@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>CRAYXUS COCKPIT · 现场调试操作板</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  :root{
+    --bg:#06090f; --bg2:#0c1220; --panel:#0e1628; --line:#1c2740;
+    --txt:#e7eef8; --dim:#8aa0c2; --mute:#566b8c;
+    --pri:#5af; --pri2:#2a6fff; --ok:#5fa; --warn:#fc6; --hot:#f55;
+    --grad-cool:linear-gradient(135deg,#2a6fff,#5af 60%,#5fa);
+  }
+  html,body{background:var(--bg);color:var(--txt);font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;height:100%;overflow:hidden;font-feature-settings:"tnum","ss01";}
+  body{display:flex;flex-direction:column;}
+  button,input{font-family:inherit;color:inherit;}
+  /* === TOP BAR === */
+  .topbar{background:linear-gradient(180deg,#0e1628,#06090f);border-bottom:1px solid var(--line);padding:8px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;height:54px;flex-shrink:0;}
+  .topbar .brand{font-size:14px;font-weight:800;letter-spacing:2px;color:var(--pri);}
+  .topbar .brand .dot{color:var(--mute);margin:0 4px;}
+  .topbar input.ip{background:#020409;border:1px solid var(--line);color:var(--ok);padding:8px 12px;border-radius:6px;font-family:"JetBrains Mono","SF Mono",Consolas,monospace;font-size:13px;width:200px;letter-spacing:.5px;}
+  .topbar input.ip:focus{outline:none;border-color:var(--pri);}
+  .topbar button{background:var(--pri2);color:#fff;padding:8px 16px;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:.5px;transition:.15s;}
+  .topbar button:hover{background:#3d80ff;}
+  .topbar button:active{transform:scale(0.96);}
+  .topbar .estop{background:linear-gradient(135deg,#a8081a,#f55);box-shadow:0 0 16px rgba(255,85,85,.35);padding:8px 20px;font-weight:800;letter-spacing:1.5px;}
+  .topbar .estop:hover{background:linear-gradient(135deg,#c00822,#f66);}
+  .topbar .spacer{flex:1;}
+  .topbar .status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mute);letter-spacing:1px;padding:6px 12px;background:#020409;border:1px solid var(--line);border-radius:6px;font-family:"SF Mono",monospace;}
+  .topbar .status .dot{width:8px;height:8px;border-radius:50%;background:var(--mute);}
+  .topbar .status.ok .dot{background:var(--ok);box-shadow:0 0 8px var(--ok);}
+  .topbar .status.warn .dot{background:var(--warn);}
+  .topbar .status.err .dot{background:var(--hot);}
+  .topbar .status.ok{color:var(--ok);border-color:#2a5a40;}
+  .topbar .status.warn{color:var(--warn);border-color:#5a4a30;}
+  .topbar .status.err{color:var(--hot);border-color:#5a3030;}
+
+  /* === WP STRIP === */
+  .wp-strip{background:linear-gradient(160deg,#0a1322,#070b14);border-bottom:1px solid var(--line);padding:8px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0;}
+  .wp-strip .lbl{font-size:11px;color:var(--pri);letter-spacing:2.5px;font-weight:700;font-family:"SF Mono",monospace;}
+  .wp-nav{display:flex;align-items:center;gap:8px;background:#020409;border:1px solid #1c3050;border-radius:8px;padding:3px;}
+  .wp-nav button{background:transparent;border:none;color:var(--pri);font-size:14px;padding:6px 12px;cursor:pointer;border-radius:5px;}
+  .wp-nav button:hover{background:rgba(85,170,255,.15);color:var(--ok);}
+  .wp-nav .cnt{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--ok);letter-spacing:1.5px;min-width:72px;text-align:center;}
+  .wp-tier-chips{display:flex;gap:4px;}
+  .wp-tier{background:#0e1628;border:1px solid var(--line);color:var(--dim);padding:5px 10px;border-radius:5px;font-size:11px;cursor:pointer;font-family:"SF Mono",monospace;font-weight:700;}
+  .wp-tier.active{background:linear-gradient(135deg,#2a6fff,#5af);color:#fff;border-color:#5af;}
+  .wp-chips{flex:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:4px;overflow-x:auto;max-height:56px;}
+  .wp-chip{padding:6px 4px;background:#0a1428;border:1px solid #1c2740;color:var(--dim);border-radius:6px;font-size:10.5px;cursor:pointer;transition:.12s;font-family:"JetBrains Mono",monospace;font-weight:500;display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1;text-align:center;}
+  .wp-chip:hover{transform:translateY(-1px);}
+  .wp-chip.active{outline:2px solid #5af;outline-offset:-2px;box-shadow:0 0 12px rgba(85,170,255,.55);background:linear-gradient(135deg,#1a3050,#5af);color:#fff;}
+  .wp-chip .wpn{font-size:10.5px;font-weight:700;}
+  .wp-chip .wpv{font-size:9px;opacity:.7;}
+
+  /* === MAIN === */
+  .main{flex:1;display:grid;grid-template-columns:1fr 320px;gap:10px;padding:10px;min-height:0;overflow:hidden;}
+  .cv-wrap{background:linear-gradient(180deg,#0a121e,#06090f);border:1px solid var(--line);border-radius:10px;padding:6px;position:relative;display:flex;flex-direction:column;}
+  canvas{display:block;width:100%;flex:1;background:#06090f;border-radius:6px;touch-action:none;cursor:crosshair;}
+  .cv-overlay{position:absolute;top:14px;left:14px;display:flex;flex-direction:column;gap:5px;pointer-events:none;font-family:"SF Mono",monospace;font-size:10.5px;letter-spacing:.5px;}
+  .cv-overlay .b{background:rgba(2,4,9,.85);padding:5px 10px;border:1px solid var(--line);border-radius:6px;color:var(--dim);}
+  .cv-overlay .b b{color:var(--ok);font-weight:700;}
+  .cv-overlay .b.car b{color:var(--warn);}
+
+  /* === SIDE === */
+  .side{display:flex;flex-direction:column;gap:8px;overflow-y:auto;}
+  .dial{background:linear-gradient(160deg,#0a1322,#070b14);border:1px solid var(--line);border-radius:10px;padding:10px 12px;}
+  .dial-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+  .dial-head .lbl{font-size:10px;color:var(--mute);letter-spacing:2.5px;font-weight:700;font-family:"SF Mono",monospace;}
+  .dial-head .val{font-size:14px;color:var(--pri);font-family:"JetBrains Mono",monospace;font-weight:600;letter-spacing:.3px;}
+  .dial-body{display:flex;align-items:center;gap:10px;}
+  .dial-svg{width:80px;height:80px;flex-shrink:0;cursor:pointer;touch-action:none;}
+  .dial-inputs{flex:1;display:flex;flex-direction:column;gap:5px;}
+  .dial-input-row{display:flex;align-items:center;gap:5px;background:#020409;border:1px solid var(--line);border-radius:5px;padding:4px 8px;}
+  .dial-input-row label{font-size:9px;color:var(--mute);letter-spacing:1px;font-weight:600;}
+  .dial-input-row input{flex:1;background:transparent;border:none;outline:none;color:var(--ok);font-family:"JetBrains Mono",monospace;font-size:12px;font-weight:600;text-align:right;-moz-appearance:textfield;width:100%;min-width:0;}
+  .dial-input-row input::-webkit-outer-spin-button,.dial-input-row input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+  .dial-input-row .unit{font-size:9.5px;color:var(--mute);font-family:"SF Mono",monospace;}
+
+  .eq-wrap{width:30px;height:80px;background:#020409;border-radius:5px;position:relative;overflow:hidden;border:1px solid var(--line);cursor:pointer;touch-action:none;flex-shrink:0;}
+  .eq-grad{position:absolute;inset:0;background:linear-gradient(180deg,#f44 0%,#fc6 30%,#5fa 70%,#5af 100%);opacity:.18;}
+  .eq-fill{position:absolute;bottom:0;left:0;right:0;background:#5fa;border-top:2px solid #fff;box-shadow:0 -2px 12px currentColor;color:#5fa;transition:height .12s;}
+
+  /* === BOTTOM ACTION BAR === */
+  .actbar{flex-shrink:0;padding:10px 16px;background:linear-gradient(180deg,#06090f,#0e1628);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(7,1fr);gap:8px;}
+  .act{padding:14px 8px;border-radius:8px;border:none;cursor:pointer;font-weight:700;font-size:13px;letter-spacing:1px;font-family:inherit;transition:.12s;display:flex;flex-direction:column;align-items:center;gap:3px;line-height:1;color:#fff;}
+  .act .ico{font-size:18px;}
+  .act .lbl{font-size:10.5px;font-weight:600;letter-spacing:.5px;}
+  .act:active{transform:scale(0.96);}
+  .act.mark{background:linear-gradient(135deg,#0a8c4a,#5fa);box-shadow:0 4px 14px rgba(95,255,170,.25);}
+  .act.apply{background:linear-gradient(135deg,#2a6fff,#5af);box-shadow:0 4px 14px rgba(85,170,255,.3);}
+  .act.run{background:linear-gradient(135deg,#a87800,#fc6);box-shadow:0 4px 14px rgba(252,198,102,.25);color:#1a1a1a;}
+  .act.stop{background:linear-gradient(135deg,#a8081a,#f55);box-shadow:0 4px 14px rgba(255,85,85,.3);}
+  .act.undo{background:#0e1628;color:var(--dim);border:1px solid var(--line);}
+  .act.save{background:#0e1628;color:var(--dim);border:1px solid var(--line);}
+  .act.reset{background:#0e1628;color:var(--dim);border:1px solid var(--line);}
+  .act.undo:hover,.act.save:hover,.act.reset:hover{border-color:var(--pri);color:var(--pri);}
+  .act.reset:hover{border-color:var(--hot);color:var(--hot);}
+
+  /* flash toast */
+  .flash{position:fixed;bottom:90px;right:24px;background:linear-gradient(135deg,#0d2a18,#1a4530);color:var(--ok);padding:12px 20px;border:1px solid #2a6840;border-radius:8px;font-size:13px;font-weight:600;box-shadow:0 6px 24px rgba(0,0,0,.5);z-index:9999;opacity:0;transform:translateY(20px);transition:.25s cubic-bezier(.16,.84,.44,1);pointer-events:none;font-family:"JetBrains Mono",monospace;}
+  .flash.show{opacity:1;transform:translateY(0);}
+  .flash.err{background:linear-gradient(135deg,#2a0d0d,#451a1a);color:var(--hot);border-color:#683030;}
+
+  /* mobile / tablet */
+  @media(max-width:900px){
+    .main{grid-template-columns:1fr;}
+    .side{max-height:240px;flex-direction:row;overflow-x:auto;overflow-y:hidden;}
+    .dial{min-width:280px;flex-shrink:0;}
+    .actbar{grid-template-columns:repeat(4,1fr);}
+    .actbar .act:nth-child(n+5){grid-column:span 1;}
+    .topbar input.ip{width:140px;}
+    .wp-chips{max-height:48px;}
+  }
+  @media(max-width:560px){
+    .actbar{grid-template-columns:repeat(2,1fr);}
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP -->
+<div class="topbar">
+  <span class="brand">CRAYXUS<span class="dot">·</span>AI<span class="dot">·</span>COCKPIT</span>
+  <input class="ip" id="carIp" placeholder="192.168.4.1" value="192.168.4.1">
+  <button onclick="connect()" id="btnConn">CONNECT</button>
+  <button class="estop" onclick="cmd('S')">⏹ E-STOP</button>
+  <span class="spacer"></span>
+  <div class="status" id="stCar"><span class="dot"></span><span>CAR</span></div>
+  <div class="status" id="stUwb"><span class="dot"></span><span>UWB</span></div>
+  <div class="status" id="stRtt"><span class="dot"></span><span>--ms</span></div>
+</div>
+
+<!-- WP STRIP -->
+<div class="wp-strip">
+  <span class="lbl">WP</span>
+  <div class="wp-nav">
+    <button onclick="navWp(-1)" title="上一个 (键盘 [)">◀</button>
+    <span class="cnt" id="wpCount">#00 / 24</span>
+    <button onclick="navWp(1)" title="下一个 (键盘 ])">▶</button>
+  </div>
+  <div class="wp-tier-chips">
+    <button class="wp-tier" data-n="8" onclick="setWpCount(8)">8</button>
+    <button class="wp-tier" data-n="16" onclick="setWpCount(16)">16</button>
+    <button class="wp-tier active" data-n="24" onclick="setWpCount(24)">24</button>
+  </div>
+  <div class="wp-chips" id="wpChips"></div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="cv-wrap">
+    <canvas id="cv" width="900" height="500"></canvas>
+    <div class="cv-overlay">
+      <div class="b car">CAR · <b id="lblCar">--.-- / --.--</b> m</div>
+      <div class="b">UWB · d0 <b id="lblD0">--</b> · d1 <b id="lblD1">--</b> · d2 <b id="lblD2">--</b> m</div>
+      <div class="b">WP<b id="lblWp">00</b> · target <b id="lblWpXY">--.-- / --.--</b></div>
+    </div>
+  </div>
+
+  <div class="side">
+    <!-- HEADING -->
+    <div class="dial">
+      <div class="dial-head"><span class="lbl">HEADING</span><span class="val" id="hVal">0°</span></div>
+      <div class="dial-body">
+        <svg class="dial-svg" id="dialHead" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="44" fill="#020409" stroke="#5af" stroke-width="1.5"/>
+          <g id="hCar" transform="translate(50 50)">
+            <path d="M-3 -12 L3 -12 L5 -6 L7 4 L7 8 L-7 8 L-7 4 L-5 -6 Z" fill="#fff" stroke="#5af" stroke-width=".8"/>
+            <rect x="-9" y="-4" width="3" height="3" fill="#5af"/><rect x="6" y="-4" width="3" height="3" fill="#5af"/>
+            <rect x="-9" y="5" width="3" height="3" fill="#5af"/><rect x="6" y="5" width="3" height="3" fill="#5af"/>
+          </g>
+          <line id="hNeedle" x1="50" y1="50" x2="50" y2="10" stroke="#fc6" stroke-width="1.5"/>
+        </svg>
+        <div class="dial-inputs">
+          <div class="dial-input-row">
+            <label>VAL</label>
+            <input type="number" id="hInput" step="1" min="0" max="359" onchange="setHeadingInput(this.value)">
+            <span class="unit">°</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- SPEED -->
+    <div class="dial">
+      <div class="dial-head"><span class="lbl">SPEED</span><span class="val" id="vVal">2.00 m/s</span></div>
+      <div class="dial-body">
+        <div class="eq-wrap" id="eqWrap"><div class="eq-grad"></div><div class="eq-fill" id="eqFill" style="height:57%;"></div></div>
+        <div class="dial-inputs">
+          <div class="dial-input-row">
+            <label>VAL</label>
+            <input type="number" id="vInput" step="0.05" min="0" max="3.5" onchange="setSpeedInput(this.value)">
+            <span class="unit">m/s</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- POSITION -->
+    <div class="dial">
+      <div class="dial-head"><span class="lbl">POSITION</span><span class="val" id="pVal">0.00 / 0.00</span></div>
+      <div class="dial-body">
+        <svg class="dial-svg" id="dialPos" viewBox="0 0 100 100">
+          <rect x="6" y="6" width="88" height="88" rx="6" fill="#020409" stroke="#5af" stroke-width="1.5"/>
+          <g stroke="#1c2740" stroke-width=".4">
+            <line x1="50" y1="6" x2="50" y2="94"/><line x1="6" y1="50" x2="94" y2="50"/>
+          </g>
+          <circle id="pDot" cx="50" cy="50" r="5" fill="#fc6" stroke="#fff" stroke-width="1.5"/>
+        </svg>
+        <div class="dial-inputs">
+          <div class="dial-input-row">
+            <label>X</label>
+            <input type="number" id="xInput" step="0.05" min="0" max="16" onchange="setPosInput(0,this.value)">
+            <span class="unit">m</span>
+          </div>
+          <div class="dial-input-row">
+            <label>Y</label>
+            <input type="number" id="yInput" step="0.05" min="0" max="8" onchange="setPosInput(1,this.value)">
+            <span class="unit">m</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM ACTION BAR -->
+<div class="actbar">
+  <button class="act mark" onclick="markHere()"><span class="ico">📍</span><span class="lbl">标定到此</span></button>
+  <button class="act apply" onclick="applyWp()"><span class="ico">🔥</span><span class="lbl">应用到车</span></button>
+  <button class="act run" onclick="runLap()"><span class="ico">▶</span><span class="lbl">跑一圈</span></button>
+  <button class="act stop" onclick="cmd('S')"><span class="ico">⏹</span><span class="lbl">急停</span></button>
+  <button class="act undo" onclick="undoWp()"><span class="ico">⤺</span><span class="lbl">Undo</span></button>
+  <button class="act save" onclick="saveWp()"><span class="ico">💾</span><span class="lbl">Save</span></button>
+  <button class="act reset" onclick="resetWp()"><span class="ico">⟲</span><span class="lbl">Reset</span></button>
+</div>
+
+<script>
+// ========= 状态 =========
+let carBase = '';
+let isConnected = false;
+let curWP = 0;
+const cmpHistory = [];
+const HIST_MAX = 50;
+
+// Map A 数据 (从主站完整复制 outer + inner + wps)
+const MAPA_OUTER=[[0.45,4.0],[0.32,4.02],[0.16,4.1],[0.05,4.24],[0.01,4.36],[0.0,7.49],[0.05,7.66],[0.13,7.77],[0.28,7.87],[0.45,7.9],[15.54,7.89],[15.7,7.82],[15.82,7.7],[15.88,7.58],[15.9,0.45],[15.87,0.28],[15.8,0.16],[15.66,0.05],[15.49,0.0],[12.41,0.0],[12.24,0.05],[12.1,0.16],[12.03,0.28],[12.0,0.45],[12.02,3.08],[12.08,3.2],[12.2,3.32],[12.36,3.39],[12.51,3.4],[12.71,3.47],[12.87,3.6],[12.96,3.74],[13.0,3.95],[12.98,4.61],[12.91,4.76],[12.76,4.91],[12.56,4.99],[11.45,5.0],[11.24,4.96],[11.06,4.84],[10.94,4.66],[10.9,4.51],[10.91,3.84],[10.99,3.64],[11.1,3.52],[11.29,3.42],[11.49,3.4],[11.62,3.37],[11.77,3.27],[11.87,3.12],[11.9,2.99],[11.89,0.36],[11.82,0.2],[11.74,0.1],[11.58,0.02],[0.45,0.0],[0.32,0.02],[0.16,0.1],[0.05,0.24],[0.01,0.36],[0.0,3.49],[0.05,3.66],[0.13,3.77],[0.28,3.87],[0.45,3.9],[6.06,3.91],[6.26,3.99],[6.41,4.14],[6.48,4.29],[6.5,4.51],[6.43,4.71],[6.34,4.84],[6.16,4.96],[5.95,5.0],[4.84,4.99],[4.64,4.91],[4.49,4.76],[4.42,4.61],[4.4,4.41],[4.35,4.24]];
+const MAPA_INNER=[[14.27,6.27],[14.08,6.38],[9.36,6.39],[9.16,6.3],[9.02,6.08],[9.0,3.41],[9.1,3.16],[9.28,3.03],[9.56,2.99],[9.8,2.88],[9.98,2.61],[9.99,2.34],[9.84,2.06],[9.61,1.92],[1.84,1.91],[1.56,2.06],[1.42,2.29],[1.42,2.61],[1.56,2.84],[1.84,2.99],[3.06,2.99],[3.34,2.84],[3.48,2.61],[3.52,2.32],[3.63,2.13],[3.86,2.01],[7.54,2.01],[7.77,2.13],[7.88,2.32],[7.89,6.04],[7.77,6.27],[7.58,6.38],[3.86,6.39],[3.66,6.3],[3.52,6.08],[3.49,5.84],[3.34,5.56],[3.11,5.42],[1.84,5.41],[1.6,5.53],[1.42,5.79],[1.41,6.06],[1.56,6.34],[1.79,6.48],[14.06,6.49],[14.34,6.34],[14.48,6.11],[14.49,1.84],[14.37,1.6],[14.11,1.42],[13.84,1.41],[13.56,1.56],[13.42,1.79],[13.42,2.11],[13.56,2.34],[13.84,2.49],[14.08,2.52],[14.3,2.66],[14.39,2.86],[14.38,6.08]];
+const MAPA_WPS=[[5.75,0.96],[8.46,0.96],[10.84,1.41],[10.19,3.74],[10.8,5.68],[13.37,5.51],[13.41,3.19],[12.87,1.04],[15.06,1.11],[15.2,3.74],[15.18,6.44],[13.07,7.21],[10.37,7.21],[7.66,7.21],[4.96,7.21],[2.25,7.21],[0.69,5.89],[2.39,4.75],[4.54,5.63],[6.99,5.39],[6.75,3.11],[4.22,3.2],[1.63,3.45],[0.77,1.54],[3.05,0.96]];
+let cmpFlow = 0; // 流光动画累加器
+
+let WP = [];
+let WP_SPD = [];
+let carX = 0, carY = 0;
+let carPath = [];
+let lastRTT = 0;
+
+// 坐标系 (canvas 900x500): 15.9m x 7.9m → padding
+const SCALE = 50; // px/m
+const PAD_X = 30, PAD_Y = 30;
+function cx(x){return x*SCALE+PAD_X;}
+function cy(y){return (8-y)*SCALE+PAD_Y;}
+function sx2x(s){return (s-PAD_X)/SCALE;}
+function sy2y(s){return 8-(s-PAD_Y)/SCALE;}
+
+// ========= 绘图 =========
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+function resizeCv(){
+  const r = cv.parentElement.getBoundingClientRect();
+  const w = Math.floor(r.width-12);
+  const h = Math.floor(r.height-12);
+  cv.width = w; cv.height = h;
+  // 自适应 SCALE 让赛道铺满
+  const sx = (w - 60) / 15.9;
+  const sy = (h - 60) / 7.9;
+  window._SCALE = Math.min(sx, sy);
+  window._PAD_X = (w - 15.9*_SCALE) / 2;
+  window._PAD_Y = (h - 7.9*_SCALE) / 2;
+}
+window.addEventListener('resize', ()=>{resizeCv(); draw();});
+function tx(x){return x*window._SCALE+window._PAD_X;}
+function ty(y){return (8-y)*window._SCALE+window._PAD_Y;}
+function ix(s){return (s-window._PAD_X)/window._SCALE;}
+function iy(s){return 8-(s-window._PAD_Y)/window._SCALE;}
+
+// ========= 炫酷绘图辅助函数 =========
+function smoothPath(ctx, pts, closed){
+  const n = pts.length; if(n<2) return;
+  if(closed){
+    const ext = [pts[n-1],...pts,pts[0]];
+    ctx.moveTo((tx(ext[0][0])+tx(ext[1][0]))/2, (ty(ext[0][1])+ty(ext[1][1]))/2);
+    for(let i=1;i<ext.length-1;i++){
+      const cpx=tx(ext[i][0]), cpy=ty(ext[i][1]);
+      const nx=tx(ext[i+1][0]), ny=ty(ext[i+1][1]);
+      const mx=(cpx+nx)/2, my=(cpy+ny)/2;
+      ctx.quadraticCurveTo(cpx,cpy,mx,my);
+    }
+  } else {
+    ctx.moveTo(tx(pts[0][0]),ty(pts[0][1]));
+    for(let i=1;i<n-1;i++){
+      const cpx=tx(pts[i][0]), cpy=ty(pts[i][1]);
+      const nx=tx(pts[i+1][0]), ny=ty(pts[i+1][1]);
+      const mx=(cpx+nx)/2, my=(cpy+ny)/2;
+      ctx.quadraticCurveTo(cpx,cpy,mx,my);
+    }
+    ctx.lineTo(tx(pts[n-1][0]),ty(pts[n-1][1]));
+  }
+}
+function spdColor(v,alpha){
+  const r = Math.max(0,Math.min(1, v/3.5));
+  const hue = r*120;
+  return alpha!==undefined?`hsla(${hue},85%,55%,${alpha})`:`hsl(${hue},85%,55%)`;
+}
+
+function draw(){
+  ctx.clearRect(0,0,cv.width,cv.height);
+  // 网格 (深邃科技网格)
+  ctx.strokeStyle='#0a1428'; ctx.lineWidth=1;
+  for(let x=-1;x<=16;x+=1){ctx.beginPath();ctx.moveTo(tx(x),0);ctx.lineTo(tx(x),cv.height);ctx.stroke();}
+  for(let y=-1;y<=8;y+=1){ctx.beginPath();ctx.moveTo(0,ty(y));ctx.lineTo(cv.width,ty(y));ctx.stroke();}
+
+  ctx.lineCap='round';ctx.lineJoin='round';
+  // === 赛道(外墙 + 内岛 evenodd 镂空) ===
+  // 1) 外光晕
+  ctx.strokeStyle='rgba(85,170,255,.07)';ctx.lineWidth=14;
+  ctx.beginPath(); smoothPath(ctx, MAPA_OUTER, true); ctx.stroke();
+  // 2) 柏油填充
+  ctx.fillStyle='#1a2540';
+  ctx.beginPath();
+  smoothPath(ctx, MAPA_OUTER, true);
+  smoothPath(ctx, MAPA_INNER.slice().reverse(), true);
+  ctx.fill('evenodd');
+  // 3) 柏油纹理渐变
+  const trkGrad = ctx.createLinearGradient(0,0,0,cv.height);
+  trkGrad.addColorStop(0,'rgba(50,68,100,.35)');
+  trkGrad.addColorStop(1,'rgba(10,16,32,.35)');
+  ctx.fillStyle=trkGrad;
+  ctx.beginPath();
+  smoothPath(ctx, MAPA_OUTER, true);
+  smoothPath(ctx, MAPA_INNER.slice().reverse(), true);
+  ctx.fill('evenodd');
+  // 4) 外墙亮绿描边
+  ctx.strokeStyle='rgba(60,200,80,.3)';ctx.lineWidth=12;
+  ctx.beginPath(); smoothPath(ctx, MAPA_OUTER, true); ctx.stroke();
+  ctx.strokeStyle='#3c3';ctx.lineWidth=3;
+  ctx.beginPath(); smoothPath(ctx, MAPA_OUTER, true); ctx.stroke();
+  // 5) 红白条纹流动 (路缘)
+  ctx.strokeStyle='#fff';ctx.lineWidth=5;
+  ctx.setLineDash([14,14]);ctx.lineDashOffset=cmpFlow*0.6;
+  ctx.beginPath(); smoothPath(ctx, MAPA_OUTER, true); ctx.stroke();
+  ctx.strokeStyle='#f44';ctx.lineDashOffset=cmpFlow*0.6+14;
+  ctx.beginPath(); smoothPath(ctx, MAPA_OUTER, true); ctx.stroke();
+  ctx.setLineDash([]);
+  // 6) 内岛红色描边 + 发光
+  ctx.strokeStyle='rgba(255,90,90,.3)';ctx.lineWidth=12;
+  ctx.beginPath(); smoothPath(ctx, MAPA_INNER, true); ctx.stroke();
+  ctx.strokeStyle='#f33';ctx.lineWidth=3;
+  ctx.beginPath(); smoothPath(ctx, MAPA_INNER, true); ctx.stroke();
+
+  // === 赛车线 (4 层光晕 + 主线渐变 + 流光) ===
+  if(WP.length >= 2){
+    // 1) 最外光晕
+    ctx.strokeStyle='rgba(255,200,100,.10)';ctx.lineWidth=42;
+    ctx.beginPath(); smoothPath(ctx, WP, true); ctx.stroke();
+    // 2) 外光晕
+    ctx.strokeStyle='rgba(255,180,80,.22)';ctx.lineWidth=28;
+    ctx.beginPath(); smoothPath(ctx, WP, true); ctx.stroke();
+    // 3) 中光晕
+    ctx.strokeStyle='rgba(255,160,60,.35)';ctx.lineWidth=18;
+    ctx.beginPath(); smoothPath(ctx, WP, true); ctx.stroke();
+    // 4) 主线 canvas 渐变
+    const grad = ctx.createLinearGradient(0,0,cv.width,cv.height);
+    grad.addColorStop(0,'#ff4d6e');grad.addColorStop(.3,'#fa3');grad.addColorStop(.6,'#5fa');grad.addColorStop(1,'#5af');
+    ctx.strokeStyle=grad;ctx.lineWidth=11;
+    ctx.beginPath(); smoothPath(ctx, WP, true); ctx.stroke();
+    // 5) 内层高光
+    ctx.strokeStyle='rgba(255,255,255,.65)';ctx.lineWidth=3.5;
+    ctx.beginPath(); smoothPath(ctx, WP, true); ctx.stroke();
+    // 6) 流动白光点
+    ctx.strokeStyle='rgba(255,255,255,1)';ctx.lineWidth=2.5;
+    ctx.setLineDash([12,32]);ctx.lineDashOffset=-cmpFlow;
+    ctx.beginPath(); smoothPath(ctx, WP, true); ctx.stroke();
+    ctx.setLineDash([]);
+    // 7) 每段中点速度色标
+    for(let i=0;i<WP.length;i++){
+      const j = (i+1)%WP.length;
+      const mx = (tx(WP[i][0])+tx(WP[j][0]))/2;
+      const my = (ty(WP[i][1])+ty(WP[j][1]))/2;
+      const v = WP_SPD[i]||2;
+      const c = spdColor(v);
+      ctx.fillStyle = spdColor(v,.4);
+      ctx.beginPath();ctx.arc(mx,my,10,0,6.28);ctx.fill();
+      ctx.fillStyle = c;
+      ctx.beginPath();ctx.arc(mx,my,4.5,0,6.28);ctx.fill();
+      ctx.strokeStyle='rgba(255,255,255,.85)';ctx.lineWidth=1.2;ctx.stroke();
+    }
+  }
+  // 实际车轨迹 (cyan 流光)
+  if(carPath.length > 1){
+    ctx.strokeStyle='rgba(0,255,255,.85)';ctx.lineWidth=2.5;ctx.lineCap='round';
+    ctx.beginPath();
+    carPath.forEach((p,i)=>{i==0?ctx.moveTo(tx(p[0]),ty(p[1])):ctx.lineTo(tx(p[0]),ty(p[1]));});
+    ctx.stroke();
+  }
+  // WP 点 (带 glow 高亮当前)
+  WP.forEach((p,i)=>{
+    const isCur = i===curWP;
+    if(isCur){
+      ctx.fillStyle='rgba(255,221,85,.35)';
+      ctx.beginPath();ctx.arc(tx(p[0]),ty(p[1]),16,0,6.28);ctx.fill();
+    }
+    ctx.fillStyle=isCur?'#fd5':'#fff';
+    ctx.beginPath();ctx.arc(tx(p[0]),ty(p[1]),isCur?8:5,0,6.28);ctx.fill();
+    ctx.strokeStyle=isCur?'#fff':'#1a2540';ctx.lineWidth=isCur?2:1;ctx.stroke();
+    ctx.fillStyle=isCur?'#000':'#5af';ctx.font=`bold ${isCur?10:9}px monospace`;
+    ctx.textAlign='center';
+    ctx.fillText(i,tx(p[0]),ty(p[1])+3);
+  });
+  // 起点 S
+  ctx.fillStyle='#5af';ctx.beginPath();ctx.arc(tx(WP[0][0]),ty(WP[0][1]),11,0,6.28);ctx.fill();
+  ctx.fillStyle='#000';ctx.font='bold 11px sans-serif';ctx.textAlign='center';
+  ctx.fillText('S',tx(WP[0][0]),ty(WP[0][1])+4);
+  // 车实时位置 (UWB)
+  if(isConnected && (carX !== 0 || carY !== 0)){
+    ctx.beginPath();
+    ctx.arc(tx(carX),ty(carY),11,0,Math.PI*2);
+    ctx.fillStyle='rgba(85,170,255,.25)';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(tx(carX),ty(carY),7,0,Math.PI*2);
+    ctx.fillStyle='#5af';
+    ctx.fill();
+    ctx.strokeStyle='#fff';
+    ctx.lineWidth=2;
+    ctx.stroke();
+  }
+}
+
+// ========= WP 操作 =========
+function setWpCount(n){
+  const step = MAPA_WPS.length / n;
+  WP = [];
+  WP_SPD = [];
+  for(let i=0;i<n;i++){
+    const src = MAPA_WPS[Math.floor(i*step)];
+    WP.push([src[0], src[1]]);
+    WP_SPD.push(2.0);
+  }
+  curWP = 0;
+  document.querySelectorAll('.wp-tier').forEach(b=>b.classList.toggle('active', +b.dataset.n===n));
+  renderChips();
+  draw();
+}
+function renderChips(){
+  const chips = WP.map((p,i)=>{
+    const v = WP_SPD[i] || 2;
+    const hue = Math.max(0,Math.min(120,(v/3.5)*120));
+    const bg = `hsla(${hue},65%,40%,.18)`;
+    const bd = `hsla(${hue},65%,50%,.45)`;
+    const a = i===curWP;
+    return `<div class="wp-chip${a?' active':''}" style="${a?'':'background:'+bg+';border-color:'+bd+';'}" onclick="selectWp(${i})">`+
+           `<span class="wpn">${String(i).padStart(2,'0')}</span><span class="wpv">${v.toFixed(1)}</span></div>`;
+  }).join('');
+  document.getElementById('wpChips').innerHTML = chips;
+  document.getElementById('wpCount').textContent = `#${String(curWP).padStart(2,'0')} / ${WP.length}`;
+  // 更新 overlay
+  document.getElementById('lblWp').textContent = String(curWP).padStart(2,'0');
+  const p = WP[curWP];
+  if(p) document.getElementById('lblWpXY').textContent = `${p[0].toFixed(2)} / ${p[1].toFixed(2)}`;
+  updateDials();
+  const active = document.querySelector('.wp-chip.active');
+  if(active) active.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});
+}
+function selectWp(i){curWP=i; renderChips(); draw();}
+function navWp(d){
+  let n = curWP + d;
+  if(n<0) n = WP.length-1;
+  if(n>=WP.length) n = 0;
+  selectWp(n);
+}
+
+// ========= Dials =========
+function wpHeading(i){
+  const j = i<WP.length-1?i+1:i-1;
+  const dx = WP[j][0]-WP[i][0], dy = WP[j][1]-WP[i][1];
+  let h = Math.atan2(dy,dx)*180/Math.PI;
+  if(i===WP.length-1) h += 180;
+  return ((h%360)+360)%360;
+}
+function updateDials(){
+  const p = WP[curWP];
+  if(!p) return;
+  const h = wpHeading(curWP);
+  document.getElementById('hCar').setAttribute('transform',`translate(50 50) rotate(${h-90})`);
+  document.getElementById('hNeedle').setAttribute('transform',`rotate(${h-90} 50 50)`);
+  document.getElementById('hVal').textContent = h.toFixed(0)+'°';
+  const v = WP_SPD[curWP];
+  const pct = Math.max(2,Math.min(98,(v/3.5)*100));
+  const hue = 240 - pct * 2.4;
+  document.getElementById('eqFill').style.height = pct+'%';
+  document.getElementById('eqFill').style.background = `hsl(${hue},90%,60%)`;
+  document.getElementById('vVal').textContent = v.toFixed(2)+' m/s';
+  const px = 6 + (p[0]/16)*88;
+  const py = 94 - (p[1]/8)*88;
+  document.getElementById('pDot').setAttribute('cx',Math.max(6,Math.min(94,px)));
+  document.getElementById('pDot').setAttribute('cy',Math.max(6,Math.min(94,py)));
+  document.getElementById('pVal').textContent = p[0].toFixed(2)+' / '+p[1].toFixed(2);
+  const focused = document.activeElement;
+  const hi = document.getElementById('hInput'); if(focused!==hi) hi.value = h.toFixed(0);
+  const vi = document.getElementById('vInput'); if(focused!==vi) vi.value = v.toFixed(2);
+  const xi = document.getElementById('xInput'); if(focused!==xi) xi.value = p[0].toFixed(2);
+  const yi = document.getElementById('yInput'); if(focused!==yi) yi.value = p[1].toFixed(2);
+}
+
+function pushHist(){
+  cmpHistory.push({wp: WP.map(p=>[p[0],p[1]]), spd: WP_SPD.slice()});
+  if(cmpHistory.length>HIST_MAX) cmpHistory.shift();
+}
+
+function setHeadingInput(val){
+  if(curWP === WP.length-1){ flash('⚠ 末点无下一段',true); return; }
+  pushHist();
+  const target = ((parseFloat(val)||0)%360+360)%360;
+  const i = curWP, j = i+1;
+  const d = Math.hypot(WP[j][0]-WP[i][0], WP[j][1]-WP[i][1])||0.5;
+  const rad = (target-90)*Math.PI/180;
+  WP[j][0] = +(WP[i][0]+d*Math.cos(rad)).toFixed(2);
+  WP[j][1] = +(WP[i][1]+d*Math.sin(rad)).toFixed(2);
+  renderChips(); draw();
+}
+function setSpeedInput(val){
+  pushHist();
+  WP_SPD[curWP] = +Math.max(0,Math.min(3.5,parseFloat(val)||0)).toFixed(2);
+  renderChips(); draw();
+}
+function setPosInput(axis,val){
+  pushHist();
+  const max = axis===0?16:8;
+  WP[curWP][axis] = +Math.max(0,Math.min(max,parseFloat(val)||0)).toFixed(2);
+  renderChips(); draw();
+}
+
+// ========= Canvas drag =========
+let dragIdx = -1;
+function cvEvt(e){
+  const r = cv.getBoundingClientRect();
+  const t = e.touches?e.touches[0]:e;
+  return [t.clientX-r.left, t.clientY-r.top];
+}
+function cvFind(sx,sy){
+  for(let i=0;i<WP.length;i++){
+    const dx = sx-tx(WP[i][0]), dy = sy-ty(WP[i][1]);
+    if(dx*dx+dy*dy < 256) return i;
+  }
+  return -1;
+}
+cv.addEventListener('mousedown',e=>{
+  const [sx,sy]=cvEvt(e);
+  dragIdx=cvFind(sx,sy);
+  if(dragIdx>=0){pushHist();curWP=dragIdx;renderChips();e.preventDefault();}
+});
+cv.addEventListener('mousemove',e=>{
+  if(dragIdx<0) return;
+  const [sx,sy]=cvEvt(e);
+  WP[dragIdx]=[+Math.max(0,Math.min(16,ix(sx))).toFixed(2),+Math.max(0,Math.min(8,iy(sy))).toFixed(2)];
+  draw();
+});
+cv.addEventListener('mouseup',()=>{if(dragIdx>=0){renderChips();}dragIdx=-1;});
+cv.addEventListener('mouseleave',()=>{if(dragIdx>=0){renderChips();}dragIdx=-1;});
+cv.addEventListener('touchstart',e=>{
+  const [sx,sy]=cvEvt(e);
+  dragIdx=cvFind(sx,sy);
+  if(dragIdx>=0){pushHist();curWP=dragIdx;renderChips();e.preventDefault();}
+},{passive:false});
+cv.addEventListener('touchmove',e=>{
+  if(dragIdx<0) return;
+  const [sx,sy]=cvEvt(e);
+  WP[dragIdx]=[+Math.max(0,Math.min(16,ix(sx))).toFixed(2),+Math.max(0,Math.min(8,iy(sy))).toFixed(2)];
+  draw();
+  e.preventDefault();
+},{passive:false});
+cv.addEventListener('touchend',()=>{if(dragIdx>=0){renderChips();}dragIdx=-1;});
+
+// 键盘快捷
+document.addEventListener('keydown',e=>{
+  if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;
+  if(e.key==='[' || e.key===',') { navWp(-1); e.preventDefault(); }
+  if(e.key===']' || e.key==='.') { navWp(1); e.preventDefault(); }
+  if(e.key===' ') { cmd('S'); e.preventDefault(); }
+  if(e.key==='z' && (e.ctrlKey||e.metaKey)) { undoWp(); e.preventDefault(); }
+  if(e.key==='s' && (e.ctrlKey||e.metaKey)) { saveWp(); e.preventDefault(); }
+});
+
+// ========= flash toast =========
+function flash(msg,err){
+  let el = document.getElementById('flashBox');
+  if(!el){ el=document.createElement('div'); el.id='flashBox'; el.className='flash'; document.body.appendChild(el); }
+  el.className = 'flash ' + (err?'err show':'show');
+  el.textContent = msg;
+  clearTimeout(el._t);
+  el._t = setTimeout(()=>el.classList.remove('show'),1800);
+}
+
+// ========= 真车连接 =========
+async function connect(){
+  const ip = document.getElementById('carIp').value.trim();
+  if(!ip){flash('⚠ 输入车 IP',true);return;}
+  carBase = ip.startsWith('http')?ip:'http://'+ip;
+  setStatus('stCar','warn','CAR · connecting');
+  const t0 = Date.now();
+  try{
+    const r = await fetch(carBase+'/c?x=Q',{mode:'cors'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    await r.json();
+    lastRTT = Date.now() - t0;
+    isConnected = true;
+    setStatus('stCar','ok','CAR · ONLINE');
+    document.getElementById('btnConn').textContent = 'DISCONNECT';
+    document.getElementById('btnConn').onclick = disconnect;
+    flash('✓ 已连接 '+carBase+' · '+lastRTT+'ms');
+    startPolling();
+  }catch(e){
+    isConnected = false;
+    setStatus('stCar','err','CAR · OFF');
+    flash('✗ 连接失败: '+e.message,true);
+  }
+}
+function disconnect(){
+  isConnected = false;
+  if(pollTimer){clearInterval(pollTimer); pollTimer=null;}
+  if(uwbTimer){clearInterval(uwbTimer); uwbTimer=null;}
+  setStatus('stCar','','CAR · OFF');
+  setStatus('stUwb','','UWB');
+  setStatus('stRtt','','--ms');
+  document.getElementById('btnConn').textContent = 'CONNECT';
+  document.getElementById('btnConn').onclick = connect;
+  flash('已断开');
+}
+function setStatus(id,cls,txt){
+  const el = document.getElementById(id);
+  el.className = 'status' + (cls?' '+cls:'');
+  el.querySelector('span:last-child').textContent = txt;
+}
+
+// ========= polling =========
+let pollTimer = null;
+let uwbTimer = null;
+function startPolling(){
+  if(pollTimer) clearInterval(pollTimer);
+  if(uwbTimer) clearInterval(uwbTimer);
+  // UWB 5Hz
+  uwbTimer = setInterval(async()=>{
+    if(!isConnected) return;
+    const t0 = Date.now();
+    try{
+      const r = await fetch(carBase+'/uwb',{mode:'cors'});
+      const j = await r.json();
+      lastRTT = Date.now() - t0;
+      setStatus('stRtt','ok',lastRTT+'ms');
+      if(j.ok){
+        carX = j.x; carY = j.y;
+        carPath.push([carX,carY]);
+        if(carPath.length>500) carPath.shift();
+        setStatus('stUwb','ok','UWB · '+j.fresh_ms+'ms');
+        document.getElementById('lblCar').textContent = j.x.toFixed(2)+' / '+j.y.toFixed(2);
+        document.getElementById('lblD0').textContent = j.d0.toFixed(2);
+        document.getElementById('lblD1').textContent = j.d1.toFixed(2);
+        document.getElementById('lblD2').textContent = j.d2.toFixed(2);
+      } else {
+        setStatus('stUwb','warn','UWB · stale '+j.fresh_ms+'ms');
+      }
+      draw();
+    }catch(e){
+      setStatus('stUwb','err','UWB · err');
+    }
+  }, 200);
+}
+
+// ========= 真车控制 =========
+async function cmd(c){
+  if(!isConnected){flash('⚠ 未连车',true);return;}
+  try{
+    await fetch(carBase+'/c?x='+c,{mode:'cors'});
+    flash('→ CMD '+c);
+  }catch(e){flash('✗ CMD '+c+' 失败',true);}
+}
+async function applyWp(){
+  if(!isConnected){
+    saveWp();
+    flash('⚠ 未连车,已存本地',true);
+    return;
+  }
+  const payload = WP.map((p,i)=>p[0].toFixed(2)+','+p[1].toFixed(2)+','+(WP_SPD[i]||2).toFixed(2)).join(';');
+  try{
+    const r = await fetch(carBase+'/set_wp?p='+encodeURIComponent(payload),{mode:'cors'});
+    const j = await r.json();
+    if(j.n_wp){
+      flash('🔥 下发 '+j.n_wp+' WP · '+(j.t_ms/1000).toFixed(1)+'s');
+    } else {
+      flash('✗ 下发失败',true);
+    }
+  }catch(e){flash('✗ /set_wp: '+e.message,true);}
+}
+async function runLap(){
+  if(!isConnected){flash('⚠ 未连车',true);return;}
+  if(!confirm('🏁 启动一圈?')) return;
+  carPath = [];
+  try{
+    await fetch(carBase+'/c?x=MB',{mode:'cors'});
+    flash('🏁 启动 · UWB 50Hz 回传');
+  }catch(e){flash('✗ 启动失败',true);}
+}
+async function markHere(){
+  if(!isConnected){flash('⚠ 未连车',true);return;}
+  try{
+    const r = await fetch(carBase+'/uwb',{mode:'cors'});
+    const j = await r.json();
+    if(!j.ok){flash('⚠ UWB 无效',true);return;}
+    pushHist();
+    WP[curWP][0] = +j.x.toFixed(2);
+    WP[curWP][1] = +j.y.toFixed(2);
+    renderChips(); draw();
+    flash('📍 WP'+String(curWP).padStart(2,'0')+' → ('+j.x.toFixed(2)+', '+j.y.toFixed(2)+')');
+  }catch(e){flash('✗ UWB 失败',true);}
+}
+
+// ========= Undo / Save / Load / Reset =========
+function undoWp(){
+  if(cmpHistory.length===0){flash('⚠ 已最早',true);return;}
+  const s = cmpHistory.pop();
+  WP = s.wp.map(p=>[p[0],p[1]]);
+  WP_SPD = s.spd.slice();
+  if(curWP>=WP.length) curWP = WP.length-1;
+  renderChips(); draw();
+  flash('⤺ Undo · '+cmpHistory.length+' left');
+}
+function saveWp(){
+  try{
+    const data = {wp: WP.map(p=>[p[0],p[1]]), spd: WP_SPD.slice(), n: WP.length, t: Date.now()};
+    localStorage.setItem('cockpit_wp_v1', JSON.stringify(data));
+    flash('💾 Saved · '+WP.length+' WP');
+  }catch(e){flash('✗ Save failed',true);}
+}
+function loadWp(){
+  const raw = localStorage.getItem('cockpit_wp_v1');
+  if(!raw){flash('⚠ 无存档',true);return;}
+  try{
+    const j = JSON.parse(raw);
+    pushHist();
+    WP = j.wp.map(p=>[p[0],p[1]]);
+    WP_SPD = j.spd.slice();
+    curWP = 0;
+    document.querySelectorAll('.wp-tier').forEach(b=>b.classList.toggle('active',+b.dataset.n===WP.length));
+    renderChips(); draw();
+    const ago = Math.round((Date.now()-j.t)/1000);
+    flash('📂 Loaded · '+ago+'s ago');
+  }catch(e){flash('✗ Load failed',true);}
+}
+function resetWp(){
+  if(!confirm('⟲ 恢复默认 24 WP?')) return;
+  pushHist();
+  setWpCount(24);
+  flash('⟲ Reset 24 WP');
+}
+
+// 三表盘 SVG 拖动 (简化版)
+const dialHead = document.getElementById('dialHead');
+function hSet(e){
+  const r = dialHead.getBoundingClientRect();
+  const t = e.touches?e.touches[0]:e;
+  const cx = r.left+r.width/2, cy = r.top+r.height/2;
+  const a = Math.atan2(t.clientY-cy, t.clientX-cx)*180/Math.PI + 90;
+  let h = ((a%360)+360)%360;
+  if(curWP === WP.length-1) return;
+  const i = curWP, j = i+1;
+  const d = Math.hypot(WP[j][0]-WP[i][0], WP[j][1]-WP[i][1])||0.5;
+  const rad = (h-90)*Math.PI/180;
+  WP[j][0] = +(WP[i][0]+d*Math.cos(rad)).toFixed(2);
+  WP[j][1] = +(WP[i][1]+d*Math.sin(rad)).toFixed(2);
+  draw(); updateDials();
+}
+let hd = false;
+dialHead.addEventListener('mousedown',e=>{pushHist();hd=true;hSet(e);e.preventDefault();});
+window.addEventListener('mousemove',e=>{if(hd)hSet(e);});
+window.addEventListener('mouseup',()=>{if(hd){hd=false;renderChips();}});
+dialHead.addEventListener('touchstart',e=>{pushHist();hd=true;hSet(e);e.preventDefault();},{passive:false});
+dialHead.addEventListener('touchmove',e=>{if(hd){hSet(e);e.preventDefault();}},{passive:false});
+dialHead.addEventListener('touchend',()=>{if(hd){hd=false;renderChips();}});
+
+const eqWrap = document.getElementById('eqWrap');
+function eqSet(e){
+  const r = eqWrap.getBoundingClientRect();
+  const t = e.touches?e.touches[0]:e;
+  const py = t.clientY-r.top;
+  const pct = Math.max(0,Math.min(1, 1-(py/r.height)));
+  WP_SPD[curWP] = +(pct*3.5).toFixed(2);
+  draw(); updateDials();
+}
+let ed = false;
+eqWrap.addEventListener('mousedown',e=>{pushHist();ed=true;eqSet(e);e.preventDefault();});
+window.addEventListener('mousemove',e=>{if(ed)eqSet(e);});
+window.addEventListener('mouseup',()=>{if(ed){ed=false;renderChips();}});
+eqWrap.addEventListener('touchstart',e=>{pushHist();ed=true;eqSet(e);e.preventDefault();},{passive:false});
+eqWrap.addEventListener('touchmove',e=>{if(ed){eqSet(e);e.preventDefault();}},{passive:false});
+eqWrap.addEventListener('touchend',()=>{if(ed){ed=false;renderChips();}});
+
+const dialPos = document.getElementById('dialPos');
+function pSet(e){
+  const r = dialPos.getBoundingClientRect();
+  const t = e.touches?e.touches[0]:e;
+  const sx = ((t.clientX-r.left)/r.width)*100;
+  const sy = ((t.clientY-r.top)/r.height)*100;
+  WP[curWP][0] = +Math.max(0,Math.min(16,((sx-6)/88)*16)).toFixed(2);
+  WP[curWP][1] = +Math.max(0,Math.min(8,-((sy-94)/88)*8)).toFixed(2);
+  draw(); updateDials();
+}
+let pd = false;
+dialPos.addEventListener('mousedown',e=>{pushHist();pd=true;pSet(e);e.preventDefault();});
+window.addEventListener('mousemove',e=>{if(pd)pSet(e);});
+window.addEventListener('mouseup',()=>{if(pd){pd=false;renderChips();}});
+dialPos.addEventListener('touchstart',e=>{pushHist();pd=true;pSet(e);e.preventDefault();},{passive:false});
+dialPos.addEventListener('touchmove',e=>{if(pd){pSet(e);e.preventDefault();}},{passive:false});
+dialPos.addEventListener('touchend',()=>{if(pd){pd=false;renderChips();}});
+
+// ========= INIT =========
+resizeCv();
+setWpCount(24);
+// 流光动画循环 (cmpFlow 累加驱动赛道路缘 + 赛车线流动)
+function animateFlow(){
+  cmpFlow = (cmpFlow + 1.2) % 9999;
+  draw();
+  requestAnimationFrame(animateFlow);
+}
+animateFlow();
+
+// 自动尝试连接 (如果当前在车的 AP 模式)
+if(location.hostname === '192.168.4.1' || location.hostname === 'crayxus.local'){
+  document.getElementById('carIp').value = location.hostname;
+  setTimeout(connect, 500);
+}
+</script>
+</body>
+</html>

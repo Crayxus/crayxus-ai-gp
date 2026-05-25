@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CRAYXUS AI PILOT — AI 机器人赛车手 · 永康联合提案</title>
+<meta name="description" content="CRAYXUS AI PILOT 是面向赛车赛事的 AI 机器人车手 IP 系统,联合永康打造下一代 AI 卡丁车,90 天占领流量风口。">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{
+    --bg:#06090f; --bg2:#0c1220; --panel:#0e1628; --line:#1c2740;
+    --txt:#e7eef8; --dim:#8aa0c2; --mute:#566b8c;
+    --pri:#5af; --pri2:#2a6fff; --ok:#5fa; --warn:#fc6; --hot:#f55;
+    --mint:#8fc99c; --brass:#c9a657;
+    --grad-pilot:linear-gradient(135deg,#5fa,#5af 50%,#8fc99c);
+    --grad-mint:linear-gradient(135deg,#8fc99c,#5fa);
+    --grad-brass:linear-gradient(135deg,#fc6,#c9a657);
+  }
+  html,body{background:var(--bg);color:var(--txt);font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.6;scroll-behavior:smooth;-webkit-font-smoothing:antialiased;font-feature-settings:"tnum","ss01";}
+  body{overflow-x:hidden;}
+  a{color:inherit;text-decoration:none;}
+  .container{max-width:1200px;margin:0 auto;padding:0 32px;}
+
+  /* === NAV === */
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,9,15,.78);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);}
+  nav .container{display:flex;align-items:center;justify-content:space-between;height:60px;}
+  .logo{font-weight:800;font-size:14px;letter-spacing:3px;color:var(--txt);}
+  .logo .dot{color:var(--ok);margin:0 6px;}
+  .logo .brand-pri{background:var(--grad-pilot);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .nav-cta{background:var(--pri2);color:#fff;padding:8px 18px;border-radius:6px;font-size:12.5px;font-weight:700;letter-spacing:1px;}
+  .nav-cta:hover{background:#3d80ff;}
+  .nav-links{display:flex;gap:24px;font-size:12.5px;color:var(--dim);letter-spacing:.5px;}
+  .nav-links a:hover{color:var(--ok);}
+  @media(max-width:780px){.nav-links{display:none;}}
+
+  /* === HERO === */
+  .hero{min-height:100vh;display:flex;align-items:center;padding:120px 0 80px;position:relative;overflow:hidden;}
+  .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 50%,rgba(95,255,170,.08),transparent 50%),radial-gradient(circle at 80% 30%,rgba(85,170,255,.08),transparent 50%);}
+  .hero .container{position:relative;z-index:2;display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center;}
+  .hero-text{}
+  .hero-pill{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border:1px solid var(--ok);border-radius:20px;font-size:11.5px;color:var(--ok);letter-spacing:2px;margin-bottom:24px;background:rgba(95,255,170,.06);font-family:"SF Mono",monospace;font-weight:600;}
+  .hero-pill .live-d{width:7px;height:7px;background:var(--ok);border-radius:50%;animation:pp 1.4s ease-in-out infinite;box-shadow:0 0 8px var(--ok);}
+  @keyframes pp{0%,100%{opacity:1;}50%{opacity:.3;}}
+  .hero h1{font-size:78px;font-weight:900;line-height:1;letter-spacing:-2.5px;margin-bottom:14px;}
+  .hero h1 .hl{background:var(--grad-pilot);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .hero .zh{font-size:38px;color:#fff;font-weight:800;letter-spacing:6px;margin-bottom:18px;text-shadow:0 0 30px rgba(85,170,255,.4);}
+  .hero .lede{font-size:17px;color:var(--dim);line-height:1.75;margin-bottom:28px;max-width:560px;}
+  .hero .lede b{color:var(--ok);}
+  .hero-cta{display:flex;gap:14px;flex-wrap:wrap;}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:14px 26px;border-radius:8px;font-size:14px;font-weight:700;letter-spacing:.5px;border:none;cursor:pointer;transition:.2s;text-decoration:none;}
+  .btn-pri{background:var(--grad-pilot);color:#06090f;box-shadow:0 6px 24px rgba(85,170,255,.3);}
+  .btn-pri:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(85,170,255,.5);}
+  .btn-ghost{background:transparent;color:var(--txt);border:1px solid var(--line);}
+  .btn-ghost:hover{border-color:var(--pri);color:var(--pri);}
+  .hero-img{position:relative;border-radius:20px;overflow:hidden;border:1px solid var(--line);background:radial-gradient(circle at 50% 50%,#1a3050,#06090f 80%);box-shadow:0 30px 80px rgba(0,0,0,.5);}
+  .hero-img img{display:block;width:100%;height:auto;}
+  .hero-img::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 40%,rgba(95,255,170,.08) 100%);pointer-events:none;}
+  .hero-badge{position:absolute;top:18px;left:18px;background:rgba(2,4,9,.88);backdrop-filter:blur(8px);border:1px solid var(--ok);border-radius:10px;padding:8px 14px;font-size:11px;font-family:"SF Mono",monospace;font-weight:700;letter-spacing:1.5px;color:var(--ok);}
+  .hero-badge .lbl{color:var(--mute);}
+  .hero-stamp{position:absolute;bottom:18px;right:18px;background:rgba(252,198,102,.12);backdrop-filter:blur(8px);border:1px solid var(--warn);border-radius:8px;padding:6px 12px;font-size:10.5px;font-family:"SF Mono",monospace;font-weight:700;letter-spacing:1px;color:var(--warn);}
+  @media(max-width:980px){
+    .hero .container{grid-template-columns:1fr;}
+    .hero h1{font-size:52px;letter-spacing:-1.5px;}
+    .hero .zh{font-size:28px;letter-spacing:3px;}
+  }
+
+  /* === SECTION 通用 === */
+  section.s{padding:90px 0;position:relative;}
+  section.s.alt{background:linear-gradient(180deg,var(--bg) 0%,#0a1220 50%,var(--bg) 100%);}
+  .eyebrow{display:inline-block;font-size:10.5px;color:var(--ok);letter-spacing:3px;font-weight:700;margin-bottom:14px;font-family:"SF Mono",monospace;padding:4px 10px;background:rgba(95,255,170,.08);border-radius:4px;}
+  .s h2{font-size:42px;line-height:1.15;font-weight:800;margin-bottom:16px;letter-spacing:-.8px;max-width:880px;}
+  .s h2 .hl{background:var(--grad-pilot);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .s .lede{font-size:16px;color:var(--dim);max-width:720px;margin-bottom:48px;line-height:1.75;}
+  .s .lede b{color:var(--ok);}
+
+  /* === ONE-LINER · 一句话讲清楚 === */
+  .oneliner{padding:40px 0 80px;}
+  .oneliner-card{background:linear-gradient(160deg,#0a1322,#070b14);border:1px solid var(--line);border-left:4px solid var(--ok);border-radius:14px;padding:36px 44px;position:relative;overflow:hidden;}
+  .oneliner-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad-pilot);}
+  .oneliner-label{font-size:11px;color:var(--ok);letter-spacing:3px;font-weight:700;margin-bottom:14px;font-family:"SF Mono",monospace;}
+  .oneliner-text{font-size:22px;color:var(--txt);line-height:1.55;font-weight:500;letter-spacing:-.3px;}
+  .oneliner-text b{color:var(--ok);font-weight:800;}
+
+  /* === FLOW · 流量风口数据 === */
+  .flow-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:36px;}
+  .flow-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px 22px;transition:.2s;position:relative;overflow:hidden;}
+  .flow-card:hover{transform:translateY(-4px);border-color:var(--pri);}
+  .flow-card .platform{font-size:10.5px;color:var(--mute);letter-spacing:2px;font-weight:700;font-family:"SF Mono",monospace;margin-bottom:10px;}
+  .flow-card .num{font-size:36px;color:var(--ok);font-weight:800;letter-spacing:-1.5px;line-height:1;margin-bottom:6px;font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:3px;}
+  .flow-card .num .unit{font-size:16px;color:var(--dim);font-weight:700;}
+  .flow-card .label{font-size:12px;color:var(--pri);font-weight:600;letter-spacing:.3px;margin-bottom:6px;}
+  .flow-card .desc{font-size:11.5px;color:var(--dim);line-height:1.55;}
+  .flow-note{margin-top:24px;padding:16px 22px;background:rgba(85,170,255,.04);border:1px solid var(--line);border-left:3px solid var(--pri);border-radius:10px;font-size:13px;color:var(--dim);line-height:1.7;}
+  .flow-note b{color:var(--ok);}
+
+  /* === IP DECONSTRUCTION === */
+  .ip-row{display:grid;grid-template-columns:1.1fr 1fr;gap:40px;align-items:center;margin-top:32px;}
+  .ip-img{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:radial-gradient(circle at 30% 30%,#1a3050,#06090f 70%);}
+  .ip-img img{display:block;width:100%;height:auto;}
+  .ip-spec{}
+  .ip-name{font-size:48px;font-weight:900;line-height:1;letter-spacing:-1.5px;margin-bottom:8px;}
+  .ip-name .crayxus{color:var(--dim);}
+  .ip-name .pilot{background:var(--grad-pilot);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .ip-version{font-size:11px;color:var(--mute);letter-spacing:2px;font-family:"SF Mono",monospace;margin-bottom:24px;}
+  .ip-tagline{font-size:15px;color:var(--dim);line-height:1.75;margin-bottom:28px;}
+  .ip-traits{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .ip-trait{background:#0a121e;border:1px solid var(--line);border-radius:10px;padding:14px 16px;transition:.15s;}
+  .ip-trait:hover{border-color:var(--pri);}
+  .ip-trait .ico{font-size:20px;margin-bottom:4px;line-height:1;}
+  .ip-trait .t-name{font-size:11.5px;color:var(--pri);font-weight:700;letter-spacing:.8px;margin-bottom:3px;font-family:"SF Mono",monospace;}
+  .ip-trait .t-desc{font-size:11px;color:var(--dim);line-height:1.55;}
+  @media(max-width:980px){.ip-row{grid-template-columns:1fr;}.ip-name{font-size:36px;}}
+
+  /* === APEX CAPABILITIES · 4 大 AI 能力 === */
+  .apex-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:36px;}
+  .apex-card{background:linear-gradient(160deg,#0a1322,#070b14);border:1px solid var(--line);border-radius:18px;padding:32px 30px;position:relative;overflow:hidden;transition:.2s;display:flex;flex-direction:column;}
+  .apex-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:18px 18px 0 0;}
+  .apex-card.c1::before{background:linear-gradient(90deg,#5af,#5fa);}
+  .apex-card.c2::before{background:linear-gradient(90deg,#a5c,#5af);}
+  .apex-card.c3::before{background:linear-gradient(90deg,#5fa,#fc6);}
+  .apex-card.c4::before{background:linear-gradient(90deg,#fc6,#f55);}
+  .apex-card:hover{transform:translateY(-4px);border-color:var(--pri);box-shadow:0 16px 48px rgba(0,0,0,.4);}
+  /* 用户成长阶段 badge */
+  .apex-stage{position:absolute;top:14px;right:18px;font-size:9.5px;font-weight:700;letter-spacing:1.5px;padding:4px 10px;border-radius:14px;font-family:"SF Mono",monospace;}
+  .apex-card.c1 .apex-stage{background:rgba(85,170,255,.12);color:#5af;border:1px solid #2a5070;}
+  .apex-card.c2 .apex-stage{background:rgba(170,90,200,.14);color:#c87cd4;border:1px solid #5a3060;}
+  .apex-card.c3 .apex-stage{background:rgba(95,255,170,.12);color:#5fa;border:1px solid #2a5a40;}
+  .apex-card.c4 .apex-stage{background:rgba(252,198,102,.14);color:#fc6;border:1px solid #5a4a30;}
+  .apex-num{font-family:"SF Mono","JetBrains Mono",monospace;font-size:13px;color:var(--mute);letter-spacing:3px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+  .apex-num::before{content:'';display:inline-block;width:30px;height:1px;background:var(--mute);}
+  .apex-card .a-ico{font-size:56px;line-height:1;margin-bottom:18px;filter:drop-shadow(0 0 18px rgba(85,170,255,.4));}
+  .apex-card.c1 .a-ico{filter:drop-shadow(0 0 18px rgba(85,170,255,.5));}
+  .apex-card.c2 .a-ico{filter:drop-shadow(0 0 18px rgba(170,90,200,.5));}
+  .apex-card.c3 .a-ico{filter:drop-shadow(0 0 18px rgba(95,255,170,.5));}
+  .apex-card.c4 .a-ico{filter:drop-shadow(0 0 18px rgba(252,198,102,.5));}
+  .apex-card h3{font-size:26px;color:var(--txt);margin-bottom:4px;font-weight:800;letter-spacing:-.5px;line-height:1.15;}
+  .apex-card h3 .hl{background:var(--grad-pilot);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .apex-card .a-en{font-size:11px;color:var(--mute);letter-spacing:2.5px;margin-bottom:18px;font-family:"SF Mono",monospace;font-weight:700;text-transform:uppercase;}
+  .apex-card>p{font-size:13.5px;color:var(--dim);line-height:1.75;margin-bottom:14px;}
+  .apex-card>p b{color:var(--ok);}
+  .apex-sub-list{display:flex;flex-direction:column;gap:10px;margin-top:auto;padding-top:14px;border-top:1px dashed var(--line);}
+  .apex-sub{background:#020409;border:1px solid var(--line);border-left:3px solid var(--ok);border-radius:8px;padding:10px 14px;}
+  .apex-sub .s-mode{font-size:10.5px;color:var(--ok);letter-spacing:2px;font-weight:700;font-family:"SF Mono",monospace;margin-bottom:4px;}
+  .apex-sub h6{font-size:13px;color:var(--txt);font-weight:700;margin-bottom:4px;letter-spacing:-.2px;}
+  .apex-sub p{font-size:11.5px;color:var(--dim);line-height:1.55;}
+  .apex-card.c1 .apex-sub{border-left-color:#5af;}
+  .apex-card.c1 .apex-sub .s-mode{color:#5af;}
+  .apex-card.c2 .apex-sub{border-left-color:#c87cd4;}
+  .apex-card.c2 .apex-sub .s-mode{color:#c87cd4;}
+  .apex-card.c3 .apex-sub{border-left-color:#5fa;}
+  .apex-card.c3 .apex-sub .s-mode{color:#5fa;}
+  .apex-card.c4 .apex-sub{border-left-color:#fc6;}
+  .apex-card.c4 .apex-sub .s-mode{color:#fc6;}
+  .apex-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:14px;}
+  .apex-tag{font-size:10px;color:var(--dim);background:rgba(85,170,255,.06);border:1px solid var(--line);border-radius:4px;padding:3px 8px;letter-spacing:.5px;font-family:"SF Mono",monospace;}
+  /* === AI 共生宣言 (赛道霸主 / 钢铁侠) === */
+  .apex-quote{margin-top:36px;padding:48px 52px;background:linear-gradient(135deg,rgba(170,90,200,.08),rgba(85,170,255,.06) 50%,rgba(95,255,170,.04));border:1px solid var(--line);border-left:4px solid #c87cd4;border-radius:18px;position:relative;overflow:hidden;}
+  .apex-quote::before{content:'"';position:absolute;top:-40px;right:40px;font-size:220px;color:rgba(170,90,200,.12);font-family:Georgia,serif;line-height:1;pointer-events:none;}
+  .apex-quote .sub-tag{font-size:12px;color:#c87cd4;letter-spacing:3px;font-family:"SF Mono",monospace;margin-bottom:18px;font-weight:700;text-transform:uppercase;}
+  .apex-quote h3{font-size:38px;color:#fff;margin-bottom:14px;font-weight:800;letter-spacing:-.8px;line-height:1.2;}
+  .apex-quote h3 .hl{background:linear-gradient(135deg,#c87cd4,#5af 60%,#5fa);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .apex-quote .body{font-size:16px;color:var(--dim);line-height:1.85;max-width:760px;}
+  .apex-quote .body b{color:var(--txt);}
+  .apex-quote-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:26px;position:relative;z-index:1;}
+  .apex-quote-item{padding:16px 18px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:10px;transition:.15s;}
+  .apex-quote-item:hover{border-color:#c87cd4;background:rgba(170,90,200,.06);}
+  .apex-quote-item .ico{font-size:24px;margin-bottom:8px;line-height:1;}
+  .apex-quote-item .lbl{font-size:11px;color:var(--mute);letter-spacing:1.5px;font-family:"SF Mono",monospace;margin-bottom:4px;font-weight:600;}
+  .apex-quote-item .arrow{display:inline-block;margin:0 4px;color:#c87cd4;}
+  .apex-quote-item .txt{font-size:13px;color:var(--txt);font-weight:700;line-height:1.5;}
+  .apex-quote .formula{margin-top:24px;padding-top:20px;border-top:1px dashed var(--line);font-size:14px;color:#c87cd4;text-align:center;font-weight:800;letter-spacing:3px;font-family:"SF Mono",monospace;}
+  .apex-quote .formula .v{color:var(--ok);}
+  .apex-quote .formula .h{color:var(--warn);}
+  @media(max-width:780px){
+    .apex-quote{padding:32px 24px;}
+    .apex-quote h3{font-size:26px;}
+    .apex-quote-grid{grid-template-columns:1fr 1fr;}
+  }
+  /* === APEX CTA === */
+  .apex-cta{margin-top:36px;padding:24px 28px;background:linear-gradient(135deg,rgba(85,170,255,.06),rgba(95,255,170,.04));border:1px solid var(--line);border-left:4px solid var(--ok);border-radius:14px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;}
+  .apex-cta-text{flex:1;min-width:260px;}
+  .apex-cta h4{font-size:18px;color:var(--txt);margin-bottom:6px;font-weight:800;letter-spacing:-.3px;}
+  .apex-cta p{font-size:13px;color:var(--dim);line-height:1.65;}
+  .apex-cta p b{color:var(--ok);}
+  @media(max-width:980px){.apex-grid{grid-template-columns:1fr;}.apex-card .a-ico{font-size:44px;}.apex-card h3{font-size:22px;}}
+  /* === 3 MODES === */
+  .modes-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:18px;margin-top:36px;}
+  .mode{background:linear-gradient(160deg,#0a1322,#070b14);border:1px solid var(--line);border-radius:16px;padding:28px 30px;position:relative;overflow:hidden;transition:.2s;}
+  .mode:hover{transform:translateY(-4px);border-color:var(--pri);}
+  .mode.primary{border-color:var(--warn);box-shadow:0 0 32px rgba(252,198,102,.18);}
+  .mode.primary::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad-brass);}
+  .mode.primary::after{content:'PRIMARY · 核心营收';position:absolute;top:14px;right:18px;font-size:9.5px;color:var(--warn);background:rgba(252,198,102,.12);border:1px solid #5a4a30;border-radius:10px;padding:3px 10px;letter-spacing:1.2px;font-family:"SF Mono",monospace;font-weight:700;}
+  .mode .m-ico{font-size:38px;margin-bottom:14px;line-height:1;}
+  .mode h3{font-size:22px;color:var(--txt);margin-bottom:4px;font-weight:800;letter-spacing:-.5px;}
+  .mode .m-en{font-size:11px;color:var(--mute);letter-spacing:2.5px;margin-bottom:16px;font-family:"SF Mono",monospace;font-weight:700;}
+  .mode p{font-size:13.5px;color:var(--dim);line-height:1.75;}
+  .mode p b{color:var(--ok);}
+  @media(max-width:980px){.modes-grid{grid-template-columns:1fr;}}
+
+  /* === CRAYXUS HELMET · 可穿戴 AI 共生系统 === */
+  .helmet-section{background:linear-gradient(160deg,#0a1322,#070b14);border:1px solid var(--line);border-radius:20px;padding:48px;margin-top:36px;position:relative;overflow:hidden;}
+  .helmet-section::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#c87cd4,#5af 50%,#5fa);}
+  .helmet-tag{display:inline-block;font-size:11px;color:#c87cd4;letter-spacing:3px;font-weight:700;padding:5px 14px;background:rgba(170,90,200,.1);border:1px solid #5a3060;border-radius:20px;font-family:"SF Mono",monospace;margin-bottom:16px;}
+  .helmet-section h3{font-size:36px;color:var(--txt);margin-bottom:8px;font-weight:800;letter-spacing:-.8px;line-height:1.1;}
+  .helmet-section h3 .hl{background:linear-gradient(135deg,#c87cd4,#5af 60%,#5fa);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .helmet-section .lede{font-size:15px;color:var(--dim);max-width:780px;margin-bottom:30px;line-height:1.75;}
+  .helmet-section .lede b{color:var(--ok);}
+  .helmet-grid{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center;margin-top:14px;}
+  .helmet-img{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:radial-gradient(circle at 50% 30%,rgba(170,90,200,.18),#06090f 70%);min-height:380px;display:flex;align-items:center;justify-content:center;}
+  .helmet-img img{display:block;width:100%;height:auto;}
+  .helmet-img-placeholder{font-size:160px;line-height:1;color:rgba(255,255,255,.06);text-align:center;}
+  .helmet-img-placeholder .lbl{display:block;font-size:11px;color:var(--mute);letter-spacing:2px;margin-top:14px;font-family:"SF Mono",monospace;font-weight:700;}
+  .helmet-features{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .helmet-feat{background:#0a121e;border:1px solid var(--line);border-radius:10px;padding:14px 16px;transition:.15s;}
+  .helmet-feat:hover{border-color:#c87cd4;transform:translateY(-2px);}
+  .helmet-feat .num{font-size:10.5px;color:#c87cd4;letter-spacing:1.5px;font-family:"SF Mono",monospace;font-weight:700;margin-bottom:4px;}
+  .helmet-feat h6{font-size:13.5px;color:var(--txt);margin-bottom:5px;font-weight:700;letter-spacing:-.2px;}
+  .helmet-feat p{font-size:11.5px;color:var(--dim);line-height:1.55;}
+  .helmet-biz{margin-top:28px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  .helmet-biz-card{background:rgba(170,90,200,.06);border:1px solid var(--line);border-radius:10px;padding:16px 18px;text-align:center;}
+  .helmet-biz-card .price{font-size:24px;color:#c87cd4;font-family:"Inter","SF Pro Display",-apple-system,sans-serif;font-weight:800;letter-spacing:-.5px;line-height:1;margin-bottom:6px;font-variant-numeric:tabular-nums;}
+  .helmet-biz-card .price .unit{font-size:13px;color:var(--dim);font-weight:700;}
+  .helmet-biz-card .label{font-size:11px;color:var(--ok);letter-spacing:1.5px;font-weight:700;margin-bottom:4px;font-family:"SF Mono",monospace;}
+  .helmet-biz-card .desc{font-size:11px;color:var(--dim);line-height:1.55;}
+  @media(max-width:980px){
+    .helmet-grid{grid-template-columns:1fr;}
+    .helmet-section{padding:32px 24px;}
+    .helmet-section h3{font-size:26px;}
+    .helmet-biz{grid-template-columns:1fr;}
+  }
+  @media(max-width:560px){
+    .helmet-features{grid-template-columns:1fr;}
+  }
+  /* === TRI-LAYER HMI · 三层显示架构 === */
+  .tri-layer{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:36px;}
+  .tri-card{background:linear-gradient(160deg,#0a1322,#070b14);border:1px solid var(--line);border-radius:16px;padding:28px;position:relative;overflow:hidden;transition:.2s;}
+  .tri-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+  .tri-card.l1::before{background:linear-gradient(90deg,#5fa,#8fc99c);}
+  .tri-card.l2::before{background:linear-gradient(90deg,#5af,#5fa);}
+  .tri-card.l3::before{background:linear-gradient(90deg,#c87cd4,#5af);}
+  .tri-card:hover{transform:translateY(-3px);border-color:var(--pri);}
+  .tri-card .layer-num{font-family:"SF Mono",monospace;font-size:11px;color:var(--mute);letter-spacing:2.5px;font-weight:700;margin-bottom:8px;}
+  .tri-card .layer-loc{display:inline-block;font-size:10px;color:var(--mute);background:#020409;border:1px solid var(--line);border-radius:4px;padding:3px 9px;margin-bottom:12px;font-family:"SF Mono",monospace;letter-spacing:.8px;}
+  .tri-card h4{font-size:22px;color:var(--txt);margin-bottom:4px;font-weight:800;letter-spacing:-.4px;line-height:1.2;}
+  .tri-card .layer-en{font-family:"SF Mono",monospace;font-size:11.5px;color:var(--mute);font-weight:600;letter-spacing:1.5px;display:block;margin-bottom:14px;}
+  .tri-card .layer-tag{font-size:18px;margin-bottom:14px;font-weight:700;letter-spacing:-.2px;}
+  .tri-card .layer-tag .hl{font-style:italic;}
+  .tri-card.l1 .layer-tag .hl{color:var(--ok);}
+  .tri-card.l2 .layer-tag .hl{color:var(--pri);}
+  .tri-card.l3 .layer-tag .hl{color:#c87cd4;}
+  .tri-card .principle{padding:10px 14px;background:#020409;border:1px solid var(--line);border-radius:8px;margin-bottom:14px;font-size:11.5px;color:var(--dim);line-height:1.6;}
+  .tri-card .principle b{color:var(--txt);font-weight:700;}
+  .tri-info{display:flex;flex-direction:column;gap:7px;}
+  .tri-row{display:flex;justify-content:space-between;gap:10px;font-size:11.5px;padding:9px 12px;background:#0a121e;border-radius:6px;border-left:2px solid var(--line);align-items:center;}
+  .tri-card.l1 .tri-row{border-left-color:var(--ok);}
+  .tri-card.l2 .tri-row{border-left-color:var(--pri);}
+  .tri-card.l3 .tri-row{border-left-color:#c87cd4;}
+  .tri-row .label{color:var(--mute);letter-spacing:.3px;font-size:10.5px;font-weight:600;}
+  .tri-row .value{color:var(--txt);font-weight:600;font-family:"JetBrains Mono",monospace;font-size:11.5px;letter-spacing:-.2px;}
+  /* 互不重合规则表 */
+  .tri-rule{margin-top:36px;background:linear-gradient(160deg,#0a1322,#070b14);border:1px solid var(--line);border-radius:16px;padding:32px;overflow-x:auto;position:relative;}
+  .tri-rule::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#5fa 0%,#5af 50%,#c87cd4 100%);}
+  .tri-rule h3{font-size:19px;color:var(--txt);margin-bottom:8px;font-weight:800;letter-spacing:-.3px;}
+  .tri-rule>p{font-size:13px;color:var(--dim);margin-bottom:22px;line-height:1.7;}
+  .tri-rule>p b{color:var(--ok);}
+  .tri-rule table{width:100%;border-collapse:collapse;font-family:"JetBrains Mono","SF Mono",monospace;min-width:600px;}
+  .tri-rule th{font-size:10.5px;padding:12px 12px;border-bottom:1px dashed var(--line);font-weight:700;letter-spacing:2px;text-align:center;}
+  .tri-rule th:first-child{text-align:left;color:var(--mute);}
+  .tri-rule th.h1{color:var(--ok);}
+  .tri-rule th.h2{color:var(--pri);}
+  .tri-rule th.h3{color:#c87cd4;}
+  .tri-rule td{font-size:12px;padding:11px 12px;border-bottom:1px solid #1c2740;text-align:center;letter-spacing:-.2px;}
+  .tri-rule td:first-child{text-align:left;color:var(--txt);font-weight:600;font-family:-apple-system,"Segoe UI","PingFang SC",sans-serif;letter-spacing:.2px;}
+  .tri-rule td .yes{color:var(--ok);font-weight:700;font-size:14px;}
+  .tri-rule td .no{color:#3a4868;font-size:14px;}
+  .tri-rule td .partial{color:var(--warn);font-weight:600;}
+  .tri-rule tr:hover td{background:rgba(85,170,255,.03);}
+  /* 设计哲学 */
+  .tri-philosophy{margin-top:32px;padding:32px 40px;background:linear-gradient(135deg,rgba(95,255,170,.04),rgba(85,170,255,.04) 50%,rgba(170,90,200,.04));border:1px solid var(--line);border-left:4px solid var(--ok);border-radius:14px;position:relative;overflow:hidden;}
+  .tri-philosophy h4{font-size:13px;color:var(--ok);letter-spacing:2.5px;margin-bottom:14px;font-weight:700;font-family:"SF Mono",monospace;}
+  .tri-philosophy .quote{font-size:18px;color:var(--txt);line-height:1.7;font-weight:600;letter-spacing:-.3px;margin-bottom:14px;}
+  .tri-philosophy .quote b{color:var(--ok);}
+  .tri-philosophy ul{list-style:none;padding:0;margin:0 0 14px;}
+  .tri-philosophy li{font-size:13.5px;color:var(--dim);line-height:1.95;padding-left:22px;position:relative;}
+  .tri-philosophy li::before{content:'→';position:absolute;left:0;color:var(--ok);font-weight:700;font-family:"SF Mono",monospace;}
+  .tri-philosophy li b{color:var(--txt);font-weight:700;}
+  .tri-philosophy .closer{font-size:14px;color:var(--ok);font-weight:700;margin-top:6px;letter-spacing:-.2px;}
+  @media(max-width:980px){
+    .tri-layer{grid-template-columns:1fr;}
+    .tri-philosophy{padding:24px;}
+    .tri-rule{padding:22px;}
+  }
+  /* === 大气版通用 === */
+  .big-h2{font-size:64px;font-weight:900;letter-spacing:-2.5px;line-height:1.05;margin-bottom:18px;}
+  .big-h2 .hl{background:var(--grad-pilot);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .big-lede{font-size:19px;color:var(--dim);max-width:640px;margin-bottom:48px;line-height:1.55;letter-spacing:-.2px;}
+  @media(max-width:780px){.big-h2{font-size:40px;letter-spacing:-1.5px;}}
+  /* === 3 大场景 · 顶部 hero 大图 + 下方 demo 统一结构 === */
+  .uc-section{padding:60px 0;border-bottom:1px solid var(--line);}
+  .uc-hero{position:relative;height:460px;margin-bottom:32px;border-radius:22px;overflow:hidden;border:1px solid var(--line);background:linear-gradient(135deg,#1a3050,#06090f);}
+  .uc-hero img{display:block;width:100%;height:100%;object-fit:cover;}
+  .uc-hero .placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:220px;opacity:.18;pointer-events:none;}
+  .uc-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(6,9,15,.92) 100%);pointer-events:none;}
+  .uc-hero-text{position:absolute;left:48px;bottom:42px;right:48px;z-index:2;}
+  .uc-hero-text .uc-num{font-size:11px;letter-spacing:3px;font-weight:700;font-family:"SF Mono",monospace;margin-bottom:10px;display:inline-block;padding:5px 12px;border-radius:14px;background:rgba(2,4,9,.6);backdrop-filter:blur(8px);border:1px solid var(--line);}
+  .uc-section.casual .uc-hero-text .uc-num{color:#5af;border-color:#1c3050;}
+  .uc-section.training .uc-hero-text .uc-num{color:#c87cd4;border-color:#5a3060;}
+  .uc-section.racing .uc-hero-text .uc-num{color:#fc6;border-color:#5a4a30;}
+  .uc-hero-text h2{font-size:84px;font-weight:900;letter-spacing:-3px;line-height:1;margin-bottom:10px;text-shadow:0 4px 24px rgba(0,0,0,.8);}
+  .uc-section.casual .uc-hero-text h2{color:#fff;}
+  .uc-section.casual .uc-hero-text h2 .em{color:#5af;}
+  .uc-section.training .uc-hero-text h2{color:#fff;}
+  .uc-section.training .uc-hero-text h2 .em{color:#c87cd4;}
+  .uc-section.racing .uc-hero-text h2{color:#fff;}
+  .uc-section.racing .uc-hero-text h2 .em{color:#fc6;}
+  .uc-hero-text .pitch{font-size:22px;color:#fff;font-weight:600;line-height:1.4;letter-spacing:-.3px;text-shadow:0 2px 12px rgba(0,0,0,.7);max-width:680px;}
+  .uc-tags-row{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:24px;align-items:center;}
+  .uc-tags-row .uc-target{margin-left:auto;font-size:12px;color:var(--mute);font-family:"SF Mono",monospace;letter-spacing:.5px;}
+  @media(max-width:780px){
+    .uc-hero{height:320px;}
+    .uc-hero-text{left:24px;bottom:24px;right:24px;}
+    .uc-hero-text h2{font-size:54px;letter-spacing:-1.8px;}
+    .uc-hero-text .pitch{font-size:16px;}
+    .uc-tags-row .uc-target{margin-left:0;width:100%;border-top:1px dashed var(--line);padding-top:10px;margin-top:6px;}
+  }
+  /* === 3 大场景 · 每个独立长 section + 演示面板 (旧版保留供 fallback) === */
+  .uc-section.OLD-PADDING-KEPT-FOR-COMPAT-OLD{padding:80px 0;border-bottom:1px solid var(--line);}
+  .uc-section.casual{background:linear-gradient(180deg,rgba(85,170,255,.025),transparent);}
+  .uc-section.training{background:linear-gradient(180deg,rgba(170,90,200,.025),transparent);}
+  .uc-section.racing{background:linear-gradient(180deg,rgba(252,198,102,.025),transparent);}
+  .uc-row{display:grid;grid-template-columns:1fr 1.2fr;gap:48px;align-items:stretch;}
+  .uc-row.reverse{grid-template-columns:1.2fr 1fr;}
+  .uc-row.reverse .uc-info{order:2;}
+  .uc-row.reverse .uc-demo{order:1;}
+  .uc-info{padding:20px 0;display:flex;flex-direction:column;justify-content:center;}
+  .uc-info .uc-num{font-size:12px;letter-spacing:3px;font-family:"SF Mono",monospace;font-weight:700;margin-bottom:14px;}
+  .uc-section.casual .uc-info .uc-num{color:#5af;}
+  .uc-section.training .uc-info .uc-num{color:#c87cd4;}
+  .uc-section.racing .uc-info .uc-num{color:var(--warn);}
+  .uc-info h2{font-size:72px;font-weight:900;letter-spacing:-2.5px;line-height:1;margin-bottom:14px;}
+  .uc-section.casual h2{color:#5af;}
+  .uc-section.training h2{color:#c87cd4;}
+  .uc-section.racing h2{color:var(--warn);}
+  .uc-info .pitch{font-size:22px;color:var(--txt);line-height:1.5;font-weight:600;margin-bottom:20px;letter-spacing:-.3px;}
+  .uc-info .features{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:22px;}
+  .uc-info .feat{font-size:12px;color:var(--dim);background:#020409;border:1px solid var(--line);border-radius:6px;padding:6px 12px;}
+  .uc-section.casual .feat{border-color:#1c3050;}
+  .uc-section.training .feat{border-color:#3a2050;}
+  .uc-section.racing .feat{border-color:#3a3020;}
+  .uc-info .feat b{margin-right:4px;font-weight:700;}
+  .uc-section.casual .feat b{color:#5af;}
+  .uc-section.training .feat b{color:#c87cd4;}
+  .uc-section.racing .feat b{color:var(--warn);}
+  .uc-info .target{font-size:12px;color:var(--mute);padding-top:16px;border-top:1px dashed var(--line);font-family:"SF Mono",monospace;letter-spacing:.5px;}
+  .uc-demo{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:linear-gradient(160deg,#0a1322,#06090f);min-height:560px;display:flex;flex-direction:column;}
+  .uc-demo .demo-tag{position:absolute;top:14px;left:14px;background:rgba(2,4,9,.88);backdrop-filter:blur(8px);border:1px solid;border-radius:18px;padding:5px 12px;font-size:10.5px;letter-spacing:2px;font-family:"SF Mono",monospace;font-weight:700;z-index:10;display:flex;align-items:center;gap:6px;}
+  .uc-section.casual .demo-tag{color:#5af;border-color:#5af;}
+  .uc-section.training .demo-tag{color:#c87cd4;border-color:#c87cd4;}
+  .uc-section.racing .demo-tag{color:var(--warn);border-color:var(--warn);}
+  .uc-demo .demo-tag .live-d{width:7px;height:7px;border-radius:50%;animation:pp 1.4s ease-in-out infinite;}
+  .uc-section.casual .demo-tag .live-d{background:#5af;box-shadow:0 0 8px #5af;}
+  .uc-section.training .demo-tag .live-d{background:#c87cd4;box-shadow:0 0 8px #c87cd4;}
+  .uc-section.racing .demo-tag .live-d{background:var(--warn);box-shadow:0 0 8px var(--warn);}
+  .uc-demo iframe{width:100%;flex:1;border:0;display:block;min-height:600px;background:#06090f;}
+  /* === 训练 demo · tab 切换卡牌 === */
+  .demo-tabs{display:flex;gap:8px;padding:50px 14px 14px;background:rgba(2,4,9,.6);border-bottom:1px solid var(--line);overflow-x:auto;flex-shrink:0;}
+  .demo-tab{padding:11px 16px;background:#0a121e;border:1px solid var(--line);border-radius:10px;color:var(--dim);font-size:12.5px;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;transition:.15s;font-weight:600;font-family:inherit;}
+  .demo-tab:hover{border-color:#c87cd4;color:var(--txt);}
+  .demo-tab.active{background:linear-gradient(135deg,#5a3060,#c87cd4);color:#fff;border-color:#c87cd4;box-shadow:0 4px 14px rgba(170,90,200,.4);}
+  .demo-tab .ico{font-size:14px;line-height:1;}
+  .demo-content{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .demo-pane{display:none;flex:1;flex-direction:column;}
+  .demo-pane.active{display:flex;}
+  .demo-pane iframe{width:100%;flex:1;border:0;min-height:720px;background:#06090f;display:block;}
+  /* TAB · 历史轨迹 */
+  .history-demo{padding:24px;flex:1;display:flex;flex-direction:column;gap:16px;}
+  .history-svg{flex:1;min-height:520px;background:#06090f;border-radius:10px;border:1px solid var(--line);position:relative;overflow:hidden;}
+  .history-svg svg{display:block;width:100%;height:100%;}
+  .history-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+  .history-stat{background:#0a121e;border:1px solid var(--line);border-radius:8px;padding:12px;text-align:center;}
+  .history-stat .lbl{font-size:9.5px;color:var(--mute);letter-spacing:1.5px;margin-bottom:5px;font-family:"SF Mono",monospace;}
+  .history-stat .val{font-size:16px;color:#c87cd4;font-weight:700;font-family:"JetBrains Mono",monospace;letter-spacing:-.3px;}
+  /* TAB · AI 算法 */
+  .algo-demo{padding:24px;flex:1;display:flex;flex-direction:column;gap:16px;}
+  .algo-svg{flex:1;min-height:520px;background:#06090f;border-radius:10px;border:1px solid var(--line);position:relative;}
+  .algo-svg svg{display:block;width:100%;height:100%;}
+  .algo-legend{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+  .algo-item{background:#0a121e;border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:flex;align-items:center;gap:10px;}
+  .algo-item .dot{width:18px;height:4px;border-radius:2px;flex-shrink:0;}
+  .algo-item .name{font-size:11.5px;color:var(--txt);font-weight:700;font-family:"SF Mono",monospace;letter-spacing:.5px;}
+  .algo-item .delta{font-size:11px;color:var(--ok);font-family:"JetBrains Mono",monospace;margin-left:auto;font-weight:700;}
+  /* TAB · 圈速对比 */
+  .lap-demo{padding:30px 24px 24px;flex:1;display:flex;flex-direction:column;gap:16px;}
+  .lap-chart{flex:1;display:flex;align-items:flex-end;gap:8px;padding:40px 16px 30px;background:#06090f;border-radius:10px;border:1px solid var(--line);min-height:500px;position:relative;}
+  .lap-chart::before{content:'';position:absolute;left:16px;right:16px;top:50%;height:1px;background:rgba(199,124,212,.15);}
+  .lap-bar{flex:1;background:linear-gradient(180deg,#c87cd4,#5a3060);border-radius:4px 4px 0 0;position:relative;transition:.2s;cursor:pointer;}
+  .lap-bar:hover{filter:brightness(1.25);}
+  .lap-bar.best{background:linear-gradient(180deg,#fc6,#a87800);box-shadow:0 0 16px rgba(252,198,102,.4);}
+  .lap-bar.you{background:linear-gradient(180deg,#5fa,#0a8c4a);}
+  .lap-bar .label{position:absolute;bottom:-22px;left:0;right:0;text-align:center;font-size:10px;color:var(--mute);font-family:"SF Mono",monospace;font-weight:700;}
+  .lap-bar .value{position:absolute;top:-22px;left:0;right:0;text-align:center;font-size:10.5px;color:#fff;font-family:"JetBrains Mono",monospace;font-weight:700;letter-spacing:-.2px;}
+  .lap-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+  .lap-sum-cell{background:#0a121e;border:1px solid var(--line);border-radius:8px;padding:12px;text-align:center;}
+  .lap-sum-cell .lbl{font-size:9.5px;color:var(--mute);letter-spacing:1.5px;margin-bottom:5px;font-family:"SF Mono",monospace;}
+  .lap-sum-cell .val{font-size:16px;color:#fc6;font-weight:700;font-family:"JetBrains Mono",monospace;letter-spacing:-.3px;}
+  .lap-sum-cell.you .val{color:var(--ok);}
+  @media(max-width:780px){
+    .history-stats,.algo-legend,.lap-summary{grid-template-columns:1fr 1fr;}
+  }
+  /* 训练专用 · 纵向全宽 layout (避免 iframe 太窄触发 cockpit mobile) */
+  .uc-row.vertical{grid-template-columns:1fr;gap:36px;}
+  .uc-row.vertical .uc-info{padding:20px 0 0;}
+  .uc-row.vertical .uc-info{display:grid;grid-template-columns:auto 1fr;gap:32px;align-items:center;}
+  .uc-row.vertical .uc-info-left{grid-column:1;}
+  .uc-row.vertical .uc-info-left h2{font-size:64px;margin-bottom:8px;}
+  .uc-row.vertical .uc-info-left .pitch{font-size:18px;margin-bottom:0;}
+  .uc-row.vertical .uc-info-right{grid-column:2;}
+  .uc-row.vertical .uc-info-right .features{margin-bottom:8px;}
+  .uc-row.vertical .uc-info-right .target{border-top:none;padding-top:0;margin-top:8px;}
+  .uc-row.vertical .uc-demo{min-height:820px;}
+  .uc-row.vertical .uc-demo iframe{min-height:820px;}
+  @media(max-width:780px){
+    .uc-row.vertical .uc-info{grid-template-columns:1fr;gap:18px;}
+    .uc-row.vertical .uc-info-left h2{font-size:48px;}
+    .uc-row.vertical .uc-demo,.uc-row.vertical .uc-demo iframe{min-height:640px;}
+  }
+  .casual-demo{padding:60px 30px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;flex:1;}
+  .casual-demo .ai-circle{width:110px;height:110px;border-radius:50%;background:radial-gradient(circle,#5af,#2a6fff);display:flex;align-items:center;justify-content:center;font-size:48px;margin-bottom:22px;box-shadow:0 0 50px rgba(85,170,255,.5);animation:casualPulse 2s ease-in-out infinite;}
+  @keyframes casualPulse{0%,100%{transform:scale(1);box-shadow:0 0 40px rgba(85,170,255,.4);}50%{transform:scale(1.06);box-shadow:0 0 70px rgba(85,170,255,.7);}}
+  .casual-demo .chat{display:flex;flex-direction:column;gap:10px;width:100%;max-width:380px;margin-bottom:22px;}
+  .casual-demo .chat-msg{border-radius:14px;padding:11px 16px;text-align:left;font-size:12.5px;line-height:1.55;}
+  .casual-demo .chat-msg.user{background:linear-gradient(135deg,#2a6fff,#5af);color:#fff;align-self:flex-end;max-width:80%;border-bottom-right-radius:4px;}
+  .casual-demo .chat-msg.ai{background:#0a121e;border:1px solid var(--line);color:var(--dim);align-self:flex-start;max-width:85%;border-bottom-left-radius:4px;}
+  .casual-demo .chat-msg.ai b{color:#5af;}
+  .casual-demo .chat-msg .meta{display:block;font-size:10.5px;color:var(--mute);font-family:"SF Mono",monospace;margin-bottom:4px;letter-spacing:.5px;}
+  .casual-demo .start-btn{padding:16px 44px;background:linear-gradient(135deg,#2a6fff,#5af);border:none;border-radius:32px;color:#fff;font-size:15px;font-weight:700;letter-spacing:2px;cursor:pointer;box-shadow:0 8px 24px rgba(85,170,255,.3);transition:.2s;font-family:inherit;}
+  .casual-demo .start-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(85,170,255,.5);}
+  .racing-demo{padding:50px 22px 24px;flex:1;display:flex;flex-direction:column;}
+  .racing-demo h4{font-size:13px;color:var(--warn);letter-spacing:2.5px;margin-bottom:16px;font-family:"SF Mono",monospace;font-weight:700;display:flex;align-items:center;gap:8px;}
+  .racing-demo .leader-tbl{display:flex;flex-direction:column;gap:5px;flex:1;}
+  .racing-demo .leader-row{display:grid;grid-template-columns:54px 1fr auto auto;gap:10px;align-items:center;padding:10px 14px;background:#0a121e;border:1px solid var(--line);border-radius:8px;font-size:12px;font-family:"JetBrains Mono",monospace;transition:.15s;}
+  .racing-demo .leader-row:hover{border-color:var(--warn);}
+  .racing-demo .leader-row.you{border-color:var(--ok);background:rgba(95,255,170,.06);box-shadow:0 0 14px rgba(95,255,170,.1);}
+  .racing-demo .leader-row.ai{border-color:#c87cd4;background:rgba(170,90,200,.04);}
+  .racing-demo .leader-row .pos{font-weight:700;color:var(--mute);font-size:11px;letter-spacing:.5px;}
+  .racing-demo .leader-row.p1 .pos{color:#fc6;}
+  .racing-demo .leader-row.p2 .pos{color:#ccc;}
+  .racing-demo .leader-row.p3 .pos{color:#c87;}
+  .racing-demo .leader-row .name{color:var(--txt);font-weight:600;font-size:11.5px;}
+  .racing-demo .leader-row.you .name{color:var(--ok);}
+  .racing-demo .leader-row.ai .name{color:#c87cd4;}
+  .racing-demo .leader-row .city{color:var(--mute);font-size:10.5px;letter-spacing:.3px;}
+  .racing-demo .leader-row .time{color:var(--ok);font-weight:700;font-size:12px;}
+  .racing-demo .live-info{margin-top:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+  .racing-demo .live-cell{background:#0a121e;border:1px solid var(--line);border-radius:8px;padding:11px 8px;text-align:center;}
+  .racing-demo .live-cell .lbl{font-size:9px;color:var(--mute);letter-spacing:1.5px;margin-bottom:4px;font-family:"SF Mono",monospace;}
+  .racing-demo .live-cell .val{font-size:16px;color:var(--warn);font-weight:700;font-family:"JetBrains Mono",monospace;letter-spacing:-.3px;}
+  @media(max-width:980px){
+    .uc-row,.uc-row.reverse{grid-template-columns:1fr;}
+    .uc-row.reverse .uc-info{order:1;}
+    .uc-row.reverse .uc-demo{order:2;}
+    .uc-info h2{font-size:54px;}
+    .uc-demo{min-height:480px;}
+    .uc-section{padding:50px 0;}
+    .racing-demo .live-info{grid-template-columns:1fr 1fr;}
+  }
+  /* === USE CASES 大气版(休闲/训练/赛事) === */
+  .uc-big-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .uc-big{display:flex;flex-direction:column;border-radius:24px;overflow:hidden;border:1px solid var(--line);background:linear-gradient(160deg,#0a1322,#070b14);min-height:540px;transition:.25s;cursor:pointer;}
+  .uc-big:hover{transform:translateY(-5px);border-color:var(--pri);box-shadow:0 20px 50px rgba(0,0,0,.4);}
+  .uc-big .img{aspect-ratio:4/3;background:linear-gradient(135deg,#1a3050,#06090f);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+  .uc-big .img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+  .uc-big .img .placeholder{font-size:140px;opacity:.35;line-height:1;}
+  .uc-big .img-tag{position:absolute;top:18px;left:18px;background:rgba(2,4,9,.82);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:18px;padding:5px 14px;font-size:10.5px;letter-spacing:2px;font-family:"SF Mono",monospace;font-weight:700;color:var(--mute);}
+  .uc-big.casual .img-tag{color:#5af;border-color:#1c3050;}
+  .uc-big.training .img-tag{color:#c87cd4;border-color:#5a3060;}
+  .uc-big.racing .img-tag{color:var(--warn);border-color:#5a4a30;}
+  .uc-big .img .casual-bg{background:radial-gradient(circle,rgba(85,170,255,.18),transparent);}
+  .uc-big .text{padding:36px 32px;flex:1;display:flex;flex-direction:column;}
+  .uc-big .text h3{font-size:52px;font-weight:900;letter-spacing:-2px;line-height:1;margin-bottom:14px;}
+  .uc-big.casual h3{color:#5af;}
+  .uc-big.training h3{color:#c87cd4;}
+  .uc-big.racing h3{color:var(--warn);}
+  .uc-big .pitch{font-size:18px;color:var(--txt);line-height:1.5;font-weight:600;letter-spacing:-.3px;margin-bottom:18px;}
+  .uc-big .features{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:auto;}
+  .uc-big .feat{font-size:11px;color:var(--dim);background:#020409;border:1px solid var(--line);border-radius:6px;padding:5px 10px;letter-spacing:.3px;line-height:1.3;}
+  .uc-big.casual .feat{border-color:#1c3050;}
+  .uc-big.training .feat{border-color:#3a2050;}
+  .uc-big.racing .feat{border-color:#3a3020;}
+  .uc-big .feat b{font-weight:700;margin-right:3px;}
+  .uc-big.casual .feat b{color:#5af;}
+  .uc-big.training .feat b{color:#c87cd4;}
+  .uc-big.racing .feat b{color:var(--warn);}
+  .uc-big .target{font-size:11.5px;color:var(--mute);margin-top:24px;padding-top:16px;border-top:1px dashed var(--line);letter-spacing:.5px;font-family:"SF Mono",monospace;}
+  @media(max-width:980px){.uc-big-grid{grid-template-columns:1fr;}.uc-big{min-height:480px;}.uc-big .text h3{font-size:42px;}}
+  /* === THE STACK 5 大核心 大气版 === */
+  .stack-big-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;}
+  .stack-big{display:flex;flex-direction:column;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:linear-gradient(160deg,#0a1322,#070b14);transition:.25s;cursor:pointer;text-decoration:none;color:inherit;}
+  .stack-big:hover{transform:translateY(-4px);border-color:var(--pri);box-shadow:0 16px 40px rgba(0,0,0,.4);}
+  .stack-big .img{aspect-ratio:1/1;background:linear-gradient(135deg,#1a2540,#06090f);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+  .stack-big .img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+  .stack-big .img .placeholder{font-size:84px;opacity:.4;line-height:1;}
+  .stack-big .img-tag{position:absolute;top:12px;left:12px;background:rgba(2,4,9,.85);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:6px;padding:3px 9px;font-size:9.5px;font-family:"SF Mono",monospace;font-weight:700;letter-spacing:1.5px;}
+  .stack-big.k1 .img-tag{color:#c87cd4;border-color:#5a3060;}
+  .stack-big.k2 .img-tag{color:#5af;border-color:#1c3050;}
+  .stack-big.k3 .img-tag{color:#5fa;border-color:#2a5040;}
+  .stack-big.k4 .img-tag{color:#fc6;border-color:#5a4a30;}
+  .stack-big.k5 .img-tag{color:#c87cd4;border-color:#5a3060;}
+  .stack-big .text{padding:20px 18px;flex:1;}
+  .stack-big .text h5{font-size:18px;font-weight:800;letter-spacing:-.5px;color:var(--txt);margin-bottom:4px;line-height:1.2;}
+  .stack-big .text p{font-size:12.5px;color:var(--dim);line-height:1.55;letter-spacing:-.1px;}
+  @media(max-width:1100px){.stack-big-grid{grid-template-columns:repeat(3,1fr);}}
+  @media(max-width:780px){.stack-big-grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:480px){.stack-big-grid{grid-template-columns:1fr;}}
+  /* === LIVE COMPOSER · 现场体验 === */
+  .live-composer-wrap{margin-top:36px;border:1px solid var(--line);border-radius:22px;overflow:hidden;background:#06090f;position:relative;box-shadow:0 30px 70px rgba(0,0,0,.4);}
+  .live-composer-wrap iframe{display:block;width:100%;height:780px;border:0;}
+  .live-composer-tag{position:absolute;top:18px;left:18px;background:rgba(2,4,9,.88);backdrop-filter:blur(10px);border:1px solid var(--ok);border-radius:20px;padding:7px 16px;font-size:11px;color:var(--ok);letter-spacing:2.5px;font-family:"SF Mono",monospace;font-weight:700;z-index:10;display:flex;align-items:center;gap:8px;}
+  .live-composer-tag .live-d{width:8px;height:8px;background:var(--ok);border-radius:50%;animation:pp 1.4s ease-in-out infinite;box-shadow:0 0 8px var(--ok);}
+  .live-composer-hint{margin-top:14px;font-size:12.5px;color:var(--mute);text-align:center;letter-spacing:.5px;}
+  .live-composer-hint b{color:var(--ok);}
+  @media(max-width:780px){.live-composer-wrap iframe{height:560px;}}
+  /* === USE CASES · 3 大使用场景(休闲/训练/赛事) 旧版保留 === */
+  .usecases{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:36px;}
+  .usecase{background:linear-gradient(160deg,#0a1322,#070b14);border:1px solid var(--line);border-radius:16px;padding:32px 28px;position:relative;overflow:hidden;transition:.2s;display:flex;flex-direction:column;}
+  .usecase::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+  .usecase.casual::before{background:linear-gradient(90deg,#5af,#8fc99c);}
+  .usecase.training::before{background:linear-gradient(90deg,#5fa,#c87cd4);}
+  .usecase.racing::before{background:linear-gradient(90deg,#fc6,#f55);}
+  .usecase:hover{transform:translateY(-4px);border-color:var(--pri);}
+  .usecase .uc-cat{font-size:10.5px;color:var(--mute);letter-spacing:2.5px;font-weight:700;font-family:"SF Mono",monospace;margin-bottom:10px;}
+  .usecase .uc-ico{font-size:48px;line-height:1;margin-bottom:14px;}
+  .usecase h4{font-size:28px;color:var(--txt);margin-bottom:4px;font-weight:800;letter-spacing:-.5px;}
+  .usecase .uc-en{font-size:11.5px;color:var(--mute);letter-spacing:2.5px;margin-bottom:18px;font-family:"SF Mono",monospace;font-weight:700;}
+  .usecase>p{font-size:13px;color:var(--dim);line-height:1.75;margin-bottom:18px;}
+  .usecase>p b{color:var(--ok);}
+  .uc-list{display:flex;flex-direction:column;gap:7px;margin-bottom:18px;}
+  .uc-item{font-size:11.5px;color:var(--dim);padding-left:18px;position:relative;line-height:1.6;}
+  .uc-item::before{content:'';position:absolute;left:0;top:8px;width:8px;height:1.5px;background:var(--mute);}
+  .uc-stack{padding:11px 14px;background:#020409;border:1px solid var(--line);border-radius:8px;margin-bottom:10px;}
+  .uc-stack .lbl{font-size:9.5px;color:var(--mute);letter-spacing:1.5px;font-weight:600;margin-bottom:4px;font-family:"SF Mono",monospace;}
+  .uc-stack .val{font-size:11.5px;color:var(--ok);font-weight:600;letter-spacing:.3px;font-family:"JetBrains Mono",monospace;}
+  .uc-target{padding:11px 14px;background:rgba(85,170,255,.06);border:1px solid var(--line);border-radius:8px;margin-bottom:14px;}
+  .uc-target .lbl{font-size:9.5px;color:var(--pri);letter-spacing:1.5px;font-weight:700;margin-bottom:3px;font-family:"SF Mono",monospace;}
+  .uc-target .val{font-size:11.5px;color:var(--txt);font-weight:600;}
+  .uc-pitch{margin-top:auto;padding-top:14px;border-top:1px dashed var(--line);font-size:14px;font-weight:700;line-height:1.5;letter-spacing:-.2px;font-style:italic;}
+  .usecase.casual .uc-pitch{color:#5af;}
+  .usecase.training .uc-pitch{color:#c87cd4;}
+  .usecase.racing .uc-pitch{color:var(--warn);}
+  @media(max-width:980px){.usecases{grid-template-columns:1fr;}}
+  /* === THE STACK · 5 大核心组件矩阵 === */
+  .stack5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:36px;}
+  .stack5-card{background:linear-gradient(160deg,#0a1322,#070b14);border:1px solid var(--line);border-radius:12px;padding:18px;transition:.2s;display:flex;flex-direction:column;position:relative;overflow:hidden;}
+  .stack5-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+  .stack5-card.k1::before{background:linear-gradient(90deg,#c87cd4,#5af);}
+  .stack5-card.k2::before{background:linear-gradient(90deg,#5af,#5fa);}
+  .stack5-card.k3::before{background:linear-gradient(90deg,#5fa,#fc6);}
+  .stack5-card.k4::before{background:linear-gradient(90deg,#fc6,#f55);}
+  .stack5-card.k5::before{background:linear-gradient(90deg,#a5c,#c87cd4);}
+  .stack5-card:hover{transform:translateY(-3px);border-color:var(--pri);}
+  .stack5-img{aspect-ratio:4/3;background:radial-gradient(circle at 50% 30%,rgba(85,170,255,.15),#06090f 70%);border-radius:8px;margin-bottom:12px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line);overflow:hidden;font-size:54px;line-height:1;opacity:.4;}
+  .stack5-img img{display:block;width:100%;height:100%;object-fit:cover;opacity:1;}
+  .stack5-cat{font-size:9.5px;color:var(--mute);letter-spacing:1.8px;font-family:"SF Mono",monospace;font-weight:700;margin-bottom:4px;}
+  .stack5-card.k1 .stack5-cat{color:#c87cd4;}
+  .stack5-card.k2 .stack5-cat{color:#5af;}
+  .stack5-card.k3 .stack5-cat{color:#5fa;}
+  .stack5-card.k4 .stack5-cat{color:#fc6;}
+  .stack5-card.k5 .stack5-cat{color:#c87cd4;}
+  .stack5-card h5{font-size:14px;color:var(--txt);margin-bottom:3px;font-weight:800;letter-spacing:-.3px;line-height:1.2;}
+  .stack5-card .stack5-cn{font-size:11px;color:var(--dim);margin-bottom:10px;letter-spacing:.5px;}
+  .stack5-card p{font-size:11.5px;color:var(--dim);line-height:1.6;margin-bottom:10px;flex:1;}
+  .stack5-card .stack5-link{font-size:10.5px;color:var(--ok);font-weight:700;letter-spacing:1px;font-family:"SF Mono",monospace;border-top:1px dashed var(--line);padding-top:8px;text-decoration:none;}
+  .stack5-card .stack5-link:hover{color:var(--pri);}
+  @media(max-width:1100px){.stack5{grid-template-columns:repeat(3,1fr);}}
+  @media(max-width:780px){.stack5{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:480px){.stack5{grid-template-columns:1fr;}}
+  /* === LINEUP · 全车型 === */
+  .lineup-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:36px;}
+  .car-card{background:#0a121e;border:1px solid var(--line);border-radius:14px;padding:24px 20px;text-align:center;transition:.2s;position:relative;}
+  .car-card:hover{transform:translateY(-4px);border-color:var(--pri);}
+  .car-card .car-ico{font-size:42px;margin-bottom:10px;line-height:1;}
+  .car-card .car-size{display:inline-block;font-size:10px;color:var(--mute);letter-spacing:1.5px;font-family:"SF Mono",monospace;background:#020409;border:1px solid var(--line);border-radius:4px;padding:3px 8px;margin-bottom:10px;}
+  .car-card h4{font-size:17px;color:var(--txt);margin-bottom:8px;font-weight:700;letter-spacing:-.3px;}
+  .car-card .car-pilot{font-size:11px;color:var(--ok);letter-spacing:1px;margin-bottom:12px;font-family:"JetBrains Mono",monospace;font-weight:700;}
+  .car-card p{font-size:12px;color:var(--dim);line-height:1.6;margin-bottom:10px;}
+  .car-card .price{font-size:13px;color:var(--warn);font-weight:700;font-family:"JetBrains Mono",monospace;letter-spacing:-.3px;}
+  @media(max-width:780px){.lineup-grid{grid-template-columns:1fr 1fr;}}
+  @media(max-width:480px){.lineup-grid{grid-template-columns:1fr;}}
+
+  /* === CONTENT HOOKS · 5 个爆款钩子 === */
+  .hooks{display:flex;flex-direction:column;gap:14px;margin-top:36px;}
+  .hook{display:grid;grid-template-columns:60px 1fr auto;gap:18px;align-items:center;background:#0a121e;border:1px solid var(--line);border-radius:12px;padding:18px 22px;transition:.15s;}
+  .hook:hover{border-color:var(--pri);transform:translateX(4px);}
+  .hook .num{font-size:32px;color:var(--ok);font-weight:800;font-family:"JetBrains Mono",monospace;letter-spacing:-1px;text-align:center;}
+  .hook .body{}
+  .hook h4{font-size:15.5px;color:var(--txt);margin-bottom:4px;font-weight:700;letter-spacing:-.2px;}
+  .hook .platform{font-size:11px;color:var(--mute);letter-spacing:1px;font-family:"SF Mono",monospace;}
+  .hook .views{font-size:16px;color:var(--warn);font-weight:800;font-family:"JetBrains Mono",monospace;letter-spacing:-.3px;text-align:right;white-space:nowrap;}
+  .hook .views .lbl{font-size:9.5px;color:var(--mute);letter-spacing:1.5px;display:block;margin-top:2px;}
+  @media(max-width:560px){
+    .hook{grid-template-columns:48px 1fr;}
+    .hook .views{grid-column:2;text-align:left;margin-top:8px;}
+  }
+
+  /* === YONGKANG PROPOSAL === */
+  .yk-card{background:linear-gradient(135deg,rgba(252,198,102,.06),rgba(85,255,170,.04));border:1px solid var(--line);border-left:4px solid var(--warn);border-radius:18px;padding:40px 44px;margin-top:36px;position:relative;overflow:hidden;}
+  .yk-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad-brass);}
+  .yk-card h3{font-size:24px;color:var(--warn);margin-bottom:10px;font-weight:800;letter-spacing:-.4px;display:flex;align-items:center;gap:10px;}
+  .yk-card>p{font-size:14px;color:var(--dim);line-height:1.75;margin-bottom:24px;}
+  .yk-card>p b{color:var(--txt);}
+  .yk-split{display:grid;grid-template-columns:1fr 1fr;gap:32px;}
+  .yk-col h4{font-size:12px;color:var(--pri);letter-spacing:2px;margin-bottom:14px;font-weight:700;font-family:"SF Mono",monospace;}
+  .yk-col ul{list-style:none;padding:0;margin:0;}
+  .yk-col li{font-size:13px;color:var(--dim);line-height:1.85;padding-left:20px;position:relative;}
+  .yk-col li::before{content:'▸';position:absolute;left:0;color:var(--warn);font-weight:700;}
+  .yk-col li b{color:var(--txt);}
+  @media(max-width:780px){.yk-split{grid-template-columns:1fr;gap:18px;}.yk-card{padding:28px 24px;}}
+
+  /* === MILESTONES 90 天 === */
+  .ms-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:36px;}
+  .ms{background:#0a121e;border:1px solid var(--line);border-radius:14px;padding:24px 22px;position:relative;}
+  .ms.p0{border-color:var(--hot);box-shadow:0 0 18px rgba(255,85,85,.12);}
+  .ms.p1{border-color:var(--warn);}
+  .ms.p2{border-color:var(--ok);}
+  .ms.p3{border-color:var(--pri);}
+  .ms .pri{display:inline-block;font-size:10px;letter-spacing:1.5px;font-weight:700;font-family:"SF Mono",monospace;padding:3px 8px;border-radius:4px;margin-bottom:10px;}
+  .ms.p0 .pri{background:rgba(255,85,85,.12);color:var(--hot);}
+  .ms.p1 .pri{background:rgba(252,198,102,.12);color:var(--warn);}
+  .ms.p2 .pri{background:rgba(95,255,170,.12);color:var(--ok);}
+  .ms.p3 .pri{background:rgba(85,170,255,.12);color:var(--pri);}
+  .ms .when{font-size:11px;color:var(--mute);letter-spacing:1px;font-family:"SF Mono",monospace;margin-bottom:8px;}
+  .ms h4{font-size:15px;color:var(--txt);margin-bottom:10px;font-weight:700;}
+  .ms ul{list-style:none;padding:0;margin:0;}
+  .ms li{font-size:11.5px;color:var(--dim);line-height:1.7;padding-left:14px;position:relative;margin-bottom:4px;}
+  .ms li::before{content:'✓';position:absolute;left:0;color:var(--ok);font-weight:700;}
+  @media(max-width:980px){.ms-grid{grid-template-columns:1fr 1fr;}}
+  @media(max-width:560px){.ms-grid{grid-template-columns:1fr;}}
+
+  /* === CTA === */
+  .cta{padding:90px 0 60px;text-align:center;}
+  .cta h2{font-size:48px;line-height:1.15;font-weight:900;letter-spacing:-1px;margin-bottom:18px;max-width:none;}
+  .cta h2 .hl{background:var(--grad-pilot);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .cta p{font-size:16px;color:var(--dim);max-width:560px;margin:0 auto 32px;line-height:1.7;}
+  .cta-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+
+  /* === FOOTER === */
+  footer{padding:28px 0;border-top:1px solid var(--line);text-align:center;font-size:12px;color:var(--mute);line-height:1.7;letter-spacing:.3px;}
+  footer b{color:var(--dim);}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="/" class="logo"><span class="brand-pri">CRAYXUS</span><span class="dot">·</span>AI<span class="dot">·</span>PILOT</a>
+    <div class="nav-links">
+      <a href="#uc-casual" style="color:#5af;font-weight:700;">🎉 休闲</a>
+      <a href="#uc-training" style="color:#c87cd4;font-weight:700;">🎓 训练</a>
+      <a href="#uc-racing" style="color:#fc6;font-weight:700;">🏆 赛事</a>
+      <a href="#yongkang">永康合作</a>
+    </div>
+    <a href="#cta" class="nav-cta">联系合作 →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-text">
+      <h1><span class="hl">CRAYXUS</span><br><span style="background:linear-gradient(135deg,#c87cd4,#5af);-webkit-background-clip:text;background-clip:text;color:transparent;">AI</span> PILOT</h1>
+      <p class="zh">放手一搏 · 抵达 APEX</p>
+      <div class="hero-cta" style="margin-top:32px;">
+        <a href="#uc-training" class="btn btn-pri">🎯 现场拖动体验</a>
+        <a href="#yongkang" class="btn btn-ghost">🤝 永康合作 →</a>
+      </div>
+    </div>
+    <div class="hero-img">
+      <div class="hero-badge"><span class="lbl">IP · </span>CRAYXUS AI PILOT v1.0</div>
+      <img src="ai_pilot_01_core.png" alt="CRAYXUS AI PILOT · AI 赛车机器人车手">
+      <div class="hero-stamp">CONCEPT · 2027</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ① 休闲 (新结构: 顶部大图 + 下方 demo) -->
+<section class="uc-section casual" id="uc-casual">
+  <div class="container">
+    <div class="uc-hero">
+      <img src="usecase_casual.png" alt="休闲场景" onerror="this.style.display='none'">
+      <div class="placeholder">🎉</div>
+      <div class="uc-hero-text">
+        <div class="uc-num">USE CASE · 01</div>
+        <h2><span class="em">休闲</span> · CASUAL</h2>
+        <p class="pitch">按一下 AI,谁都能跑赛道。</p>
+      </div>
+    </div>
+    <div class="uc-tags-row">
+      <span class="feat"><b>🎤</b> 语音控制</span>
+      <span class="feat"><b>🤝</b> AI 副驾</span>
+      <span class="feat"><b>📸</b> 拍照分享</span>
+      <span class="feat"><b>⏱</b> 自动计时</span>
+      <span class="feat"><b>🎯</b> 一键启动</span>
+      <span class="uc-target">→ 家庭娱乐 / 卡丁车场 / 商业活动</span>
+    </div>
+    <div class="uc-demo">
+      <div class="demo-tag"><span class="live-d"></span>DEMO · 语音 AI</div>
+      <div class="casual-demo">
+        <div class="ai-circle">🎤</div>
+        <div class="chat">
+          <div class="chat-msg user">"CRAYXUS,跑一圈给我看!"</div>
+          <div class="chat-msg ai"><span class="meta">// 已识别任务: full_lap</span>收到!最小曲率路线,预计 <b>17.8 秒</b>,开始 🏁</div>
+          <div class="chat-msg user">"慢一点,T2 别打滑"</div>
+          <div class="chat-msg ai"><span class="meta">// PARAM: max_speed=1.8m/s</span>明白,T2 提前刹车,速度降 18%</div>
+        </div>
+        <button class="start-btn">🏁 START LAP</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ② 训练 (新结构: 顶部大图 + 下方 4-tab demo) -->
+<section class="uc-section training" id="uc-training">
+  <div class="container">
+    <div class="uc-hero">
+      <img src="usecase_training.png" alt="训练场景" onerror="this.style.display='none'">
+      <div class="placeholder">🎓</div>
+      <div class="uc-hero-text">
+        <div class="uc-num">USE CASE · 02</div>
+        <h2><span class="em">训练</span> · TRAINING</h2>
+        <p class="pitch">3 个月,把任何人训练成赛道主宰者。</p>
+      </div>
+    </div>
+    <div class="uc-tags-row">
+      <span class="feat"><b>📍</b> 轨迹自动记录</span>
+      <span class="feat"><b>🧠</b> AI 数据分析</span>
+      <span class="feat"><b>🎯</b> 弯线优化</span>
+      <span class="feat"><b>📊</b> 圈速对比</span>
+      <span class="feat"><b>💡</b> 弱点诊断</span>
+      <span class="feat"><b>📅</b> 训练计划</span>
+      <span class="feat"><b>🎬</b> 多机位回放</span>
+      <span class="feat"><b>👤</b> AI 教练</span>
+      <span class="uc-target">→ 俱乐部会员 / 私人车主 / 爱好者</span>
+    </div>
+    <div class="uc-demo">
+        <div class="demo-tag"><span class="live-d"></span>LIVE · TRAINING SYSTEM</div>
+
+        <!-- 切换卡牌 -->
+        <div class="demo-tabs">
+          <div class="demo-tab active" data-tab="drag"><span class="ico">🎯</span>拖动 WP</div>
+          <div class="demo-tab" data-tab="history"><span class="ico">📍</span>历史轨迹</div>
+          <div class="demo-tab" data-tab="algo"><span class="ico">🧠</span>AI 算法</div>
+          <div class="demo-tab" data-tab="lap"><span class="ico">📊</span>圈速对比</div>
+        </div>
+
+        <!-- 内容区 -->
+        <div class="demo-content">
+          <!-- TAB 1: 拖动 WP (iframe cockpit.html) -->
+          <div class="demo-pane active" data-pane="drag">
+            <iframe src="cockpit.html" title="Drive Composer · Drag WP"></iframe>
+          </div>
+
+          <!-- TAB 2: 历史轨迹 (真实 Map A 赛道) -->
+          <div class="demo-pane" data-pane="history">
+            <div class="history-demo">
+              <div class="history-svg">
+                <svg id="histSvg" viewBox="0 0 1600 800" preserveAspectRatio="xMidYMid meet">
+                  <defs>
+                    <pattern id="histGrid" width="100" height="100" patternUnits="userSpaceOnUse">
+                      <path d="M 100 0 L 0 0 0 100" fill="none" stroke="#0a1428" stroke-width="1"/>
+                    </pattern>
+                  </defs>
+                  <rect width="1600" height="800" fill="url(#histGrid)"/>
+                  <!-- 赛道(JS 填充) -->
+                  <path id="histTrack" fill="#0a1a30" stroke="#1c3050" stroke-width="2" fill-rule="evenodd"/>
+                  <!-- 中线参考(虚线) -->
+                  <path id="histRef" fill="none" stroke="#fc6" stroke-width="1.5" stroke-dasharray="6 6" opacity=".2"/>
+                  <!-- 4 圈历史轨迹(JS 填充) -->
+                  <path id="histLap1" fill="none" stroke="#f55" stroke-width="3" opacity=".35"/>
+                  <path id="histLap5" fill="none" stroke="#fc6" stroke-width="3" opacity=".5"/>
+                  <path id="histLapBest" fill="none" stroke="#5fa" stroke-width="4" opacity=".95"/>
+                  <path id="histLap20" fill="none" stroke="#5af" stroke-width="3" opacity=".6"/>
+                  <!-- 起点 (JS 填充 cx/cy) -->
+                  <circle id="histStart" r="14" fill="#fc6" stroke="#fff" stroke-width="2.5"/>
+                  <text id="histStartT" text-anchor="middle" font-size="14" fill="#06090f" font-family="monospace" font-weight="800">S</text>
+                  <!-- 图例右上角 -->
+                  <g transform="translate(1450,40)">
+                    <rect x="-110" y="-20" width="170" height="160" rx="10" fill="rgba(2,4,9,.82)" stroke="#1c2740"/>
+                    <text x="-95" y="0" font-size="11" fill="#c87cd4" font-family="SF Mono,monospace" font-weight="700" letter-spacing="1.5">LAP HISTORY</text>
+                    <line x1="-95" y1="22" x2="-65" y2="22" stroke="#f55" stroke-width="3" opacity=".35"/>
+                    <text x="-58" y="26" font-size="12" fill="#8aa0c2" font-family="SF Mono,monospace">LAP 01 · 18.91s</text>
+                    <line x1="-95" y1="48" x2="-65" y2="48" stroke="#fc6" stroke-width="3" opacity=".5"/>
+                    <text x="-58" y="52" font-size="12" fill="#8aa0c2" font-family="SF Mono,monospace">LAP 05 · 18.23s</text>
+                    <line x1="-95" y1="74" x2="-65" y2="74" stroke="#5fa" stroke-width="4"/>
+                    <text x="-58" y="78" font-size="12" fill="#5fa" font-family="SF Mono,monospace" font-weight="700">LAP 12 · 17.42s ★</text>
+                    <line x1="-95" y1="100" x2="-65" y2="100" stroke="#5af" stroke-width="3" opacity=".6"/>
+                    <text x="-58" y="104" font-size="12" fill="#8aa0c2" font-family="SF Mono,monospace">LAP 20 · 17.78s</text>
+                    <text x="-95" y="130" font-size="10" fill="#566b8c" font-family="SF Mono,monospace" letter-spacing=".5">↘ 学习曲线 -1.49s</text>
+                  </g>
+                </svg>
+              </div>
+              <div class="history-stats">
+                <div class="history-stat"><div class="lbl">总圈数</div><div class="val">28</div></div>
+                <div class="history-stat"><div class="lbl">最快圈</div><div class="val">17.42s</div></div>
+                <div class="history-stat"><div class="lbl">平均圈</div><div class="val">18.31s</div></div>
+                <div class="history-stat"><div class="lbl">学习提升</div><div class="val">-1.49s</div></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 3: AI 算法 (真实 Map A 赛道) -->
+          <div class="demo-pane" data-pane="algo">
+            <div class="algo-demo">
+              <div class="algo-svg">
+                <svg id="algoSvg" viewBox="0 0 1600 800" preserveAspectRatio="xMidYMid meet">
+                  <rect width="1600" height="800" fill="url(#histGrid)"/>
+                  <!-- 赛道(JS 填充) -->
+                  <path id="algoTrack" fill="#0a1a30" stroke="#1c3050" stroke-width="2" fill-rule="evenodd"/>
+                  <!-- 4 条算法线(JS 填充) -->
+                  <path id="algoDijkstra" fill="none" stroke="#5af" stroke-width="3" opacity=".75"/>
+                  <path id="algoMinCurve" fill="none" stroke="#5fa" stroke-width="3" opacity=".75"/>
+                  <path id="algoCmaes" fill="none" stroke="#fc6" stroke-width="3" opacity=".8"/>
+                  <path id="algoApex" fill="none" stroke="#f55" stroke-width="4" opacity=".95"/>
+                  <!-- 起点 -->
+                  <circle id="algoStart" r="14" fill="#fc6" stroke="#fff" stroke-width="2.5"/>
+                  <text id="algoStartT" text-anchor="middle" font-size="14" fill="#06090f" font-family="monospace" font-weight="800">S</text>
+                  <!-- 图例 -->
+                  <g transform="translate(1450,40)">
+                    <rect x="-130" y="-20" width="190" height="160" rx="10" fill="rgba(2,4,9,.82)" stroke="#1c2740"/>
+                    <text x="-115" y="0" font-size="11" fill="#c87cd4" font-family="SF Mono,monospace" font-weight="700" letter-spacing="1.5">AI ALGORITHMS</text>
+                    <line x1="-115" y1="22" x2="-85" y2="22" stroke="#5af" stroke-width="3"/>
+                    <text x="-78" y="26" font-size="12" fill="#8aa0c2" font-family="SF Mono,monospace">DIJKSTRA · 18.12s</text>
+                    <line x1="-115" y1="48" x2="-85" y2="48" stroke="#5fa" stroke-width="3"/>
+                    <text x="-78" y="52" font-size="12" fill="#8aa0c2" font-family="SF Mono,monospace">MIN-CURVE · 17.86s</text>
+                    <line x1="-115" y1="74" x2="-85" y2="74" stroke="#fc6" stroke-width="3"/>
+                    <text x="-78" y="78" font-size="12" fill="#8aa0c2" font-family="SF Mono,monospace">CMA-ES · 17.65s</text>
+                    <line x1="-115" y1="100" x2="-85" y2="100" stroke="#f55" stroke-width="4"/>
+                    <text x="-78" y="104" font-size="12" fill="#f55" font-family="SF Mono,monospace" font-weight="700">APEX · 17.42s ★</text>
+                    <text x="-115" y="130" font-size="10" fill="#566b8c" font-family="SF Mono,monospace" letter-spacing=".5">▶ 4 算法并行求解</text>
+                  </g>
+                </svg>
+              </div>
+              <div class="algo-legend">
+                <div class="algo-item"><span class="dot" style="background:#5af;"></span><span class="name">DIJKSTRA</span><span class="delta">18.12s</span></div>
+                <div class="algo-item"><span class="dot" style="background:#5fa;"></span><span class="name">MIN-CURVE</span><span class="delta">17.86s</span></div>
+                <div class="algo-item"><span class="dot" style="background:#fc6;"></span><span class="name">CMA-ES</span><span class="delta">17.65s</span></div>
+                <div class="algo-item"><span class="dot" style="background:#f55;"></span><span class="name">APEX ★</span><span class="delta">17.42s</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 4: 圈速对比 -->
+          <div class="demo-pane" data-pane="lap">
+            <div class="lap-demo">
+              <div class="lap-chart">
+                <div class="lap-bar" style="height:62%"><span class="value">18.91</span><span class="label">L1</span></div>
+                <div class="lap-bar" style="height:58%"><span class="value">18.55</span><span class="label">L2</span></div>
+                <div class="lap-bar" style="height:54%"><span class="value">18.23</span><span class="label">L3</span></div>
+                <div class="lap-bar" style="height:60%"><span class="value">18.72</span><span class="label">L4</span></div>
+                <div class="lap-bar" style="height:52%"><span class="value">18.05</span><span class="label">L5</span></div>
+                <div class="lap-bar" style="height:48%"><span class="value">17.89</span><span class="label">L6</span></div>
+                <div class="lap-bar you" style="height:46%"><span class="value">17.78</span><span class="label">L7</span></div>
+                <div class="lap-bar" style="height:50%"><span class="value">17.96</span><span class="label">L8</span></div>
+                <div class="lap-bar" style="height:44%"><span class="value">17.65</span><span class="label">L9</span></div>
+                <div class="lap-bar" style="height:42%"><span class="value">17.58</span><span class="label">L10</span></div>
+                <div class="lap-bar" style="height:46%"><span class="value">17.81</span><span class="label">L11</span></div>
+                <div class="lap-bar best" style="height:38%"><span class="value">17.42</span><span class="label">L12 ★</span></div>
+              </div>
+              <div class="lap-summary">
+                <div class="lap-sum-cell"><div class="lbl">最快圈</div><div class="val">17.42s</div></div>
+                <div class="lap-sum-cell"><div class="lbl">平均圈</div><div class="val">18.04s</div></div>
+                <div class="lap-sum-cell you"><div class="lbl">你的圈</div><div class="val">17.78s</div></div>
+                <div class="lap-sum-cell"><div class="lbl">差距</div><div class="val">-0.36s</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</section>
+
+<!-- ③ 赛事 (新结构: 顶部大图 + 下方 LIVE LEADERBOARD) -->
+<section class="uc-section racing" id="uc-racing">
+  <div class="container">
+    <div class="uc-hero">
+      <img src="usecase_racing.png" alt="赛事场景" onerror="this.style.display='none'">
+      <div class="placeholder">🏆</div>
+      <div class="uc-hero-text">
+        <div class="uc-num">USE CASE · 03</div>
+        <h2><span class="em">赛事</span> · RACING</h2>
+        <p class="pitch">跨城同场 · AI 对决 · 直播变现。</p>
+      </div>
+    </div>
+    <div class="uc-tags-row">
+      <span class="feat"><b>🛰</b> 跨城同场</span>
+      <span class="feat"><b>🤖</b> AI 对战</span>
+      <span class="feat"><b>🏆</b> 实时排名</span>
+      <span class="feat"><b>📺</b> 多机位直播</span>
+      <span class="feat"><b>🎟</b> 周边/卡牌</span>
+      <span class="feat"><b>💰</b> 赞助变现</span>
+      <span class="uc-target">→ 场地运营 / 赛事联盟 / 赞助商</span>
+    </div>
+    <div class="uc-demo">
+      <div class="demo-tag"><span class="live-d"></span>LIVE · APEX GP</div>
+      <div class="racing-demo">
+          <h4>🏆 LIVE LEADERBOARD · 实时排名</h4>
+          <div class="leader-tbl">
+            <div class="leader-row p1">
+              <span class="pos">🥇 P1</span>
+              <span class="name">LU_XINYI</span>
+              <span class="city">杭州</span>
+              <span class="time">17.42s</span>
+            </div>
+            <div class="leader-row p2">
+              <span class="pos">🥈 P2</span>
+              <span class="name">CHEN_JIA</span>
+              <span class="city">上海</span>
+              <span class="time">17.61s</span>
+            </div>
+            <div class="leader-row p3">
+              <span class="pos">🥉 P3</span>
+              <span class="name">WANG_MIN</span>
+              <span class="city">永康</span>
+              <span class="time">17.89s</span>
+            </div>
+            <div class="leader-row you">
+              <span class="pos">P4</span>
+              <span class="name">YOU · 北京</span>
+              <span class="city">远程</span>
+              <span class="time">18.05s</span>
+            </div>
+            <div class="leader-row ai">
+              <span class="pos">P5</span>
+              <span class="name">AI-PILOT-X</span>
+              <span class="city">🤖</span>
+              <span class="time">18.21s</span>
+            </div>
+            <div class="leader-row">
+              <span class="pos">P6</span>
+              <span class="name">ZHAO_PENG</span>
+              <span class="city">深圳</span>
+              <span class="time">18.43s</span>
+            </div>
+          </div>
+          <div class="live-info">
+            <div class="live-cell"><div class="lbl">同场城市</div><div class="val">6</div></div>
+            <div class="live-cell"><div class="lbl">直播观众</div><div class="val">47K</div></div>
+            <div class="live-cell"><div class="lbl">总圈数</div><div class="val">23</div></div>
+            <div class="live-cell"><div class="lbl">最快圈</div><div class="val">17.42s</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+</section>
+
+
+
+
+<!-- (USE CASES section 已移至 HERO 之后,作为置顶核心卖点) -->
+
+
+
+
+
+<!-- YONGKANG -->
+<section class="s" id="yongkang">
+  <div class="container">
+    <span class="eyebrow">PROPOSAL · 永康联合方案</span>
+    <h2>与永康联手 —— <span class="hl">中国第一款 AI 机器人卡丁车</span></h2>
+    <p class="lede">永康是<b>中国卡丁车之乡</b>,有完整产业链 + 量产能力 + 渠道。CRAYXUS 提供 AI 软件栈与赛事 IP,联合打造首款<b>有 IP 辨识度的 AI 机器人卡丁车</b> —— 不做廉价玩具,做能上抖音热搜、办全国联赛、走高端家庭市场的旗舰款。</p>
+
+    <div class="yk-card">
+      <h3>🤝 合作框架</h3>
+      <p>联合品牌:<b>CRAYXUS AI PILOT × YONGKANG KART</b> · 排他周期:<b>12 个月</b> · 首批样车 5-10 台 3 个月内跑通 · 9 个月内打到全国 AI 机器人话题前 3</p>
+      <div class="yk-split">
+        <div class="yk-col">
+          <h4>⚙️ 永康承担</h4>
+          <ul>
+            <li><b>车身 / 车架 / 电池 / 电机</b>硬件研发与制造</li>
+            <li><b>模具 / 量产</b>能力 + 供应链管理</li>
+            <li><b>卡丁车场地资源</b> + 全国经销商渠道</li>
+            <li><b>本地售后</b> / 维修 / 检测体系</li>
+            <li>承诺投入(首期)<b>¥80-150 万</b> 用于样车开发与场地改造</li>
+          </ul>
+        </div>
+        <div class="yk-col">
+          <h4>🧠 CRAYXUS 承担</h4>
+          <ul>
+            <li><b>AI 算法 + Drive Composer + 路径求解器</b>(已有 6 项发明专利)</li>
+            <li><b>Cyber Arena 云端</b> + 跨城同场 + UWB 定位系统</li>
+            <li><b>CRAYXUS AI PILOT IP 形象</b> + 工业设计 + 商标矩阵</li>
+            <li><b>赛事 IP 运营</b> + 直播 / 周边 / 赞助 / 内容矩阵</li>
+            <li>承诺 3 个月内交付<b>可量产的 AI 软件栈 + 首场赛事方案</b></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- CTA -->
+<section class="cta" id="cta">
+  <div class="container">
+    <h2>放手一搏 <span class="hl">CRAYXUS AI PILOT</span></h2>
+    <p>这不是 PPT 项目 —— 软件栈已跑通 / 真车 demo 已可演示 / 6 项发明专利已规划 / PILOT IP 形象已诞生。需要的是<b style="color:var(--ok);">永康的产业链 + 时间窗口</b>。</p>
+    <div class="cta-actions">
+      <a href="https://crayxus.github.io/crayxus-ai-gp/" class="btn btn-pri" target="_blank">🌐 主项目网站</a>
+      <a href="cockpit.html" class="btn btn-ghost">🎮 现场操作板 Demo</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    © 2026 <b>CRAYXUS AI PILOT</b> · AI 机器人赛车手 IP 系统 · 永康联合提案<br>
+    商标 / 著作权 / 专利 申报中 · 本提案保密
+  </div>
+</footer>
+
+<script>
+// =========================
+// 训练 demo · tab 切换
+// =========================
+document.querySelectorAll('.demo-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const id = tab.dataset.tab;
+    const wrapper = tab.closest('.uc-demo');
+    if(!wrapper) return;
+    wrapper.querySelectorAll('.demo-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === id));
+    wrapper.querySelectorAll('.demo-pane').forEach(p => p.classList.toggle('active', p.dataset.pane === id));
+  });
+});
+
+// =========================
+// 真实 Map A 赛道数据 (与 cockpit.html 一致)
+// =========================
+const MAPA_OUTER=[[0.45,4.0],[0.32,4.02],[0.16,4.1],[0.05,4.24],[0.01,4.36],[0.0,7.49],[0.05,7.66],[0.13,7.77],[0.28,7.87],[0.45,7.9],[15.54,7.89],[15.7,7.82],[15.82,7.7],[15.88,7.58],[15.9,0.45],[15.87,0.28],[15.8,0.16],[15.66,0.05],[15.49,0.0],[12.41,0.0],[12.24,0.05],[12.1,0.16],[12.03,0.28],[12.0,0.45],[12.02,3.08],[12.08,3.2],[12.2,3.32],[12.36,3.39],[12.51,3.4],[12.71,3.47],[12.87,3.6],[12.96,3.74],[13.0,3.95],[12.98,4.61],[12.91,4.76],[12.76,4.91],[12.56,4.99],[11.45,5.0],[11.24,4.96],[11.06,4.84],[10.94,4.66],[10.9,4.51],[10.91,3.84],[10.99,3.64],[11.1,3.52],[11.29,3.42],[11.49,3.4],[11.62,3.37],[11.77,3.27],[11.87,3.12],[11.9,2.99],[11.89,0.36],[11.82,0.2],[11.74,0.1],[11.58,0.02],[0.45,0.0],[0.32,0.02],[0.16,0.1],[0.05,0.24],[0.01,0.36],[0.0,3.49],[0.05,3.66],[0.13,3.77],[0.28,3.87],[0.45,3.9],[6.06,3.91],[6.26,3.99],[6.41,4.14],[6.48,4.29],[6.5,4.51],[6.43,4.71],[6.34,4.84],[6.16,4.96],[5.95,5.0],[4.84,4.99],[4.64,4.91],[4.49,4.76],[4.42,4.61],[4.4,4.41],[4.35,4.24]];
+const MAPA_INNER=[[14.27,6.27],[14.08,6.38],[9.36,6.39],[9.16,6.3],[9.02,6.08],[9.0,3.41],[9.1,3.16],[9.28,3.03],[9.56,2.99],[9.8,2.88],[9.98,2.61],[9.99,2.34],[9.84,2.06],[9.61,1.92],[1.84,1.91],[1.56,2.06],[1.42,2.29],[1.42,2.61],[1.56,2.84],[1.84,2.99],[3.06,2.99],[3.34,2.84],[3.48,2.61],[3.52,2.32],[3.63,2.13],[3.86,2.01],[7.54,2.01],[7.77,2.13],[7.88,2.32],[7.89,6.04],[7.77,6.27],[7.58,6.38],[3.86,6.39],[3.66,6.3],[3.52,6.08],[3.49,5.84],[3.34,5.56],[3.11,5.42],[1.84,5.41],[1.6,5.53],[1.42,5.79],[1.41,6.06],[1.56,6.34],[1.79,6.48],[14.06,6.49],[14.34,6.34],[14.48,6.11],[14.49,1.84],[14.37,1.6],[14.11,1.42],[13.84,1.41],[13.56,1.56],[13.42,1.79],[13.42,2.11],[13.56,2.34],[13.84,2.49],[14.08,2.52],[14.3,2.66],[14.39,2.86],[14.38,6.08]];
+const MAPA_WPS=[[5.75,0.96],[8.46,0.96],[10.84,1.41],[10.19,3.74],[10.8,5.68],[13.37,5.51],[13.41,3.19],[12.87,1.04],[15.06,1.11],[15.2,3.74],[15.18,6.44],[13.07,7.21],[10.37,7.21],[7.66,7.21],[4.96,7.21],[2.25,7.21],[0.69,5.89],[2.39,4.75],[4.54,5.63],[6.99,5.39],[6.75,3.11],[4.22,3.2],[1.63,3.45],[0.77,1.54],[3.05,0.96]];
+
+// SVG viewBox 1600x800 (15.9m x 7.9m, 1m=100px, +padding)
+const VB_W=1600, VB_H=800;
+const MAP_W=15.9, MAP_H=7.9;
+const PAD=40;
+const SX=(VB_W-2*PAD)/MAP_W;
+const SY=(VB_H-2*PAD)/MAP_H;
+const SC=Math.min(SX,SY);
+const OFF_X=(VB_W-MAP_W*SC)/2;
+const OFF_Y=(VB_H-MAP_H*SC)/2;
+const tx=x=>(x*SC+OFF_X).toFixed(1);
+const ty=y=>((MAP_H-y)*SC+OFF_Y).toFixed(1);
+
+// 平滑路径 (Catmull-Rom 中点 quadratic)
+function smoothClosed(pts){
+  if(!pts.length) return '';
+  const ext=[pts[pts.length-1],...pts,pts[0]];
+  const m0x=(+tx(ext[0][0])+ +tx(ext[1][0]))/2;
+  const m0y=(+ty(ext[0][1])+ +ty(ext[1][1]))/2;
+  let d=`M ${m0x.toFixed(1)} ${m0y.toFixed(1)}`;
+  for(let i=1;i<ext.length-1;i++){
+    const cpx=+tx(ext[i][0]),cpy=+ty(ext[i][1]);
+    const nx=+tx(ext[i+1][0]),ny=+ty(ext[i+1][1]);
+    const mx=(cpx+nx)/2,my=(cpy+ny)/2;
+    d+=` Q ${cpx.toFixed(1)} ${cpy.toFixed(1)} ${mx.toFixed(1)} ${my.toFixed(1)}`;
+  }
+  d+=' Z';
+  return d;
+}
+
+// 赛道形状 (evenodd 镂空内岛)
+function buildTrackPath(){
+  return smoothClosed(MAPA_OUTER)+' '+smoothClosed([...MAPA_INNER].reverse());
+}
+
+// 模拟历史圈轨迹: WP 序列加种子扰动 (jitter)
+function generateLap(seed, jitter){
+  return MAPA_WPS.map((p,i)=>{
+    const a=(i+seed)*1.37;
+    const b=(i+seed)*1.91;
+    return [
+      Math.max(0.6,Math.min(15.3, p[0]+Math.sin(a)*jitter*0.8+Math.cos(b)*jitter*0.3)),
+      Math.max(0.6,Math.min(7.3,  p[1]+Math.cos(a)*jitter*0.8+Math.sin(b)*jitter*0.3))
+    ];
+  });
+}
+
+// AI 算法路径: 4 种,each based on WP with different bias
+function generateAlgoLap(algorithm){
+  // 0=dijkstra(保守内线), 1=min-curve(对称), 2=cma-es(全局优化), 3=apex(激进外内外)
+  return MAPA_WPS.map((p,i)=>{
+    const prev=MAPA_WPS[(i-1+MAPA_WPS.length)%MAPA_WPS.length];
+    const next=MAPA_WPS[(i+1)%MAPA_WPS.length];
+    // 法线方向
+    const dx=next[0]-prev[0],dy=next[1]-prev[1];
+    const len=Math.hypot(dx,dy)||1;
+    const nx=-dy/len,ny=dx/len;
+    let offset=0;
+    if(algorithm===0) offset=0.15;       // Dijkstra: 稍内
+    else if(algorithm===1) offset=0;     // Min-Curve: WP 中线
+    else if(algorithm===2) offset=-0.18; // CMA-ES: 稍外(更平滑出弯)
+    else { // Apex: 入弯外, 弯心内 (用 sin 调制位置)
+      offset=Math.sin(i*0.95)*0.28;
+    }
+    return [
+      Math.max(0.5,Math.min(15.4, p[0]+nx*offset)),
+      Math.max(0.5,Math.min(7.4,  p[1]+ny*offset))
+    ];
+  });
+}
+
+// 初始化 SVG
+function initTrainingSvgs(){
+  const trackD=buildTrackPath();
+  const refD=smoothClosed(MAPA_WPS);
+  // 起点 (WP00)
+  const sx=tx(MAPA_WPS[0][0]),sy=ty(MAPA_WPS[0][1]);
+
+  // 历史轨迹
+  const histTrack=document.getElementById('histTrack');
+  const histRef=document.getElementById('histRef');
+  if(histTrack){
+    histTrack.setAttribute('d',trackD);
+    histRef.setAttribute('d',refD);
+    document.getElementById('histLap1').setAttribute('d',smoothClosed(generateLap(7,  0.45)));
+    document.getElementById('histLap5').setAttribute('d',smoothClosed(generateLap(13, 0.28)));
+    document.getElementById('histLapBest').setAttribute('d',smoothClosed(generateLap(23, 0.06)));
+    document.getElementById('histLap20').setAttribute('d',smoothClosed(generateLap(41, 0.15)));
+    document.getElementById('histStart').setAttribute('cx',sx);
+    document.getElementById('histStart').setAttribute('cy',sy);
+    document.getElementById('histStartT').setAttribute('x',sx);
+    document.getElementById('histStartT').setAttribute('y',(+sy+5).toFixed(1));
+  }
+
+  // AI 算法
+  const algoTrack=document.getElementById('algoTrack');
+  if(algoTrack){
+    algoTrack.setAttribute('d',trackD);
+    document.getElementById('algoDijkstra').setAttribute('d',smoothClosed(generateAlgoLap(0)));
+    document.getElementById('algoMinCurve').setAttribute('d',smoothClosed(generateAlgoLap(1)));
+    document.getElementById('algoCmaes').setAttribute('d',smoothClosed(generateAlgoLap(2)));
+    document.getElementById('algoApex').setAttribute('d',smoothClosed(generateAlgoLap(3)));
+    document.getElementById('algoStart').setAttribute('cx',sx);
+    document.getElementById('algoStart').setAttribute('cy',sy);
+    document.getElementById('algoStartT').setAttribute('x',sx);
+    document.getElementById('algoStartT').setAttribute('y',(+sy+5).toFixed(1));
+  }
+}
+
+// 等 DOM 就绪
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',initTrainingSvgs);
+} else {
+  initTrainingSvgs();
+}
+</script>
+
+</body>
+</html>

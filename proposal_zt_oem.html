@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Crayxus × ZTMotor 合作架构建议</title>
+<style>
+@page {
+  size: A4;
+  margin: 16mm 14mm;
+}
+@media print {
+  body { background: white !important; }
+  .no-print { display: none !important; }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: #f0f3f8;
+  color: #1a2540;
+  line-height: 1.55;
+  padding: 24px 16px;
+  font-feature-settings: "tnum";
+}
+.page {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 0 auto;
+  background: white;
+  padding: 18mm 16mm;
+  box-shadow: 0 6px 32px rgba(0,0,0,.1);
+  position: relative;
+}
+@media print {
+  body { padding: 0; }
+  .page { width: 100%; min-height: 0; margin: 0; padding: 0; box-shadow: none; }
+}
+
+/* === HEADER === */
+.header {
+  border-bottom: 3px solid #1a2540;
+  padding-bottom: 8mm;
+  margin-bottom: 8mm;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+.brand {
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 4px;
+  color: #1a2540;
+}
+.brand .alpha { color: #ff7a45; font-weight: 900; }
+.brand-sub {
+  font-size: 11px;
+  color: #5a6e8e;
+  letter-spacing: 1.5px;
+  margin-top: 4px;
+  font-weight: 500;
+}
+.meta {
+  text-align: right;
+  font-size: 10.5px;
+  color: #5a6e8e;
+  line-height: 1.7;
+  letter-spacing: .3px;
+}
+.meta .label { color: #8a99b3; font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; }
+.meta .val { color: #1a2540; font-weight: 600; }
+
+/* === TITLE === */
+.title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #1a2540;
+  margin: 4mm 0 1mm;
+  letter-spacing: -.5px;
+  line-height: 1.2;
+}
+.subtitle {
+  font-size: 12.5px;
+  color: #5a6e8e;
+  margin-bottom: 8mm;
+  font-weight: 500;
+  letter-spacing: .3px;
+}
+
+/* === SECTION === */
+.section {
+  margin-bottom: 7mm;
+}
+.section-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: #1a2540;
+  letter-spacing: 1.5px;
+  padding-bottom: 1.5mm;
+  margin-bottom: 3mm;
+  text-transform: uppercase;
+  border-bottom: 1.5px solid #d8e1ed;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.section-title .num {
+  background: #1a2540;
+  color: white;
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 800;
+}
+.section-title .accent {
+  color: #ff7a45;
+  margin-left: auto;
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: none;
+}
+
+/* === CONTENT === */
+.lead {
+  background: linear-gradient(135deg, #fff5ed 0%, #fef0e0 100%);
+  border-left: 3px solid #ff7a45;
+  padding: 4mm 5mm;
+  margin-bottom: 6mm;
+  font-size: 12px;
+  color: #1a2540;
+  line-height: 1.7;
+  border-radius: 0 4px 4px 0;
+}
+.lead b { color: #ff5b1a; font-weight: 800; }
+
+/* === TABLE === */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  margin-top: 1mm;
+}
+th, td {
+  padding: 4px 8px;
+  text-align: left;
+  vertical-align: top;
+}
+th {
+  background: #1a2540;
+  color: white;
+  font-weight: 700;
+  font-size: 10.5px;
+  letter-spacing: .5px;
+  border-right: 1px solid #2a3550;
+}
+th:last-child { border-right: none; }
+tr:nth-child(even) td { background: #f5f7fb; }
+td {
+  border-bottom: 1px solid #e8edf5;
+  color: #2a3a5a;
+}
+.t-key { color: #ff7a45; font-weight: 700; }
+.t-bg-c { background: #e7f5ff !important; }
+.t-bg-w { background: #fff5e7 !important; }
+
+/* === EQUITY === */
+.equity {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2mm;
+  margin-top: 2mm;
+}
+.eq-block {
+  background: linear-gradient(180deg, #f5f7fb, #e8edf5);
+  padding: 3mm 2mm;
+  border-radius: 4px;
+  text-align: center;
+  border-top: 3px solid #1a2540;
+  font-size: 10px;
+  color: #5a6e8e;
+}
+.eq-block:nth-child(1) { border-top-color: #ff7a45; }
+.eq-block:nth-child(2) { border-top-color: #00b870; }
+.eq-block:nth-child(3) { border-top-color: #00a0d4; }
+.eq-block:nth-child(4) { border-top-color: #7a3dff; }
+.eq-block:nth-child(5) { border-top-color: #f5a623; }
+.eq-pct {
+  font-size: 17px;
+  font-weight: 900;
+  color: #1a2540;
+  line-height: 1;
+  margin: 2mm 0;
+  font-feature-settings: "tnum";
+}
+.eq-label {
+  font-size: 9.5px;
+  color: #5a6e8e;
+  font-weight: 600;
+  letter-spacing: .3px;
+  line-height: 1.3;
+}
+
+/* === TIMELINE === */
+.timeline {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2mm;
+  margin-top: 2mm;
+}
+.tl-block {
+  background: white;
+  border: 1px solid #d8e1ed;
+  padding: 3mm 2mm;
+  border-radius: 4px;
+  position: relative;
+}
+.tl-block::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #1a2540, #5a6e8e);
+}
+.tl-week {
+  font-size: 9px;
+  color: #ff7a45;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin-bottom: 2mm;
+}
+.tl-action {
+  font-size: 10.5px;
+  color: #1a2540;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.tl-detail {
+  font-size: 9.5px;
+  color: #7a8aa3;
+  margin-top: 1.5mm;
+  line-height: 1.4;
+}
+
+/* === BENEFITS GRID === */
+.benefits {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3mm;
+  margin-top: 2mm;
+}
+.benefit {
+  padding: 3mm;
+  background: #f5f9ff;
+  border-radius: 4px;
+  border-left: 2.5px solid #00a0d4;
+}
+.benefit .icon { font-size: 14px; margin-bottom: 1mm; }
+.benefit .label {
+  font-size: 10px;
+  color: #1a2540;
+  font-weight: 700;
+  margin-bottom: 1mm;
+}
+.benefit .desc {
+  font-size: 9.5px;
+  color: #5a6e8e;
+  line-height: 1.5;
+}
+
+/* === FOOTER === */
+.footer {
+  margin-top: 8mm;
+  padding-top: 5mm;
+  border-top: 1px solid #d8e1ed;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  font-size: 9.5px;
+  color: #7a8aa3;
+  letter-spacing: .3px;
+}
+.footer .left { line-height: 1.6; }
+.footer .right { text-align: right; line-height: 1.6; }
+.footer b { color: #1a2540; }
+.signature {
+  margin-top: 3mm;
+  font-style: italic;
+  color: #5a6e8e;
+  font-size: 10px;
+}
+
+/* === PRINT HINT === */
+.no-print {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  background: #1a2540;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(0,0,0,.2);
+}
+.no-print button {
+  background: #ff7a45;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  margin-left: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 12px;
+}
+</style>
+</head>
+<body>
+
+<div class="no-print">
+  💡 Ctrl + P 打印为 PDF (A4, 无边距) <button onclick="window.print()">📄 打印</button>
+</div>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div>
+      <div class="brand">CRAYXUS <span class="alpha">α</span> AI</div>
+      <div class="brand-sub">Building autonomous racing intelligence for K12</div>
+    </div>
+    <div class="meta">
+      <div><span class="label">DATE</span> &nbsp; <span class="val">2026 · 05 · 27</span></div>
+      <div><span class="label">REV</span> &nbsp; <span class="val">v1.0 草案</span></div>
+      <div><span class="label">CONFIDENTIAL</span> &nbsp; <span class="val">内部讨论稿</span></div>
+    </div>
+  </div>
+
+  <!-- TITLE -->
+  <div class="title">Crayxus × ZTMotor 合作架构建议</div>
+  <div class="subtitle">主品牌 + 独家 OEM 模式 · 致 张教授</div>
+
+  <!-- LEAD -->
+  <div class="lead">
+    <b>核心提议</b>: Crayxus 主导<b>品牌 / 软件 / 渠道 / 教学内容</b>,承担市场风险;
+    ZTMotor 独家承担<b>整车 OEM + 零部件供应</b>,拿稳定订单 + 制造利润。
+    参照 <b>Apple / Foxconn</b>、<b>大疆 / 立讯</b>、<b>宇树 / 代工厂</b> 的成熟模式。
+  </div>
+
+  <!-- SECTION 1: 职责分工 -->
+  <div class="section">
+    <div class="section-title">
+      <span class="num">1</span> 职责分工 (Division of Responsibilities)
+      <span class="accent">专业人做专业事</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:50%">Crayxus (主品牌方)</th>
+          <th style="width:50%">ZTMotor (独家 OEM)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="t-bg-c">AlphaCar / AI·GP 品牌运营</td>
+          <td class="t-bg-w">整车装配 · OEM 生产</td>
+        </tr>
+        <tr>
+          <td class="t-bg-c">软件 / 算法 / AI 模型训练</td>
+          <td class="t-bg-w">零部件供应 · 模具开发</td>
+        </tr>
+        <tr>
+          <td class="t-bg-c">云平台 · APP · 大数据后台</td>
+          <td class="t-bg-w">注塑 · 焊接 · 表面处理</td>
+        </tr>
+        <tr>
+          <td class="t-bg-c">渠道 · 销售 · 市场推广</td>
+          <td class="t-bg-w">来料 · 装配 · 品控 (QC)</td>
+        </tr>
+        <tr>
+          <td class="t-bg-c">教学内容 · 课程 · 赛事运营</td>
+          <td class="t-bg-w">物流 · 仓储 · 售后维修</td>
+        </tr>
+        <tr>
+          <td class="t-bg-c"><b style="color:#ff5b1a">承担市场风险</b></td>
+          <td class="t-bg-w"><b style="color:#00a060">零市场风险</b></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SECTION 2: 商务条款 -->
+  <div class="section">
+    <div class="section-title">
+      <span class="num">2</span> 商务条款 (Commercial Terms)
+      <span class="accent">初稿待协商</span>
+    </div>
+    <table>
+      <tbody>
+        <tr><td style="width:30%;font-weight:700"><span class="t-key">▸</span> 合作期</td><td><b>3 年独家 OEM</b>,自合约生效起;到期双方有权续约</td></tr>
+        <tr><td style="font-weight:700"><span class="t-key">▸</span> 保底订单</td><td>第 1 年 <b>__ 套</b>,第 2 年 <b>__ 套</b>,第 3 年 <b>__ 套</b>(签约前确认)</td></tr>
+        <tr><td style="font-weight:700"><span class="t-key">▸</span> 制造毛利</td><td>OEM 加工费 = BOM 成本 × <b>18-22%</b>(行业标准,可按 SKU 微调)</td></tr>
+        <tr><td style="font-weight:700"><span class="t-key">▸</span> 知识产权</td><td><b>全部归 Crayxus</b>(品牌商标 / 算法专利 / 工业设计 / 软件版权)</td></tr>
+        <tr><td style="font-weight:700"><span class="t-key">▸</span> 战略股份</td><td>ZTMotor 持 Crayxus <b>3-5%</b> 战略股份(供应链锁定 + 长期价值绑定)</td></tr>
+        <tr><td style="font-weight:700"><span class="t-key">▸</span> 排他性</td><td>ZT 不为 Crayxus 同类竞品代工 / Crayxus 不另寻同等级 OEM</td></tr>
+        <tr><td style="font-weight:700"><span class="t-key">▸</span> 风险兜底</td><td>未达保底订单部分,Crayxus 按协议价回购或补偿违约金,<b>ZT 不承担库存</b></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SECTION 3: 股权结构 -->
+  <div class="section">
+    <div class="section-title">
+      <span class="num">3</span> Crayxus 股权结构 (Equity Structure)
+      <span class="accent">初稿,可调</span>
+    </div>
+    <div class="equity">
+      <div class="eq-block"><div class="eq-label">创始人 / CEO</div><div class="eq-pct">60-65%</div><div class="eq-label">日常经营 + 主决策</div></div>
+      <div class="eq-block"><div class="eq-label">张教授 (联创 + 顾问)</div><div class="eq-pct">8-12%</div><div class="eq-label">IP + 学术背书 + 桥梁</div></div>
+      <div class="eq-block"><div class="eq-label">ZTMotor (战略股东)</div><div class="eq-pct">3-5%</div><div class="eq-label">供应链锁定, 不日常参与</div></div>
+      <div class="eq-block"><div class="eq-label">期权池</div><div class="eq-pct">15-20%</div><div class="eq-label">招聘技术 / 销售 / 内容</div></div>
+      <div class="eq-block"><div class="eq-label">早期投资</div><div class="eq-pct">5-10%</div><div class="eq-label">天使轮预留</div></div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: 三方收益 -->
+  <div class="section">
+    <div class="section-title">
+      <span class="num">4</span> 三方收益分析 (Win-Win-Win)
+    </div>
+    <div class="benefits">
+      <div class="benefit">
+        <div class="icon">🏭</div>
+        <div class="label">ZTMotor 收益</div>
+        <div class="desc">订单稳定,无市场风险;制造利润旱涝保收;持 Crayxus 战略股,享未来上行</div>
+      </div>
+      <div class="benefit">
+        <div class="icon">🎓</div>
+        <div class="label">张教授收益</div>
+        <div class="desc">8-12% 联创股 + IP 收益;学术背书放大效应;两家家族关系桥梁价值</div>
+      </div>
+      <div class="benefit">
+        <div class="icon">🚀</div>
+        <div class="label">Crayxus 收益</div>
+        <div class="desc">决策快速;品牌 IP 完整;运营效率高;吸引投资人路径清晰</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5: 时间表 -->
+  <div class="section">
+    <div class="section-title">
+      <span class="num">5</span> 推进时间表 (Roadmap)
+      <span class="accent">4 周内启动</span>
+    </div>
+    <div class="timeline">
+      <div class="tl-block">
+        <div class="tl-week">WEEK 1</div>
+        <div class="tl-action">张教授 → 冯总<br>轻聊 framing</div>
+        <div class="tl-detail">家人间预沟通, 给冯总时间消化新合作模式</div>
+      </div>
+      <div class="tl-block">
+        <div class="tl-week">WEEK 2</div>
+        <div class="tl-action">三方会议<br>定 Term Sheet</div>
+        <div class="tl-detail">张教授 + Crayxus + ZT 共商关键条款</div>
+      </div>
+      <div class="tl-block">
+        <div class="tl-week">WEEK 3</div>
+        <div class="tl-action">法务起草<br>正式协议</div>
+        <div class="tl-detail">双方法务对接 OEM 协议 + 股权文件</div>
+      </div>
+      <div class="tl-block">
+        <div class="tl-week">WEEK 4</div>
+        <div class="tl-action">签约<br>启动 PCB 打样</div>
+        <div class="tl-detail">合同签订 + 启动 AlphaCar 量产前打样</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="left">
+      <b>Crayxus AI</b> · 让 AI 在每个垂直领域比人更厉害<br>
+      crayxus.com.au · biz@crayxus.com.au
+      <div class="signature">本文档为内部讨论稿,仅供决策参考。最终条款以正式签约文本为准。</div>
+    </div>
+    <div class="right">
+      <b>提议人</b>: Jerhyn Zhang<br>
+      Crayxus 创始人 / CEO<br>
+      crayxuscab3@gmail.com
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

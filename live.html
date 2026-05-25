@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>CRAYXUS · 动作复刻</title>
+<style>
+  :root { --bg:#06090f; --pn:#0e1521; --line:#1a2540; --txt:#e7eaf0; --mute:#7a8499; --pri:#5af; --ok:#3f3; --hot:#f55; --gold:#fc6; }
+  *{box-sizing:border-box;margin:0;padding:0;user-select:none}
+  body{background:var(--bg);color:var(--txt);font-family:-apple-system,monospace;font-size:14px;padding:8px;overflow:hidden}
+  .grid{display:grid;grid-template-columns:300px 1fr;gap:8px;height:calc(100vh - 16px);}
+  .pn{background:var(--pn);border:1px solid var(--line);border-radius:8px;padding:12px;overflow-y:auto}
+  .row{display:flex;gap:6px;align-items:center;margin-bottom:8px}
+  input{flex:1;background:#0a121e;border:1px solid var(--line);color:var(--txt);padding:6px 8px;border-radius:4px;font:inherit}
+  .btn{background:#1a2540;border:1px solid #2a4060;color:#fff;padding:12px;border-radius:8px;cursor:pointer;font-weight:700;flex:1;font:inherit;font-size:14px}
+  .btn:hover{filter:brightness(1.15)}
+  .btn.pri{background:linear-gradient(135deg,#2a5fff,#5af);border:none}
+  .btn.rec{background:linear-gradient(135deg,#a33,#f55);border:none}
+  .btn.go{background:linear-gradient(135deg,#363,#5a5);border:none;font-size:16px}
+  .btn.stop{background:linear-gradient(135deg,#a33,#f55);border:none;font-size:16px}
+  .btn.gold{background:linear-gradient(135deg,#a73,#fa3);border:none}
+  .stat{background:#0a121e;border:1px solid var(--line);border-radius:5px;padding:8px;margin-bottom:5px}
+  .stat .l{font-size:10px;color:var(--mute);letter-spacing:1.5px;text-transform:uppercase}
+  .stat .v{font-size:16px;font-weight:700;font-family:'SF Mono',monospace;margin-top:3px}
+  .conn{display:inline-block;width:8px;height:8px;border-radius:50%;background:#444;margin-right:5px}
+  .conn.ok{background:var(--ok);box-shadow:0 0 6px var(--ok)}
+  canvas{background:#0a121e;border:1px solid var(--line);border-radius:8px;width:100%;height:100%}
+  h3{font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:2px;margin:12px 0 6px}
+  h3:first-child{margin-top:0}
+  #logs{font-size:11px;color:#9aa;height:80px;overflow-y:auto;background:#0a121e;border:1px solid var(--line);border-radius:5px;padding:6px;font-family:monospace}
+  .log-ok{color:var(--ok)} .log-err{color:var(--hot)} .log-info{color:var(--mute)} .log-key{color:var(--gold)}
+  /* WASD 键盘可视化 */
+  .keys{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin:6px 0}
+  .key{aspect-ratio:1.3;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#1a2540;border:2px solid #2a4060;border-radius:8px;font-size:22px;font-weight:bold;color:#fff;transition:.05s}
+  .key.empty{visibility:hidden}
+  .key small{font-size:9px;color:var(--mute);margin-top:3px}
+  .key.active{background:linear-gradient(135deg,#5af,#2a5fff);border-color:#fff;box-shadow:0 0 12px #5af;transform:scale(.95)}
+  .timer{font-size:20px;font-weight:700;color:var(--gold);text-align:center}
+</style>
+</head>
+<body>
+<div class="grid">
+
+<div class="pn">
+  <h3>🚗 车</h3>
+  <div class="row"><input id="ip" value="172.20.10.4"></div>
+  <div class="row"><button class="btn pri" onclick="doConnect()">连接</button></div>
+  <div class="row"><span><span id="connDot" class="conn"></span><span id="connTxt">未连接</span></span></div>
+
+  <h3>⌨️ WASD 键盘控制</h3>
+  <div class="keys">
+    <div class="key empty"></div>
+    <div class="key" id="kW">W<small>前进</small></div>
+    <div class="key empty"></div>
+    <div class="key" id="kA">A<small>左</small></div>
+    <div class="key" id="kS">S<small>后退</small></div>
+    <div class="key" id="kD">D<small>右</small></div>
+  </div>
+  <div class="row" style="font-size:11px;color:var(--mute);text-align:center;">按键控车 · 松开停止 · Space=STOP</div>
+
+  <h3>🎬 录动作 + 复刻</h3>
+  <div class="stat"><div class="l">动作数 · 时长</div><div class="v"><span id="nact">0</span> · <span id="rtime">0.0</span>s</div></div>
+  <div class="row"><button class="btn rec" id="recBtn" onclick="toggleRecord()">🔴 开始录</button></div>
+  <div class="row"><button class="btn go" onclick="replayActions()">▶ 复刻动作</button></div>
+  <div class="row" style="font-size:11px;color:var(--mute);">录: WASD 控车 → 完成 → 把车放回 → 复刻</div>
+
+  <h3>🛑 紧急</h3>
+  <div class="row"><button class="btn stop" onclick="doStop()">■ STOP (空格)</button></div>
+
+  <h3>📊 日志</h3>
+  <div id="logs"></div>
+</div>
+
+<div class="pn" style="padding:6px;display:flex;flex-direction:column">
+  <canvas id="cv" style="flex:1"></canvas>
+  <div style="text-align:center;font-size:11px;color:var(--mute);padding:4px">
+    🟡 录的轨迹 &nbsp;|&nbsp; 🟢 复刻实际跑出来 &nbsp;|&nbsp; 🔵 车
+  </div>
+</div>
+
+</div>
+
+<script>
+let base='', connected=false;
+let carPos = {x:0, y:0};
+let targetPath = [];     // 录制时车的轨迹 (UWB 位置, 黄色)
+let actualPath = [];     // 复刻时实际跑出来 (青色)
+let canvas, ctx, viewScale = 80, pan = {x:0, y:0};
+let recording = false;
+let recStartMs = 0;
+let actions = [];        // [{t_ms, key, dn:true|false}, ...]
+let curKeys = {};        // 当前按下的键
+let replayingActions = false;
+
+function w2c(x,y){ return [canvas.width/2 + x*viewScale + pan.x, canvas.height/2 - y*viewScale + pan.y]; }
+
+window.addEventListener('load', () => {
+  canvas = document.getElementById('cv'); ctx = canvas.getContext('2d');
+  const fit = () => { const r = canvas.getBoundingClientRect(); canvas.width=r.width; canvas.height=r.height; draw(); };
+  fit(); window.addEventListener('resize', fit);
+  setupKeyboard();
+  log('就绪. 连接车, 用 WASD 控制', 'info');
+  setInterval(pollPos, 100);
+  setInterval(updateTimer, 100);
+});
+
+function updateTimer(){
+  if(recording){
+    document.getElementById('rtime').textContent = ((Date.now()-recStartMs)/1000).toFixed(1);
+  }
+}
+
+async function doConnect(){
+  const ip = document.getElementById('ip').value.trim();
+  base = ip.startsWith('http') ? ip : 'http://'+ip;
+  try {
+    const r = await fetch(base+'/c?x=Q', {mode:'cors'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    connected = true;
+    document.getElementById('connDot').className = 'conn ok';
+    document.getElementById('connTxt').textContent = '已连接';
+    log('✓ '+ip, 'ok');
+    const j = await (await fetch(base+'/pos')).json();
+    pan.x = -j.x * viewScale; pan.y = j.y * viewScale; draw();
+  } catch(e) {
+    connected = false;
+    document.getElementById('connDot').className = 'conn';
+    document.getElementById('connTxt').textContent = '失败';
+    log('✗ '+e.message, 'err');
+  }
+}
+
+async function pollPos(){
+  if(!connected) return;
+  try {
+    const r = await fetch(base+'/pos', {mode:'cors'});
+    const j = await r.json();
+    carPos = {x:j.x, y:j.y};
+    if(recording){
+      // 录制时记车的位置
+      if(targetPath.length === 0 || Math.hypot(j.x-targetPath[targetPath.length-1][0], j.y-targetPath[targetPath.length-1][1]) > 0.01){
+        targetPath.push([j.x, j.y]);
+      }
+    }
+    if(replayingActions){
+      if(actualPath.length === 0 || Math.hypot(j.x-actualPath[actualPath.length-1][0], j.y-actualPath[actualPath.length-1][1]) > 0.01){
+        actualPath.push([j.x, j.y]);
+      }
+    }
+    draw();
+  } catch(e) {}
+}
+
+// === 键盘 / 命令映射 ===
+const KEY_MAP = { 'w':'F', 'a':'L', 's':'B', 'd':'R' };
+const KEY_RELEASE = { 'F':'S', 'B':'S', 'L':'C', 'R':'C' };  // 松开发什么 (F/B 用 /c, A/D 用 ramp)
+
+// 渐进打舵: 单次 HTTP 请求, 服务器内部 ramp (避免 WiFi 频繁请求卡顿)
+const STEER_RAMP_MS = 400;       // 0 → 满需要 400ms
+const STEER_RETURN_MS = 150;     // 回中 150ms
+async function startSteer(target){
+  const t = target === 0 ? STEER_RETURN_MS : STEER_RAMP_MS;
+  try { await fetch(base+`/steer?q=${target}&t=${t}`, {mode:'cors'}); } catch(e){}
+}
+
+function setupKeyboard(){
+  document.addEventListener('keydown', e => {
+    if(e.repeat) return;
+    if(e.key === ' '){ e.preventDefault(); doStop(); return; }
+    const k = e.key.toLowerCase();
+    if(!KEY_MAP[k]) return;
+    if(curKeys[k]) return;
+    curKeys[k] = true;
+    document.getElementById('k'+k.toUpperCase()).classList.add('active');
+    pressKey(k);
+  });
+  document.addEventListener('keyup', e => {
+    const k = e.key.toLowerCase();
+    if(!KEY_MAP[k]) return;
+    if(!curKeys[k]) return;
+    curKeys[k] = false;
+    document.getElementById('k'+k.toUpperCase()).classList.remove('active');
+    releaseKey(k);
+  });
+}
+
+async function pressKey(k){
+  if(!connected) return;
+  if(recording){
+    actions.push({t:Date.now()-recStartMs, k:k, dn:true});
+    document.getElementById('nact').textContent = actions.length;
+  }
+  // W/S 走 /c 电机命令; A/D 走 ramp 渐进打舵
+  if(k === 'a'){ startSteer(-100); }
+  else if(k === 'd'){ startSteer(100); }
+  else {
+    const cmd = KEY_MAP[k];
+    try { await fetch(base+'/c?x='+cmd, {mode:'cors'}); } catch(e){}
+  }
+}
+
+async function releaseKey(k){
+  if(!connected) return;
+  if(recording){
+    actions.push({t:Date.now()-recStartMs, k:k, dn:false});
+    document.getElementById('nact').textContent = actions.length;
+  }
+  if(k === 'a' || k === 'd'){ startSteer(0); }       // 渐进回中
+  else {
+    const cmd = KEY_RELEASE[KEY_MAP[k]];
+    try { await fetch(base+'/c?x='+cmd, {mode:'cors'}); } catch(e){}
+  }
+}
+
+function toggleRecord(){
+  if(!connected){ log('✗ 未连接', 'err'); return; }
+  recording = !recording;
+  const btn = document.getElementById('recBtn');
+  if(recording){
+    actions = []; targetPath = []; actualPath = [];
+    recStartMs = Date.now();
+    document.getElementById('nact').textContent = 0;
+    document.getElementById('rtime').textContent = '0.0';
+    btn.textContent = '⏹ 完成录'; btn.style.background = 'linear-gradient(135deg,#363,#5a5)';
+    log('🔴 录制中 (WASD 控车)', 'key');
+  } else {
+    btn.textContent = '🔴 开始录'; btn.style.background = '';
+    btn.classList.add('rec');
+    log(`⏹ 录完: ${actions.length} 动作, ${((Date.now()-recStartMs)/1000).toFixed(1)}s, ${targetPath.length} 点`, 'ok');
+  }
+}
+
+async function replayActions(){
+  if(!connected){ log('✗ 未连接', 'err'); return; }
+  if(targetPath.length < 5){ log('⚠ 录的太少 (至少 5 点)', 'err'); return; }
+  // PP 闭环跟踪 targetPath: 把它简化成 ~15 WP 发给车, 让 ESP32 自己用 UWB 闭环跑
+  const N = Math.min(20, Math.max(8, Math.floor(targetPath.length / 5)));
+  const dists = [0];
+  for(let i=1; i<targetPath.length; i++){
+    const dx = targetPath[i][0]-targetPath[i-1][0], dy = targetPath[i][1]-targetPath[i-1][1];
+    dists.push(dists[i-1] + Math.hypot(dx, dy));
+  }
+  const total = dists[dists.length-1];
+  const step = total / (N - 1);
+  const wp = [];
+  let j = 0;
+  for(let i=0; i<N; i++){
+    const d = i * step;
+    while(j < dists.length-1 && dists[j+1] < d) j++;
+    wp.push(targetPath[j]);
+  }
+  actualPath = [];
+  replayingActions = true;
+  const p = wp.map(w => `${w[0].toFixed(2)},${w[1].toFixed(2)},0.25`).join(';');
+  try {
+    await fetch(base+'/set_wp?p='+encodeURIComponent(p));
+    log(`📌 下发 ${wp.length} WP (路径 ${total.toFixed(2)}m)`, 'info');
+    await new Promise(r=>setTimeout(r, 200));
+    const r = await fetch(base+'/go');
+    const j2 = await r.json();
+    log(j2.err ? '✗'+j2.err : '▶ PP 闭环开始', j2.err?'err':'ok');
+  } catch(e) { log('✗'+e.message, 'err'); replayingActions = false; }
+}
+
+async function doStop(){
+  replayingActions = false;
+  if(!connected) return;
+  try { await fetch(base+'/c?x=S'); await fetch(base+'/stop'); log('■ STOP', 'info'); } catch(e){}
+}
+
+function draw(){
+  if(!ctx) return;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.strokeStyle='#1a2540'; ctx.lineWidth=1;
+  for(let x=-15; x<=20; x++){ const [px]=w2c(x,0); ctx.beginPath();ctx.moveTo(px,0);ctx.lineTo(px,canvas.height);ctx.stroke();}
+  for(let y=-15; y<=15; y++){ const [,py]=w2c(0,y); ctx.beginPath();ctx.moveTo(0,py);ctx.lineTo(canvas.width,py);ctx.stroke();}
+
+  // 录的轨迹 黄
+  if(targetPath.length>=2){
+    ctx.strokeStyle='#fc6'; ctx.lineWidth=4;
+    ctx.beginPath();
+    targetPath.forEach((p,i)=>{const [px,py]=w2c(p[0],p[1]); if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);});
+    ctx.stroke();
+    // 起点
+    const [px,py]=w2c(targetPath[0][0], targetPath[0][1]);
+    ctx.fillStyle='#fc6'; ctx.beginPath(); ctx.arc(px,py,8,0,6.28); ctx.fill();
+    ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.stroke();
+    ctx.fillStyle='#000'; ctx.font='bold 10px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('S', px, py);
+    ctx.textAlign='start'; ctx.textBaseline='alphabetic';
+    // 大粉色箭头: 起点初始车头方向 (供物理对齐)
+    // 用前 10 个点的均值方向估初始朝向 (更稳)
+    const n_dir = Math.min(10, targetPath.length-1);
+    let avg_dx = 0, avg_dy = 0;
+    for(let i=1; i<=n_dir; i++){
+      avg_dx += targetPath[i][0] - targetPath[0][0];
+      avg_dy += targetPath[i][1] - targetPath[0][1];
+    }
+    const len = Math.hypot(avg_dx, avg_dy);
+    if(len > 0.01){
+      const ux = avg_dx/len, uy = avg_dy/len;
+      const arrowLen = 60;   // 像素长度
+      const ex = px + ux*arrowLen;
+      const ey = py - uy*arrowLen;     // canvas Y 翻转
+      ctx.strokeStyle='#f5d'; ctx.lineWidth=5;
+      ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(ex, ey); ctx.stroke();
+      // 箭头头
+      const ang = Math.atan2(-uy, ux);
+      ctx.beginPath();
+      ctx.moveTo(ex, ey);
+      ctx.lineTo(ex - 14*Math.cos(ang-0.4), ey - 14*Math.sin(ang-0.4));
+      ctx.lineTo(ex - 14*Math.cos(ang+0.4), ey - 14*Math.sin(ang+0.4));
+      ctx.closePath(); ctx.fillStyle='#f5d'; ctx.fill();
+      // 文字提示
+      ctx.fillStyle='#f5d'; ctx.font='bold 11px sans-serif'; ctx.textAlign='left';
+      ctx.fillText('车头对这个方向', ex + 6, ey - 4);
+      ctx.textAlign='start';
+    }
+  }
+
+  // 复刻轨迹 青
+  if(actualPath.length>=2){
+    ctx.strokeStyle='#0fc'; ctx.lineWidth=2.5;
+    ctx.beginPath();
+    actualPath.forEach((p,i)=>{const [px,py]=w2c(p[0],p[1]); if(i===0)ctx.moveTo(px,py); else ctx.lineTo(px,py);});
+    ctx.stroke();
+  }
+
+  // 车
+  const [cpx,cpy] = w2c(carPos.x, carPos.y);
+  ctx.fillStyle='rgba(85,170,255,.35)'; ctx.beginPath(); ctx.arc(cpx,cpy,16,0,6.28); ctx.fill();
+  ctx.fillStyle='#5af'; ctx.beginPath(); ctx.arc(cpx,cpy,9,0,6.28); ctx.fill();
+  ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.stroke();
+}
+
+function log(msg, cls){
+  const el = document.getElementById('logs');
+  const d = document.createElement('div');
+  d.className = 'log-'+(cls||'info');
+  d.textContent = new Date().toLocaleTimeString() + ' ' + msg;
+  el.appendChild(d); el.scrollTop = el.scrollHeight;
+}
+</script>
+</body>
+</html>

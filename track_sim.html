@@ -1,0 +1,183 @@
+<!DOCTYPE html><html lang="zh"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Crayxus AI-GP 赛车仿真</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,Segoe UI,sans-serif;background:#050810;color:#cfe;padding:12px;
+ background-image:radial-gradient(circle at 50% 0%,#102040 0%,#050810 60%)}
+h1{font-size:18px;letter-spacing:2px;font-weight:300;text-align:center;margin:6px 0 12px}
+h1 b{color:#0bf;font-weight:900;text-shadow:0 0 12px #0bf6}
+.wrap{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;align-items:flex-start}
+canvas{background:#0a121e;border:1px solid #1a3050;border-radius:8px;box-shadow:0 0 24px #0bf3}
+.panel{width:340px;background:linear-gradient(180deg,#0e1828,#0a121e);border:1px solid #1a3050;
+ border-radius:10px;padding:14px;box-shadow:0 0 18px #0bf2}
+.panel h2{font-size:13px;color:#0bf;letter-spacing:1px;margin:2px 0 8px;font-weight:700}
+button{background:#13243a;color:#cfe;border:1px solid #2a4060;
+ border-radius:6px;padding:8px 14px;font-size:13px;cursor:pointer;margin:3px}
+button:hover{background:#1c3252}
+button.on{background:#0bf;color:#021;font-weight:700}
+.row{margin:8px 0;font-size:12px;line-height:1.7}
+.seg{font-family:monospace;font-size:12px;color:#9cf;background:#0a1422;border-radius:4px;
+ padding:5px 8px;margin:3px 0}
+.verdict{font-size:14px;font-weight:700;padding:8px;border-radius:6px;text-align:center;margin:8px 0}
+.ok{background:#0a3a1a;color:#3f8;border:1px solid #0f6}
+.bad{background:#3a0a12;color:#f66;border:1px solid #f44}
+code{background:#0a1422;color:#ff3;padding:2px 6px;border-radius:4px;font-size:11px;word-break:break-all}
+.muted{color:#678;font-size:11px}
+</style></head><body>
+
+<h1>CRAYXUS <b>AI·GP</b> · 赛车仿真器</h1>
+
+<div class="wrap">
+  <canvas id="cv" width="884" height="746"></canvas>
+  <div class="panel">
+    <h2>路线</h2>
+    <button id="b4" class="on" onclick="setWP(4)">WP1→WP4</button>
+    <button id="b8" onclick="setWP(8)">WP1→WP8 整圈</button>
+    <h2 style="margin-top:12px">仿真</h2>
+    <button onclick="play()">▶ 运行</button>
+    <button onclick="reset()">⟲ 重置</button>
+    <span class="muted">速度</span>
+    <button onclick="setSpd(1)">1×</button>
+    <button onclick="setSpd(3)" class="on" id="s3">3×</button>
+    <button onclick="setSpd(8)">8×</button>
+    <h2 style="margin-top:12px">MAPB_LAP 段</h2>
+    <div id="segs"></div>
+    <div id="verdict"></div>
+    <h2>发给真车</h2>
+    <div class="row"><code id="setlap"></code></div>
+    <div class="row muted">车放 <b id="startpt"></b>,车头朝 <b id="starth"></b></div>
+  </div>
+</div>
+
+<script src="sim_core.js"></script>
+<script>
+var SIM = window.SIM;
+var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+// 世界 -> 屏幕
+var X0=-8.7, Y1=5.6, S=73;
+function w2s(x,y){ return [(x-X0)*S, (Y1-y)*S]; }
+
+var WPN=4, spd=3, sim=null, anim={i:0,playing:false};
+
+function setWP(n){ WPN=n;
+  document.getElementById('b4').className=n==4?'on':'';
+  document.getElementById('b8').className=n==8?'on':'';
+  plan(); }
+function setSpd(s){ spd=s;
+  ['s3'].forEach(function(){});
+  document.querySelectorAll('.panel button').forEach(function(b){
+    if(/^[138]×$/.test(b.textContent)) b.className=(b.textContent==s+'×')?'on':''; });
+  }
+function reset(){ anim.i=0; anim.playing=false; draw(); }
+function play(){ if(!sim) return; if(anim.i>=sim.res.traj.length-1) anim.i=0;
+  anim.playing=true; loop(); }
+
+function plan(){
+  var A = SIM.autoRoute(SIM.WAYPOINTS.slice(0,WPN));
+  var route=A.route, segs=A.segs, res=A.res, startH=A.segs[0].legH;
+  sim = {route:route, segs:segs, res:res, startH:startH};
+  anim.i=0; anim.playing=false;
+  // 信息面板
+  var sh='', sl=[];
+  segs.forEach(function(s,i){
+    sh += '<div class="seg">段'+(i+1)+'&nbsp; delta '+s.delta+'°&nbsp; dur '+s.dur+'ms'
+        + '<br><span class="muted">腿'+s.legL.toFixed(2)+'m 直行'+s.straight+'m</span></div>';
+    sl.push(s.delta+','+s.dur);
+  });
+  document.getElementById('segs').innerHTML=sh;
+  document.getElementById('setlap').textContent='set_lap?d='+sl.join(';');
+  document.getElementById('startpt').textContent='WP1 ('+route[0][0]+', '+route[0][1]+')';
+  document.getElementById('starth').textContent=startH.toFixed(1)+'° (朝 WP2)';
+  var v=document.getElementById('verdict');
+  if(res.hit) v.className='verdict bad',
+    v.innerHTML='✘ 撞墙 — 段'+(res.hit.seg+1)+' @ ('+res.hit.x.toFixed(2)+','+res.hit.y.toFixed(2)+')';
+  else{
+    var e=res.traj[res.traj.length-1], t=sim.route[WPN-1];
+    var err=Math.hypot(e.x-t[0],e.y-t[1]);
+    v.className='verdict ok';
+    v.innerHTML='✔ 跑通 — 用时 '+e.t.toFixed(1)+'s,终点误差 '+err.toFixed(2)+'m';
+  }
+  draw();
+}
+
+function drawPoly(poly,color,lw){
+  ctx.strokeStyle=color; ctx.lineWidth=lw;
+  for(var i=0;i<poly.length-1;i++){
+    var a=poly[i],b=poly[i+1];
+    if(Math.hypot(b[0]-a[0],b[1]-a[1])>=4.2) continue; // 跳变线不画
+    var p=w2s(a[0],a[1]),q=w2s(b[0],b[1]);
+    ctx.beginPath();ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);ctx.stroke();
+  }
+}
+
+function draw(){
+  ctx.clearRect(0,0,cv.width,cv.height);
+  // 网格
+  ctx.strokeStyle='#10203a';ctx.lineWidth=1;
+  for(var gx=-8;gx<=3;gx++){var a=w2s(gx,-4.5),b=w2s(gx,5.5);
+    ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();}
+  for(var gy=-4;gy<=5;gy++){var a=w2s(-8.6,gy),b=w2s(3.3,gy);
+    ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();}
+  // 墙
+  drawPoly(SIM.OUTER,'#0f8',2.5);
+  drawPoly(SIM.INNER,'#0bf',2.5);
+  // 计划路线 (航点连线)
+  if(sim){
+    ctx.strokeStyle='#456';ctx.lineWidth=1.5;ctx.setLineDash([5,4]);
+    ctx.beginPath();
+    sim.route.forEach(function(p,i){var s=w2s(p[0],p[1]);
+      i?ctx.lineTo(s[0],s[1]):ctx.moveTo(s[0],s[1]);});
+    ctx.stroke();ctx.setLineDash([]);
+    // 航点
+    sim.route.forEach(function(p,i){
+      var s=w2s(p[0],p[1]);
+      ctx.beginPath();ctx.arc(s[0],s[1],9,0,6.28);
+      ctx.fillStyle='#ff3';ctx.fill();
+      ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke();
+      ctx.fillStyle='#021';ctx.font='bold 10px monospace';
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText((i+1),s[0],s[1]);
+    });
+    // 仿真轨迹: 全程(暗紫,一打开就可见) + 已走(亮粉)
+    var tr=sim.res.traj;
+    ctx.strokeStyle='#6a4a7e';ctx.lineWidth=2;ctx.beginPath();
+    for(var i=0;i<tr.length;i++){
+      var s=w2s(tr[i].x,tr[i].y);
+      i?ctx.lineTo(s[0],s[1]):ctx.moveTo(s[0],s[1]);
+    }
+    ctx.stroke();
+    ctx.strokeStyle='#f0a';ctx.lineWidth=3;ctx.beginPath();
+    for(var j=0;j<=anim.i && j<tr.length;j++){
+      var s2=w2s(tr[j].x,tr[j].y);
+      j?ctx.lineTo(s2[0],s2[1]):ctx.moveTo(s2[0],s2[1]);
+    }
+    ctx.stroke();
+    // 车
+    var c=tr[Math.min(anim.i,tr.length-1)];
+    var cs=w2s(c.x,c.y), hr=c.h*Math.PI/180;
+    ctx.save();ctx.translate(cs[0],cs[1]);ctx.rotate(-hr);
+    ctx.fillStyle='#fff';ctx.strokeStyle='#0bf';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(13,0);ctx.lineTo(-8,7);ctx.lineTo(-8,-7);ctx.closePath();
+    ctx.fill();ctx.stroke();ctx.restore();
+    // 撞墙点
+    if(sim.res.hit && anim.i>=tr.length-1){
+      var h=w2s(sim.res.hit.x,sim.res.hit.y);
+      ctx.strokeStyle='#f44';ctx.lineWidth=3;
+      ctx.beginPath();ctx.moveTo(h[0]-9,h[1]-9);ctx.lineTo(h[0]+9,h[1]+9);
+      ctx.moveTo(h[0]+9,h[1]-9);ctx.lineTo(h[0]-9,h[1]+9);ctx.stroke();
+    }
+  }
+}
+
+function loop(){
+  if(!anim.playing) return;
+  anim.i += spd;
+  if(anim.i>=sim.res.traj.length-1){ anim.i=sim.res.traj.length-1; anim.playing=false; }
+  draw();
+  if(anim.playing) requestAnimationFrame(loop);
+}
+
+plan();
+</script>
+</body></html>

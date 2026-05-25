@@ -1,0 +1,150 @@
+<!DOCTYPE html><html><head><meta charset=utf-8>
+<title>Crayxus AI·GP 标准地图 V2</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,Segoe UI,sans-serif;background:#050810;color:#cfe;padding:10px;background-image:radial-gradient(circle at 50% 0%,#102040 0%,#050810 60%)}
+h1{font-size:20px;letter-spacing:2px;font-weight:300;text-align:center;margin:8px 0 12px}
+h1 b{color:#0bf;font-weight:900;text-shadow:0 0 12px #0bf6}
+.panel{background:linear-gradient(180deg,#0e1828,#0a121e);border:1px solid #1a3050;border-radius:10px;padding:10px;margin:0 auto;max-width:1100px;box-shadow:0 0 20px #0bf2}
+.info{display:flex;gap:12px;justify-content:center;font-size:13px;color:#8af;margin-bottom:10px}
+.info span{padding:4px 10px;border:1px solid #1a3050;border-radius:6px;background:#050810}
+canvas{display:block;margin:0 auto;background:#0a121e;border:1px solid #1a3050;border-radius:6px;box-shadow:0 0 20px #0bf2}
+.legend{display:flex;gap:18px;justify-content:center;font-size:11px;color:#456;margin-top:8px}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%}
+</style></head><body>
+
+<h1>CRAYXUS <b>AI·GP</b> · 标准赛道 V2 · 10.27m × 4.78m</h1>
+
+<div class="panel">
+  <div class="info">
+    <span>📏 长边 10.27m</span>
+    <span>📐 短边 4.78m</span>
+    <span>📌 起点 S</span>
+    <span>🏁 WP 0-24 共 25 个</span>
+    <span>↻ 已旋转 180°</span>
+  </div>
+  <canvas id="cv" width="1040" height="540"></canvas>
+  <div class="legend">
+    <span><span class="dot" style="background:#0f8"></span>赛道外框</span>
+    <span><span class="dot" style="background:#f44"></span>WP 路径 / 起点</span>
+    <span><span class="dot" style="background:#ff0"></span>车实时位置</span>
+    <span><span class="dot" style="background:#456"></span>1m 网格</span>
+  </div>
+</div>
+
+<script>
+// === WP 路径 (25 个点, 跟 main.py 同步) ===
+const WP = [[0.0,-0.5],[1.11,-0.5],[2.23,-0.5],[3.34,-0.5],[3.49,1.1],[3.49,2.22],[3.19,3.3],[2.37,3.3],[1.26,3.3],[0.15,3.3],[-0.31,3.3],[-0.3,2.52],[-1.8,1.9],[-2.91,1.9],[-4.02,1.9],[-4.82,2.03],[-4.82,3.4],[-6.24,3.4],[-7.35,3.4],[-7.35,1.72],[-7.35,0.6],[-7.19,-1.0],[-6.08,-1.1],[-4.96,-1.2],[0.0,-1.3]];
+
+// === 赛道边界 (标准矩形 10.27 × 4.78m, 中心包围所有 WP) ===
+// WP X 范围 -7.35 ~ 3.49, 中心 ≈ -1.93. Y 范围 -1.3 ~ 3.4, 中心 ≈ 1.05
+// 标准矩形 10.27 × 4.78, 居中包住 WP
+const TRACK_X = -1.93;   // 中心 x
+const TRACK_Y = 1.05;    // 中心 y
+const TRACK_W = 10.27;
+const TRACK_H = 4.78;
+const CORNER_R = 0.5;    // 圆角半径
+
+// === 画布参数 ===
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+const W = cv.width, H = cv.height;
+const SCALE = 90;        // 1m = 90px (适应画布)
+const ORIGIN_X = W/2;    // 画布中心 = 赛道中心 (X)
+const ORIGIN_Y = H/2;
+
+// === 180° 旋转: 世界 (x, y) → 屏幕. 朝赛道中心翻转 ===
+function w2s(x, y){
+  const dx = x - TRACK_X;
+  const dy = y - TRACK_Y;
+  // 旋转 180°: (dx, dy) → (-dx, -dy)
+  return [ORIGIN_X - dx * SCALE, ORIGIN_Y + dy * SCALE];
+  // 注: canvas y 向下, 世界 y 向上, 所以 +dy*SCALE 已经翻转 y
+  // 加上 -dx 是 X 翻转 = 总共 180°
+}
+
+let carX = 0, carY = -0.5;   // 车初始位置 = WP[0]
+
+function drawTrack(){
+  ctx.clearRect(0, 0, W, H);
+
+  // 背景网格 (每 1m 一根)
+  ctx.strokeStyle = '#1a3050'; ctx.lineWidth = 1;
+  for (let i = -8; i <= 5; i++){
+    const [sx,] = w2s(i, 0);
+    ctx.beginPath(); ctx.moveTo(sx, 0); ctx.lineTo(sx, H); ctx.stroke();
+  }
+  for (let i = -3; i <= 5; i++){
+    const [, sy] = w2s(0, i);
+    ctx.beginPath(); ctx.moveTo(0, sy); ctx.lineTo(W, sy); ctx.stroke();
+  }
+
+  // 赛道外框 (圆角矩形, 标准)
+  const [cx, cy] = w2s(TRACK_X, TRACK_Y);
+  const tw = TRACK_W * SCALE, th = TRACK_H * SCALE;
+  const tx = cx - tw/2, ty = cy - th/2;
+  const r = CORNER_R * SCALE;
+  ctx.strokeStyle = '#0f8'; ctx.lineWidth = 3; ctx.fillStyle = 'rgba(0,255,136,0.05)';
+  ctx.beginPath();
+  ctx.moveTo(tx + r, ty);
+  ctx.lineTo(tx + tw - r, ty);
+  ctx.arcTo(tx + tw, ty, tx + tw, ty + r, r);
+  ctx.lineTo(tx + tw, ty + th - r);
+  ctx.arcTo(tx + tw, ty + th, tx + tw - r, ty + th, r);
+  ctx.lineTo(tx + r, ty + th);
+  ctx.arcTo(tx, ty + th, tx, ty + th - r, r);
+  ctx.lineTo(tx, ty + r);
+  ctx.arcTo(tx, ty, tx + r, ty, r);
+  ctx.closePath();
+  ctx.fill(); ctx.stroke();
+
+  // 尺寸标注
+  ctx.fillStyle = '#0f8'; ctx.font = '11px monospace';
+  ctx.fillText('10.27m', cx - 22, ty + th + 18);
+  ctx.save();
+  ctx.translate(tx - 8, cy); ctx.rotate(-Math.PI/2);
+  ctx.fillText('4.78m', -15, 0);
+  ctx.restore();
+
+  // WP 路径 (红线)
+  ctx.strokeStyle = '#f44'; ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  WP.forEach((p, i) => {
+    const [sx, sy] = w2s(p[0], p[1]);
+    if (i === 0) ctx.moveTo(sx, sy);
+    else ctx.lineTo(sx, sy);
+  });
+  ctx.stroke();
+
+  // WP 点 + 编号
+  WP.forEach((p, i) => {
+    const [sx, sy] = w2s(p[0], p[1]);
+    ctx.fillStyle = i === 0 ? '#0bf' : '#f44';
+    ctx.beginPath(); ctx.arc(sx, sy, i === 0 ? 9 : 6, 0, 6.28); ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.fillStyle = '#fff'; ctx.font = 'bold 10px monospace';
+    if (i === 0) ctx.fillText('S', sx - 3, sy + 3);
+    else ctx.fillText(i, sx + 8, sy - 5);
+  });
+
+  // 车位置 (黄色)
+  const [carSx, carSy] = w2s(carX, carY);
+  ctx.fillStyle = '#ff0'; ctx.strokeStyle = '#000'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(carSx, carSy, 7, 0, 6.28); ctx.fill(); ctx.stroke();
+}
+
+drawTrack();
+
+// === 实时车位置 (如果连 ESP32) ===
+const ESP_IP = '172.20.10.4';
+setInterval(() => {
+  fetch('http://' + ESP_IP + '/pos').then(r => r.json()).then(j => {
+    if (j.uwb_ok){
+      carX = j.x; carY = j.y;
+      drawTrack();
+    }
+  }).catch(() => {});
+}, 200);
+</script>
+</body></html>

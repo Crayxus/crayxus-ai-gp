@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PP TEST · Pure Pursuit 增量验证台</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,Segoe UI,sans-serif;background:#0a0f1c;color:#cfe;padding:14px;line-height:1.6}
+h1{font-size:22px;color:#fa0;letter-spacing:2px;margin-bottom:8px}
+h1 b{color:#0bf}
+h2{font-size:14px;color:#0bf;border-left:3px solid #0bf;padding-left:8px;margin:18px 0 8px}
+.panel{background:#0e1828;border:1px solid #1a3050;border-radius:8px;padding:12px 14px;margin-bottom:10px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:4px 0}
+input,select{background:#0a1422;color:#cfe;border:1px solid #2a4060;border-radius:4px;
+ padding:5px 7px;font-size:13px;font-family:monospace}
+input{width:70px}
+button{background:#13243a;color:#cfe;border:1px solid #2a4060;border-radius:6px;
+ padding:8px 14px;font-size:13px;cursor:pointer;margin:2px}
+button:hover{background:#1c3252}
+button.go{background:#0bf;color:#021;font-weight:700}
+button.stop{background:#c0182a;color:#fff;font-weight:900;font-size:17px;
+ padding:14px;border:2px solid #f55;box-shadow:0 0 14px #f446;width:100%;margin-bottom:10px}
+button.stop:hover{background:#e21e34}
+pre{background:#050810;color:#9cf;padding:10px;border-radius:4px;font-size:12px;
+ overflow:auto;font-family:monospace;line-height:1.4;white-space:pre-wrap;word-break:break-all}
+.note{color:#789;font-size:12px;margin:4px 0}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;
+ background:#234;color:#cfe;margin-right:4px}
+b.ok{color:#3f8} b.bad{color:#f55} b.warn{color:#fa0}
+</style>
+</head>
+<body>
+
+<h1>CRAYXUS · <b>PP TEST</b> · Pure Pursuit 增量验证台</h1>
+
+<button class="stop" onclick="stopAll()">■ 急停 STOP (空格 / Esc 也行)</button>
+
+<div class="panel">
+  车: <b id="conn">○ 未检测</b> &nbsp;
+  IP <input id="ip" value="172.20.10.5" style="width:108px"> &nbsp;
+  <button onclick="ping()">测试连接</button>
+</div>
+
+<div class="panel">
+  <h2>阶段 0 · 转向方向校验(必做)</h2>
+  <div class="note">站车后看前轮指哪边。先 q=+100(代码说"右"),如果实际指<b class="bad">左</b>就是符号反了。</div>
+  <div class="row">
+    <button onclick="steer(100)">q = +100 (代码:右)</button>
+    <button onclick="steer(0)">q = 0 (回中)</button>
+    <button onclick="steer(-100)">q = -100 (代码:左)</button>
+    <span style="margin-left:16px">→ q=+100 时前轮实际:
+      <select id="sign" onchange="updateSign()">
+        <option value="?">未测</option>
+        <option value="right">指右(正确,符号对)</option>
+        <option value="left">指左(反向,启动时会自动翻号)</option>
+      </select>
+    </span>
+  </div>
+  <div id="signMsg" class="note">&nbsp;</div>
+</div>
+
+<div class="panel">
+  <h2>阶段 1 · 单段测试 (WP1 → WP2, 实测 5.37m)</h2>
+  <div class="row">
+    <span class="tag">WP1 起点</span>
+    x <input id="wp0x" value="-4.754"> ,
+    y <input id="wp0y" value="1.805">
+  </div>
+  <div class="row">
+    <span class="tag">WP2 目标</span>
+    x <input id="wp1x" value="0.297"> ,
+    y <input id="wp1y" value="3.624">
+  </div>
+  <div class="row">
+    限速 <input id="spd" value="0.5"> m/s &nbsp;
+    占空上限 <input id="dmax" value="80"> % &nbsp;
+    占空下限 <input id="dmin" value="40"> %
+  </div>
+  <div class="row">
+    <button class="go" onclick="runPP()">▶ 启动 WP1→WP2</button>
+    <span class="note" id="runMsg">&nbsp;</span>
+  </div>
+  <div class="note">⚠️ 启动前确认:车在 WP1 ±20cm、车头朝 WP2(NE 方向)、前轮回中、前方 ≥2m 空地、MPU 已复位 · ETA ~10s</div>
+  <div class="row" style="margin-top:6px">
+    <button onclick="rstMpu()">⟲ MPU 复位</button>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>实时状态 (500ms 轮询)</h2>
+  <div class="row" style="align-items:flex-start">
+    <strong style="min-width:64px;color:#fa0">PP:</strong>
+    <pre id="ppstate" style="flex:1;margin:0;max-height:280px">未连接</pre>
+  </div>
+  <div class="row" style="align-items:flex-start;margin-top:8px">
+    <strong style="min-width:64px;color:#0bf">UWB:</strong>
+    <pre id="uwbstate" style="flex:1;margin:0;max-height:100px">未连接</pre>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>轨迹 CSV</h2>
+  <button onclick="getTraj()">📥 拉 /traj</button>
+  <pre id="traj" style="margin-top:8px;max-height:300px">未拉取</pre>
+</div>
+
+<script>
+function ip(){return document.getElementById('ip').value;}
+
+function steer(q){
+  fetch('http://'+ip()+'/steer?q='+q,{mode:'no-cors'}).catch(function(){});
+}
+
+function rstMpu(){
+  fetch('http://'+ip()+'/c?x=RST',{mode:'no-cors'}).catch(function(){});
+  document.getElementById('runMsg').innerHTML='<span style="color:#9af">MPU 复位</span>';
+}
+
+function updateSign(){
+  var s=document.getElementById('sign').value;
+  var m=document.getElementById('signMsg');
+  if(s==='right'){m.innerHTML='<b class="ok">✓ 方向正常 — 启动时不需要翻 kp 符号</b>';}
+  else if(s==='left'){m.innerHTML='<b class="warn">⚠ 符号反了 — 启动时会自动翻 kp_h / kp_lat / kd 符号</b>';}
+  else{m.innerHTML='&nbsp;';}
+}
+
+function runPP(){
+  var sign=document.getElementById('sign').value;
+  if(sign==='?'){
+    if(!confirm('未校验转向方向! 仍要启动? (如果符号是反的, 车会乱跑)')) return;
+  }
+  var wp0x=document.getElementById('wp0x').value;
+  var wp0y=document.getElementById('wp0y').value;
+  var wp1x=document.getElementById('wp1x').value;
+  var wp1y=document.getElementById('wp1y').value;
+  var spd=parseFloat(document.getElementById('spd').value)||0.5;
+  var dmax=parseInt(document.getElementById('dmax').value)||80;
+  var dmin=parseInt(document.getElementById('dmin').value)||40;
+  var flip=(sign==='left');
+  var tune='max_speed='+spd+'&cruise_duty_max='+dmax+'&cruise_duty_min='+dmin;
+  if(flip)tune+='&kp_h=-1.2&kp_lat=-2.5&kd=-0.1';
+  var msg=document.getElementById('runMsg');
+  var wpStr=wp0x+','+wp0y+';'+wp1x+','+wp1y;
+  msg.textContent='① /tune ' + tune + ' ...';
+  fetch('http://'+ip()+'/tune?'+tune,{mode:'no-cors'})
+    .then(function(){
+      msg.textContent='② /set_path wp='+wpStr+' ...';
+      return fetch('http://'+ip()+'/set_path?wp='+wpStr,{mode:'no-cors'});
+    })
+    .then(function(){
+      msg.textContent='③ /go ...';
+      return fetch('http://'+ip()+'/go',{mode:'no-cors'});
+    })
+    .then(function(){
+      msg.innerHTML='<b class="warn">🎯 已启动 — 看下方 PP 状态</b>';
+    })
+    .catch(function(){msg.innerHTML='<b class="bad">✘ 发送失败</b>';});
+}
+
+function stopAll(){
+  for(var k=0;k<5;k++)(function(k){
+    setTimeout(function(){
+      fetch('http://'+ip()+'/stop',{mode:'no-cors'}).catch(function(){});
+      fetch('http://'+ip()+'/c?x=S',{mode:'no-cors'}).catch(function(){});
+    },k*70);
+  })(k);
+  document.getElementById('runMsg').innerHTML='<b class="bad">■ 急停 ×5</b>';
+}
+
+function poll(){
+  fetch('http://'+ip()+'/pp_status').then(function(r){return r.json();}).then(function(s){
+    document.getElementById('ppstate').textContent=JSON.stringify(s,null,2);
+  }).catch(function(){});
+  fetch('http://'+ip()+'/uwb').then(function(r){return r.json();}).then(function(s){
+    document.getElementById('uwbstate').textContent=JSON.stringify(s,null,2);
+  }).catch(function(){});
+}
+
+function setConn(s){
+  var e=document.getElementById('conn');
+  e.textContent=s?'● 在线':'● 离线';
+  e.style.color=s?'#3f8':'#f55';
+}
+
+function ping(){
+  var ac=new AbortController(),done=false;
+  var to=setTimeout(function(){if(!done){done=true;ac.abort();setConn(0);}},2500);
+  fetch('http://'+ip()+'/tm',{mode:'no-cors',signal:ac.signal})
+    .then(function(){if(!done){done=true;clearTimeout(to);setConn(1);}})
+    .catch(function(){if(!done){done=true;clearTimeout(to);setConn(0);}});
+}
+
+function getTraj(){
+  fetch('http://'+ip()+'/traj').then(function(r){return r.text();}).then(function(t){
+    document.getElementById('traj').textContent=t||'(空)';
+  }).catch(function(){
+    document.getElementById('traj').textContent='拉取失败';
+  });
+}
+
+window.addEventListener('keydown',function(e){
+  if(e.code==='Space'||e.code==='Escape'){e.preventDefault();stopAll();}
+});
+setInterval(ping,4000); ping();
+setInterval(poll,500);
+</script>
+</body>
+</html>

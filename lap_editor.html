@@ -1,0 +1,738 @@
+<!DOCTYPE html><html lang="zh"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Crayxus AI-GP · 拖点路线编辑器</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --font-ui: 'Inter', -apple-system, "SF Pro Text", "Segoe UI", "PingFang SC", sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', SFMono-Regular, ui-monospace, 'Cascadia Code', 'Roboto Mono', Menlo, Consolas, monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-ui);background:#050810;color:#cfe;padding:10px;
+ background-image:radial-gradient(circle at 50% 0%,#102040 0%,#050810 60%);
+ -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1{font-size:17px;letter-spacing:2px;font-weight:300;text-align:center;margin:6px 0 10px}
+h1 b{color:#0bf;font-weight:900;text-shadow:0 0 12px #0bf6}
+.wrap{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;align-items:flex-start}
+canvas{background:#0a121e;border:1px solid #1a3050;border-radius:8px;box-shadow:0 0 22px #0bf3;
+ max-width:100%;cursor:crosshair}
+.panel{width:340px;background:linear-gradient(180deg,#0e1828,#0a121e);border:1px solid #1a3050;
+ border-radius:10px;padding:12px}
+h2{font-size:12px;color:#0bf;letter-spacing:1px;margin:10px 0 6px;font-weight:700}
+.seglist{max-height:270px;overflow-y:auto;border:1px solid #14263e;border-radius:6px;padding:4px;
+ font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-feature-settings:"tnum","ss01";font-size:11px}
+.segrow{display:flex;gap:7px;padding:2px 4px;border-radius:3px;align-items:center}
+.segrow:nth-child(even){background:#0a1422}
+.segrow .n{width:22px;color:#678;text-align:right}
+.segrow .a{width:60px;color:#ff3}
+.segrow .t{width:56px;color:#9cf}
+.L{color:#f93}.R{color:#3cf}.S{color:#586}
+input,select{background:#0a1422;color:#cfe;border:1px solid #2a4060;border-radius:4px;
+ padding:3px 5px;font-size:12px;font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-feature-settings:"tnum","ss01";width:64px}
+input[type=checkbox]{width:15px;height:15px;cursor:pointer;vertical-align:middle;padding:0}
+button{background:#13243a;color:#cfe;border:1px solid #2a4060;border-radius:6px;
+ padding:6px 10px;font-size:12px;cursor:pointer;margin:2px}
+button:hover{background:#1c3252}
+button.go{background:#0bf;color:#021;font-weight:700}
+button.stop{background:#c0182a;color:#fff;font-weight:900;font-size:16px;
+ display:block;width:100%;padding:14px;margin:8px 0 4px;border:2px solid #f55;
+ box-shadow:0 0 14px #f446}
+button.stop:hover{background:#e21e34}
+.stat{font-size:12px;color:#9cf;line-height:1.9}
+.stat b{color:#ff3}
+code{background:#0a1422;color:#ff3;font-size:10px;padding:4px 6px;border-radius:4px;
+ display:block;word-break:break-all;margin-top:4px;max-height:50px;overflow-y:auto}
+.hint{font-size:11px;color:#678;line-height:1.6;margin-top:4px}
+.connbar{display:flex;align-items:center;gap:6px;font-size:12px;background:#0a1422;
+ border:1px solid #14263e;border-radius:6px;padding:6px 8px;margin:7px 0;flex-wrap:wrap}
+.bad{color:#f66;font-weight:700}.ok{color:#3f8;font-weight:700}
+.batt-pn{background:linear-gradient(180deg,#0e1a2e,#070d18);border:1px solid #1a3a5a;
+ border-radius:8px;padding:10px 12px;margin:7px 0;font-family:var(--font-mono);
+ font-variant-numeric:tabular-nums;font-feature-settings:"tnum","ss01";
+ box-shadow:0 0 12px rgba(0,212,255,.08)}
+.batt-pn .row1{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:7px;gap:8px}
+.batt-pn .pct{font-size:32px;font-weight:800;color:#3f8;letter-spacing:-1.5px;
+ line-height:1;text-shadow:0 0 14px rgba(0,255,156,.35);transition:color .3s}
+.batt-pn .pct.warn{color:#fc6;text-shadow:0 0 14px rgba(255,200,0,.4)}
+.batt-pn .pct.crit{color:#f66;text-shadow:0 0 16px rgba(255,80,80,.5);animation:bpulse 1s infinite}
+@keyframes bpulse{0%,100%{opacity:1}50%{opacity:.4}}
+.batt-pn .v{color:#cfe;font-size:14px;font-weight:700;text-align:right;line-height:1.3}
+.batt-pn .v .sub{font-size:10px;color:#789;font-weight:400;letter-spacing:.5px;
+ margin-top:2px;display:block}
+.batt-pn .v b{color:#fff;font-weight:800}
+.batt-pn .bar{height:6px;background:#020409;border-radius:3px;border:1px solid #14263e;
+ overflow:hidden;margin:5px 0 7px}
+.batt-pn .fill{height:100%;background:linear-gradient(90deg,#3f8,#0bf);
+ transition:width .4s,background .3s;box-shadow:0 0 8px rgba(0,255,156,.6)}
+.batt-pn .fill.warn{background:linear-gradient(90deg,#fc6,#fa0);box-shadow:0 0 8px rgba(255,200,0,.6)}
+.batt-pn .fill.crit{background:linear-gradient(90deg,#f66,#a33);box-shadow:0 0 10px rgba(255,80,80,.7)}
+.batt-pn .extra{display:flex;justify-content:space-between;font-size:11px;color:#9ab;
+ margin-top:4px;letter-spacing:.3px;line-height:1.5}
+.batt-pn .extra b{color:#ff3;font-weight:700}
+.batt-pn .boost{color:#0bf;font-weight:700;font-feature-settings:"tnum","ss01"}
+.batt-pn .boost.up{color:#fa3}
+.batt-pn .ctrl{display:flex;justify-content:space-between;align-items:center;
+ font-size:11px;color:#789;margin-top:7px;padding-top:7px;border-top:1px dashed #1a3a5a;
+ letter-spacing:.3px}
+.batt-pn .ctrl span{font-family:var(--font-ui)}
+.vnom-input{background:#020409;border:1px solid #2a4060;color:#ff3;
+ padding:3px 6px;font-family:var(--font-mono);font-variant-numeric:tabular-nums;
+ font-feature-settings:"tnum","ss01";font-size:12px;font-weight:600;border-radius:4px;
+ width:50px;text-align:right;outline:none;transition:.15s}
+.vnom-input:focus{border-color:#0bf;box-shadow:0 0 0 2px rgba(0,212,255,.2)}
+.vnom-btn{background:linear-gradient(135deg,#0bf,#2a5fff);color:#021;border:none;
+ padding:3px 10px;font-size:10px;font-weight:700;letter-spacing:.5px;
+ border-radius:4px;cursor:pointer;margin-left:3px;font-family:var(--font-ui);
+ transition:.15s}
+.vnom-btn:hover{filter:brightness(1.1);box-shadow:0 0 8px rgba(0,212,255,.4)}
+
+/* Boost slider — 直观拖拽调补偿强度 */
+.boost-slider{margin-top:8px;padding-top:8px;border-top:1px dashed #1a3a5a}
+.boost-slider .lbl{display:flex;justify-content:space-between;font-size:11px;color:#9ab;
+ letter-spacing:.5px;margin-bottom:4px}
+.boost-slider .lbl .name{color:#0bf;font-weight:700;font-family:var(--font-ui)}
+.boost-slider .lbl .val{font-family:var(--font-mono);font-weight:800;font-size:14px;
+ color:#fa3;font-feature-settings:"tnum","ss01"}
+.boost-slider .lbl .val.flat{color:#789}
+.boost-slider input[type=range]{
+ -webkit-appearance:none;appearance:none;width:100%;height:8px;background:transparent;
+ outline:none;padding:0;margin:0;cursor:pointer}
+.boost-slider input[type=range]::-webkit-slider-runnable-track{
+ height:6px;border-radius:3px;border:1px solid #2a4060;
+ background:linear-gradient(90deg, #0bf 0%, #fa3 60%, #f55 100%)}
+.boost-slider input[type=range]::-webkit-slider-thumb{
+ -webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;
+ background:radial-gradient(circle,#fff 30%,#0bf 80%);
+ border:2px solid #fff;margin-top:-7px;cursor:grab;
+ box-shadow:0 0 10px rgba(0,212,255,.7),0 2px 6px rgba(0,0,0,.5);
+ transition:transform .1s}
+.boost-slider input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
+.boost-slider input[type=range]::-webkit-slider-thumb:active{cursor:grabbing;transform:scale(1.2)}
+.boost-slider input[type=range]::-moz-range-track{
+ height:6px;border-radius:3px;border:1px solid #2a4060;
+ background:linear-gradient(90deg, #0bf 0%, #fa3 60%, #f55 100%)}
+.boost-slider input[type=range]::-moz-range-thumb{
+ width:16px;height:16px;border-radius:50%;
+ background:radial-gradient(circle,#fff 30%,#0bf 80%);
+ border:2px solid #fff;cursor:grab;
+ box-shadow:0 0 10px rgba(0,212,255,.7)}
+.boost-slider .ticks{display:flex;justify-content:space-between;
+ font-family:var(--font-mono);font-size:9px;color:#566;letter-spacing:.5px;
+ margin-top:3px;font-feature-settings:"tnum","ss01"}
+.boost-slider .vn-disp{font-family:var(--font-mono);font-size:10px;color:#9ab;
+ text-align:right;margin-top:3px;font-feature-settings:"tnum","ss01"}
+.boost-slider .vn-disp b{color:#ff3;font-weight:700}
+</style></head><body>
+
+<h1>CRAYXUS <b>AI·GP</b> · 拖点路线编辑器</h1>
+
+<div class="wrap">
+  <canvas id="cv" width="884" height="746"></canvas>
+  <div class="panel">
+    <div class="hint"><b style="color:#0bf">拖画布上的黄点改路线</b>;拖 1 号点(蓝)= 整条平移。
+      下面**勾选**要跑哪几段 —— 粉色亮 = 会跑,暗 = 不跑。</div>
+
+    <div class="connbar">车: <b id="conn">○ 未检测</b>
+      <span style="flex:1"></span>
+      IP <input id="ip" value="172.20.10.5" style="width:94px">
+      <button onclick="ping()">测试连接</button></div>
+
+    <!-- 实时电压面板(INA219 + 补偿状态) -->
+    <div class="batt-pn" id="battPn" style="display:none">
+      <div class="row1">
+        <span class="pct" id="bPct">—</span>
+        <span class="v"><b id="bV">—</b> V<span class="sub" id="bMode">1S Li-Po</span></span>
+      </div>
+      <div class="bar"><div class="fill" id="bBar" style="width:0%"></div></div>
+      <div class="extra">
+        <span>电流 <b id="bA">—</b> A · <b id="bW">—</b> W</span>
+        <span>boost <span class="boost" id="bBoost">×1.00</span></span>
+      </div>
+      <div class="ctrl">
+        <span>V_NOMINAL: <input class="vnom-input" id="vnomI" value="4.20">V
+          <button class="vnom-btn" onclick="setVnom()">写入</button></span>
+        <span>补偿 <span id="compOn">—</span> · <a href="javascript:toggleComp()" style="color:#fc6;text-decoration:none">切换</a></span>
+      </div>
+
+      <!-- Boost 滑条: 拖动直接调 V_NOMINAL,实时看效果 -->
+      <div class="boost-slider">
+        <div class="lbl">
+          <span class="name">⚡ BOOST 调节</span>
+          <span class="val" id="bSlideVal">×1.00</span>
+        </div>
+        <input type="range" id="bSlider" min="1.00" max="1.60" step="0.01" value="1.00"
+          oninput="onBoostSlide(this.value)" onchange="onBoostCommit(this.value)">
+        <div class="ticks">
+          <span>×1.0</span><span>×1.15</span><span>×1.30</span><span>×1.45</span><span>×1.60</span>
+        </div>
+        <div class="vn-disp">→ V_NOMINAL = <b id="bSlideVnom">4.20</b> V</div>
+      </div>
+    </div>
+
+    <div class="connbar">旋转
+      <input id="rot" type="range" min="-180" max="180" value="30" step="0.5"
+        style="flex:1;padding:0;height:18px" oninput="setRot(this.value)">
+      <b id="rotv" style="min-width:42px;text-align:right">30°</b></div>
+
+    <h2>车速(算时间用)</h2>
+    <div class="stat">车速 <input id="vv" value="1.95"> m/s</div>
+
+    <h2>24 段 · 勾选要跑的段</h2>
+    <div class="stat" style="font-size:11px;margin-bottom:3px">
+      <button onclick="selAll(true)">全选</button>
+      <button onclick="selAll(false)">清空</button>
+      勾到第<input id="seln" value="8" style="width:32px">段<button onclick="selPrefix()">✓</button>
+    </div>
+    <div class="seglist" id="seglist"></div>
+
+    <h2>结果</h2>
+    <div class="stat" id="stat">—</div>
+    <code id="setlap">—</code>
+
+    <h2>存档 · 完整配方(路径+车速+补偿+电池)</h2>
+    <div class="stat" style="font-size:11px;line-height:2.4">
+      <input id="svname" placeholder="配方名" style="width:88px">
+      <input id="svnote" placeholder="备注 (可选)" style="width:140px;font-family:var(--font-ui)">
+      <button onclick="saveRoute()" style="background:linear-gradient(135deg,#0bf,#2a5fff);color:#021;border:none;font-weight:700">💾 保存完整</button>
+    </div>
+    <div class="stat" style="font-size:11px;line-height:2;margin-top:4px">
+      <select id="svlist" style="width:155px"></select>
+      <button onclick="loadRoute()" style="background:#2a5;color:#021;font-weight:700">📥 读取</button>
+      <button onclick="delRoute()">🗑</button>
+    </div>
+    <div id="svInfo" style="font-size:10.5px;color:#789;background:#0a1422;
+      border-left:3px solid #14263e;padding:5px 8px;margin-top:5px;display:none;
+      line-height:1.6;font-family:var(--font-mono);font-feature-settings:'tnum'"></div>
+
+    <h2>操作</h2>
+    <button class="stop" onclick="stopCar()">■ 急停 STOP　(空格 / Esc 也行)</button>
+    <button onclick="reset24()">↺ 还原 24 段</button>
+    <button onclick="fitNow()">⤢ 适应窗口</button>
+    <button onclick="addPoint()">＋ 加点</button>
+    <button onclick="delPoint()">－ 删点</button>
+    <button class="go" onclick="apply()">⇧ 应用选中段到车</button>
+    <button class="go" onclick="cmd('MB')">▶ 跑</button>
+    <button onclick="cmd('RST')">⟲ MPU复位</button>
+    <div class="hint" id="msg">&nbsp;</div>
+  </div>
+</div>
+
+<script src="sim_core.js"></script>
+<script>
+var SIM = window.SIM;
+// main.py MAPB_LAP 24 段
+var DEFAULT = [[-0.0,555],[-0.0,559],[-0.0,554],[-84.6,803],[-5.4,560],[-15.5,560],
+ [-74.5,409],[0.0,555],[0.0,555],[0.0,229],[-90.5,390],[68.1,811],[22.5,555],[0.0,554],
+ [9.2,405],[80.8,685],[-90.0,710],[0.0,554],[-90.0,840],[0.0,560],[-5.7,803],
+ [-79.1,557],[0.0,562],[-3.9,2480]];
+var H0 = 25, P0 = [-4.60, 1.50];
+var POINTS = [];          // 25 个点(可拖)
+var SEL = [];             // 24 个段的勾选状态
+
+var cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+var X0=-8.7, Y1=5.6, S=73;
+function w2s(x,y){return [cv.width-(x-X0)*S,(Y1-y)*S];}   // X 镜像: 世界 +X = 屏幕 LEFT (跟 ref_points 一致)
+// 视觉旋转: 以 WP8 为枢轴, 整张地图逆时针转 ROT_DEG 度 (只改显示, 不改数据)
+var ROT_DEG=30, rotRad=ROT_DEG*Math.PI/180, rotCa=Math.cos(rotRad), rotSa=Math.sin(rotRad);
+function pivotWorld(){return POINTS[8]||POINTS[Math.floor(POINTS.length/2)]||[0,0];}
+function pivotScr(){var p=pivotWorld(); return [cv.width-(p[0]-X0)*S,(Y1-p[1])*S];}
+function unrotateScr(qx,qy){                       // 屏幕坐标 -> 反旋转回到 w2s 之前的屏幕系
+  var pv=pivotScr(), dx=qx-pv[0], dy=qy-pv[1];
+  return [pv[0]+dx*rotCa-dy*rotSa, pv[1]+dx*rotSa+dy*rotCa];
+}
+// 自动缩放: 把所有点位刚好框进画布(留边距)
+function fitView(){
+  if(!POINTS.length) return;
+  // 计算"旋转后的屏幕相对枢轴 bbox" (单位 S, 米为单位), 让旋转后的路线刚好放进画布
+  var piv=pivotWorld();
+  var mnx=1e9,mxx=-1e9,mny=1e9,mxy=-1e9;
+  for(var i=0;i<POINTS.length;i++){
+    var rx0=-(POINTS[i][0]-piv[0]), ry0=-(POINTS[i][1]-piv[1]);   // X镜像+Y翻 -> 屏幕坐标系下相对枢轴
+    var rx=rx0*rotCa+ry0*rotSa, ry=-rx0*rotSa+ry0*rotCa;          // 视觉旋转
+    if(rx<mnx)mnx=rx; if(rx>mxx)mxx=rx;
+    if(ry<mny)mny=ry; if(ry>mxy)mxy=ry;
+  }
+  var mg=1.2;                          // 世界边距(米)
+  mnx-=mg;mxx+=mg;mny-=mg;mxy+=mg;
+  var ww=mxx-mnx, wh=mxy-mny;
+  S=Math.min(cv.width/ww, cv.height/wh);
+  var leftPad=(cv.width-ww*S)/2, topPad=(cv.height-wh*S)/2;
+  X0=piv[0]-(cv.width-(leftPad-mnx*S))/S;
+  Y1=piv[1]+(topPad-mny*S)/S;
+}
+function norm(a){while(a>180)a-=360;while(a<-180)a+=360;return a;}
+function speed(){return parseFloat(document.getElementById('vv').value)||1.95;}
+
+// 24 段 -> 25 个点
+function derivePoints(){
+  var v=speed(), h=H0, pts=[P0.slice()];
+  for(var i=0;i<DEFAULT.length;i++){
+    h+=DEFAULT[i][0];
+    var d=DEFAULT[i][1]/1000*v, last=pts[pts.length-1];
+    pts.push([last[0]+d*Math.cos(h*Math.PI/180), last[1]+d*Math.sin(h*Math.PI/180)]);
+  }
+  POINTS=pts;
+  SEL=[]; for(var i=0;i<DEFAULT.length;i++) SEL.push(true);
+}
+
+// 25 个点 -> 24 段 (delta, dur)
+function computeSegs(){
+  var v=speed(), segs=[], prevH=null;
+  for(var i=0;i<POINTS.length-1;i++){
+    var dx=POINTS[i+1][0]-POINTS[i][0], dy=POINTS[i+1][1]-POINTS[i][1];
+    var len=Math.hypot(dx,dy), hd=Math.atan2(dy,dx)*180/Math.PI;
+    var delta = (i===0) ? 0 : norm(hd-prevH);
+    segs.push({d:+delta.toFixed(1), t:Math.round(len/v*1000)});
+    prevH=hd;
+  }
+  return segs;
+}
+
+function drawPoly(poly,color){
+  ctx.strokeStyle=color;ctx.lineWidth=2;
+  for(var i=0;i<poly.length-1;i++){
+    var a=poly[i],b=poly[i+1];
+    if(Math.hypot(b[0]-a[0],b[1]-a[1])>=4.2) continue;
+    var p=w2s(a[0],a[1]),q=w2s(b[0],b[1]);
+    ctx.beginPath();ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);ctx.stroke();
+  }
+}
+
+function render(){
+  var segs=computeSegs();
+  ctx.clearRect(0,0,cv.width,cv.height);
+  var pv=pivotScr();                              // WP8 旋转前屏幕位置 (枢轴)
+  ctx.save();
+  ctx.translate(pv[0],pv[1]); ctx.rotate(-rotRad); ctx.translate(-pv[0],-pv[1]);
+  ctx.strokeStyle='#10203a';ctx.lineWidth=1;
+  var vx0=X0, vx1=X0+cv.width/S, vy0=Y1-cv.height/S, vy1=Y1;
+  for(var gx=Math.ceil(vx0);gx<=Math.floor(vx1);gx++){
+    var a=w2s(gx,vy0),b=w2s(gx,vy1);
+    ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();}
+  for(var gy=Math.ceil(vy0);gy<=Math.floor(vy1);gy++){
+    var a=w2s(vx0,gy),b=w2s(vx1,gy);
+    ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();}
+  // 仿真 3 圈 (第1圈粉, 第2圈青, 第3圈黄) —— 每圈从上一圈结束位置开始
+  var sh=Math.atan2(POINTS[1][1]-POINTS[0][1],POINTS[1][0]-POINTS[0][0])*180/Math.PI;
+  var segDur=segs.map(function(s){return {delta:s.d,dur:s.t};});
+  var lapColors=['#f0a','#0fc','#fc4'], lapWidths=[2.8,2.4,2.0];
+  var startPos=POINTS[0].slice(), startH=sh;
+  for(var lap=0;lap<3;lap++){
+    var res=SIM.simulate(startPos,startH,segDur);
+    var tr=res.traj;
+    ctx.strokeStyle=lapColors[lap]; ctx.lineWidth=lapWidths[lap]; ctx.beginPath();
+    var pen=false;
+    for(var i=0;i<tr.length;i++){
+      var sg=tr[i].seg, on=(sg===undefined)||SEL[sg];
+      var s=w2s(tr[i].x,tr[i].y);
+      if(on){ if(pen)ctx.lineTo(s[0],s[1]); else{ctx.moveTo(s[0],s[1]);pen=true;} }
+      else pen=false;
+    }
+    ctx.stroke();
+    var last=tr[tr.length-1];
+    startPos=[last.x,last.y]; startH=last.h;
+  }
+
+  // 拖点折线 (画在旋转坐标系内, 跟着地图一起转)
+  ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.beginPath();
+  for(var i=0;i<POINTS.length;i++){var s=w2s(POINTS[i][0],POINTS[i][1]);
+    i?ctx.lineTo(s[0],s[1]):ctx.moveTo(s[0],s[1]);}
+  ctx.stroke();
+  ctx.restore();                                  // 旋转结束
+
+  // WP 圆 + 编号 (在未旋转坐标系画, 让数字保持正向 / 任何角度下都竖直)
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.font='800 17px -apple-system,"Segoe UI Variable","Segoe UI",system-ui,sans-serif';
+  for(var i=0;i<POINTS.length;i++){
+    var s=w2s(POINTS[i][0],POINTS[i][1]);
+    var dx=s[0]-pv[0], dy=s[1]-pv[1];
+    var qx=pv[0]+dx*rotCa+dy*rotSa, qy=pv[1]-dx*rotSa+dy*rotCa;    // 应用旋转得到最终屏幕位置
+    var pr=(i===0)?18:16;
+    ctx.beginPath();ctx.arc(qx,qy,pr,0,6.28);
+    ctx.fillStyle=(i===0)?'#0bf':'#ff3';ctx.fill();
+    ctx.strokeStyle='#fff';ctx.lineWidth=2.5;ctx.stroke();
+    ctx.fillStyle='#000';
+    ctx.fillText(i,qx,qy+0.5);
+  }
+  // 段表(带勾选框)
+  var hh='';
+  for(var i=0;i<segs.length;i++){
+    var d=segs[i].d, ty=Math.abs(d)<2?'直':d<0?'左':'右', cl=Math.abs(d)<2?'S':d<0?'L':'R';
+    hh+='<div class="segrow">'
+      +'<input type="checkbox" '+(SEL[i]?'checked':'')
+      +' onchange="SEL['+i+']=this.checked;render()">'
+      +'<span class="n">'+(i+1)+'</span>'
+      +'<span class="a">'+d+'°</span><span class="t">'+segs[i].t+'ms</span>'
+      +'<span class="'+cl+'">'+ty+'</span></div>';
+  }
+  document.getElementById('seglist').innerHTML=hh;
+
+  // 选中的段
+  var sel=[]; for(var i=0;i<segs.length;i++) if(SEL[i]) sel.push(segs[i]);
+  var tot=0; sel.forEach(function(s){tot+=s.t;});
+  document.getElementById('stat').innerHTML=
+    '选中 <b>'+sel.length+' / '+segs.length+'</b> 段 &nbsp; 时长 <b>'+(tot/1000).toFixed(1)+'s</b>';
+  document.getElementById('setlap').textContent='d='+
+    sel.map(function(s){return s.d+','+s.t;}).join(';');
+  window._segs=sel;
+  autoSave();
+}
+
+function selAll(v){ for(var i=0;i<SEL.length;i++) SEL[i]=v; render(); }
+function selPrefix(){
+  var n=parseInt(document.getElementById('seln').value)||0;
+  for(var i=0;i<SEL.length;i++) SEL[i]=(i<n);
+  render();
+}
+function reset24(){ derivePoints(); fitView(); render(); }
+function fitNow(){ fitView(); render(); }
+function setRot(deg){               // 旋转滑块: 拖动微调显示角度 (不改数据/不改发车指令)
+  ROT_DEG=parseFloat(deg)||0;
+  rotRad=ROT_DEG*Math.PI/180; rotCa=Math.cos(rotRad); rotSa=Math.sin(rotRad);
+  document.getElementById('rotv').textContent=ROT_DEG.toFixed(0)+'°';
+  render();
+}
+function addPoint(){          // 接在末尾, 编号顺延 (不打乱已有点)
+  var n=POINTS.length, a=POINTS[n-2], b=POINTS[n-1];
+  var dx=b[0]-a[0], dy=b[1]-a[1], L=Math.hypot(dx,dy)||1;
+  var ext=Math.min(L,1.0);                       // 沿最后一段方向延伸
+  POINTS.push([b[0]+dx/L*ext, b[1]+dy/L*ext]);
+  SEL.push(true);
+  render();
+  msg('已加 WP'+(POINTS.length-1)+' (接在末尾) · 共 '+POINTS.length+' 点',1);
+}
+function delPoint(){          // 删末尾的点 (不打乱已有点编号)
+  if(POINTS.length<=4){msg('点不能再少了',0);return;}
+  POINTS.pop(); SEL.pop();
+  render();
+  msg('已删末尾 WP · 共 '+POINTS.length+' 点',1);
+}
+function msg(t,ok){var m=document.getElementById('msg');m.textContent=t;m.style.color=ok?'#3f8':'#f88';}
+function apply(){
+  if(!window._segs.length){msg('没勾选任何段',0);return;}
+  var ip=document.getElementById('ip').value;
+  var d=window._segs.map(function(s){return s.d+','+s.t;}).join(';');
+  fetch('http://'+ip+'/set_lap?d='+d,{mode:'no-cors'})
+    .then(function(){msg('已发送 set_lap('+window._segs.length+'段) 到车',1);})
+    .catch(function(){msg('发送失败 — 检查 IP / 车在线',0);});
+}
+function cmd(x){
+  var ip=document.getElementById('ip').value;
+  fetch('http://'+ip+'/c?x='+x,{mode:'no-cors'})
+    .then(function(){msg('已发送 '+x,1);}).catch(function(){msg('发送失败',0);});
+}
+function stopCar(){            // 急停: /c?x=S 连发 5 次, 防丢包
+  var ip=document.getElementById('ip').value;
+  for(var k=0;k<5;k++)(function(k){
+    setTimeout(function(){
+      fetch('http://'+ip+'/c?x=S',{mode:'no-cors'}).catch(function(){});
+    },k*70);
+  })(k);
+  msg('■ 急停指令已连发 ×5',1);
+}
+window.addEventListener('keydown',function(e){
+  if(e.code==='Space'||e.code==='Escape'){e.preventDefault();stopCar();}
+});
+document.getElementById('vv').oninput=render;
+
+// 连接状态 + 实时电压 (CORS, 读 JSON body)
+// 电池: 1S Li-Po 1000mAh, 满 4.2V, 空 3.0V (但用户基本不放到 3V)
+var BATT_CAP_MAH = 1000;  // 你的电池实际容量
+
+function setConn(s){
+  var e=document.getElementById('conn');
+  e.textContent=s?'● 在线':'● 离线';
+  e.style.color=s?'#3f8':'#f55';
+  document.getElementById('battPn').style.display = s ? 'block' : 'none';
+}
+function ping(){
+  var ip=document.getElementById('ip').value;
+  var ac=new AbortController(), done=false;
+  var to=setTimeout(function(){if(!done){done=true;ac.abort();setConn(0);}},2500);
+  fetch('http://'+ip+'/tm',{mode:'cors',signal:ac.signal})
+    .then(function(r){return r.json();})
+    .then(function(j){
+      if(done) return; done=true; clearTimeout(to); setConn(1);
+      updateBatt(j);
+    })
+    .catch(function(){if(!done){done=true;clearTimeout(to);setConn(0);}});
+}
+
+// Battery EMA 平滑
+var _baEma = 0;
+
+function updateBatt(j){
+  if(j.bv === undefined || !j.ina_ok){
+    document.getElementById('bV').textContent='—';
+    document.getElementById('bPct').textContent='-';
+    document.getElementById('bMode').innerHTML='INA219 未就绪';
+    return;
+  }
+  var bv = j.bv, ba = j.ba||0, bw = j.bw||0;
+  var vn = j.v_nominal || 4.20;
+  // 1S Li-Po SOC (你的电池: 满 4.20V, 标称 3.7V, 保护切断 3.30V)
+  // 分段线性: 4.20-3.85=上半 50-100%, 3.85-3.30=下半 0-50%
+  // (Li-Po 电压曲线非线性, 上半段 voltage 跌得快; 这个映射符合工程经验)
+  var pct;
+  if(bv >= 3.85) pct = 50 + (bv-3.85)/(4.20-3.85)*50;
+  else pct = (bv-3.30)/(3.85-3.30)*50;
+  pct = Math.max(0, Math.min(100, pct));
+  // 临界 (<3.4V) crit, 30% warn
+  var cls = bv < 3.40 ? 'crit' : (pct < 30 ? 'warn' : '');
+  if(bv < 3.35) {
+    // 极度接近保护切断, 闪红警告
+    if(!window._battWarned) { msg('⚠️ 电池 '+bv.toFixed(2)+'V 接近 3.3V 保护! 立刻停车换电池!', 0); window._battWarned = true; setTimeout(function(){window._battWarned=false;}, 30000); }
+  }
+  // 平滑电流
+  _baEma = _baEma*0.85 + Math.abs(ba)*0.15;
+  // 剩余时间 (mAh / mA * 60 = min)
+  var remainMah = pct/100 * BATT_CAP_MAH;
+  var cur = Math.max(0.05, _baEma);
+  var minLeft = remainMah / (cur*1000) * 60;
+  var timeStr;
+  if(minLeft > 60) timeStr = (minLeft/60).toFixed(1)+'h';
+  else if(minLeft > 1) timeStr = minLeft.toFixed(0)+' 分';
+  else timeStr = (minLeft*60).toFixed(0)+' 秒';
+
+  document.getElementById('bPct').textContent = pct.toFixed(0)+'%';
+  document.getElementById('bPct').className = 'pct '+cls;
+  document.getElementById('bBar').style.width = pct+'%';
+  document.getElementById('bBar').className = 'fill '+cls;
+  document.getElementById('bV').textContent = bv.toFixed(3);
+  document.getElementById('bMode').innerHTML = '1S Li-Po · 剩 '+timeStr;
+  document.getElementById('bA').textContent = ba.toFixed(3);
+  document.getElementById('bW').textContent = bw.toFixed(2);
+  // boost
+  var boost = j.comp_boost || 1.0;
+  document.getElementById('bBoost').textContent = '×'+boost.toFixed(3);
+  document.getElementById('bBoost').className = 'boost '+(boost > 1.01 ? 'up' : '');
+  // V_NOMINAL + slider 同步 (用户没在拖时才同步)
+  var vnomEl = document.getElementById('vnomI');
+  if(document.activeElement !== vnomEl) vnomEl.value = vn.toFixed(2);
+  var slider = document.getElementById('bSlider');
+  if(slider && document.activeElement !== slider && !slider.matches(':active')){
+    // 计算服务器侧真实 boost = vn / bv
+    var realBoost = bv > 1 ? vn / bv : 1.0;
+    if(realBoost >= 1.0 && realBoost <= 1.6){
+      slider.value = realBoost.toFixed(2);
+      document.getElementById('bSlideVal').textContent = '×'+realBoost.toFixed(2);
+      document.getElementById('bSlideVnom').textContent = vn.toFixed(2);
+    }
+  }
+  document.getElementById('compOn').textContent = j.comp_on ? '✅ON' : '❌OFF';
+  document.getElementById('compOn').style.color = j.comp_on ? '#3f8' : '#f66';
+}
+
+// 写 V_NOMINAL
+function setVnom(){
+  var v = parseFloat(document.getElementById('vnomI').value);
+  if(isNaN(v) || v < 2 || v > 20){ msg('V_NOMINAL 2-20V', 0); return; }
+  var ip = document.getElementById('ip').value;
+  fetch('http://'+ip+'/set_nominal_v?v='+v.toFixed(2), {mode:'cors'})
+    .then(function(r){return r.json();})
+    .then(function(j){
+      msg('V_NOMINAL → '+j.v_nominal.toFixed(2)+'V (bv='+j.batt_v.toFixed(2)+'V)', 1);
+      ping();
+    })
+    .catch(function(){msg('设置失败', 0);});
+}
+
+// Boost slider 拖动 = 改 V_NOMINAL = 改 boost
+// V_NOMINAL = boost_target × batt_v
+var _bSlideTimer = null;
+var _bSlideLastWrite = 0;
+
+function onBoostSlide(val){
+  // 实时更新 UI (不发请求)
+  var boost = parseFloat(val);
+  document.getElementById('bSlideVal').textContent = '×' + boost.toFixed(2);
+  // 计算所需 V_NOMINAL (用最新电压)
+  var bvText = document.getElementById('bV').textContent;
+  var bv = parseFloat(bvText);
+  if(isNaN(bv) || bv < 1) return;
+  var vn = boost * bv;
+  document.getElementById('bSlideVnom').textContent = vn.toFixed(2);
+  document.getElementById('vnomI').value = vn.toFixed(2);
+  // 节流写入: 拖动 100ms 没新事件才提交
+  if(_bSlideTimer) clearTimeout(_bSlideTimer);
+  _bSlideTimer = setTimeout(function(){ writeVnomDirect(vn); }, 100);
+}
+
+function onBoostCommit(val){
+  // 松手立刻确保写一次
+  if(_bSlideTimer) { clearTimeout(_bSlideTimer); _bSlideTimer = null; }
+  var boost = parseFloat(val);
+  var bv = parseFloat(document.getElementById('bV').textContent);
+  if(isNaN(bv) || bv < 1) return;
+  writeVnomDirect(boost * bv);
+}
+
+function writeVnomDirect(vn){
+  if(vn < 2 || vn > 20) return;
+  // 频率限制 (避免过快推 ESP32)
+  var now = Date.now();
+  if(now - _bSlideLastWrite < 80) return;
+  _bSlideLastWrite = now;
+  var ip = document.getElementById('ip').value;
+  fetch('http://'+ip+'/set_nominal_v?v='+vn.toFixed(2), {mode:'cors'})
+    .catch(function(){});
+}
+
+// 切换补偿开关
+function toggleComp(){
+  var ip = document.getElementById('ip').value;
+  fetch('http://'+ip+'/comp', {mode:'cors'})
+    .then(function(r){return r.json();})
+    .then(function(j){
+      return fetch('http://'+ip+'/comp?on='+(j.enabled?0:1), {mode:'cors'});
+    })
+    .then(function(r){return r.json();})
+    .then(function(j){
+      msg('补偿 '+(j.enabled?'✅启用':'❌关闭'), 1);
+      ping();
+    })
+    .catch(function(){msg('切换失败', 0);});
+}
+
+setInterval(ping, 1500); ping();
+
+// === 完整配方存档 (localStorage, v2 schema) ===
+var LS_SAVES='lapedit_saves', LS_WIP='lapedit_wip';
+function getSaves(){try{return JSON.parse(localStorage.getItem(LS_SAVES))||{};}catch(e){return{};}}
+
+// 收集"配方": 路径 + 段选 + 车速 + 补偿状态 + 电池快照
+function curRoute(){
+  var r = {
+    version: 2,
+    points: POINTS,
+    speed: speed(),
+    sel: SEL,
+    saved_at: new Date().toLocaleString('zh-CN', {hour12:false}),
+    note: (document.getElementById('svnote').value || '').slice(0, 80),
+    // 当前补偿配置
+    v_nominal: parseFloat(document.getElementById('vnomI').value) || 4.20,
+    // 电池快照(调试时的状态)
+    batt_at_save: {
+      bv:  parseFloat(document.getElementById('bV').textContent) || 0,
+      pct: parseInt(document.getElementById('bPct').textContent) || 0,
+      boost: parseFloat((document.getElementById('bBoost').textContent || '').replace('×',''))|| 1.0,
+      comp_on: (document.getElementById('compOn').textContent||'').indexOf('ON') >= 0
+    }
+  };
+  return r;
+}
+// 读 → 应用完整配方 (路径+补偿+电池信息显示)
+function applyRoute(r){
+  // === Step 1: 路径 + 速度 + 段选 (老逻辑保留) ===
+  POINTS=r.points.map(function(p){return [p[0],p[1]];});
+  if(r.speed)document.getElementById('vv').value=r.speed;
+  if(r.sel&&r.sel.length===POINTS.length-1){SEL=r.sel.slice();}
+  else{SEL=[];for(var i=0;i<POINTS.length-1;i++)SEL.push(true);}
+  fitView(); render();
+  // === Step 2: V_NOMINAL + 补偿开关 (v2 配方,自动推到 ESP32) ===
+  if(r.version >= 2){
+    var ip = document.getElementById('ip').value;
+    if(r.v_nominal){
+      document.getElementById('vnomI').value = r.v_nominal.toFixed(2);
+      fetch('http://'+ip+'/set_nominal_v?v='+r.v_nominal.toFixed(2), {mode:'cors'})
+        .then(function(){ msg('🔋 V_NOMINAL → '+r.v_nominal.toFixed(2)+'V 已推送', 1); })
+        .catch(function(){ msg('V_NOMINAL 推送失败 (车在线吗?)', 0); });
+    }
+    if(r.batt_at_save && r.batt_at_save.comp_on !== undefined){
+      var compFlag = r.batt_at_save.comp_on ? 1 : 0;
+      fetch('http://'+ip+'/comp?on='+compFlag, {mode:'cors'}).catch(function(){});
+    }
+    // === Step 3: 显示配方元信息 (调试时的电池状态 + 备注) ===
+    var info = document.getElementById('svInfo');
+    var b = r.batt_at_save || {};
+    info.style.display='block';
+    info.innerHTML =
+      '<b style="color:#0bf">已加载配方</b>: ' + (r.note || '(无备注)') + '<br>' +
+      '保存时间: ' + (r.saved_at || '?') + '<br>' +
+      '调试电池: <b style="color:#ff3">' + (b.bv||0).toFixed(2) + 'V (' + (b.pct||0) + '%)</b> · ' +
+      'boost <b style="color:#fa3">×' + (b.boost||1).toFixed(3) + '</b> · ' +
+      '补偿: ' + (b.comp_on ? '✅ON' : '❌OFF') + '<br>' +
+      '<span style="color:#566">→ V_NOMINAL=' + (r.v_nominal||4.2).toFixed(2) + 'V 已自动应用到车</span>';
+  }
+}
+var _svTimer=null;
+function autoSave(){            // 防抖: 拖动时不狂写 localStorage
+  if(_svTimer)return;
+  _svTimer=setTimeout(function(){_svTimer=null;
+    try{localStorage.setItem(LS_WIP,JSON.stringify(curRoute()));}catch(e){}
+  },400);
+}
+function refreshSaveList(){
+  var s=getSaves(), el=document.getElementById('svlist'), names=Object.keys(s);
+  el.innerHTML='';
+  if(!names.length){el.innerHTML='<option>(无存档)</option>';return;}
+  names.forEach(function(n){
+    var r = s[n] || {};
+    var tag = r.version >= 2 ? ' ⚙' : '';
+    var bv = (r.batt_at_save && r.batt_at_save.bv) ? ' '+r.batt_at_save.bv.toFixed(2)+'V' : '';
+    var o=document.createElement('option');o.value=n;
+    o.textContent=n + tag + bv;
+    el.appendChild(o);
+  });
+}
+function saveRoute(){
+  var n=(document.getElementById('svname').value||'').trim();
+  if(!n){msg('先输入配方名',0);return;}
+  var s=getSaves();
+  var recipe = curRoute();
+  s[n] = recipe;
+  try{localStorage.setItem(LS_SAVES,JSON.stringify(s));}catch(e){msg('保存失败',0);return;}
+  refreshSaveList(); document.getElementById('svlist').value=n;
+  var note = recipe.note ? ' · '+recipe.note : '';
+  msg('💾 配方「'+n+'」已存 (V_NOM='+recipe.v_nominal.toFixed(2)+'V, 调试电池 '+(recipe.batt_at_save.bv||0).toFixed(2)+'V)'+note, 1);
+}
+function loadRoute(){
+  var n=document.getElementById('svlist').value, s=getSaves();
+  if(!s[n]){msg('没选有效存档',0);return;}
+  applyRoute(s[n]); document.getElementById('svname').value=n;
+  msg('已读取「'+n+'」',1);
+}
+function delRoute(){
+  var n=document.getElementById('svlist').value, s=getSaves();
+  if(!s[n]){msg('没选有效存档',0);return;}
+  delete s[n]; localStorage.setItem(LS_SAVES,JSON.stringify(s));
+  refreshSaveList(); msg('已删除「'+n+'」',1);
+}
+
+// 拖点
+var drag=-1;
+function mpos(e){var r=cv.getBoundingClientRect(),k=cv.width/r.width;
+  return [(e.clientX-r.left)*k,(e.clientY-r.top)*k];}
+cv.addEventListener('mousedown',function(e){
+  var raw=mpos(e), m=unrotateScr(raw[0],raw[1]), best=-1, bd=20;   // 反旋转鼠标坐标后再做命中检测
+  for(var i=0;i<POINTS.length;i++){
+    var s=w2s(POINTS[i][0],POINTS[i][1]);
+    var d=Math.hypot(m[0]-s[0],m[1]-s[1]);
+    if(d<bd){bd=d;best=i;}                     // 取最近的圈
+  }
+  drag=best;
+});
+window.addEventListener('mousemove',function(e){
+  if(drag<0)return;
+  var raw=mpos(e), m=unrotateScr(raw[0],raw[1]);          // 先反旋转
+  var nx=X0+(cv.width-m[0])/S, ny=Y1-m[1]/S;             // 再做 X 镜像的逆变换
+  if(drag===0){
+    var dx=nx-POINTS[0][0], dy=ny-POINTS[0][1];
+    for(var i=0;i<POINTS.length;i++){POINTS[i][0]+=dx;POINTS[i][1]+=dy;}
+  } else { POINTS[drag]=[nx,ny]; }
+  render();
+});
+window.addEventListener('mouseup',function(){drag=-1;});
+
+// 启动: 有上次的 WIP 就恢复, 否则用 DEFAULT 24 段
+(function(){
+  var wip=null;
+  try{wip=JSON.parse(localStorage.getItem(LS_WIP));}catch(e){}
+  if(wip&&wip.points&&wip.points.length>1){ applyRoute(wip); }
+  else { derivePoints(); fitView(); render(); }
+  refreshSaveList();
+})();
+</script>
+</body></html>

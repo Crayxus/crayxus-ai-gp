@@ -1,0 +1,313 @@
+<!DOCTYPE html><html lang="zh"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Crayxus AI·GP 赛道路径编辑器</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,Segoe UI,sans-serif;background:#050810;color:#cfe;padding:10px;
+ background-image:radial-gradient(circle at 50% 0%,#102040 0%,#050810 60%)}
+h1{font-size:18px;letter-spacing:2px;font-weight:300;text-align:center;margin:6px 0 9px}
+h1 b{color:#0bf;font-weight:900;text-shadow:0 0 12px #0bf6}
+.panel{background:linear-gradient(180deg,#0e1828,#0a121e);border:1px solid #1a3050;border-radius:10px;
+ padding:10px;margin:0 auto;max-width:1120px;box-shadow:0 0 20px #0bf2}
+.info{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;font-size:12px;color:#8af;margin-bottom:8px}
+.info span{padding:3px 9px;border:1px solid #1a3050;border-radius:6px;background:#050810}
+.info b{color:#0bf}
+canvas{display:block;margin:0 auto;background:#0a121e;border:1px solid #1a3050;border-radius:6px;
+ box-shadow:0 0 20px #0bf2;max-width:100%;touch-action:none;cursor:crosshair}
+.ctrl{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;align-items:center;margin-top:9px}
+.ctrl label{font-size:12px;color:#8af}
+.ctrl input{background:#050810;border:1px solid #1a3050;color:#cfe;border-radius:5px;
+ padding:5px 7px;font-size:12px;font-family:monospace}
+.ctrl input.ip{width:118px}.ctrl input.spd{width:50px}
+button{border:none;border-radius:6px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer;
+ letter-spacing:.5px}
+button:active{transform:translateY(1px)}
+.b-draw{background:#1a3050;color:#9cf}.b-draw.on{background:linear-gradient(180deg,#fff,#bcd);color:#012}
+.b-apply{background:linear-gradient(180deg,#0bf,#08a);color:#012}
+.b-run{background:linear-gradient(180deg,#fa3,#c70);color:#210}
+.b-clr{background:#3a1a28;color:#f9b}
+.b-reset{background:#1a3050;color:#9cf}
+.b-conn{background:#1a3050;color:#9cf}
+.b-conn.ok{background:linear-gradient(180deg,#0f8,#0a6);color:#012}
+.b-io{background:#13243a;color:#8af;padding:5px 10px;font-weight:400}
+#stat{text-align:center;font-size:12px;margin-top:8px;min-height:16px;color:#789}
+#io{display:block;margin:8px auto 0;width:100%;max-width:680px;height:46px;background:#050810;
+ border:1px solid #1a3050;color:#9cf;border-radius:5px;font-family:monospace;font-size:11px;padding:5px}
+.legend{display:flex;gap:13px;justify-content:center;flex-wrap:wrap;font-size:11px;color:#678;margin-top:8px}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.dot{display:inline-block;width:11px;height:11px;border-radius:50%}
+.bar{display:inline-block;width:16px;height:3px;border-radius:2px}
+</style></head><body>
+
+<h1>CRAYXUS <b>AI·GP</b> · 赛道路径编辑器</h1>
+
+<div class="panel">
+  <div class="info">
+    <span>📏 <b>10.27</b>×<b>4.78</b>m</span>
+    <span id="i-mpu">🔴 MPU 参考 25 点</span>
+    <span id="i-draw">✏️ 已画 <b>0</b> 点</span>
+    <span id="metric">里程 — · 估时 —</span>
+  </div>
+  <canvas id="cv" width="1080" height="560"></canvas>
+  <div class="ctrl">
+    <button class="b-draw" id="draw">✏️ 绘制模式: 关</button>
+    <button class="b-clr"  id="clr">🗑 清空绘制</button>
+    <label><input type="checkbox" id="showmpu" checked> 显示 MPU 参考</label>
+  </div>
+  <div class="ctrl">
+    <button class="b-conn" id="conn">🔗 连接车辆</button>
+    <label>ESP32 IP <input class="ip" id="ip" value="172.20.10.4"></label>
+    <label>速度 <input class="spd" id="spd" value="2.0"> m/s</label>
+    <button class="b-io" id="calib">🧭 标定IMU</button>
+    <button class="b-apply" id="apply">⬆ 应用到车</button>
+    <button class="b-run" id="run">▶ 跑一圈</button>
+    <button class="b-reset" id="reset">↺ MPU复位</button>
+  </div>
+  <div id="stat">开「绘制模式」→ 单击空白逐点画出实际路线 · 双击某点删除该点 · 平时可拖动任意点</div>
+  <textarea id="io" placeholder="导出: 把绘制路线的坐标输出到这里 (复制发我) ｜ 导入: 粘贴坐标后点「导入」"></textarea>
+  <div class="ctrl">
+    <button class="b-io" id="exp">📋 导出绘制坐标</button>
+    <button class="b-io" id="imp">📥 导入坐标到绘制</button>
+  </div>
+  <div class="legend">
+    <span><span class="bar" style="background:#0f8"></span>赛道外边界</span>
+    <span><span class="bar" style="background:#0bf"></span>中央岛</span>
+    <span><span class="bar" style="background:#b44"></span>MPU 参考路径</span>
+    <span><span class="bar" style="background:#fff"></span>你画的实际路线</span>
+    <span><span class="dot" style="background:#0bf"></span>起点</span>
+  </div>
+</div>
+
+<script>
+const OUTER = [[5.654,4.616],[5.565,4.500],[5.509,4.365],[5.490,4.220],[5.490,3.610],[5.473,3.463],[5.425,3.324],[5.346,3.198],[5.242,3.094],[5.116,3.015],[4.977,2.967],[4.830,2.950],[4.220,2.950],[4.073,2.967],[3.934,3.015],[3.809,3.094],[3.704,3.198],[3.625,3.324],[3.577,3.463],[3.560,3.610],[3.560,4.220],[3.541,4.365],[3.485,4.500],[3.396,4.616],[3.280,4.705],[3.145,4.761],[3.000,4.780],[0.560,4.780],[0.415,4.761],[0.280,4.705],[0.164,4.616],[0.075,4.500],[0.019,4.365],[0.000,4.220],[0.000,0.560],[0.019,0.415],[0.075,0.280],[0.164,0.164],[0.280,0.075],[0.415,0.019],[0.560,-0.000],[9.710,-0.000],[9.855,0.019],[9.990,0.075],[10.106,0.164],[10.195,0.280],[10.251,0.415],[10.270,0.560],[10.270,4.220],[10.251,4.365],[10.195,4.500],[10.106,4.616],[9.990,4.705],[9.855,4.761],[9.710,4.780],[6.050,4.780],[5.905,4.761],[5.770,4.705],[5.654,4.616]];
+const INNER = [[7.238,2.544],[7.292,2.690],[7.378,2.819],[7.492,2.924],[7.627,3.000],[7.777,3.042],[7.932,3.048],[8.084,3.018],[8.225,2.953],[8.347,2.857],[8.443,2.735],[8.508,2.594],[8.538,2.442],[8.532,2.287],[8.490,2.137],[8.414,2.002],[8.309,1.888],[8.180,1.802],[8.034,1.748],[7.880,1.730],[2.390,1.730],[2.243,1.747],[2.104,1.795],[1.978,1.874],[1.874,1.978],[1.795,2.104],[1.747,2.243],[1.730,2.390],[1.730,3.660],[1.830,3.660],[1.830,2.390],[1.849,2.245],[1.905,2.110],[1.994,1.994],[2.110,1.905],[2.245,1.849],[2.390,1.830],[6.660,1.830],[6.805,1.849],[6.940,1.905],[7.056,1.994],[7.145,2.110],[7.201,2.245],[7.220,2.390],[7.238,2.544]];
+const MPU0  = [[6.709,0.865],[7.552,0.865],[8.402,0.865],[9.405,1.358],[9.405,2.411],[9.405,3.149],[9.143,3.912],[8.508,3.915],[7.666,3.915],[6.823,3.915],[6.476,3.856],[6.355,3.346],[5.343,2.390],[4.500,2.390],[3.658,2.390],[2.695,3.024],[2.694,3.919],[1.972,4.195],[0.867,3.943],[0.865,2.819],[0.865,2.082],[1.251,0.865],[2.094,0.865],[2.944,0.865],[6.709,0.865]];
+let MPU   = MPU0.map(p => [p[0], p[1]]);   // MPU 参考(可拖)
+let DRAWN = [];                            // 你画的实际路线
+
+const XMAX = 10.27, YMAX = 4.78;
+const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+const SCALE = 92;
+const MX = (cv.width  - XMAX*SCALE) / 2;
+const MY = (cv.height - YMAX*SCALE) / 2;
+function w2s(x, y){ return [ MX + (XMAX - x)*SCALE, MY + y*SCALE ]; }
+function s2w(sx, sy){ return [ XMAX - (sx - MX)/SCALE, (sy - MY)/SCALE ]; }
+
+let drawMode = false, showMPU = true;
+let dragArr = null, dragIdx = -1;          // 正在拖的点
+let downPos = null, moved = false, downOnPt = false;
+
+function poly(pts, close){
+  ctx.beginPath();
+  pts.forEach((p,i) => { const s=w2s(p[0],p[1]); i?ctx.lineTo(s[0],s[1]):ctx.moveTo(s[0],s[1]); });
+  if (close) ctx.closePath();
+}
+function pathLen(a){
+  let L=0; for(let i=0;i<a.length-1;i++){
+    const dx=a[i+1][0]-a[i][0], dy=a[i+1][1]-a[i][1]; L+=Math.sqrt(dx*dx+dy*dy); }
+  return L;
+}
+function active(){ return DRAWN.length>=2 ? DRAWN : MPU; }
+
+function draw(){
+  ctx.clearRect(0,0,cv.width,cv.height);
+  // 网格
+  ctx.strokeStyle='#13243a'; ctx.lineWidth=1;
+  for(let x=0;x<=10;x++){const a=w2s(x,0),b=w2s(x,YMAX);
+    ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();}
+  for(let y=0;y<=4;y++){const a=w2s(0,y),b=w2s(XMAX,y);
+    ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();}
+  // 铺面
+  poly(OUTER,true); ctx.fillStyle='#16202e'; ctx.fill();
+  poly(INNER,true); ctx.fillStyle='#0a121e'; ctx.fill();
+  // 外边界 / 中央岛
+  poly(OUTER,true); ctx.strokeStyle='#0f8'; ctx.lineWidth=3;
+  ctx.shadowColor='#0f8'; ctx.shadowBlur=6; ctx.stroke(); ctx.shadowBlur=0;
+  poly(INNER,true); ctx.strokeStyle='#0bf'; ctx.lineWidth=2.5;
+  ctx.shadowColor='#0bf'; ctx.shadowBlur=6; ctx.stroke(); ctx.shadowBlur=0;
+  // MPU 参考 (暗红, 细)
+  if (showMPU){
+    poly(MPU,true); ctx.strokeStyle='#b44'; ctx.lineWidth=1.6;
+    ctx.setLineDash([5,4]); ctx.stroke(); ctx.setLineDash([]);
+    MPU.forEach((p,i)=>{ const s=w2s(p[0],p[1]);
+      ctx.beginPath(); ctx.arc(s[0],s[1],3.5,0,6.283);
+      ctx.fillStyle='#b44'; ctx.fill(); });
+  }
+  // 你画的实际路线 (白, 粗)
+  if (DRAWN.length>0){
+    if (DRAWN.length>1){
+      poly(DRAWN,false); ctx.strokeStyle='#fff'; ctx.lineWidth=2.8;
+      ctx.shadowColor='#fff'; ctx.shadowBlur=6; ctx.stroke(); ctx.shadowBlur=0;
+    }
+    DRAWN.forEach((p,i)=>{
+      const s=w2s(p[0],p[1]);
+      const act=(dragArr===DRAWN && i===dragIdx);
+      ctx.beginPath(); ctx.arc(s[0],s[1], i===0?10:8, 0,6.283);
+      ctx.fillStyle=i===0?'#0bf':(act?'#ff5':'#fff');
+      ctx.fill(); ctx.strokeStyle='#012'; ctx.lineWidth=1.5; ctx.stroke();
+      ctx.fillStyle=i===0?'#fff':'#012';
+      ctx.font='bold 9px monospace'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(i===0?'S':i, s[0], s[1]);
+      const lbl='('+p[0].toFixed(2)+', '+p[1].toFixed(2)+')';
+      ctx.font='9px monospace'; ctx.textAlign='left'; ctx.textBaseline='bottom';
+      const tw=ctx.measureText(lbl).width;
+      ctx.fillStyle='rgba(5,8,16,0.82)'; ctx.fillRect(s[0]+9,s[1]-18,tw+4,12);
+      ctx.fillStyle='#ff5'; ctx.fillText(lbl, s[0]+11, s[1]-7);
+    });
+  }
+  // 尺寸
+  ctx.fillStyle='#0f8'; ctx.font='11px monospace'; ctx.textAlign='center';
+  const b1=w2s(XMAX/2,YMAX); ctx.fillText('10.27 m', b1[0], b1[1]+20);
+  ctx.save(); const l1=w2s(0,YMAX/2);
+  ctx.translate(l1[0]+16,l1[1]); ctx.rotate(-Math.PI/2);
+  ctx.fillText('4.78 m',0,0); ctx.restore();
+  // 指标
+  const a=active(), L=pathLen(a);
+  const v=parseFloat(document.getElementById('spd').value)||2.0;
+  document.getElementById('metric').textContent=
+    (a===DRAWN?'绘制线 ':'MPU线 ')+'里程 '+L.toFixed(2)+'m · 估时 '+(L/v).toFixed(1)+'s';
+  document.getElementById('i-draw').innerHTML='✏️ 已画 <b>'+DRAWN.length+'</b> 点';
+}
+
+// ===== 命中检测 =====
+function evtPos(e){
+  const r=cv.getBoundingClientRect();
+  return [ (e.clientX-r.left)*cv.width/r.width, (e.clientY-r.top)*cv.height/r.height ];
+}
+function hit(sx,sy){   // 返回 {arr,idx} 或 null
+  let best=null, bd=20*20;
+  DRAWN.forEach((p,i)=>{ const s=w2s(p[0],p[1]); const dd=(s[0]-sx)**2+(s[1]-sy)**2;
+    if(dd<bd){bd=dd; best={arr:DRAWN,idx:i};} });
+  if(!drawMode) MPU.forEach((p,i)=>{ const s=w2s(p[0],p[1]); const dd=(s[0]-sx)**2+(s[1]-sy)**2;
+    if(dd<bd){bd=dd; best={arr:MPU,idx:i};} });
+  return best;
+}
+
+cv.addEventListener('pointerdown', e=>{
+  const [sx,sy]=evtPos(e); downPos=[sx,sy]; moved=false;
+  const h=hit(sx,sy);
+  if(h){ dragArr=h.arr; dragIdx=h.idx; downOnPt=true; cv.setPointerCapture(e.pointerId); }
+  else { dragArr=null; dragIdx=-1; downOnPt=false; }
+  draw();
+});
+cv.addEventListener('pointermove', e=>{
+  const [sx,sy]=evtPos(e);
+  if(downPos && ((sx-downPos[0])**2+(sy-downPos[1])**2)>25) moved=true;
+  if(dragIdx<0) return;
+  const w=s2w(sx,sy);
+  dragArr[dragIdx]=[w[0], w[1]];
+  draw();
+});
+function endTap(){
+  if(!moved && !downOnPt && drawMode && downPos){
+    const w=s2w(downPos[0],downPos[1]);
+    DRAWN.push([w[0], w[1]]);
+    setStat('加点 #'+(DRAWN.length-1)+'  ('+w[0].toFixed(2)+', '+w[1].toFixed(2)+')','#fff');
+  }
+  dragArr=null; dragIdx=-1; downPos=null; draw();
+}
+cv.addEventListener('pointerup', endTap);
+cv.addEventListener('pointercancel', endTap);
+// 双击删点
+cv.addEventListener('dblclick', e=>{
+  if(!drawMode) return;
+  const [sx,sy]=evtPos(e);
+  let best=-1, bd=22*22;
+  DRAWN.forEach((p,i)=>{ const s=w2s(p[0],p[1]); const dd=(s[0]-sx)**2+(s[1]-sy)**2;
+    if(dd<bd){bd=dd; best=i;} });
+  if(best>=0){ DRAWN.splice(best,1); setStat('删除点 #'+best,'#f9b'); draw(); }
+});
+
+// ===== 控件 =====
+function setStat(m,c){ const s=document.getElementById('stat'); s.textContent=m; s.style.color=c||'#789'; }
+function espURL(p){ return 'http://'+document.getElementById('ip').value.trim()+p; }
+
+document.getElementById('draw').onclick=function(){
+  drawMode=!drawMode;
+  this.textContent='✏️ 绘制模式: '+(drawMode?'开':'关');
+  this.classList.toggle('on',drawMode);
+  cv.style.cursor=drawMode?'copy':'crosshair';
+  setStat(drawMode?'绘制模式: 单击空白加点 · 双击点删点 · 拖动点可微调'
+                  :'拖拽模式: 拖动任意点微调','#9cf');
+};
+document.getElementById('clr').onclick=()=>{
+  if(DRAWN.length && !confirm('清空已画的 '+DRAWN.length+' 个点?')) return;
+  DRAWN=[]; setStat('已清空绘制路线','#f9b'); draw();
+};
+document.getElementById('showmpu').onchange=function(){ showMPU=this.checked; draw(); };
+document.getElementById('spd').addEventListener('input',draw);
+
+document.getElementById('conn').onclick=()=>{
+  const btn=document.getElementById('conn');
+  setStat('🔗 连接车辆中…','#fa3');
+  fetch(espURL('/tm')).then(r=>r.json())
+    .then(j=>{
+      btn.classList.add('ok'); btn.textContent='🔗 已连接';
+      setStat('✓ 已连接车辆 '+document.getElementById('ip').value.trim()
+        +' — MPU '+(j.mpu_ok?'OK':'离线')+' · heading='+j.h.toFixed(1)+'°'
+        +(j.running?' · 行驶中':''),'#0f8');
+    })
+    .catch(()=>{
+      btn.classList.remove('ok'); btn.textContent='🔗 连接车辆';
+      setStat('✗ 连不上车辆 '+document.getElementById('ip').value.trim()
+        +' — 检查 IP / 热点 / 车是否开机','#f55');
+    });
+};
+document.getElementById('calib').onclick=()=>{
+  if(!confirm('🧭 标定 IMU 零偏?\n车必须平放静止, 约 12 秒内不要碰车')) return;
+  setStat('🧭 标定中… 车别动 (约 12 秒)','#fa3');
+  fetch(espURL('/calib')).then(r=>r.json())
+    .then(j=>setStat((j.ok?'✓':'⚠')+' IMU 标定完成: 零偏='+j.gz_offset
+      +' · 残余漂移='+j.residual.toFixed(3)+'°/s'+(j.ok?' (合格)':' (偏大,建议重标)'),
+      j.ok?'#0f8':'#fa3'))
+    .catch(()=>setStat('✗ 标定失败 — 连不上 ESP32','#f55'));
+};
+document.getElementById('apply').onclick=()=>{
+  const a=active();
+  if(a.length<2){ setStat('✗ 路径点不足 2 个','#f55'); return; }
+  const v=parseFloat(document.getElementById('spd').value)||2.0;
+  // (x,y) -> (转向角°, 时长ms) 换算 (同 main.py), 发 /set_lap 直接写 MAPB_LAP
+  let segs=[], prevH=0;
+  for(let i=0;i<a.length-1;i++){
+    const dx=a[i+1][0]-a[i][0], dy=a[i+1][1]-a[i][1];
+    const dist=Math.sqrt(dx*dx+dy*dy);
+    let th=Math.atan2(dy,dx)*180/Math.PI;
+    let d=th-prevH;
+    while(d>180)d-=360; while(d<-180)d+=360;
+    segs.push(d.toFixed(1)+','+Math.round(dist/v*1000));
+    prevH=th;
+  }
+  setStat('⬆ 下发'+(a===DRAWN?'绘制路线':'MPU路线')+' '+segs.length+' 段…','#fa3');
+  fetch(espURL('/set_lap?d='+encodeURIComponent(segs.join(';'))))
+    .then(r=>r.json())
+    .then(j=>setStat('✓ 已下发 ESP32: '+j.n+' 段 / '+(j.t/1000).toFixed(1)+'s'
+                     +' — 点「跑一圈」执行 (重启车恢复出厂路线)','#0f8'))
+    .catch(()=>setStat('✗ 连不上 ESP32 — 检查 IP / 热点','#f55'));
+};
+document.getElementById('run').onclick=()=>{
+  if(!confirm('▶ 让车按当前已下发路径跑一圈?')) return;
+  setStat('▶ 启动…','#fa3');
+  fetch(espURL('/c?x=MB')).then(r=>r.json())
+    .then(()=>setStat('▶ 已发出跑圈指令','#fa3'))
+    .catch(()=>setStat('✗ 连不上 ESP32','#f55'));
+};
+document.getElementById('reset').onclick=()=>{
+  MPU=MPU0.map(p=>[p[0],p[1]]); setStat('↺ MPU 参考已复位','#9cf'); draw();
+};
+document.getElementById('exp').onclick=()=>{
+  if(!DRAWN.length){ setStat('还没画点','#f55'); return; }
+  document.getElementById('io').value=JSON.stringify(DRAWN.map(p=>[+p[0].toFixed(2),+p[1].toFixed(2)]));
+  setStat('✓ 坐标已导出到下方框 — 全选复制发我','#0f8');
+};
+document.getElementById('imp').onclick=()=>{
+  try{
+    const arr=JSON.parse(document.getElementById('io').value.trim());
+    if(!Array.isArray(arr)||!arr.length) throw 0;
+    DRAWN=arr.map(p=>[+p[0], +p[1]]);
+    setStat('✓ 已导入 '+DRAWN.length+' 点到绘制路线','#0f8'); draw();
+  }catch(e){ setStat('✗ 导入失败 — 需要 [[x,y],...] 格式','#f55'); }
+};
+
+draw();
+</script>
+</body></html>

@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ALPHACAR · LIVE HUD · CRAYXUS</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#020409; --bg2:#050810; --panel:#0a1525;
+  --line:#1a3050; --line2:#0f243a;
+  --txt:#e0f0ff; --dim:#7a96b8; --mute:#3a5070;
+  --cyan:#00f0ff; --cyan2:#00d4ff;
+  --orange:#ff7a1a; --orange2:#ffaa45;
+  --green:#00ff9c; --green2:#5dffc7;
+  --red:#ff3060; --warn:#ffcc00;
+  --magenta:#ff2e8a;
+  --grid: rgba(0,212,255,.04);
+}
+html,body{background:var(--bg);color:var(--txt);height:100vh;overflow:hidden;
+  font-family:'Rajdhani',-apple-system,sans-serif;font-weight:500}
+body{display:flex;flex-direction:column;
+  background:
+    radial-gradient(ellipse at 50% 0%,rgba(0,212,255,.04),transparent 60%),
+    radial-gradient(ellipse at 50% 100%,rgba(255,46,138,.03),transparent 60%),
+    linear-gradient(var(--grid) 1px,transparent 1px) 0 0/40px 40px,
+    linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/40px 40px,
+    var(--bg)}
+
+/* CRT 扫描线 (整屏微妙效果) */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:99;
+  background:repeating-linear-gradient(0deg,transparent 0,transparent 2px,rgba(0,255,255,.015) 2px,rgba(0,255,255,.015) 3px)}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:99;
+  background:linear-gradient(rgba(0,0,0,0) 50%,rgba(0,0,0,.05) 50%);background-size:100% 4px}
+
+/* ========== TOP BAR ========== */
+.topbar{background:linear-gradient(180deg,rgba(0,212,255,.05),var(--bg2));
+  border-bottom:1px solid var(--cyan);box-shadow:0 0 20px rgba(0,212,255,.15),inset 0 -1px 0 rgba(0,212,255,.3);
+  padding:8px 18px;display:flex;align-items:center;gap:14px;height:54px;flex-shrink:0;position:relative;z-index:10}
+.brand{font-family:'Orbitron',monospace;font-weight:900;font-size:15px;letter-spacing:4px;
+  background:linear-gradient(135deg,var(--cyan),#fff 50%,var(--cyan));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:0 0 24px rgba(0,212,255,.5);position:relative}
+.brand .a{color:var(--orange);-webkit-text-fill-color:var(--orange);
+  text-shadow:0 0 12px var(--orange)}
+.brand::after{content:'';position:absolute;right:-12px;top:50%;width:6px;height:6px;
+  border-radius:50%;background:var(--cyan);box-shadow:0 0 12px var(--cyan);
+  transform:translateY(-50%);animation:bpulse 1.5s infinite}
+@keyframes bpulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+.topbar input{background:#020409;border:1px solid var(--line);color:var(--cyan);
+  padding:6px 10px;border-radius:0;font-family:'Share Tech Mono',monospace;font-size:12px;width:160px;
+  letter-spacing:1.5px;clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
+.topbar input:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 8px rgba(0,240,255,.4)}
+.btn{background:linear-gradient(135deg,var(--cyan2),var(--cyan));color:#001a26;padding:7px 18px;border:none;
+  font-family:'Orbitron',monospace;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:2px;
+  clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
+  transition:filter .15s}
+.btn:hover{filter:brightness(1.15) drop-shadow(0 0 8px var(--cyan))}
+.btn.estop{background:linear-gradient(135deg,#a8081a,var(--red));color:#fff;
+  font-weight:900;letter-spacing:3px;padding:7px 22px;
+  box-shadow:0 0 16px rgba(255,48,96,.5);animation:estop-pulse 2s infinite}
+@keyframes estop-pulse{0%,100%{box-shadow:0 0 16px rgba(255,48,96,.5)}50%{box-shadow:0 0 24px rgba(255,48,96,.8)}}
+.spacer{flex:1}
+.conn{display:flex;align-items:center;gap:8px;padding:6px 14px;background:#020409;
+  border:1px solid var(--line);font-size:10px;color:var(--dim);letter-spacing:2px;
+  font-family:'Share Tech Mono',monospace;text-transform:uppercase;
+  clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)}
+.conn .dot{width:8px;height:8px;background:var(--mute);transform:rotate(45deg);transition:.2s}
+.conn.ok{color:var(--green);border-color:#1a5a3a}
+.conn.ok .dot{background:var(--green);box-shadow:0 0 10px var(--green)}
+.conn.demo{color:var(--warn);border-color:#5a4a10}
+.conn.demo .dot{background:var(--warn);box-shadow:0 0 10px var(--warn);animation:bpulse 1s infinite}
+.conn.err{color:var(--red);border-color:#5a1a30}
+.conn.err .dot{background:var(--red);box-shadow:0 0 10px var(--red)}
+.fps{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--mute);letter-spacing:1px}
+
+/* ========== MAIN ========== */
+.main{flex:1;display:grid;grid-template-columns:1fr 360px;gap:8px;padding:8px;overflow:hidden}
+.left{display:flex;flex-direction:column;gap:8px;min-height:0}
+.right{display:flex;flex-direction:column;gap:8px;overflow-y:auto}
+.right::-webkit-scrollbar{width:6px}
+.right::-webkit-scrollbar-thumb{background:var(--line)}
+.right::-webkit-scrollbar-track{background:var(--bg)}
+
+/* ========== HUD TILES ========== */
+.tiles{display:grid;grid-template-columns:1.1fr 1.1fr 1.5fr 1fr;gap:8px;flex-shrink:0;height:130px}
+.tile{background:linear-gradient(180deg,var(--panel),#050d18);
+  border:1px solid var(--line);padding:10px 14px;position:relative;overflow:hidden;
+  clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px);
+  transition:border-color .2s}
+.tile.speed{--accent:var(--orange);--accent2:var(--orange2)}
+.tile.head{--accent:var(--cyan);--accent2:var(--cyan2)}
+.tile.batt{--accent:var(--green);--accent2:var(--green2)}
+.tile.stat{--accent:var(--warn);--accent2:#ffe066}
+.tile::before{content:'';position:absolute;top:0;left:14px;right:0;height:2px;background:var(--accent);
+  box-shadow:0 0 16px var(--accent)}
+.tile::after{content:'';position:absolute;top:0;right:0;width:18px;height:18px;
+  background:var(--accent);clip-path:polygon(0 0,100% 0,100% 100%);opacity:.4}
+.tile:hover{border-color:var(--accent)}
+.tile .lbl{font-family:'Orbitron',monospace;font-size:9px;color:var(--accent);
+  text-transform:uppercase;letter-spacing:2.5px;margin-bottom:4px;display:flex;
+  justify-content:space-between;align-items:center;font-weight:700}
+.tile .lbl .badge{font-size:8px;padding:1px 6px;background:rgba(0,212,255,.15);
+  color:var(--cyan);letter-spacing:1.5px;font-weight:700;
+  clip-path:polygon(4px 0,100% 0,100% calc(100% - 4px),calc(100% - 4px) 100%,0 100%,0 4px)}
+
+/* SPEED tile */
+.spd-main{font-family:'Orbitron',monospace;font-size:42px;font-weight:900;
+  color:var(--orange);line-height:1;letter-spacing:-2px;
+  text-shadow:0 0 16px rgba(255,122,26,.5)}
+.spd-unit{font-size:13px;color:var(--dim);margin-left:4px;font-weight:500;font-family:'Rajdhani'}
+.spd-top{margin-top:10px;display:flex;justify-content:space-between;align-items:center;
+  font-family:'Share Tech Mono',monospace;font-size:11px}
+.spd-top .top-lbl{color:var(--mute);letter-spacing:1.5px}
+.spd-top .top-val{color:var(--orange2);font-weight:700;font-size:14px;
+  text-shadow:0 0 8px rgba(255,170,69,.4)}
+
+/* HEADING tile + 圆盘 */
+.head-body{display:flex;gap:10px;align-items:center}
+.head-num{flex:1}
+.head-val{font-family:'Orbitron',monospace;font-size:32px;font-weight:900;color:var(--cyan);
+  line-height:1;letter-spacing:-1px;text-shadow:0 0 14px rgba(0,240,255,.5)}
+.head-unit{font-size:13px;color:var(--dim);margin-left:2px}
+.head-sub{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--mute);
+  margin-top:8px;letter-spacing:1px}
+.compass{width:64px;height:64px;border:2px solid var(--line);border-radius:50%;
+  position:relative;flex-shrink:0;
+  background:radial-gradient(circle,#020409 30%,rgba(0,212,255,.05) 100%);
+  box-shadow:inset 0 0 12px rgba(0,212,255,.1)}
+.compass::before{content:'';position:absolute;inset:6px;border:1px dashed rgba(0,212,255,.25);
+  border-radius:50%}
+.compass .needle{position:absolute;left:50%;top:50%;width:3px;height:24px;
+  background:linear-gradient(180deg,var(--cyan),transparent);
+  transform-origin:bottom center;transform:translate(-50%,-100%);
+  box-shadow:0 0 8px var(--cyan);transition:transform .15s}
+.compass .needle::before{content:'';position:absolute;top:-3px;left:50%;
+  width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;
+  border-bottom:8px solid var(--cyan);transform:translateX(-50%);
+  filter:drop-shadow(0 0 4px var(--cyan))}
+.compass .ctr{position:absolute;left:50%;top:50%;width:6px;height:6px;border-radius:50%;
+  background:var(--cyan);transform:translate(-50%,-50%);box-shadow:0 0 6px var(--cyan)}
+.compass .lbl-n,.compass .lbl-s,.compass .lbl-e,.compass .lbl-w{
+  position:absolute;font-family:'Orbitron',monospace;font-size:8px;color:var(--dim);font-weight:700}
+.compass .lbl-n{top:1px;left:50%;transform:translateX(-50%);color:var(--cyan)}
+.compass .lbl-s{bottom:1px;left:50%;transform:translateX(-50%)}
+.compass .lbl-e{right:2px;top:50%;transform:translateY(-50%)}
+.compass .lbl-w{left:2px;top:50%;transform:translateY(-50%)}
+
+/* BATTERY tile */
+.batt-row{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
+.batt-pct{font-family:'Orbitron',monospace;font-size:36px;font-weight:900;
+  color:var(--green);line-height:1;letter-spacing:-2px;
+  text-shadow:0 0 14px rgba(0,255,156,.5);transition:color .3s}
+.batt-v{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--green2);
+  letter-spacing:1px}
+.batt-cells{display:flex;gap:2px;margin:6px 0 5px;height:8px}
+.batt-cell{flex:1;background:#020409;border:1px solid var(--line);position:relative;overflow:hidden}
+.batt-cell .fill{position:absolute;inset:0;background:linear-gradient(90deg,var(--green2),var(--green));
+  box-shadow:0 0 6px var(--green);transition:transform .5s,background .3s}
+.batt-cell.warn .fill{background:linear-gradient(90deg,#ffd44d,var(--warn));box-shadow:0 0 6px var(--warn)}
+.batt-cell.crit .fill{background:linear-gradient(90deg,#ff8888,var(--red));box-shadow:0 0 8px var(--red);
+  animation:bpulse 1s infinite}
+.batt-time{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--cyan2);
+  font-weight:700;letter-spacing:1px;display:flex;align-items:center;gap:6px;margin-top:4px}
+.batt-iw{font-family:'Share Tech Mono',monospace;font-size:9.5px;color:var(--mute);
+  letter-spacing:.5px;margin-top:2px}
+
+/* STATUS tile */
+.stat-val{font-family:'Orbitron',monospace;font-size:24px;font-weight:900;color:var(--warn);
+  line-height:1;letter-spacing:1px;text-shadow:0 0 12px rgba(255,204,0,.4)}
+.stat-sub{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--mute);
+  margin-top:8px;letter-spacing:1px}
+.stat-lights{display:flex;gap:5px;margin-top:8px}
+.slight{width:8px;height:8px;background:var(--mute);transform:rotate(45deg);transition:.2s}
+.slight.on{background:var(--green);box-shadow:0 0 8px var(--green)}
+.slight.warn{background:var(--warn);box-shadow:0 0 8px var(--warn)}
+.slight.crit{background:var(--red);box-shadow:0 0 8px var(--red);animation:bpulse .8s infinite}
+
+/* ========== MAP ========== */
+.map-pn{background:linear-gradient(180deg,var(--panel),#050d18);
+  border:1px solid var(--line);flex:1;position:relative;overflow:hidden;
+  clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px)}
+.map-pn::before{content:'';position:absolute;top:0;left:14px;right:0;height:2px;background:var(--cyan);
+  box-shadow:0 0 16px var(--cyan)}
+.map-pn canvas{display:block;width:100%;height:100%;position:relative;z-index:1}
+.map-overlay{position:absolute;top:8px;left:18px;font-family:'Orbitron',monospace;
+  font-size:10px;color:var(--cyan);letter-spacing:2.5px;text-transform:uppercase;
+  pointer-events:none;z-index:2;font-weight:700;text-shadow:0 0 8px rgba(0,212,255,.5)}
+.map-overlay .small{color:var(--mute);font-size:9px;font-family:'Share Tech Mono'}
+/* 角靠的 4 个目标括号 */
+.bracket{position:absolute;width:18px;height:18px;border:2px solid var(--cyan);z-index:2;
+  filter:drop-shadow(0 0 4px var(--cyan));pointer-events:none}
+.bracket.tl{top:30px;left:18px;border-right:none;border-bottom:none}
+.bracket.tr{top:30px;right:18px;border-left:none;border-bottom:none}
+.bracket.bl{bottom:18px;left:18px;border-right:none;border-top:none}
+.bracket.br{bottom:18px;right:18px;border-left:none;border-top:none}
+.map-legend{position:absolute;bottom:8px;right:18px;display:flex;flex-direction:column;gap:3px;
+  font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--dim);
+  background:rgba(2,4,9,.85);padding:6px 10px;border:1px solid var(--line2);z-index:2;
+  letter-spacing:1px}
+.legend-row{display:flex;align-items:center;gap:5px}
+.lb{width:8px;height:8px;transform:rotate(45deg)}
+
+/* ========== CHART ========== */
+.chart-pn{background:linear-gradient(180deg,var(--panel),#050d18);
+  border:1px solid var(--line);padding:6px 10px;height:80px;position:relative;flex-shrink:0;
+  clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
+.chart-pn::before{content:'';position:absolute;top:0;left:10px;right:0;height:2px;background:var(--magenta);
+  box-shadow:0 0 12px var(--magenta);opacity:.7}
+.chart-pn canvas{width:100%;height:100%;display:block}
+.chart-pn .lbl{position:absolute;top:5px;left:16px;font-family:'Orbitron',monospace;
+  font-size:9px;color:var(--magenta);letter-spacing:2px;text-transform:uppercase;font-weight:700}
+
+/* ========== SIDE PANELS ========== */
+.pn{background:linear-gradient(180deg,var(--panel),#050d18);
+  border:1px solid var(--line);padding:10px 12px;position:relative;
+  clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
+.pn::before{content:'';position:absolute;top:0;left:10px;right:0;height:1.5px;background:var(--cyan);opacity:.7;
+  box-shadow:0 0 8px var(--cyan)}
+.pn h3{font-family:'Orbitron',monospace;font-size:10px;color:var(--cyan);text-transform:uppercase;
+  letter-spacing:3px;margin-bottom:8px;display:flex;align-items:center;gap:6px;font-weight:700}
+.pn h3::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--cyan),transparent);opacity:.4}
+.kv{display:flex;justify-content:space-between;align-items:center;padding:4px 0;
+  border-bottom:1px dashed rgba(0,212,255,.08);font-family:'Share Tech Mono',monospace;font-size:11.5px}
+.kv:last-child{border:none}
+.kv .k{color:var(--mute);text-transform:uppercase;letter-spacing:1.5px;font-size:9.5px}
+.kv .v{color:var(--cyan2);font-weight:700;letter-spacing:.5px}
+.kv .v.ok{color:var(--green)}
+.kv .v.warn{color:var(--warn)}
+.kv .v.red{color:var(--red)}
+
+/* ========== LOG ========== */
+.log{font-family:'Share Tech Mono',monospace;font-size:10.5px;color:var(--dim);
+  background:#020409;border:1px solid var(--line2);padding:6px 8px;height:110px;
+  overflow-y:auto;line-height:1.6;letter-spacing:.3px}
+.log .l-ok{color:var(--green)}
+.log .l-warn{color:var(--warn)}
+.log .l-err{color:var(--red)}
+.log .l-info{color:var(--cyan2)}
+.log .t{color:var(--mute);margin-right:5px}
+.log::-webkit-scrollbar{width:4px}
+.log::-webkit-scrollbar-thumb{background:var(--line)}
+
+@media(max-width:980px){
+  .main{grid-template-columns:1fr}
+  .tiles{grid-template-columns:repeat(2,1fr);height:auto}
+  .right{max-height:50vh}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== TOP BAR ===== -->
+<div class="topbar">
+  <div class="brand">ALPHACAR <span class="a">α</span> LIVE</div>
+  <input id="ip" placeholder="172.20.10.5" value="172.20.10.5">
+  <button class="btn" onclick="connect()">CONNECT</button>
+  <button class="btn estop" onclick="estop()">■ STOP</button>
+  <div class="spacer"></div>
+  <div class="fps">FPS <span id="fps">0</span> · TICK <span id="tick">0</span></div>
+  <div id="conn" class="conn"><span class="dot"></span><span id="connTxt">STANDBY · DEMO</span></div>
+</div>
+
+<!-- ===== MAIN ===== -->
+<div class="main">
+
+  <div class="left">
+
+    <!-- TILES -->
+    <div class="tiles">
+
+      <!-- SPEED -->
+      <div class="tile speed">
+        <div class="lbl"><span>⚡ VELOCITY</span><span class="badge" id="spdBadge">m/s</span></div>
+        <div>
+          <span class="spd-main" id="spdNow">0.00</span><span class="spd-unit">m/s</span>
+        </div>
+        <div class="spd-top">
+          <span class="top-lbl">▲ TOP</span>
+          <span class="top-val"><span id="spdTop">0.00</span> m/s</span>
+        </div>
+      </div>
+
+      <!-- HEADING -->
+      <div class="tile head">
+        <div class="lbl"><span>🧭 HEADING</span><span class="badge">IMU</span></div>
+        <div class="head-body">
+          <div class="head-num">
+            <div><span class="head-val" id="headNow">0</span><span class="head-unit">°</span></div>
+            <div class="head-sub" id="headSub">GYRO · ICM42688</div>
+          </div>
+          <div class="compass">
+            <div class="lbl-n">N</div><div class="lbl-s">S</div><div class="lbl-e">E</div><div class="lbl-w">W</div>
+            <div class="needle" id="needle"></div>
+            <div class="ctr"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BATTERY -->
+      <div class="tile batt">
+        <div class="lbl"><span>🔋 POWER CORE</span><span class="badge" id="battType">2S</span></div>
+        <div class="batt-row">
+          <span class="batt-pct" id="battPct">—</span>
+          <span class="batt-v" id="battV">— V</span>
+        </div>
+        <div class="batt-cells" id="battCells">
+          <div class="batt-cell"><div class="fill" style="transform:translateX(-100%)"></div></div>
+          <div class="batt-cell"><div class="fill" style="transform:translateX(-100%)"></div></div>
+          <div class="batt-cell"><div class="fill" style="transform:translateX(-100%)"></div></div>
+          <div class="batt-cell"><div class="fill" style="transform:translateX(-100%)"></div></div>
+          <div class="batt-cell"><div class="fill" style="transform:translateX(-100%)"></div></div>
+          <div class="batt-cell"><div class="fill" style="transform:translateX(-100%)"></div></div>
+          <div class="batt-cell"><div class="fill" style="transform:translateX(-100%)"></div></div>
+          <div class="batt-cell"><div class="fill" style="transform:translateX(-100%)"></div></div>
+          <div class="batt-cell"><div class="fill" style="transform:translateX(-100%)"></div></div>
+          <div class="batt-cell"><div class="fill" style="transform:translateX(-100%)"></div></div>
+        </div>
+        <div class="batt-time">⏱ <span id="battTime">— 分钟</span></div>
+        <div class="batt-iw"><span id="battI">— A</span> · <span id="battW">— W</span> · CAP <span id="battCap">5000</span>mAh</div>
+      </div>
+
+      <!-- STATUS -->
+      <div class="tile stat">
+        <div class="lbl"><span>⚙ STATUS</span><span class="badge">SYS</span></div>
+        <div><span class="stat-val" id="statMain">IDLE</span></div>
+        <div class="stat-sub" id="statSub">SYSTEM STANDBY</div>
+        <div class="stat-lights">
+          <div class="slight" id="lMpu" title="MPU"></div>
+          <div class="slight" id="lUwb" title="UWB"></div>
+          <div class="slight" id="lBat" title="BAT"></div>
+          <div class="slight" id="lCon" title="CON"></div>
+          <div class="slight" id="lRun" title="RUN"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAP -->
+    <div class="map-pn">
+      <div class="bracket tl"></div><div class="bracket tr"></div>
+      <div class="bracket bl"></div><div class="bracket br"></div>
+      <div class="map-overlay">▶ LIVE MAP <span class="small">· Map B · 10.27×4.78m · LOCKED</span></div>
+      <canvas id="map"></canvas>
+      <div class="map-legend">
+        <div class="legend-row"><span class="lb" style="background:#00ff9c"></span>OUTER</div>
+        <div class="legend-row"><span class="lb" style="background:#00d4ff"></span>INNER</div>
+        <div class="legend-row"><span class="lb" style="background:#ffeb3b"></span>WP</div>
+        <div class="legend-row"><span class="lb" style="background:#ff7a45"></span>CAR</div>
+        <div class="legend-row"><span class="lb" style="background:#ff2e8a"></span>TRAIL</div>
+      </div>
+    </div>
+
+    <!-- CHART -->
+    <div class="chart-pn">
+      <div class="lbl">▶ HEADING TRACE · 30s ROLLING</div>
+      <canvas id="chart"></canvas>
+    </div>
+
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="right">
+    <div class="pn">
+      <h3>🧭 IMU TELEMETRY</h3>
+      <div class="kv"><span class="k">HEADING</span><span class="v" id="kH">—</span></div>
+      <div class="kv"><span class="k">YAW RATE (°/s)</span><span class="v" id="kGz">—</span></div>
+      <div class="kv"><span class="k">CHIP</span><span class="v ok" id="kMpu">—</span></div>
+      <div class="kv"><span class="k">RUNNING</span><span class="v" id="kRun">—</span></div>
+    </div>
+
+    <div class="pn">
+      <h3>📡 UWB · 3 ANCHORS</h3>
+      <div class="kv"><span class="k">POS (X, Y)</span><span class="v" id="kPos">— , —</span></div>
+      <div class="kv"><span class="k">DIST A0 (m)</span><span class="v" id="kDa0">—</span></div>
+      <div class="kv"><span class="k">DIST A1 (m)</span><span class="v" id="kDa1">—</span></div>
+      <div class="kv"><span class="k">DIST A2 (m)</span><span class="v" id="kDa2">—</span></div>
+      <div class="kv"><span class="k">TAG TS</span><span class="v" id="kTs">—</span></div>
+    </div>
+
+    <div class="pn">
+      <h3>🎯 PURE PURSUIT</h3>
+      <div class="kv"><span class="k">PHASE</span><span class="v" id="kPpPhase">—</span></div>
+      <div class="kv"><span class="k">TARGET WP</span><span class="v" id="kPpWp">—</span></div>
+      <div class="kv"><span class="k">DIST LEFT (m)</span><span class="v" id="kPpD">—</span></div>
+      <div class="kv"><span class="k">STEER Q</span><span class="v" id="kPpQ">—</span></div>
+      <div class="kv"><span class="k">DUTY %</span><span class="v" id="kPpDuty">—</span></div>
+    </div>
+
+    <div class="pn">
+      <h3>📜 SYSTEM LOG</h3>
+      <div class="log" id="log"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* =================================================================
+   ALPHACAR LIVE HUD — Mecha-style real-time dashboard
+   ================================================================= */
+
+// ---- Map B (跟 aigp.html 一致, 10.27×4.78m 真实赛道) ----
+const MAPB_OUTER = [[5.654,4.616],[5.565,4.500],[5.509,4.365],[5.490,4.220],[5.490,3.610],[5.473,3.463],[5.425,3.324],[5.346,3.198],[5.242,3.094],[5.116,3.015],[4.977,2.967],[4.830,2.950],[4.220,2.950],[4.073,2.967],[3.934,3.015],[3.809,3.094],[3.704,3.198],[3.625,3.324],[3.577,3.463],[3.560,3.610],[3.560,4.220],[3.541,4.365],[3.485,4.500],[3.396,4.616],[3.280,4.705],[3.145,4.761],[3.000,4.780],[0.560,4.780],[0.415,4.761],[0.280,4.705],[0.164,4.616],[0.075,4.500],[0.019,4.365],[0.000,4.220],[0.000,0.560],[0.019,0.415],[0.075,0.280],[0.164,0.164],[0.280,0.075],[0.415,0.019],[0.560,-0.000],[9.710,-0.000],[9.855,0.019],[9.990,0.075],[10.106,0.164],[10.195,0.280],[10.251,0.415],[10.270,0.560],[10.270,4.220],[10.251,4.365],[10.195,4.500],[10.106,4.616],[9.990,4.705],[9.855,4.761],[9.710,4.780],[6.050,4.780],[5.905,4.761],[5.770,4.705],[5.654,4.616]];
+const MAPB_INNER = [[7.238,2.544],[7.292,2.690],[7.378,2.819],[7.492,2.924],[7.627,3.000],[7.777,3.042],[7.932,3.048],[8.084,3.018],[8.225,2.953],[8.347,2.857],[8.443,2.735],[8.508,2.594],[8.538,2.442],[8.532,2.287],[8.490,2.137],[8.414,2.002],[8.309,1.888],[8.180,1.802],[8.034,1.748],[7.880,1.730],[2.390,1.730],[2.243,1.747],[2.104,1.795],[1.978,1.874],[1.874,1.978],[1.795,2.104],[1.747,2.243],[1.730,2.390],[1.730,3.660],[1.830,3.660],[1.830,2.390],[1.849,2.245],[1.905,2.110],[1.994,1.994],[2.110,1.905],[2.245,1.849],[2.390,1.830],[6.660,1.830],[6.805,1.849],[6.940,1.905],[7.056,1.994],[7.145,2.110],[7.201,2.245],[7.220,2.390],[7.238,2.544]];
+const MAPB_WPS = [[6.709,0.865],[7.552,0.865],[8.402,0.865],[9.405,1.358],[9.405,2.411],[9.405,3.149],[9.143,3.912],[8.508,3.915],[7.666,3.915],[6.823,3.915],[6.476,3.856],[6.355,3.346],[5.343,2.390],[4.500,2.390],[3.658,2.390],[2.695,3.024],[2.694,3.919],[1.972,4.195],[0.867,3.943],[0.865,2.819],[0.865,2.082],[1.251,0.865],[2.094,0.865],[2.944,0.865]];
+
+// ---- 状态 ----
+const ip = () => document.getElementById('ip').value.trim();
+let connected = false, demoMode = true;
+let lastPos = null, lastHead = 0, lastSpd = 0, topSpeed = 0;
+let posTrail = [];
+let headHistory = [];
+let frameTimes = [];
+let tickCount = 0;
+let logBuf = [];
+
+const cv = document.getElementById('map');
+const ctx = cv.getContext('2d');
+const ch = document.getElementById('chart');
+const chx = ch.getContext('2d');
+
+// localStorage 持久化
+const savedIp = localStorage.getItem('alphacar_ip');
+if (savedIp) document.getElementById('ip').value = savedIp;
+const savedTop = parseFloat(localStorage.getItem('alphacar_topspd') || '0');
+if (savedTop > 0) { topSpeed = savedTop; document.getElementById('spdTop').textContent = topSpeed.toFixed(2); }
+
+// ---- 电池配置 ----
+const BATT_CFG = {
+  capacityMah: parseInt(localStorage.getItem('batt_cap') || '5000'),
+  cellCount: parseInt(localStorage.getItem('batt_cells') || '2'),
+  cellMax: 4.20, cellNom: 3.70, cellMin: 3.30,
+};
+function setBatteryConfig(cells, capacity) {
+  BATT_CFG.cellCount = cells; BATT_CFG.capacityMah = capacity;
+  localStorage.setItem('batt_cells', cells);
+  localStorage.setItem('batt_cap', capacity);
+  document.getElementById('battType').textContent = cells + 'S';
+  document.getElementById('battCap').textContent = capacity;
+  log(`BATTERY CFG: ${cells}S · ${capacity}mAh`, 'l-info');
+}
+window.setBatteryConfig = setBatteryConfig;
+window.resetTopSpeed = () => { topSpeed = 0; localStorage.removeItem('alphacar_topspd'); document.getElementById('spdTop').textContent = '0.00'; log('TOP SPEED RESET', 'l-info'); };
+
+let battAutoDetected = false;
+let battCurrentEma = 0;
+let battSocEma = null;
+
+function log(msg, cls='l-info') {
+  const t = new Date().toLocaleTimeString('zh-CN', {hour12:false});
+  logBuf.unshift(`<span class="t">[${t}]</span><span class="${cls}">${msg}</span>`);
+  if (logBuf.length > 80) logBuf.pop();
+  document.getElementById('log').innerHTML = logBuf.join('<br>');
+}
+
+function setConn(state) {
+  const el = document.getElementById('conn');
+  const txt = document.getElementById('connTxt');
+  el.classList.remove('ok','demo','err');
+  if (state === 'ok') { el.classList.add('ok'); txt.textContent = '● LIVE'; connected = true; demoMode = false; setLight('lCon','on'); }
+  else if (state === 'demo') { el.classList.add('demo'); txt.textContent = 'STANDBY · DEMO'; connected = false; demoMode = true; setLight('lCon','warn'); }
+  else { el.classList.add('err'); txt.textContent = '✘ OFFLINE'; connected = false; demoMode = false; setLight('lCon','crit'); }
+}
+
+function setLight(id, state) {
+  const e = document.getElementById(id);
+  e.className = 'slight' + (state ? ' '+state : '');
+}
+
+function connect() {
+  localStorage.setItem('alphacar_ip', ip());
+  log(`> CONNECT ${ip()} ...`, 'l-info');
+  fetch(`http://${ip()}/tm`, {mode:'cors'})
+    .then(r => r.json())
+    .then(j => { setConn('ok'); log(`✓ LINK ESTABLISHED · MPU=${j.mpu_ok?'OK':'FAIL'}`, 'l-ok'); })
+    .catch(e => { setConn('err'); log(`✘ LINK FAIL: ${e.message}`, 'l-err'); log(`⚠ HTTPS BLOCKS LOCAL HTTP · USE file:// OR http://`, 'l-warn'); });
+}
+
+function estop() {
+  if (!connected) { log('NOT CONNECTED · STOP IGNORED', 'l-warn'); return; }
+  for (let k=0; k<3; k++) setTimeout(() => {
+    fetch(`http://${ip()}/stop`, {mode:'no-cors'}).catch(()=>{});
+  }, k * 50);
+  log('■ EMERGENCY STOP ×3', 'l-err');
+}
+
+// ---- 主轮询 ----
+async function poll() {
+  tickCount++;
+  document.getElementById('tick').textContent = tickCount;
+  if (!connected) { demoTick(); return; }
+  const tasks = [
+    fetch(`http://${ip()}/tm`).then(r=>r.json()).catch(()=>null),
+    fetch(`http://${ip()}/uwb`).then(r=>r.json()).catch(()=>null),
+    fetch(`http://${ip()}/pp_status`).then(r=>r.json()).catch(()=>null)
+  ];
+  const [tm, uwb, pp] = await Promise.all(tasks);
+  if (!tm) { setConn('err'); log('TM LOST', 'l-err'); return; }
+  applyTm(tm); applyUwb(uwb); applyPp(pp);
+  frameTimes.push(Date.now());
+  while (frameTimes.length > 0 && frameTimes[0] < Date.now() - 1000) frameTimes.shift();
+  document.getElementById('fps').textContent = frameTimes.length;
+}
+
+function applyTm(t) {
+  const h = t.h ?? 0;
+  document.getElementById('kH').textContent  = h.toFixed(2) + '°';
+  document.getElementById('kGz').textContent = (t.gz ?? 0).toFixed(2);
+  document.getElementById('kMpu').textContent = t.mpu_ok ? 'ICM42688 OK' : 'FAIL';
+  document.getElementById('kMpu').className = 'v ' + (t.mpu_ok ? 'ok' : 'red');
+  document.getElementById('kRun').textContent = t.running ? 'YES' : 'NO';
+  document.getElementById('kRun').className = 'v ' + (t.running ? 'ok' : '');
+  document.getElementById('headNow').textContent = h.toFixed(0);
+  document.getElementById('headSub').textContent = 'ω=' + (t.gz ?? 0).toFixed(2) + '°/s';
+  document.getElementById('needle').style.transform = `translate(-50%,-100%) rotate(${h}deg)`;
+
+  // STATUS tile
+  if (t.running) {
+    document.getElementById('statMain').textContent = `RUN #${t.step ?? 0}`;
+    document.getElementById('statSub').textContent = 'AUTONOMOUS · LIVE';
+    setLight('lRun','on');
+  } else if (t.recording) {
+    document.getElementById('statMain').textContent = `REC ${t.rec_count}`;
+    document.getElementById('statSub').textContent = 'RECORDING DRIVE';
+    setLight('lRun','warn');
+  } else if (t.replay_total > 0) {
+    document.getElementById('statMain').textContent = `RP ${t.replay_done}/${t.replay_total}`;
+    document.getElementById('statSub').textContent = 'REPLAY ACTIVE';
+    setLight('lRun','warn');
+  } else {
+    document.getElementById('statMain').textContent = 'IDLE';
+    document.getElementById('statSub').textContent = 'SYSTEM STANDBY';
+    setLight('lRun', '');
+  }
+  setLight('lMpu', t.mpu_ok ? 'on' : 'crit');
+
+  lastHead = h;
+  headHistory.push([Date.now(), h]);
+  while (headHistory.length > 0 && headHistory[0][0] < Date.now() - 30000) headHistory.shift();
+  drawChart();
+
+  if (t.bv !== undefined) updateBattery(t.bv, t.ba ?? 0, t.bw ?? 0);
+}
+
+function applyUwb(u) {
+  if (!u) { setLight('lUwb','crit'); return; }
+  setLight('lUwb','on');
+  if (u.x !== undefined && u.y !== undefined) {
+    document.getElementById('kPos').textContent = `${u.x.toFixed(2)} , ${u.y.toFixed(2)}`;
+    const now = Date.now();
+    if (lastPos) {
+      const dt = (now - lastPos.t) / 1000;
+      if (dt > 0 && dt < 1) {
+        const dx = u.x - lastPos.x, dy = u.y - lastPos.y;
+        lastSpd = Math.hypot(dx, dy) / dt;
+        document.getElementById('spdNow').textContent = lastSpd.toFixed(2);
+        // TOP SPEED 追踪
+        if (lastSpd > topSpeed && lastSpd < 10) {  // <10m/s 防 UWB 噪声 spike
+          topSpeed = lastSpd;
+          document.getElementById('spdTop').textContent = topSpeed.toFixed(2);
+          localStorage.setItem('alphacar_topspd', topSpeed.toString());
+          log(`▲ NEW TOP SPEED: ${topSpeed.toFixed(2)} m/s`, 'l-ok');
+        }
+      }
+    }
+    lastPos = {x: u.x, y: u.y, t: now};
+    posTrail.push([u.x, u.y, now]);
+    while (posTrail.length > 200) posTrail.shift();
+  }
+  if (u.d) {
+    document.getElementById('kDa0').textContent = (u.d[0] ?? 0).toFixed(3);
+    document.getElementById('kDa1').textContent = (u.d[1] ?? 0).toFixed(3);
+    document.getElementById('kDa2').textContent = (u.d[2] ?? 0).toFixed(3);
+  }
+  if (u.ts !== undefined) document.getElementById('kTs').textContent = u.ts;
+  drawMap();
+}
+
+function applyPp(p) {
+  if (!p) {
+    ['kPpPhase','kPpWp','kPpD','kPpQ','kPpDuty'].forEach(id => document.getElementById(id).textContent = '—');
+    return;
+  }
+  document.getElementById('kPpPhase').textContent = p.phase ?? '—';
+  document.getElementById('kPpWp').textContent    = p.wp_idx ?? '—';
+  document.getElementById('kPpD').textContent     = (p.dist_to_wp ?? 0).toFixed(2);
+  document.getElementById('kPpQ').textContent     = p.q ?? '—';
+  document.getElementById('kPpDuty').textContent  = p.duty ?? '—';
+}
+
+// ---- 电池: 电压 → SOC → 时间 + 10 cells 视觉 ----
+function updateBattery(bv, ba, bw) {
+  if (!battAutoDetected && bv > 0) {
+    const guessed = bv > 10 ? 3 : (bv > 5 ? 2 : 1);
+    if (guessed !== BATT_CFG.cellCount) {
+      BATT_CFG.cellCount = guessed;
+      document.getElementById('battType').textContent = guessed + 'S';
+      log(`▶ BAT AUTO-DETECT: ${guessed}S (${bv.toFixed(2)}V)`, 'l-info');
+    }
+    battAutoDetected = true;
+  }
+
+  const cellV = bv / BATT_CFG.cellCount;
+  let soc;
+  if (cellV >= BATT_CFG.cellNom) {
+    soc = 50 + (cellV - BATT_CFG.cellNom) / (BATT_CFG.cellMax - BATT_CFG.cellNom) * 50;
+  } else {
+    soc = (cellV - BATT_CFG.cellMin) / (BATT_CFG.cellNom - BATT_CFG.cellMin) * 50;
+  }
+  soc = Math.max(0, Math.min(100, soc));
+
+  battSocEma = battSocEma === null ? soc : battSocEma * 0.85 + soc * 0.15;
+  battCurrentEma = battCurrentEma * 0.9 + Math.abs(ba) * 0.1;
+
+  const remainingMah = battSocEma / 100 * BATT_CFG.capacityMah;
+  let timeText;
+  if (battCurrentEma < 0.05) {
+    const hours = remainingMah / 50;
+    timeText = `待机 ${hours.toFixed(0)} h`;
+  } else {
+    const minutes = remainingMah / (battCurrentEma * 1000) * 60;
+    if (minutes > 60) timeText = (minutes/60).toFixed(1) + ' 小时';
+    else if (minutes > 1) timeText = minutes.toFixed(0) + ' 分钟';
+    else timeText = (minutes * 60).toFixed(0) + ' 秒';
+  }
+
+  let cls = '';
+  if (battSocEma < 15) cls = 'crit';
+  else if (battSocEma < 30) cls = 'warn';
+
+  document.getElementById('battPct').textContent = battSocEma.toFixed(0) + '%';
+  document.getElementById('battPct').className = 'batt-pct ' + cls;
+  document.getElementById('battV').textContent = bv.toFixed(2) + ' V · ' + cellV.toFixed(2) + ' V/cell';
+  document.getElementById('battTime').textContent = timeText;
+  document.getElementById('battI').textContent = ba.toFixed(2) + ' A';
+  document.getElementById('battW').textContent = bw.toFixed(1) + ' W';
+  setLight('lBat', cls === 'crit' ? 'crit' : (cls === 'warn' ? 'warn' : 'on'));
+
+  // 10 cells 视觉 (机甲电池条)
+  const cells = document.querySelectorAll('.batt-cell');
+  const filledCount = Math.round(battSocEma / 10);
+  cells.forEach((c, i) => {
+    const fill = c.querySelector('.fill');
+    c.classList.remove('warn','crit');
+    if (i < filledCount) {
+      fill.style.transform = 'translateX(0)';
+      if (cls) c.classList.add(cls);
+    } else {
+      fill.style.transform = 'translateX(-100%)';
+    }
+  });
+
+  if (battSocEma < 15 && !window._lowBattWarned) {
+    log('⚠ LOW POWER · CHANGE PACK NOW', 'l-err');
+    window._lowBattWarned = true;
+    setTimeout(() => { window._lowBattWarned = false; }, 60000);
+  }
+}
+
+// ---- DEMO ----
+let demoT = 0, demoIdx = 0;
+function demoTick() {
+  demoT += 0.05;
+  const wpA = MAPB_WPS[demoIdx];
+  const wpB = MAPB_WPS[(demoIdx + 1) % MAPB_WPS.length];
+  const f = (demoT % 1.5) / 1.5;
+  const x = wpA[0] + (wpB[0] - wpA[0]) * f;
+  const y = wpA[1] + (wpB[1] - wpA[1]) * f;
+  if (demoT > 1.5) { demoT = 0; demoIdx = (demoIdx + 1) % MAPB_WPS.length; }
+  const head = Math.atan2(wpB[1]-wpA[1], wpB[0]-wpA[0]) * 180 / Math.PI;
+  const battDecay = (Date.now() % 60000) / 60000;
+  const demoBv = 8.4 - battDecay * 1.4;
+  const demoBa = 0.6 + 0.6 * Math.abs(Math.sin(Date.now()/700));
+  applyTm({h: head, gz: 0.5*Math.sin(Date.now()/500), mpu_ok: true,
+           running: true, recording: false, rec_count: 0, replay_done: 0, replay_total: 0, step: demoIdx,
+           bv: demoBv, ba: demoBa, bw: demoBv * demoBa});
+  applyUwb({x, y, d: [Math.hypot(x,y), Math.hypot(10-x,y), Math.hypot(x,5-y)], ts: Date.now()});
+}
+
+// ---- 渲染 ----
+function resizeMap() {
+  const dpr = window.devicePixelRatio || 1;
+  cv.width = cv.clientWidth * dpr;
+  cv.height = cv.clientHeight * dpr;
+  ch.width = ch.clientWidth * dpr;
+  ch.height = ch.clientHeight * dpr;
+}
+new ResizeObserver(resizeMap).observe(cv);
+new ResizeObserver(resizeMap).observe(ch);
+setTimeout(resizeMap, 50);
+
+function fitTrack() {
+  let mx = Infinity, my = Infinity, Mx = -Infinity, My = -Infinity;
+  MAPB_OUTER.forEach(p => { mx = Math.min(mx, p[0]); my = Math.min(my, p[1]); Mx = Math.max(Mx, p[0]); My = Math.max(My, p[1]); });
+  const dpr = window.devicePixelRatio || 1;
+  const pad = 50 * dpr;
+  const sx = (cv.width - pad*2) / (Mx - mx);
+  const sy = (cv.height - pad*2) / (My - my);
+  const s = Math.min(sx, sy);
+  return { s, ox: pad + (cv.width - pad*2 - (Mx-mx)*s)/2, oy: pad + (cv.height - pad*2 - (My-my)*s)/2, mx, my, Mx, My };
+}
+
+function w2s(p, fit) {
+  return [cv.width - (p[0]*fit.s + fit.ox), cv.height - (p[1]*fit.s + fit.oy)];
+}
+
+let radarAngle = 0;
+function drawMap() {
+  const dpr = window.devicePixelRatio || 1;
+  ctx.fillStyle = '#020409';
+  ctx.fillRect(0, 0, cv.width, cv.height);
+
+  // 网格
+  ctx.strokeStyle = 'rgba(0,212,255,.06)';
+  ctx.lineWidth = 1;
+  const gridStep = 50 * dpr;
+  for (let x = 0; x < cv.width; x += gridStep) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, cv.height); ctx.stroke();
+  }
+  for (let y = 0; y < cv.height; y += gridStep) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(cv.width, y); ctx.stroke();
+  }
+
+  const fit = fitTrack();
+
+  // Radar 扫描线 (淡淡的圆锥)
+  if (lastPos) {
+    const c = w2s([lastPos.x, lastPos.y], fit);
+    radarAngle += 0.05;
+    const r = 80 * dpr;
+    ctx.save();
+    ctx.translate(c[0], c[1]); ctx.rotate(radarAngle);
+    const grad = ctx.createConicGradient(0, 0, 0);
+    grad.addColorStop(0, 'rgba(0,240,255,.15)');
+    grad.addColorStop(0.05, 'rgba(0,240,255,0)');
+    grad.addColorStop(1, 'rgba(0,240,255,0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+
+  // 外墙 + 内障
+  function drawPoly(poly, color, lw) {
+    ctx.strokeStyle = color; ctx.lineWidth = lw * dpr;
+    ctx.shadowColor = color; ctx.shadowBlur = 8 * dpr;
+    ctx.beginPath();
+    poly.forEach((p,i) => { const s = w2s(p, fit); if(i===0) ctx.moveTo(s[0],s[1]); else ctx.lineTo(s[0],s[1]); });
+    ctx.closePath(); ctx.stroke();
+  }
+  drawPoly(MAPB_OUTER, '#00ff9c', 2);
+  drawPoly(MAPB_INNER, '#00d4ff', 1.5);
+  ctx.shadowBlur = 0;
+
+  // WP 圆点 + 编号
+  MAPB_WPS.forEach((wp,i) => {
+    const s = w2s(wp, fit);
+    ctx.fillStyle = i === 0 ? '#fff' : '#ffeb3b';
+    ctx.shadowColor = '#ffeb3b'; ctx.shadowBlur = 6 * dpr;
+    ctx.beginPath(); ctx.arc(s[0], s[1], 3.5 * dpr, 0, Math.PI*2); ctx.fill();
+    if (i === 0) {
+      ctx.fillStyle = '#fff'; ctx.font = `bold ${10*dpr}px "Orbitron"`;
+      ctx.fillText('S', s[0]+7*dpr, s[1]+3*dpr);
+    }
+  });
+  ctx.shadowBlur = 0;
+
+  // 轨迹
+  ctx.strokeStyle = '#ff2e8a'; ctx.lineWidth = 2 * dpr;
+  ctx.shadowColor = '#ff2e8a'; ctx.shadowBlur = 6 * dpr;
+  ctx.beginPath();
+  posTrail.forEach((p,i) => {
+    const age = (Date.now() - p[2]) / 10000;
+    ctx.globalAlpha = Math.max(0.1, 1 - age);
+    const s = w2s([p[0], p[1]], fit);
+    if (i === 0) ctx.moveTo(s[0],s[1]); else ctx.lineTo(s[0],s[1]);
+  });
+  ctx.stroke();
+  ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+
+  // 车辆 (三角形 + 航向)
+  if (lastPos) {
+    const s = w2s([lastPos.x, lastPos.y], fit);
+    const hRad = -lastHead * Math.PI / 180;
+    ctx.save();
+    ctx.translate(s[0], s[1]); ctx.rotate(hRad);
+    const r = 10 * dpr;
+    ctx.fillStyle = '#ff7a45';
+    ctx.shadowColor = '#ff7a45'; ctx.shadowBlur = 14 * dpr;
+    ctx.beginPath();
+    ctx.moveTo(r, 0); ctx.lineTo(-r*0.6, r*0.6); ctx.lineTo(-r*0.3, 0); ctx.lineTo(-r*0.6, -r*0.6);
+    ctx.closePath(); ctx.fill();
+    // 外圈靶标
+    ctx.strokeStyle = 'rgba(255,122,69,.4)'; ctx.lineWidth = 1.5 * dpr;
+    ctx.beginPath(); ctx.arc(0, 0, r*2, 0, Math.PI*2); ctx.stroke();
+    ctx.restore();
+  }
+}
+
+function drawChart() {
+  const dpr = window.devicePixelRatio || 1;
+  chx.fillStyle = '#020409';
+  chx.fillRect(0, 0, ch.width, ch.height);
+  // 网格
+  chx.strokeStyle = 'rgba(255,46,138,.08)'; chx.lineWidth = 1;
+  for (let y = 0; y < ch.height; y += 20*dpr) {
+    chx.beginPath(); chx.moveTo(0, y); chx.lineTo(ch.width, y); chx.stroke();
+  }
+  if (headHistory.length < 2) return;
+  const now = Date.now();
+  const W = ch.width, H = ch.height, pad = 8 * dpr;
+  let mn = Infinity, mx = -Infinity;
+  headHistory.forEach(([t,h]) => { mn = Math.min(mn,h); mx = Math.max(mx,h); });
+  if (mx - mn < 5) { mx = mn + 5; }
+  const yMap = h => H - pad - (h - mn) / (mx - mn) * (H - pad*2);
+  const xMap = t => pad + (1 - (now - t) / 30000) * (W - pad*2);
+  chx.strokeStyle = '#ff2e8a'; chx.lineWidth = 1.8 * dpr;
+  chx.shadowColor = '#ff2e8a'; chx.shadowBlur = 6 * dpr;
+  chx.beginPath();
+  headHistory.forEach(([t,h],i) => {
+    if (i === 0) chx.moveTo(xMap(t), yMap(h)); else chx.lineTo(xMap(t), yMap(h));
+  });
+  chx.stroke();
+  chx.shadowBlur = 0;
+}
+
+// ---- 启动 ----
+setConn('demo');
+log('▶ ALPHACAR LIVE HUD ONLINE', 'l-ok');
+log('▶ DEMO MODE · SIMULATED DATA', 'l-warn');
+log('▶ ENTER CAR IP → [CONNECT] FOR LIVE', 'l-info');
+log('▶ BAT CFG: setBatteryConfig(2, 5000)', 'l-info');
+log('▶ TOP SPD RESET: resetTopSpeed()', 'l-info');
+log('⚠ HTTPS BLOCKS LOCAL HTTP · USE file:// OR http://', 'l-warn');
+
+if (savedIp) setTimeout(connect, 300);
+
+setInterval(poll, 200);
+setInterval(drawMap, 80);
+window.addEventListener('keydown', e => { if (e.code==='Space'||e.code==='Escape') { e.preventDefault(); estop(); } });
+</script>
+
+</body>
+</html>

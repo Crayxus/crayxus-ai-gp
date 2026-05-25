@@ -1,0 +1,1748 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crayxus AI·GP Genesis · Where AI Races</title>
+<meta name="description" content="The world's first self-assembling AI racing system. Transparent F1 cars, modular robotic tracks, TRON-inspired aesthetics. Built with Vibe Coding.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050810;
+    --bg-soft: #0a0e1a;
+    --bg-card: #0f1424;
+    --line: rgba(0, 184, 255, 0.15);
+    --line-soft: rgba(0, 184, 255, 0.08);
+    --blue: #00B8FF;
+    --orange: #FF8800;
+    --purple: #B026FF;
+    --red: #FF0040;
+    --green: #00FF9D;
+    --white: #ffffff;
+    --gray: #8892a8;
+    --gray-soft: #5a6378;
+    --font-display: 'Orbitron', system-ui, sans-serif;
+    --font-tech: 'Rajdhani', system-ui, sans-serif;
+    --font-body: 'Inter', -apple-system, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', SFMono-Regular, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--white);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0, 184, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 184, 255, 0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  a { color: inherit; text-decoration: none; }
+  section { position: relative; z-index: 2; }
+
+  /* ====== Nav ====== */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    padding: 18px 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    z-index: 100;
+    background: rgba(5, 8, 16, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--line-soft);
+    transition: background 0.3s;
+  }
+  .logo {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 16px;
+    letter-spacing: 0.18em;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .logo-mark {
+    width: 28px; height: 28px;
+    background: linear-gradient(135deg, var(--blue), var(--orange));
+    clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+    box-shadow: 0 0 20px rgba(0, 184, 255, 0.5);
+  }
+  .logo span:nth-child(2) { color: var(--white); }
+  .logo .sub { color: var(--gray); font-weight: 400; font-size: 12px; letter-spacing: 0.15em; margin-left: 4px; }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a {
+    font-family: var(--font-tech);
+    font-weight: 500; font-size: 13px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--gray); transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--blue); }
+  .nav-cta {
+    font-family: var(--font-tech);
+    font-weight: 600; font-size: 13px;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    padding: 10px 22px;
+    border: 1px solid var(--blue);
+    color: var(--blue); background: transparent;
+    cursor: pointer; transition: all 0.3s;
+  }
+  .nav-cta:hover {
+    background: var(--blue); color: var(--bg);
+    box-shadow: 0 0 30px rgba(0, 184, 255, 0.6);
+  }
+
+  /* ====== Hero ====== */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding: 0 48px; overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: url('genesis_hero.png') center/cover no-repeat;
+    z-index: 1;
+  }
+  .hero-bg::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg,
+      rgba(5, 8, 16, 0.95) 0%, rgba(5, 8, 16, 0.6) 40%,
+      rgba(5, 8, 16, 0.3) 70%, rgba(5, 8, 16, 0.8) 100%);
+  }
+  .hero-content { position: relative; z-index: 2; max-width: 720px; }
+  .hero-eyebrow {
+    font-family: var(--font-tech);
+    font-size: 14px; letter-spacing: 0.3em;
+    color: var(--blue); text-transform: uppercase;
+    margin-bottom: 20px;
+    opacity: 0; animation: fadeUp 0.8s 0.2s forwards;
+  }
+  .hero-title {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(48px, 7vw, 96px);
+    letter-spacing: 0.02em; line-height: 0.95;
+    margin-bottom: 16px;
+    opacity: 0; animation: fadeUp 0.8s 0.4s forwards;
+  }
+  .hero-title .genesis {
+    background: linear-gradient(135deg, var(--blue), var(--orange));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 30px rgba(0, 184, 255, 0.4));
+  }
+  .hero-subtitle {
+    font-family: var(--font-tech);
+    font-weight: 300;
+    font-size: clamp(20px, 2.5vw, 28px);
+    letter-spacing: 0.15em; color: var(--gray);
+    margin-bottom: 16px;
+    opacity: 0; animation: fadeUp 0.8s 0.6s forwards;
+  }
+  .hero-desc {
+    font-size: 16px; line-height: 1.7;
+    color: var(--gray); margin-bottom: 40px; max-width: 540px;
+    opacity: 0; animation: fadeUp 0.8s 0.8s forwards;
+  }
+  .hero-ctas { display: flex; gap: 16px; opacity: 0; animation: fadeUp 0.8s 1s forwards; }
+  .btn {
+    font-family: var(--font-tech);
+    font-weight: 600; font-size: 14px;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    padding: 16px 32px; cursor: pointer;
+    transition: all 0.3s; border: none;
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .btn-primary { background: var(--blue); color: var(--bg); }
+  .btn-primary:hover { box-shadow: 0 0 40px rgba(0, 184, 255, 0.6); transform: translateY(-2px); }
+  .btn-secondary { background: transparent; color: var(--white); border: 1px solid var(--white); }
+  .btn-secondary:hover { background: var(--white); color: var(--bg); }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ====== Stats Bar ====== */
+  .stats-bar {
+    position: relative; z-index: 2;
+    padding: 32px 48px;
+    background: var(--bg-soft);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+  }
+  .stat { text-align: center; border-right: 1px solid var(--line-soft); }
+  .stat:last-child { border-right: none; }
+  .stat-num {
+    font-family: var(--font-display);
+    font-weight: 700; font-size: 40px;
+    color: var(--blue); line-height: 1; margin-bottom: 6px;
+    text-shadow: 0 0 20px rgba(0, 184, 255, 0.4);
+  }
+  .stat-label {
+    font-family: var(--font-tech);
+    font-size: 12px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--gray);
+  }
+
+  /* ====== Section base ====== */
+  .section-pad { padding: 120px 48px; }
+  .section-eyebrow {
+    font-family: var(--font-tech);
+    font-size: 13px; letter-spacing: 0.3em;
+    color: var(--blue); text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(36px, 5vw, 56px);
+    letter-spacing: 0.02em; line-height: 1.1;
+    margin-bottom: 24px;
+  }
+  .section-desc {
+    font-size: 17px; color: var(--gray);
+    line-height: 1.7; max-width: 600px;
+  }
+
+  /* ====== Features ====== */
+  .features {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 32px; max-width: 1280px; margin: 0 auto;
+  }
+  .feature {
+    padding: 40px 32px;
+    border: 1px solid var(--line);
+    background: linear-gradient(135deg, rgba(15, 20, 36, 0.6), rgba(5, 8, 16, 0.3));
+    backdrop-filter: blur(10px);
+    transition: all 0.4s;
+    position: relative; overflow: hidden;
+  }
+  .feature::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--blue), transparent);
+    opacity: 0; transition: opacity 0.4s;
+  }
+  .feature:hover {
+    border-color: var(--blue);
+    transform: translateY(-6px);
+    box-shadow: 0 20px 60px rgba(0, 184, 255, 0.15);
+  }
+  .feature:hover::before { opacity: 1; }
+  .feature-icon {
+    width: 56px; height: 56px;
+    background: linear-gradient(135deg, rgba(0, 184, 255, 0.15), rgba(0, 184, 255, 0.05));
+    border: 1px solid var(--blue);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 24px; color: var(--blue);
+  }
+  .feature h3 {
+    font-family: var(--font-display);
+    font-weight: 600; font-size: 22px;
+    letter-spacing: 0.02em; margin-bottom: 12px;
+  }
+  .feature p { font-size: 15px; color: var(--gray); line-height: 1.7; }
+
+  /* ====== Showcase split ====== */
+  .showcase {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 80px; align-items: center;
+    max-width: 1320px; margin: 0 auto;
+  }
+  .showcase.reverse .showcase-img { order: 2; }
+  .showcase-img { position: relative; }
+  .showcase-img img {
+    width: 100%; height: auto; display: block;
+    filter: drop-shadow(0 30px 60px rgba(0, 184, 255, 0.2));
+  }
+  .showcase-img::after {
+    content: ''; position: absolute; inset: -20px;
+    border: 1px solid var(--line); pointer-events: none; z-index: -1;
+  }
+  .showcase-specs { list-style: none; margin-top: 32px; border-top: 1px solid var(--line); }
+  .showcase-specs li {
+    display: flex; justify-content: space-between;
+    padding: 18px 0; border-bottom: 1px solid var(--line);
+    font-family: var(--font-tech);
+  }
+  .spec-key {
+    font-size: 13px; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--gray);
+  }
+  .spec-val { font-size: 15px; font-weight: 600; color: var(--white); }
+
+  /* ====== Car Customizer (Interactive) ====== */
+  .customizer-section {
+    background: linear-gradient(180deg, var(--bg-soft), var(--bg));
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .customizer {
+    max-width: 1280px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 380px;
+    gap: 80px; align-items: center;
+  }
+  .car-stage {
+    position: relative;
+    aspect-ratio: 16/10;
+    background: radial-gradient(ellipse at center,
+      rgba(0, 184, 255, 0.12), transparent 60%);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+  .car-stage::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(0, 184, 255, 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 184, 255, 0.08) 1px, transparent 1px);
+    background-size: 40px 40px;
+    transform: perspective(600px) rotateX(60deg) translateY(20%);
+    transform-origin: bottom;
+    opacity: 0.6;
+  }
+  .car-img-wrap {
+    position: relative; z-index: 2;
+    width: 90%; max-width: 600px;
+    transition: filter 0.6s, transform 0.4s;
+  }
+  .car-img-wrap img {
+    width: 100%; height: auto; display: block;
+  }
+  .car-stage:hover .car-img-wrap { transform: scale(1.02); }
+  .color-pills {
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .color-pill {
+    display: flex; align-items: center; gap: 16px;
+    padding: 18px 22px;
+    border: 1px solid var(--line);
+    background: var(--bg-card);
+    cursor: pointer; transition: all 0.3s;
+    font-family: var(--font-tech);
+  }
+  .color-pill:hover { border-color: rgba(255, 255, 255, 0.3); transform: translateX(4px); }
+  .color-pill.active {
+    border-color: var(--white);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+  }
+  .color-swatch {
+    width: 28px; height: 28px; border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: 0 0 20px currentColor;
+  }
+  .color-info { flex: 1; }
+  .color-name {
+    font-weight: 600; font-size: 15px;
+    letter-spacing: 0.05em; color: var(--white);
+    margin-bottom: 2px;
+  }
+  .color-desc {
+    font-size: 12px; color: var(--gray);
+    letter-spacing: 0.05em;
+  }
+  .color-price {
+    font-family: var(--font-display);
+    font-weight: 700; font-size: 14px;
+    color: var(--blue);
+  }
+
+  /* ====== Track Builder (Interactive) ====== */
+  .builder-section { padding: 120px 48px; }
+  .builder {
+    max-width: 1280px; margin: 40px auto 0;
+    display: grid; grid-template-columns: 200px 1fr 280px;
+    gap: 32px;
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    padding: 32px;
+  }
+  .builder-palette h4, .builder-readout h4 {
+    font-family: var(--font-tech);
+    font-size: 11px; letter-spacing: 0.25em;
+    text-transform: uppercase; color: var(--blue);
+    margin-bottom: 16px;
+  }
+  .palette-items { display: flex; flex-direction: column; gap: 12px; }
+  .palette-item {
+    aspect-ratio: 1;
+    border: 1px solid var(--line);
+    background: var(--bg-soft);
+    display: flex; align-items: center; justify-content: center;
+    cursor: grab; transition: all 0.2s;
+    position: relative;
+    user-select: none;
+  }
+  .palette-item:hover {
+    border-color: var(--blue);
+    box-shadow: 0 0 20px rgba(0, 184, 255, 0.15);
+  }
+  .palette-item:active { cursor: grabbing; }
+  .palette-item .module-name {
+    position: absolute; bottom: 4px;
+    font-family: var(--font-tech);
+    font-size: 9px; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--gray);
+  }
+  .palette-item svg { width: 60%; height: 60%; }
+
+  .builder-canvas-wrap {
+    aspect-ratio: 1;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    position: relative; overflow: hidden;
+  }
+  .builder-canvas {
+    width: 100%; height: 100%;
+    display: block;
+  }
+  .canvas-hint {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--font-tech);
+    font-size: 13px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--gray-soft);
+    pointer-events: none;
+    text-align: center; line-height: 2;
+  }
+  .canvas-hint.hidden { display: none; }
+  @keyframes placeIn {
+    0% { opacity: 0; filter: drop-shadow(0 0 32px #00B8FF) brightness(2.2); }
+    50% { opacity: 1; filter: drop-shadow(0 0 22px #00B8FF) brightness(1.6); }
+    100% { opacity: 1; }
+  }
+  .placed-mod.fresh { animation: placeIn 0.55s ease-out; }
+  .demo-badge {
+    position: absolute; top: 14px; right: 14px;
+    font-family: var(--font-tech);
+    font-size: 10px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--blue);
+    padding: 4px 10px;
+    border: 1px solid var(--blue);
+    background: rgba(0,184,255,0.08);
+    pointer-events: none;
+    animation: badgePulse 1.4s ease-in-out infinite;
+  }
+  .demo-badge.hidden { display: none; }
+  @keyframes badgePulse { 0%,100%{opacity:0.6} 50%{opacity:1} }
+
+  .builder-readout { display: flex; flex-direction: column; gap: 14px; }
+  .readout-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 14px 16px;
+    background: var(--bg-soft);
+    border-left: 2px solid var(--blue);
+    font-family: var(--font-tech);
+  }
+  .readout-row .k {
+    font-size: 11px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--gray);
+  }
+  .readout-row .v {
+    font-family: var(--font-display);
+    font-weight: 700; font-size: 18px;
+    color: var(--white);
+  }
+  .readout-row .v.glow { color: var(--blue); text-shadow: 0 0 12px rgba(0, 184, 255, 0.6); }
+  .builder-actions {
+    display: flex; flex-direction: column; gap: 10px; margin-top: 8px;
+  }
+  .builder-btn {
+    font-family: var(--font-tech);
+    font-size: 12px; letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 12px 16px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--white); cursor: pointer;
+    transition: all 0.2s;
+  }
+  .builder-btn:hover {
+    border-color: var(--blue);
+    color: var(--blue);
+  }
+  .builder-btn.primary {
+    background: var(--blue);
+    color: var(--bg);
+    border-color: var(--blue);
+  }
+  .builder-btn.primary:hover {
+    box-shadow: 0 0 25px rgba(0, 184, 255, 0.5);
+    color: var(--bg);
+  }
+
+  /* ====== Race System ====== */
+  .race-system {
+    position: relative;
+    min-height: 90vh;
+    display: flex; align-items: center;
+    overflow: hidden;
+    background: var(--bg-soft);
+  }
+  .race-system-bg {
+    position: absolute; inset: 0;
+    background: url('genesis_track.png') center/cover no-repeat;
+    opacity: 0.85;
+  }
+  .race-system-bg::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg,
+      rgba(5, 8, 16, 0.4) 0%, rgba(5, 8, 16, 0.85) 100%);
+  }
+  .race-system-content {
+    position: relative; z-index: 2;
+    padding: 120px 48px;
+    max-width: 720px; margin: 0 auto;
+    text-align: center;
+  }
+
+  /* ====== Vibe Coding Section ====== */
+  .vibe-section {
+    background: linear-gradient(180deg, var(--bg), var(--bg-soft));
+    padding: 140px 48px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .vibe-header {
+    max-width: 880px; margin: 0 auto 60px;
+    text-align: center;
+  }
+  .vibe-compare {
+    max-width: 1280px; margin: 0 auto 60px;
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+  }
+  .vibe-col {
+    padding: 32px 28px;
+    border: 1px solid var(--line);
+    background: var(--bg-card);
+    position: relative;
+  }
+  .vibe-col.featured {
+    border-color: var(--blue);
+    background: linear-gradient(180deg, rgba(0, 184, 255, 0.06), var(--bg-card));
+  }
+  .vibe-col.featured::before {
+    content: 'CORE TEAM';
+    position: absolute; top: -10px; left: 24px;
+    font-family: var(--font-tech);
+    font-size: 10px; letter-spacing: 0.25em;
+    font-weight: 700; padding: 4px 12px;
+    background: var(--blue); color: var(--bg);
+  }
+  .vibe-col-eyebrow {
+    font-family: var(--font-tech);
+    font-size: 11px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--gray);
+    margin-bottom: 8px;
+  }
+  .vibe-col h3 {
+    font-family: var(--font-display);
+    font-weight: 700; font-size: 22px;
+    margin-bottom: 20px;
+  }
+  .vibe-stat {
+    font-family: var(--font-display);
+    font-weight: 700; font-size: 36px;
+    color: var(--white); margin-bottom: 4px;
+  }
+  .vibe-col.featured .vibe-stat { color: var(--blue); }
+  .vibe-stat-label {
+    font-family: var(--font-tech);
+    font-size: 11px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--gray);
+    margin-bottom: 24px;
+  }
+  .vibe-list { list-style: none; }
+  .vibe-list li {
+    font-size: 14px; padding: 8px 0;
+    border-bottom: 1px solid var(--line-soft);
+    color: var(--gray);
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .vibe-list li::before { content: '·'; color: var(--blue); font-weight: 900; }
+  .vibe-col.featured .vibe-list li::before { content: '+'; }
+
+  /* code demo */
+  .code-demo {
+    max-width: 1080px; margin: 0 auto;
+    background: #06090f;
+    border: 1px solid var(--line);
+    overflow: hidden;
+  }
+  .code-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; gap: 16px;
+    font-family: var(--font-tech);
+    font-size: 12px; letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .code-dots { display: flex; gap: 6px; }
+  .code-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--gray-soft); }
+  .code-title { color: var(--gray); flex: 1; }
+  .code-tag {
+    padding: 4px 10px;
+    border: 1px solid var(--blue);
+    color: var(--blue);
+    font-size: 10px;
+  }
+  .code-body {
+    padding: 28px 32px;
+    font-family: var(--font-mono);
+    font-size: 14px; line-height: 1.7;
+    color: #e7eef8;
+    min-height: 280px;
+    white-space: pre-wrap;
+  }
+  .code-body .kw { color: #ff5fff; }
+  .code-body .str { color: #00ff9d; }
+  .code-body .com { color: var(--gray-soft); font-style: italic; }
+  .code-body .fn { color: var(--blue); }
+  .code-body .num { color: var(--orange); }
+  .code-cursor {
+    display: inline-block; width: 8px; height: 16px;
+    background: var(--blue); vertical-align: text-bottom;
+    animation: blink 1s infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ====== Product matrix ====== */
+  .matrix {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 24px; max-width: 1320px; margin: 0 auto;
+  }
+  .product {
+    border: 1px solid var(--line);
+    background: var(--bg-card);
+    padding: 36px 28px;
+    transition: all 0.4s; position: relative;
+  }
+  .product:hover {
+    border-color: var(--blue);
+    transform: translateY(-6px);
+    box-shadow: 0 20px 60px rgba(0, 184, 255, 0.15);
+  }
+  .product.featured {
+    border-color: var(--blue);
+    background: linear-gradient(180deg, rgba(0, 184, 255, 0.08), var(--bg-card));
+  }
+  .product.featured::before {
+    content: 'FLAGSHIP';
+    position: absolute; top: -10px; right: 20px;
+    font-family: var(--font-tech);
+    font-size: 11px; letter-spacing: 0.2em;
+    font-weight: 700; padding: 4px 12px;
+    background: var(--blue); color: var(--bg);
+  }
+  .product-tier {
+    font-family: var(--font-tech);
+    font-size: 12px; letter-spacing: 0.25em;
+    text-transform: uppercase; color: var(--gray);
+    margin-bottom: 8px;
+  }
+  .product-name {
+    font-family: var(--font-display);
+    font-weight: 700; font-size: 24px;
+    letter-spacing: 0.02em; margin-bottom: 20px;
+  }
+  .product-price {
+    font-family: var(--font-display);
+    font-weight: 700; font-size: 36px;
+    color: var(--blue); margin-bottom: 4px;
+  }
+  .product-price-unit {
+    font-family: var(--font-tech);
+    font-size: 13px; color: var(--gray);
+    letter-spacing: 0.15em; margin-bottom: 28px;
+  }
+  .product-specs { list-style: none; margin-bottom: 28px; }
+  .product-specs li {
+    padding: 10px 0; font-size: 14px; color: var(--gray);
+    border-bottom: 1px solid var(--line-soft);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .product-specs li::before { content: '+'; color: var(--blue); font-weight: 700; }
+  .product-cta {
+    display: block; width: 100%; text-align: center;
+    padding: 14px; border: 1px solid var(--line);
+    font-family: var(--font-tech);
+    font-size: 13px; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--white);
+    cursor: pointer; transition: all 0.3s; background: transparent;
+  }
+  .product-cta:hover { background: var(--blue); color: var(--bg); border-color: var(--blue); }
+  .product.featured .product-cta {
+    background: var(--blue); color: var(--bg); border-color: var(--blue);
+  }
+  .product.featured .product-cta:hover { box-shadow: 0 0 30px rgba(0, 184, 255, 0.6); }
+
+  /* ====== Pre-order ====== */
+  .preorder {
+    text-align: center; padding: 140px 48px;
+    background: linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
+    border-top: 1px solid var(--line);
+  }
+  .preorder h2 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(36px, 5vw, 60px);
+    margin-bottom: 20px;
+  }
+  .preorder p {
+    color: var(--gray); font-size: 17px;
+    margin-bottom: 40px; max-width: 540px;
+    margin-left: auto; margin-right: auto;
+  }
+  .email-form {
+    display: flex; max-width: 480px; margin: 0 auto;
+    border: 1px solid var(--blue);
+    background: var(--bg-soft);
+  }
+  .email-form input {
+    flex: 1; background: transparent; border: none;
+    padding: 18px 24px; color: var(--white);
+    font-family: var(--font-body); font-size: 15px; outline: none;
+  }
+  .email-form input::placeholder { color: var(--gray-soft); }
+  .email-form button {
+    background: var(--blue); color: var(--bg);
+    border: none; padding: 0 28px;
+    font-family: var(--font-tech);
+    font-weight: 600; font-size: 13px;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    cursor: pointer; transition: all 0.3s;
+  }
+  .email-form button:hover { background: var(--white); }
+
+  /* ====== Footer ====== */
+  footer {
+    background: var(--bg); padding: 48px;
+    border-top: 1px solid var(--line); text-align: center;
+  }
+  .footer-logo {
+    font-family: var(--font-display);
+    font-weight: 900; font-size: 16px;
+    letter-spacing: 0.2em; margin-bottom: 16px;
+  }
+  .footer-tagline {
+    font-family: var(--font-tech);
+    font-size: 13px; letter-spacing: 0.2em;
+    color: var(--gray); margin-bottom: 24px;
+    text-transform: uppercase;
+  }
+  .footer-meta { font-size: 12px; color: var(--gray-soft); letter-spacing: 0.05em; }
+  .footer-meta a { color: var(--blue); }
+
+  /* ====== Responsive ====== */
+  @media (max-width: 900px) {
+    nav { padding: 14px 20px; }
+    .nav-links { display: none; }
+    .hero { padding: 100px 20px 40px; }
+    .stats-bar { grid-template-columns: repeat(2, 1fr); padding: 24px 20px; }
+    .stat:nth-child(2) { border-right: none; }
+    .stat:nth-child(1), .stat:nth-child(2) { border-bottom: 1px solid var(--line-soft); padding-bottom: 16px; }
+    .stat:nth-child(3), .stat:nth-child(4) { padding-top: 16px; }
+    .section-pad { padding: 80px 20px; }
+    .features { grid-template-columns: 1fr; }
+    .showcase { grid-template-columns: 1fr; gap: 40px; }
+    .showcase.reverse .showcase-img { order: 0; }
+    .customizer { grid-template-columns: 1fr; gap: 32px; }
+    .race-system-content { padding: 80px 20px; }
+    .vibe-section { padding: 80px 20px; }
+    .vibe-compare { grid-template-columns: 1fr; }
+    .builder-section { padding: 80px 20px; }
+    .builder { grid-template-columns: 1fr; padding: 20px; }
+    .matrix { grid-template-columns: 1fr; }
+    .preorder { padding: 80px 20px; }
+    .email-form { flex-direction: column; }
+    .email-form button { padding: 16px; }
+    footer { padding: 32px 20px; }
+  }
+
+  .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.8s, transform 0.8s; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav>
+  <div class="logo">
+    <span class="logo-mark"></span>
+    <span>CRAYXUS</span>
+    <span class="sub">AI·GP GENESIS</span>
+  </div>
+  <div class="nav-links">
+    <a href="#car">AI Car</a>
+    <a href="#customize">Customize</a>
+    <a href="#track">Track</a>
+    <a href="#builder">Builder</a>
+    <a href="#vibe">Team</a>
+    <a href="#products">Products</a>
+  </div>
+  <button class="nav-cta" onclick="document.getElementById('preorder').scrollIntoView()">Pre-order</button>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Crayxus AI·GP · Genesis Edition</div>
+    <h1 class="hero-title">Where AI<br><span class="genesis">Races.</span></h1>
+    <div class="hero-subtitle">The First Self-Assembling AI Racing System</div>
+    <p class="hero-desc">
+      Transparent F1 racing cars. Self-moving modular tracks. Real-time AI competition.
+      Crayxus AI·GP Genesis 重新定义了"AI 赛车"——不是遥控车,而是一个能自我组装、自主比赛、永不重复的智能赛事系统。
+    </p>
+    <div class="hero-ctas">
+      <button class="btn btn-primary" onclick="document.getElementById('preorder').scrollIntoView()">
+        Pre-order Now
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </button>
+      <button class="btn btn-secondary" onclick="document.getElementById('builder').scrollIntoView()">Try Track Builder</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== STATS BAR ===== -->
+<div class="stats-bar">
+  <div class="stat"><div class="stat-num">0</div><div class="stat-label">遥控器</div></div>
+  <div class="stat"><div class="stat-num">12</div><div class="stat-label">模块化赛道</div></div>
+  <div class="stat"><div class="stat-num">8</div><div class="stat-label">多车同跑</div></div>
+  <div class="stat"><div class="stat-num">∞</div><div class="stat-label">赛道形状</div></div>
+</div>
+
+<!-- ===== FEATURES ===== -->
+<section class="section-pad" id="features">
+  <div style="max-width:1280px; margin:0 auto 64px; text-align:center;">
+    <div class="section-eyebrow reveal">Core Technology</div>
+    <h2 class="section-title reveal">三个第一,定义全新品类</h2>
+  </div>
+  <div class="features">
+    <div class="feature reveal">
+      <div class="feature-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><path d="M10 6.5h4M10 17.5h4M6.5 10v4M17.5 10v4" stroke-dasharray="2"/></svg></div>
+      <h3>自动拼接赛道</h3>
+      <p>每块赛道是一个独立机器人。在 App 上画形状,所有模块自动跑到位置、磁吸对接——60 秒成型一条全新赛道。</p>
+    </div>
+    <div class="feature reveal">
+      <div class="feature-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.2 4.2l2.8 2.8M17 17l2.8 2.8M1 12h4M19 12h4M4.2 19.8l2.8-2.8M17 7l2.8-2.8"/></svg></div>
+      <h3>AI 自主驾驶</h3>
+      <p>没有遥控器、没有人工干预。视觉识别 + UWB 定位 + 多传感器融合,AI 看见赛道、理解规则、自己跑、自己赢。</p>
+    </div>
+    <div class="feature reveal">
+      <div class="feature-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h2l3-9 6 18 3-9h4"/></svg></div>
+      <h3>实时多车对决</h3>
+      <p>4-8 辆 AI 车同场竞速,实时避碰、动态调度、智能策略。每一局比赛都不一样,因为对手是会学习的 AI。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== AI CAR SHOWCASE ===== -->
+<section class="section-pad" id="car" style="background: var(--bg-soft);">
+  <div class="showcase">
+    <div class="showcase-img reveal"><img src="genesis_car.png" alt="Crayxus AI·GP Genesis - Transparent Racing Car"></div>
+    <div class="reveal">
+      <div class="section-eyebrow">AI Car · Blueprint 01</div>
+      <h2 class="section-title">透明发光 F1<br>致敬 Light Cycle</h2>
+      <p class="section-desc">经典 F1 单座方程式车身,完全透明的亚克力外壳,内置 LED 矩阵。车体轮廓发光、四轮 LED 环转动、车尾留下蓝色光迹——这不是玩具,是赛博朋克美学的实物落地。</p>
+      <ul class="showcase-specs">
+        <li><span class="spec-key">Top Speed</span><span class="spec-val">30 km/h</span></li>
+        <li><span class="spec-key">Drive System</span><span class="spec-val">AI Autonomous</span></li>
+        <li><span class="spec-key">Body Material</span><span class="spec-val">Transparent PETG</span></li>
+        <li><span class="spec-key">Lighting</span><span class="spec-val">5 Programmable Zones</span></li>
+        <li><span class="spec-key">Color Skins</span><span class="spec-val">6 Default Colors</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CAR CUSTOMIZER (Interactive) ===== -->
+<section class="section-pad customizer-section" id="customize">
+  <div style="max-width:1280px; margin:0 auto 64px; text-align:center;">
+    <div class="section-eyebrow reveal">Live Customizer</div>
+    <h2 class="section-title reveal">选你的颜色,<br>定义你的队伍</h2>
+    <p class="section-desc reveal" style="margin: 0 auto;">六种 LED 配色,点一下立刻预览。每一种都对应一个赛车队伍 IP——你站哪一边?</p>
+  </div>
+  <div class="customizer">
+    <div class="car-stage reveal">
+      <div class="car-img-wrap" id="carImgWrap">
+        <img src="genesis_car.png" alt="Customizable AI Car">
+      </div>
+    </div>
+    <div class="color-pills reveal">
+      <div class="color-pill active" data-hue="0" data-color="#00B8FF" data-name="Blue Genesis" data-desc="经典 TRON 蓝 · 默认配色" data-price="¥59,800">
+        <div class="color-swatch" style="background:#00B8FF; color:#00B8FF;"></div>
+        <div class="color-info">
+          <div class="color-name">Blue Genesis</div>
+          <div class="color-desc">经典 TRON 蓝 · 默认配色</div>
+        </div>
+        <div class="color-price">¥59,800</div>
+      </div>
+      <div class="color-pill" data-hue="-130" data-color="#FF8800" data-name="Orange Clu" data-desc="TRON: Legacy 反派色" data-price="¥59,800">
+        <div class="color-swatch" style="background:#FF8800; color:#FF8800;"></div>
+        <div class="color-info">
+          <div class="color-name">Orange Clu</div>
+          <div class="color-desc">TRON: Legacy 反派色</div>
+        </div>
+        <div class="color-price">¥59,800</div>
+      </div>
+      <div class="color-pill" data-hue="70" data-color="#B026FF" data-name="Purple Cipher" data-desc="赛博朋克紫 · 限定版" data-price="¥69,800">
+        <div class="color-swatch" style="background:#B026FF; color:#B026FF;"></div>
+        <div class="color-info">
+          <div class="color-name">Purple Cipher</div>
+          <div class="color-desc">赛博朋克紫 · 限定版</div>
+        </div>
+        <div class="color-price">¥69,800</div>
+      </div>
+      <div class="color-pill" data-hue="-180" data-color="#FF0040" data-name="Red Phoenix" data-desc="战斗模式 · 红队冠军" data-price="¥69,800">
+        <div class="color-swatch" style="background:#FF0040; color:#FF0040;"></div>
+        <div class="color-info">
+          <div class="color-name">Red Phoenix</div>
+          <div class="color-desc">战斗模式 · 红队冠军</div>
+        </div>
+        <div class="color-price">¥69,800</div>
+      </div>
+      <div class="color-pill" data-hue="100" data-color="#00FF9D" data-name="Green Vector" data-desc="数据流绿 · 极客限定" data-price="¥69,800">
+        <div class="color-swatch" style="background:#00FF9D; color:#00FF9D;"></div>
+        <div class="color-info">
+          <div class="color-name">Green Vector</div>
+          <div class="color-desc">数据流绿 · 极客限定</div>
+        </div>
+        <div class="color-price">¥69,800</div>
+      </div>
+      <div class="color-pill" data-hue="0" data-color="#ffffff" data-name="White Origin" data-desc="纯白限量版 · 仅 100 台" data-price="¥98,800" data-extra-class="white-mode">
+        <div class="color-swatch" style="background:#ffffff; color:#ffffff;"></div>
+        <div class="color-info">
+          <div class="color-name">White Origin</div>
+          <div class="color-desc">纯白限量版 · 仅 100 台</div>
+        </div>
+        <div class="color-price">¥98,800</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== AI TRACK SHOWCASE ===== -->
+<section class="section-pad" id="track">
+  <div class="showcase reverse">
+    <div class="showcase-img reveal"><img src="genesis_module.png" alt="Modular Track Tile"></div>
+    <div class="reveal">
+      <div class="section-eyebrow">AI Track · Module 01</div>
+      <h2 class="section-title">每块赛道<br>都是一个机器人</h2>
+      <p class="section-desc">30×30 cm 模块化设计,自带电池、电机、定位系统。天花板视觉追踪 + 磁吸边缘对齐,毫米级精度自动拼接。想要 8 字、椭圆、星形、迷宫?在 App 上画一笔,赛道自己组装出来。</p>
+      <ul class="showcase-specs">
+        <li><span class="spec-key">Dimensions</span><span class="spec-val">300 × 300 × 30 mm</span></li>
+        <li><span class="spec-key">Positioning</span><span class="spec-val">UWB + ArUco Vision</span></li>
+        <li><span class="spec-key">Docking</span><span class="spec-val">Magnetic Auto-align</span></li>
+        <li><span class="spec-key">Battery Life</span><span class="spec-val">2-3 hours</span></li>
+        <li><span class="spec-key">Charging</span><span class="spec-val">Magnetic Auto-dock</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TRACK BUILDER (Interactive) ===== -->
+<section class="builder-section" id="builder" style="background: var(--bg-soft);">
+  <div style="max-width:1280px; margin:0 auto; text-align:center;">
+    <div class="section-eyebrow reveal">Live Builder</div>
+    <h2 class="section-title reveal">拖一拖,<br>拼出你的专属赛道</h2>
+    <p class="section-desc reveal" style="margin: 0 auto;">从左侧拖入赛道模块,在网格上拼出任意形状。实时计算赛道长度 + AI 预测圈速。</p>
+  </div>
+  <div class="builder reveal">
+    <div class="builder-palette">
+      <h4>Modules</h4>
+      <div class="palette-items">
+        <div class="palette-item" draggable="true" data-type="straight">
+          <svg viewBox="0 0 60 60" fill="none" stroke="#00B8FF" stroke-width="3"><line x1="30" y1="5" x2="30" y2="55"/></svg>
+          <div class="module-name">Straight</div>
+        </div>
+        <div class="palette-item" draggable="true" data-type="curve-tl">
+          <svg viewBox="0 0 60 60" fill="none" stroke="#00B8FF" stroke-width="3"><path d="M 30 55 Q 30 30, 5 30"/></svg>
+          <div class="module-name">Turn L</div>
+        </div>
+        <div class="palette-item" draggable="true" data-type="curve-tr">
+          <svg viewBox="0 0 60 60" fill="none" stroke="#00B8FF" stroke-width="3"><path d="M 30 55 Q 30 30, 55 30"/></svg>
+          <div class="module-name">Turn R</div>
+        </div>
+        <div class="palette-item" draggable="true" data-type="cross">
+          <svg viewBox="0 0 60 60" fill="none" stroke="#00B8FF" stroke-width="3"><line x1="30" y1="5" x2="30" y2="55"/><line x1="5" y1="30" x2="55" y2="30"/></svg>
+          <div class="module-name">Cross</div>
+        </div>
+        <div class="palette-item" draggable="true" data-type="start">
+          <svg viewBox="0 0 60 60" fill="none" stroke="#FF8800" stroke-width="3"><line x1="30" y1="5" x2="30" y2="55"/><circle cx="30" cy="30" r="6" fill="#FF8800"/></svg>
+          <div class="module-name">Start</div>
+        </div>
+      </div>
+    </div>
+    <div class="builder-canvas-wrap">
+      <svg class="builder-canvas" id="canvas" viewBox="0 0 800 800" preserveAspectRatio="xMidYMid meet"></svg>
+      <div class="canvas-hint" id="canvasHint">↞  从左侧拖入模块到此处  ↠<br><span style="font-size:11px; color:var(--gray);">单击旋转 90° · 右键删除</span></div>
+      <div class="demo-badge" id="demoBadge">▸ Auto-assembly demo · 拖入任意模块停止</div>
+    </div>
+    <div class="builder-readout">
+      <h4>Real-time Telemetry</h4>
+      <div class="readout-row"><div class="k">Modules</div><div class="v" id="rdModules">0</div></div>
+      <div class="readout-row"><div class="k">Track Length</div><div class="v glow" id="rdLength">0.0 m</div></div>
+      <div class="readout-row"><div class="k">Est. Lap Time</div><div class="v glow" id="rdLap">--</div></div>
+      <div class="readout-row"><div class="k">Top Speed</div><div class="v" id="rdSpeed">--</div></div>
+      <div class="builder-actions">
+        <button class="builder-btn" onclick="clearTrack()">Clear Track</button>
+        <button class="builder-btn" onclick="randomTrack()">Random Layout</button>
+        <button class="builder-btn primary" onclick="alert('赛道方案已保存!\\n首批 100 套预订发售中,扫码获取详细信息。')">▶ Simulate Race</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== AI PILOT TUNING (Waypoint Drag) ===== -->
+<section class="section-pad" id="pilot">
+  <div style="max-width:1280px; margin:0 auto 48px; text-align:center;">
+    <div class="section-eyebrow reveal">AI Pilot Tuning</div>
+    <h2 class="section-title reveal">拖动路径点,<br>调教你的 AI 车手</h2>
+    <p class="section-desc reveal" style="margin: 0 auto;">这是 <strong style="color:var(--blue)">真实赛道 Track 5</strong>(UWB 标定 10.27 × 4.78 m,墙体数据来自实地校准)。8 个 waypoint 是 AI 决策点,拖动它定义过弯线 — 橙色幽灵车实时跟随,实时检测撞墙。这就是 Crayxus AI 的可解释驾驶。</p>
+  </div>
+  <div class="reveal" style="max-width:1080px; margin:0 auto; background:var(--bg-card); border:1px solid var(--line); padding:24px;">
+    <div style="position:relative; background:var(--bg); border:1px solid var(--line); overflow:hidden;">
+      <canvas id="pilotCv" width="800" height="500" style="width:100%; height:auto; display:block; cursor:grab; touch-action:none;"></canvas>
+      <div style="position:absolute; top:14px; left:18px; font-family:var(--font-tech); font-size:11px; letter-spacing:0.15em; text-transform:uppercase; color:var(--gray);">▸ Drag green dots · Watch the orange ghost</div>
+    </div>
+    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; margin-top:16px;">
+      <div class="readout-row"><div class="k">Lap Time</div><div class="v glow" id="plLap">--</div></div>
+      <div class="readout-row"><div class="k">Top Speed</div><div class="v" id="plSpeed">--</div></div>
+      <div class="readout-row"><div class="k">Wall Status</div><div class="v" id="plG">--</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== RACE SYSTEM ===== -->
+<section class="race-system" id="race">
+  <div class="race-system-bg"></div>
+  <div class="race-system-content reveal">
+    <div class="section-eyebrow">Real-time AI Racing League</div>
+    <h2 class="section-title">不是单局对战<br>是一个完整的赛事宇宙</h2>
+    <p class="section-desc" style="margin: 0 auto;">
+      实时计分、AI 排名、数据回放、跨场对战。Crayxus AI·GP Genesis 不只是产品,是世界上第一个 <strong style="color:var(--blue)">真实物理 + AI 驱动的微型赛车联盟</strong>。杭州、上海、北京——每一台 Genesis 都接入同一个云端赛事系统。
+    </p>
+  </div>
+</section>
+
+<!-- ===== VIBE CODING ===== -->
+<section class="vibe-section" id="vibe">
+  <div class="vibe-header">
+    <div class="section-eyebrow reveal">Behind Genesis</div>
+    <h2 class="section-title reveal">学术 · IP · 制造<br>中国顶级铁三角</h2>
+    <p class="section-desc reveal" style="margin: 16px auto 0;">
+      Genesis 不是一家公司单打独斗。<strong style="color:var(--blue)">浙江大学张旭光 AI 团队</strong> 的核心算法、<strong style="color:var(--blue)">Crayxus AI</strong> 的产品定义与 IP 设计、<strong style="color:var(--blue)">ZTMotor 中天模型</strong> 的产线制造——三方协同,这才是 Genesis 能从论文跑到量产的真正原因。
+    </p>
+  </div>
+  <div class="vibe-compare">
+    <div class="vibe-col reveal">
+      <div class="vibe-col-eyebrow">Academic Research</div>
+      <h3>浙江大学<br>张旭光 AI 团队</h3>
+      <div class="vibe-stat">15+</div>
+      <div class="vibe-stat-label">核心论文 / 专利</div>
+      <ul class="vibe-list">
+        <li>多传感器融合 + SLAM 核心算法</li>
+        <li>自主驾驶决策模型(MPC + RL)</li>
+        <li>浙大机器人研究所产学研支撑</li>
+        <li>博士与研究生团队深度参与</li>
+      </ul>
+    </div>
+    <div class="vibe-col featured reveal">
+      <div class="vibe-col-eyebrow">Product & IP</div>
+      <h3>Crayxus AI<br>产品定义 + IP</h3>
+      <div class="vibe-stat">32+</div>
+      <div class="vibe-stat-label">已布局发明专利</div>
+      <ul class="vibe-list">
+        <li>AI Track × AI Car 双智能架构 IP</li>
+        <li>TRON 视觉美学与品牌资产</li>
+        <li>赛事系统 + 云端联盟运营</li>
+        <li>面向 K12 教育 + 高端家庭双市场</li>
+      </ul>
+    </div>
+    <div class="vibe-col reveal">
+      <div class="vibe-col-eyebrow">Manufacturing</div>
+      <h3>ZTMotor<br>中天模型制造</h3>
+      <div class="vibe-stat">10 年+</div>
+      <div class="vibe-stat-label">模型车产业经验</div>
+      <ul class="vibe-list">
+        <li>浙江本土成熟产线与模具能力</li>
+        <li>F1 单座车体 OEM 量产基础</li>
+        <li>电机 / 电池 / 传动系统供应链</li>
+        <li>本土制造,品控可追溯</li>
+      </ul>
+    </div>
+  </div>
+  <div class="code-demo reveal">
+    <div class="code-header">
+      <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+      <div class="code-title">ai_pilot.py · 浙大 × Crayxus 联合研发</div>
+      <div class="code-tag">LIVE</div>
+    </div>
+    <div class="code-body" id="codeBody"></div>
+  </div>
+</section>
+
+<!-- ===== PRODUCT MATRIX ===== -->
+<section class="section-pad" id="products">
+  <div style="max-width:1280px; margin:0 auto 64px; text-align:center;">
+    <div class="section-eyebrow reveal">Product Lineup</div>
+    <h2 class="section-title reveal">四档产品矩阵</h2>
+    <p class="section-desc reveal" style="margin: 0 auto;">从入门到旗舰,从家庭到场馆,Genesis 全系列已就位。</p>
+  </div>
+  <div class="matrix">
+    <div class="product reveal">
+      <div class="product-tier">Tier 01</div>
+      <h3 class="product-name">Genesis Lite</h3>
+      <div class="product-price">¥9,800</div>
+      <div class="product-price-unit">CNY / Set</div>
+      <ul class="product-specs"><li>2 辆 AI 车</li><li>10 块手动拼接赛道</li><li>基础课程包</li><li>App 控制</li></ul>
+      <button class="product-cta">Pre-order</button>
+    </div>
+    <div class="product featured reveal">
+      <div class="product-tier">Tier 02 · Recommended</div>
+      <h3 class="product-name">Genesis Neon Pro</h3>
+      <div class="product-price">¥59,800</div>
+      <div class="product-price-unit">CNY / Set</div>
+      <ul class="product-specs"><li>2 辆透明发光 AI 车</li><li>10 块自移动赛道砖</li><li>天花板视觉系统</li><li>1 年云端赛事订阅</li></ul>
+      <button class="product-cta">Pre-order</button>
+    </div>
+    <div class="product reveal">
+      <div class="product-tier">Tier 03</div>
+      <h3 class="product-name">Genesis Club</h3>
+      <div class="product-price">¥148,000</div>
+      <div class="product-price-unit">CNY / Set</div>
+      <ul class="product-specs"><li>8 辆 AI 车(4 队配色)</li><li>20 块自移动赛道砖</li><li>实时赛事直播系统</li><li>团建 / 俱乐部专用</li></ul>
+      <button class="product-cta">Pre-order</button>
+    </div>
+    <div class="product reveal">
+      <div class="product-tier">Tier 04 · Coming Q4 2026</div>
+      <h3 class="product-name">Genesis Arena</h3>
+      <div class="product-price">¥298,000+</div>
+      <div class="product-price-unit">CNY / Venue</div>
+      <ul class="product-specs"><li>LED 地板沉浸赛道</li><li>动态变化赛道形状</li><li>商业空间永久部署</li><li>城市加盟方案</li></ul>
+      <button class="product-cta">Contact</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PRE-ORDER ===== -->
+<section class="preorder" id="preorder">
+  <h2>Join the Genesis.</h2>
+  <p>首批 100 套限量发售,2026 Q3 交付。留下邮箱,你将是世界上第一批拥有 AI 自主赛车系统的人。</p>
+  <form class="email-form" onsubmit="event.preventDefault(); alert('已加入候补名单 · 我们会在 48 小时内联系您'); this.reset();">
+    <input type="email" placeholder="your@email.com" required>
+    <button type="submit">Reserve</button>
+  </form>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="footer-logo">CRAYXUS</div>
+  <div class="footer-tagline">Where AI Races · Hangzhou · 2026</div>
+  <div class="footer-meta">
+    © 2026 Crayxus AI · All Rights Reserved · ZJU × Crayxus × ZTMotor · <a href="mailto:hello@crayxus.com">hello@crayxus.com</a>
+  </div>
+</footer>
+
+<script>
+/* ====== Scroll reveal ====== */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px -80px 0px' });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+/* ====== Nav background on scroll ====== */
+const nav = document.querySelector('nav');
+window.addEventListener('scroll', () => {
+  nav.style.background = window.scrollY > 50 ? 'rgba(5,8,16,0.92)' : 'rgba(5,8,16,0.6)';
+});
+
+/* ====== Car Color Customizer ====== */
+const carImgWrap = document.getElementById('carImgWrap');
+document.querySelectorAll('.color-pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('.color-pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    const hue = parseInt(pill.dataset.hue);
+    const color = pill.dataset.color;
+    const isWhite = pill.dataset.extraClass === 'white-mode';
+    if (isWhite) {
+      carImgWrap.style.filter = `grayscale(0.7) brightness(1.4) drop-shadow(0 0 40px rgba(255,255,255,0.5))`;
+    } else {
+      carImgWrap.style.filter = `hue-rotate(${hue}deg) drop-shadow(0 0 40px ${color}99)`;
+    }
+    document.querySelector('.car-stage').style.background =
+      `radial-gradient(ellipse at center, ${color}22, transparent 60%)`;
+  });
+});
+
+/* ====== Track Builder (SVG drag + drop) ====== */
+const canvas = document.getElementById('canvas');
+const hint = document.getElementById('canvasHint');
+const GRID_SIZE = 8;
+const CELL = 800 / GRID_SIZE;
+let placed = []; // {type, gx, gy}
+
+// draw grid
+function drawGrid() {
+  let html = '';
+  for (let i = 0; i <= GRID_SIZE; i++) {
+    const v = i * CELL;
+    html += `<line x1="${v}" y1="0" x2="${v}" y2="800" stroke="rgba(0,184,255,0.08)" stroke-width="1"/>`;
+    html += `<line x1="0" y1="${v}" x2="800" y2="${v}" stroke="rgba(0,184,255,0.08)" stroke-width="1"/>`;
+  }
+  return html;
+}
+
+function moduleSvg(type, gx, gy, rot, isFresh) {
+  const x = gx * CELL, y = gy * CELL, c = CELL / 2;
+  const cx = x + c, cy = y + c;
+  let inner = '';
+  const stroke = type === 'start' ? '#FF8800' : '#00B8FF';
+  const glow = type === 'start' ? '#FF8800' : '#00B8FF';
+  if (type === 'straight') {
+    inner = `<line x1="${cx}" y1="${y+8}" x2="${cx}" y2="${y+CELL-8}" stroke="${stroke}" stroke-width="3"/>`;
+  } else if (type === 'curve-tl') {
+    inner = `<path d="M ${cx} ${y+CELL-8} Q ${cx} ${cy}, ${x+8} ${cy}" stroke="${stroke}" stroke-width="3" fill="none"/>`;
+  } else if (type === 'curve-tr') {
+    inner = `<path d="M ${cx} ${y+CELL-8} Q ${cx} ${cy}, ${x+CELL-8} ${cy}" stroke="${stroke}" stroke-width="3" fill="none"/>`;
+  } else if (type === 'cross') {
+    inner = `<line x1="${cx}" y1="${y+8}" x2="${cx}" y2="${y+CELL-8}" stroke="${stroke}" stroke-width="3"/><line x1="${x+8}" y1="${cy}" x2="${x+CELL-8}" y2="${cy}" stroke="${stroke}" stroke-width="3"/>`;
+  } else if (type === 'start') {
+    inner = `<line x1="${cx}" y1="${y+8}" x2="${cx}" y2="${y+CELL-8}" stroke="${stroke}" stroke-width="3"/><circle cx="${cx}" cy="${cy}" r="8" fill="${stroke}"/>`;
+  }
+  const cls = isFresh ? 'placed-mod fresh' : 'placed-mod';
+  return `<g class="${cls}" data-gx="${gx}" data-gy="${gy}" transform="rotate(${rot||0} ${cx} ${cy})" style="cursor:pointer; filter: drop-shadow(0 0 8px ${glow}); transition: transform 0.25s ease-out;">
+    <rect x="${x+2}" y="${y+2}" width="${CELL-4}" height="${CELL-4}" fill="rgba(0,184,255,0.04)" stroke="rgba(0,184,255,0.2)" stroke-width="1"/>
+    ${inner}
+  </g>`;
+}
+
+function render() {
+  let html = drawGrid();
+  placed.forEach(m => html += moduleSvg(m.type, m.gx, m.gy, m.rot, m._new));
+  // clear _new flag so the animation only plays once
+  placed.forEach(m => { if (m._new) { setTimeout(() => { m._new = false; }, 600); } });
+  canvas.innerHTML = html;
+  hint.classList.toggle('hidden', placed.length > 0);
+  updateReadout();
+  // Left click: rotate 90° CW · Right click: delete
+  canvas.querySelectorAll('.placed-mod').forEach(g => {
+    g.addEventListener('click', (e) => {
+      if (typeof stopDemo === 'function') stopDemo();
+      const gx = parseInt(g.dataset.gx), gy = parseInt(g.dataset.gy);
+      const mod = placed.find(m => m.gx === gx && m.gy === gy);
+      if (mod) {
+        mod.rot = ((mod.rot || 0) + 90) % 360;
+        render();
+      }
+    });
+    g.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      if (typeof stopDemo === 'function') stopDemo();
+      const gx = parseInt(g.dataset.gx), gy = parseInt(g.dataset.gy);
+      placed = placed.filter(m => !(m.gx === gx && m.gy === gy));
+      render();
+    });
+  });
+}
+
+function updateReadout() {
+  const lengthM = (placed.length * 0.3).toFixed(1);
+  const lapSec = placed.length ? (placed.length * 0.5).toFixed(1) : '--';
+  const topSpeed = placed.length ? Math.min(30, 15 + placed.length * 1.2).toFixed(0) : '--';
+  document.getElementById('rdModules').textContent = placed.length;
+  document.getElementById('rdLength').textContent = `${lengthM} m`;
+  document.getElementById('rdLap').textContent = lapSec === '--' ? '--' : `${lapSec} s`;
+  document.getElementById('rdSpeed').textContent = topSpeed === '--' ? '--' : `${topSpeed} km/h`;
+}
+
+// drag-and-drop
+let draggedType = null;
+document.querySelectorAll('.palette-item').forEach(item => {
+  item.addEventListener('dragstart', e => {
+    draggedType = item.dataset.type;
+    e.dataTransfer.effectAllowed = 'copy';
+  });
+});
+
+canvas.addEventListener('dragover', e => {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'copy';
+});
+
+canvas.addEventListener('drop', e => {
+  e.preventDefault();
+  if (!draggedType) return;
+  stopDemo();
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.clientX - rect.left) / rect.width * 800;
+  const y = (e.clientY - rect.top) / rect.height * 800;
+  const gx = Math.floor(x / CELL);
+  const gy = Math.floor(y / CELL);
+  if (gx < 0 || gx >= GRID_SIZE || gy < 0 || gy >= GRID_SIZE) return;
+  // remove existing at same cell
+  placed = placed.filter(m => !(m.gx === gx && m.gy === gy));
+  placed.push({ type: draggedType, gx, gy, rot: 0 });
+  draggedType = null;
+  render();
+});
+
+function clearTrack() { stopDemo(); placed = []; render(); }
+function randomTrack() {
+  stopDemo();
+  placed = [];
+  // load the 20-tile standard circuit layout (same as auto-demo)
+  demoSequence.forEach(([x,y,t,r]) => placed.push({type:t, gx:x, gy:y, rot:r}));
+  render();
+}
+
+render();
+
+/* ====== Auto-assembly demo (plays on first scroll-into-view) ====== */
+// Standard 20-tile rectangular circuit (clockwise visual loop in 8x8 grid)
+const demoSequence = [
+  [3,6,'start',90],         // start at bottom-center, heading left
+  [2,6,'straight',90],      // bottom ←
+  [1,6,'curve-tr',270],     // SW corner ← to ↑
+  [1,5,'straight',0],       // left ↑
+  [1,4,'straight',0],
+  [1,3,'straight',0],
+  [1,2,'straight',0],
+  [1,1,'curve-tr',0],       // NW corner ↑ to →
+  [2,1,'straight',90],      // top →
+  [3,1,'straight',90],
+  [4,1,'straight',90],
+  [5,1,'straight',90],
+  [6,1,'curve-tr',90],      // NE corner → to ↓
+  [6,2,'straight',0],       // right ↓
+  [6,3,'straight',0],
+  [6,4,'straight',0],
+  [6,5,'straight',0],
+  [6,6,'curve-tr',180],     // SE corner ↓ to ←
+  [5,6,'straight',90],      // bottom ←
+  [4,6,'straight',90]       // bottom ← (closes loop to start)
+];
+let demoStep = 0;
+let demoActive = false;
+let demoTimer = null;
+const demoBadge = document.getElementById('demoBadge');
+
+function tickDemo() {
+  if (!demoActive) return;
+  if (demoStep >= demoSequence.length) {
+    demoTimer = setTimeout(() => {
+      if (!demoActive) return;
+      placed = [];
+      demoStep = 0;
+      render();
+      demoTimer = setTimeout(tickDemo, 900);
+    }, 2800);
+    return;
+  }
+  const [x, y, t, r] = demoSequence[demoStep];
+  placed.push({ type: t, gx: x, gy: y, rot: r, _new: true });
+  demoStep++;
+  render();
+  demoTimer = setTimeout(tickDemo, 580);
+}
+
+function startDemo() {
+  if (demoActive) return;
+  demoActive = true;
+  demoBadge.classList.remove('hidden');
+  placed = [];
+  demoStep = 0;
+  render();
+  demoTimer = setTimeout(tickDemo, 400);
+}
+
+function stopDemo() {
+  if (!demoActive) return;
+  demoActive = false;
+  if (demoTimer) { clearTimeout(demoTimer); demoTimer = null; }
+  demoBadge.classList.add('hidden');
+}
+
+// kick off when Track Builder enters the viewport
+const builderObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      startDemo();
+      builderObserver.disconnect();
+    }
+  });
+}, { threshold: 0.4 });
+builderObserver.observe(document.querySelector('.builder-canvas-wrap'));
+
+/* ====== Vibe Coding Code Typewriter ====== */
+const codeSnippet = [
+  { txt: '# ', cls: 'com' },
+  { txt: 'Adaptive cornering with UWB + visual sensor fusion', cls: 'com' },
+  { txt: '\n# Zhang Lab (ZJU) × Crayxus AI · ICRA 2026 submission', cls: 'com' },
+  { txt: '\n\n', cls: '' },
+  { txt: 'def ', cls: 'kw' },
+  { txt: 'corner_strategy', cls: 'fn' },
+  { txt: '(uwb_pos, curvature, speed):\n', cls: '' },
+  { txt: '    ', cls: '' },
+  { txt: '# Derived from MPC-Lite framework (Zhang et al., 2025)\n', cls: 'com' },
+  { txt: '    ', cls: '' },
+  { txt: 'optimal_speed = ', cls: '' },
+  { txt: '30 ', cls: 'num' },
+  { txt: '* (', cls: '' },
+  { txt: '1 ', cls: 'num' },
+  { txt: '- ', cls: '' },
+  { txt: 'abs', cls: 'fn' },
+  { txt: '(curvature) * ', cls: '' },
+  { txt: '0.6', cls: 'num' },
+  { txt: ')\n', cls: '' },
+  { txt: '    throttle = ', cls: '' },
+  { txt: 'max', cls: 'fn' },
+  { txt: '(', cls: '' },
+  { txt: '0.3', cls: 'num' },
+  { txt: ', ', cls: '' },
+  { txt: 'min', cls: 'fn' },
+  { txt: '(', cls: '' },
+  { txt: '1.0', cls: 'num' },
+  { txt: ', optimal_speed / speed))\n', cls: '' },
+  { txt: '    steering = curvature * ', cls: '' },
+  { txt: '0.85 ', cls: 'num' },
+  { txt: '+ (uwb_pos.lateral_error * ', cls: '' },
+  { txt: '0.15', cls: 'num' },
+  { txt: ')\n', cls: '' },
+  { txt: '    \n', cls: '' },
+  { txt: '    ', cls: '' },
+  { txt: 'return ', cls: 'kw' },
+  { txt: '{', cls: '' },
+  { txt: '"throttle"', cls: 'str' },
+  { txt: ': throttle, ', cls: '' },
+  { txt: '"steering"', cls: 'str' },
+  { txt: ': steering}\n\n', cls: '' },
+  { txt: '# ', cls: 'com' },
+  { txt: '✓ 论文已 submission · 专利已布局 · ZTMotor 量产中', cls: 'com' },
+];
+
+const codeBody = document.getElementById('codeBody');
+let typedHTML = '';
+let snipIdx = 0, charIdx = 0;
+function typeCode() {
+  if (snipIdx >= codeSnippet.length) {
+    codeBody.innerHTML = typedHTML + '<span class="code-cursor"></span>';
+    setTimeout(() => {
+      typedHTML = ''; snipIdx = 0; charIdx = 0;
+      typeCode();
+    }, 6000);
+    return;
+  }
+  const cur = codeSnippet[snipIdx];
+  if (charIdx === 0 && cur.cls) typedHTML += `<span class="${cur.cls}">`;
+  typedHTML += cur.txt[charIdx];
+  charIdx++;
+  if (charIdx >= cur.txt.length) {
+    if (cur.cls) typedHTML += '</span>';
+    snipIdx++; charIdx = 0;
+  }
+  codeBody.innerHTML = typedHTML + '<span class="code-cursor"></span>';
+  const delay = cur.cls === 'com' ? 8 : 18;
+  setTimeout(typeCode, delay);
+}
+// start when section in view
+const vibeObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting && !codeBody.dataset.started) {
+      codeBody.dataset.started = '1';
+      typeCode();
+      vibeObserver.disconnect();
+    }
+  });
+}, { threshold: 0.3 });
+vibeObserver.observe(document.querySelector('.code-demo'));
+
+/* ====== AI Pilot Waypoint Tuner · Real Track 5 (UWB-calibrated walls) ====== */
+// Real Track 5 outer/inner wall polygons (from ref_points.html, meters)
+const TRACK_OUTER = [[5.654,4.616],[5.565,4.500],[5.509,4.365],[5.490,4.220],[5.490,3.610],[5.473,3.463],[5.425,3.324],[5.346,3.198],[5.242,3.094],[5.116,3.015],[4.977,2.967],[4.830,2.950],[4.220,2.950],[4.073,2.967],[3.934,3.015],[3.809,3.094],[3.704,3.198],[3.625,3.324],[3.577,3.463],[3.560,3.610],[3.560,4.220],[3.541,4.365],[3.485,4.500],[3.396,4.616],[3.280,4.705],[3.145,4.761],[3.000,4.780],[0.560,4.780],[0.415,4.761],[0.280,4.705],[0.164,4.616],[0.075,4.500],[0.019,4.365],[0.000,4.220],[0.000,0.560],[0.019,0.415],[0.075,0.280],[0.164,0.164],[0.280,0.075],[0.415,0.019],[0.560,0],[9.710,0],[9.855,0.019],[9.990,0.075],[10.106,0.164],[10.195,0.280],[10.251,0.415],[10.270,0.560],[10.270,4.220],[10.251,4.365],[10.195,4.500],[10.106,4.616],[9.990,4.705],[9.855,4.761],[9.710,4.780],[6.050,4.780],[5.905,4.761],[5.770,4.705],[5.654,4.616]];
+const TRACK_INNER = [[7.238,2.544],[7.292,2.690],[7.378,2.819],[7.492,2.924],[7.627,3.000],[7.777,3.042],[7.932,3.048],[8.084,3.018],[8.225,2.953],[8.347,2.857],[8.443,2.735],[8.508,2.594],[8.538,2.442],[8.532,2.287],[8.490,2.137],[8.414,2.002],[8.309,1.888],[8.180,1.802],[8.034,1.748],[7.880,1.730],[2.390,1.730],[2.243,1.747],[2.104,1.795],[1.978,1.874],[1.874,1.978],[1.795,2.104],[1.747,2.243],[1.730,2.390],[1.730,3.660],[1.830,3.660],[1.830,2.390],[1.849,2.245],[1.905,2.110],[1.994,1.994],[2.110,1.905],[2.245,1.849],[2.390,1.830],[6.660,1.830],[6.805,1.849],[6.940,1.905],[7.056,1.994],[7.145,2.110],[7.201,2.245],[7.220,2.390],[7.238,2.544]];
+const TRACK_X = 10.27, TRACK_Y = 4.78;
+const CAR_CLEAR = 0.20;  // wall clearance (m)
+
+const pilotCv = document.getElementById('pilotCv');
+const pilotCtx = pilotCv.getContext('2d');
+const PW = 800, PH = 500;
+const TX_SCALE = Math.min((PW - 60) / TRACK_X, (PH - 60) / TRACK_Y);
+const TX_MX = (PW - TRACK_X * TX_SCALE) / 2;
+const TX_MY = (PH - TRACK_Y * TX_SCALE) / 2;
+const w2s = (x, y) => [TX_MX + (TRACK_X - x) * TX_SCALE, TX_MY + y * TX_SCALE]; // mirror X (matches ref_points)
+const s2w = (sx, sy) => [TRACK_X - (sx - TX_MX) / TX_SCALE, (sy - TX_MY) / TX_SCALE];
+
+// 8 waypoints along racing line — initial guess between outer and inner walls (world meters)
+let waypoints = [
+  {x: 5.0, y: 4.30},   // WP1 start, bottom-center
+  {x: 9.2, y: 4.30},   // WP2 bottom-right
+  {x: 9.65,y: 2.70},   // WP3 right
+  {x: 9.20,y: 0.55},   // WP4 top-right (around peninsula)
+  {x: 5.00,y: 0.40},   // WP5 top-center
+  {x: 1.10,y: 0.55},   // WP6 top-left
+  {x: 0.50,y: 2.70},   // WP7 left
+  {x: 1.10,y: 4.30}    // WP8 bottom-left
+];
+let wpDrag = -1, ghostT = 0;
+
+// ---- Point-in-polygon (ray casting) ----
+function inPoly(p, poly) {
+  let inside = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const xi = poly[i][0], yi = poly[i][1], xj = poly[j][0], yj = poly[j][1];
+    if (((yi > p.y) !== (yj > p.y)) && (p.x < (xj - xi) * (p.y - yi) / (yj - yi) + xi)) inside = !inside;
+  }
+  return inside;
+}
+
+// ---- Point to segment distance ----
+function distToSeg(px, py, ax, ay, bx, by) {
+  const vx = bx - ax, vy = by - ay, wx = px - ax, wy = py - ay;
+  const L2 = vx*vx + vy*vy;
+  const t = L2 > 0 ? Math.max(0, Math.min(1, (wx*vx + wy*vy) / L2)) : 0;
+  return Math.hypot(px - (ax + t*vx), py - (ay + t*vy));
+}
+
+// ---- Build wall segments (skip large gap jumps > 4.2m) ----
+function wallSegs() {
+  const segs = [];
+  [TRACK_OUTER, TRACK_INNER].forEach(poly => {
+    for (let i = 0; i < poly.length - 1; i++) {
+      const a = poly[i], b = poly[i+1];
+      if (Math.hypot(b[0]-a[0], b[1]-a[1]) < 4.2) segs.push([a, b]);
+    }
+  });
+  return segs;
+}
+const WALLS = wallSegs();
+
+// ---- Catmull-Rom point along loop, t in [0,1] ----
+function ghostPos(t) {
+  const N = waypoints.length;
+  const idx = Math.floor(t * N) % N;
+  const local = (t * N) - Math.floor(t * N);
+  const p0 = waypoints[(idx-1+N)%N], p1 = waypoints[idx], p2 = waypoints[(idx+1)%N], p3 = waypoints[(idx+2)%N];
+  const t2 = local*local, t3 = t2*local;
+  return {
+    x: 0.5*((2*p1.x) + (-p0.x + p2.x)*local + (2*p0.x - 5*p1.x + 4*p2.x - p3.x)*t2 + (-p0.x + 3*p1.x - 3*p2.x + p3.x)*t3),
+    y: 0.5*((2*p1.y) + (-p0.y + p2.y)*local + (2*p0.y - 5*p1.y + 4*p2.y - p3.y)*t2 + (-p0.y + 3*p1.y - 3*p2.y + p3.y)*t3)
+  };
+}
+
+// ---- Sample whole racing line + check wall clearance ----
+function evaluateLine() {
+  let totalLen = 0, minClearance = 1e9, hit = false;
+  const SAMPLES = 200;
+  let prev = ghostPos(0);
+  for (let s = 1; s <= SAMPLES; s++) {
+    const t = s / SAMPLES;
+    const cur = ghostPos(t);
+    totalLen += Math.hypot(cur.x - prev.x, cur.y - prev.y);
+    // check against all walls
+    let minD = 1e9;
+    for (let w = 0; w < WALLS.length; w++) {
+      const d = distToSeg(cur.x, cur.y, WALLS[w][0][0], WALLS[w][0][1], WALLS[w][1][0], WALLS[w][1][1]);
+      if (d < minD) minD = d;
+    }
+    if (minD < minClearance) minClearance = minD;
+    if (minD < CAR_CLEAR) hit = true;
+    // sanity: must be inside outer & outside inner
+    if (!inPoly(cur, TRACK_OUTER) || inPoly(cur, TRACK_INNER)) hit = true;
+    prev = cur;
+  }
+  return { length: totalLen, minClearance: minClearance, hit: hit };
+}
+
+// Split a polygon into sub-polygons wherever consecutive points jump > threshold meters
+function splitByJump(poly, threshold) {
+  const segs = [];
+  let cur = [poly[0]];
+  for (let i = 1; i < poly.length; i++) {
+    const a = poly[i-1], b = poly[i];
+    if (Math.hypot(b[0]-a[0], b[1]-a[1]) > threshold) {
+      if (cur.length > 1) segs.push(cur);
+      cur = [poly[i]];
+    } else {
+      cur.push(poly[i]);
+    }
+  }
+  if (cur.length > 1) segs.push(cur);
+  return segs;
+}
+
+function drawWallPoly(poly, stroke, glow, fill) {
+  // Fill: use whole polygon as one closed path so winding rule covers
+  // sub-regions correctly (including main-island interior not explicitly walled)
+  if (fill) {
+    pilotCtx.fillStyle = fill;
+    pilotCtx.beginPath();
+    poly.forEach((p, i) => {
+      const s = w2s(p[0], p[1]);
+      if (i) pilotCtx.lineTo(s[0], s[1]); else pilotCtx.moveTo(s[0], s[1]);
+    });
+    pilotCtx.closePath();
+    pilotCtx.fill();
+  }
+  // Stroke: split by large jumps so we don't draw the data-only connector lines
+  const subPolys = splitByJump(poly, 4.2);
+  pilotCtx.strokeStyle = stroke;
+  pilotCtx.lineWidth = 2.5;
+  pilotCtx.shadowColor = glow;
+  pilotCtx.shadowBlur = 10;
+  pilotCtx.beginPath();
+  subPolys.forEach(sub => {
+    sub.forEach((p, i) => {
+      const s = w2s(p[0], p[1]);
+      if (i) pilotCtx.lineTo(s[0], s[1]); else pilotCtx.moveTo(s[0], s[1]);
+    });
+  });
+  pilotCtx.stroke();
+  pilotCtx.shadowBlur = 0;
+}
+
+function drawPilot() {
+  pilotCtx.clearRect(0, 0, PW, PH);
+  // background grid (1m × 1m)
+  pilotCtx.strokeStyle = 'rgba(0,184,255,0.06)';
+  pilotCtx.lineWidth = 1;
+  for (let x = 0; x <= 10; x++) {
+    const a = w2s(x, 0), b = w2s(x, TRACK_Y);
+    pilotCtx.beginPath(); pilotCtx.moveTo(a[0], a[1]); pilotCtx.lineTo(b[0], b[1]); pilotCtx.stroke();
+  }
+  for (let y = 0; y <= 4; y++) {
+    const a = w2s(0, y), b = w2s(TRACK_X, y);
+    pilotCtx.beginPath(); pilotCtx.moveTo(a[0], a[1]); pilotCtx.lineTo(b[0], b[1]); pilotCtx.stroke();
+  }
+  // outer wall (filled track surface + bright green stroke)
+  drawWallPoly(TRACK_OUTER, '#00FF9D', '#00FF9D', 'rgba(16,28,48,0.85)');
+  // inner wall (cut-out)
+  drawWallPoly(TRACK_INNER, '#00B8FF', '#00B8FF', 'rgba(5,8,16,0.95)');
+  // racing line (smooth Catmull-Rom through waypoints)
+  const evalRes = evaluateLine();
+  pilotCtx.strokeStyle = evalRes.hit ? '#FF0040' : '#00B8FF';
+  pilotCtx.lineWidth = 3;
+  pilotCtx.shadowColor = pilotCtx.strokeStyle;
+  pilotCtx.shadowBlur = 14;
+  pilotCtx.beginPath();
+  const N = waypoints.length;
+  const start = w2s(waypoints[0].x, waypoints[0].y);
+  pilotCtx.moveTo(start[0], start[1]);
+  for (let i = 0; i < N; i++) {
+    const p0 = waypoints[(i-1+N)%N], p1 = waypoints[i], p2 = waypoints[(i+1)%N], p3 = waypoints[(i+2)%N];
+    const cp1 = {x: p1.x + (p2.x - p0.x)/6, y: p1.y + (p2.y - p0.y)/6};
+    const cp2 = {x: p2.x - (p3.x - p1.x)/6, y: p2.y - (p3.y - p1.y)/6};
+    const c1 = w2s(cp1.x, cp1.y), c2 = w2s(cp2.x, cp2.y), pt = w2s(p2.x, p2.y);
+    pilotCtx.bezierCurveTo(c1[0], c1[1], c2[0], c2[1], pt[0], pt[1]);
+  }
+  pilotCtx.stroke();
+  pilotCtx.shadowBlur = 0;
+  // ghost car + trail
+  const gp = ghostPos(ghostT);
+  const gs = w2s(gp.x, gp.y);
+  pilotCtx.fillStyle = 'rgba(255,136,0,0.35)';
+  for (let k = 1; k <= 10; k++) {
+    const tp = ghostPos((ghostT - k*0.006 + 1) % 1);
+    const ts = w2s(tp.x, tp.y);
+    pilotCtx.globalAlpha = (10-k)/12;
+    pilotCtx.beginPath(); pilotCtx.arc(ts[0], ts[1], 5, 0, Math.PI*2); pilotCtx.fill();
+  }
+  pilotCtx.globalAlpha = 1;
+  pilotCtx.fillStyle = '#FF8800';
+  pilotCtx.shadowColor = '#FF8800';
+  pilotCtx.shadowBlur = 22;
+  pilotCtx.beginPath(); pilotCtx.arc(gs[0], gs[1], 8, 0, Math.PI*2); pilotCtx.fill();
+  pilotCtx.shadowBlur = 0;
+  // waypoints
+  waypoints.forEach((wp, i) => {
+    const s = w2s(wp.x, wp.y);
+    const active = i === wpDrag;
+    pilotCtx.fillStyle = active ? '#FF8800' : '#00FF9D';
+    pilotCtx.shadowColor = pilotCtx.fillStyle;
+    pilotCtx.shadowBlur = active ? 22 : 14;
+    pilotCtx.beginPath(); pilotCtx.arc(s[0], s[1], active ? 14 : 11, 0, Math.PI*2); pilotCtx.fill();
+    pilotCtx.shadowBlur = 0;
+    pilotCtx.fillStyle = '#06090f';
+    pilotCtx.font = 'bold 11px ui-monospace, monospace';
+    pilotCtx.textAlign = 'center';
+    pilotCtx.textBaseline = 'middle';
+    pilotCtx.fillText('WP' + (i+1), s[0], s[1]);
+  });
+  updatePilotReadout(evalRes);
+}
+
+function updatePilotReadout(ev) {
+  const lapSec = ev.length / 1.95; // CAL.V = 1.95 m/s (real calibrated cruise speed)
+  document.getElementById('plLap').textContent = lapSec.toFixed(2) + ' s';
+  document.getElementById('plSpeed').textContent = '1.95 m/s';
+  const wsEl = document.getElementById('plG');
+  if (ev.hit) {
+    wsEl.textContent = '⚠ WALL HIT';
+    wsEl.style.color = '#FF0040';
+    wsEl.style.textShadow = '0 0 14px #FF0040';
+  } else {
+    wsEl.textContent = '✓ CLEAR · ' + (ev.minClearance * 100).toFixed(0) + 'cm';
+    wsEl.style.color = '#00FF9D';
+    wsEl.style.textShadow = '0 0 14px #00FF9D';
+  }
+}
+
+function pilotCoord(e) {
+  const rect = pilotCv.getBoundingClientRect();
+  return { x: (e.clientX - rect.left) * (PW / rect.width), y: (e.clientY - rect.top) * (PH / rect.height) };
+}
+function pilotDown(e) {
+  const sxy = pilotCoord(e);
+  waypoints.forEach((wp, i) => {
+    const s = w2s(wp.x, wp.y);
+    if (Math.hypot(s[0] - sxy.x, s[1] - sxy.y) < 22) wpDrag = i;
+  });
+  if (wpDrag >= 0) pilotCv.style.cursor = 'grabbing';
+}
+function pilotMove(e) {
+  if (wpDrag < 0) return;
+  const sxy = pilotCoord(e);
+  const wxy = s2w(sxy.x, sxy.y);
+  waypoints[wpDrag].x = Math.max(0.1, Math.min(TRACK_X - 0.1, wxy[0]));
+  waypoints[wpDrag].y = Math.max(0.1, Math.min(TRACK_Y - 0.1, wxy[1]));
+}
+function pilotUp() {
+  wpDrag = -1;
+  pilotCv.style.cursor = 'grab';
+}
+pilotCv.addEventListener('mousedown', pilotDown);
+window.addEventListener('mousemove', pilotMove);
+window.addEventListener('mouseup', pilotUp);
+pilotCv.addEventListener('touchstart', e => { e.preventDefault(); pilotDown(e.touches[0]); }, {passive:false});
+pilotCv.addEventListener('touchmove', e => { e.preventDefault(); pilotMove(e.touches[0]); }, {passive:false});
+pilotCv.addEventListener('touchend', pilotUp);
+
+function animateGhost() {
+  ghostT = (ghostT + 0.002) % 1;
+  drawPilot();
+  requestAnimationFrame(animateGhost);
+}
+drawPilot();
+animateGhost();
+</script>
+
+</body>
+</html>

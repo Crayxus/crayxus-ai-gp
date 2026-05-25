@@ -1,0 +1,61 @@
+<!DOCTYPE html><html lang="zh"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>赛道 5 参考点采集</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,Segoe UI,sans-serif;background:#050810;color:#cfe;padding:10px;
+ background-image:radial-gradient(circle at 50% 0%,#102040 0%,#050810 60%)}
+h1{font-size:19px;letter-spacing:2px;font-weight:300;text-align:center;margin:8px 0 10px}
+h1 b{color:#0bf;font-weight:900;text-shadow:0 0 12px #0bf6}
+.panel{background:linear-gradient(180deg,#0e1828,#0a121e);border:1px solid #1a3050;border-radius:10px;
+ padding:10px;margin:0 auto;max-width:1120px;box-shadow:0 0 20px #0bf2}
+canvas{display:block;margin:0 auto;background:#0a121e;border:1px solid #1a3050;border-radius:6px;
+ box-shadow:0 0 20px #0bf2;max-width:100%}
+.note{font-size:14px;color:#9cf;text-align:center;margin:12px auto;max-width:900px;line-height:1.8}
+.note b{color:#ff3}.note .o{color:#f93}
+</style></head><body>
+
+<h1>CRAYXUS <b>AI·GP</b> · 赛道 5 参考点</h1>
+
+<div class="panel">
+  <canvas id="cv" width="1080" height="560"></canvas>
+  <div class="note">
+    把车<b>依次放到 1 2 3 4 号角</b> + <b class="o">5 号(半岛尖端)</b>。<br>
+    每放好一个,告诉我「<b>N 号好了</b>」,我读 UWB。<br>
+    <b>1-4 = 四个角</b> · <b class="o">5 = 下面突出的半岛尖端(锁方向,防搞反)</b><br>
+    5 个点采完 → 我算出整条赛道的墙在 UWB 坐标系的位置。
+  </div>
+</div>
+
+<script>
+const OUTER=[[5.654,4.616],[5.565,4.500],[5.509,4.365],[5.490,4.220],[5.490,3.610],[5.473,3.463],[5.425,3.324],[5.346,3.198],[5.242,3.094],[5.116,3.015],[4.977,2.967],[4.830,2.950],[4.220,2.950],[4.073,2.967],[3.934,3.015],[3.809,3.094],[3.704,3.198],[3.625,3.324],[3.577,3.463],[3.560,3.610],[3.560,4.220],[3.541,4.365],[3.485,4.500],[3.396,4.616],[3.280,4.705],[3.145,4.761],[3.000,4.780],[0.560,4.780],[0.415,4.761],[0.280,4.705],[0.164,4.616],[0.075,4.500],[0.019,4.365],[0.000,4.220],[0.000,0.560],[0.019,0.415],[0.075,0.280],[0.164,0.164],[0.280,0.075],[0.415,0.019],[0.560,-0.000],[9.710,-0.000],[9.855,0.019],[9.990,0.075],[10.106,0.164],[10.195,0.280],[10.251,0.415],[10.270,0.560],[10.270,4.220],[10.251,4.365],[10.195,4.500],[10.106,4.616],[9.990,4.705],[9.855,4.761],[9.710,4.780],[6.050,4.780],[5.905,4.761],[5.770,4.705],[5.654,4.616]], INNER=[[7.238,2.544],[7.292,2.690],[7.378,2.819],[7.492,2.924],[7.627,3.000],[7.777,3.042],[7.932,3.048],[8.084,3.018],[8.225,2.953],[8.347,2.857],[8.443,2.735],[8.508,2.594],[8.538,2.442],[8.532,2.287],[8.490,2.137],[8.414,2.002],[8.309,1.888],[8.180,1.802],[8.034,1.748],[7.880,1.730],[2.390,1.730],[2.243,1.747],[2.104,1.795],[1.978,1.874],[1.874,1.978],[1.795,2.104],[1.747,2.243],[1.730,2.390],[1.730,3.660],[1.830,3.660],[1.830,2.390],[1.849,2.245],[1.905,2.110],[1.994,1.994],[2.110,1.905],[2.245,1.849],[2.390,1.830],[6.660,1.830],[6.805,1.849],[6.940,1.905],[7.056,1.994],[7.145,2.110],[7.201,2.245],[7.220,2.390],[7.238,2.544]], REFS=[[0.164,0.164],[10.106,0.164],[10.106,4.616],[0.164,4.616],[4.525,2.977]];
+const XMAX=10.27,YMAX=4.78;
+const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+const SCALE=92, MX=(cv.width-XMAX*SCALE)/2, MY=(cv.height-YMAX*SCALE)/2;
+function w2s(x,y){return [MX+(XMAX-x)*SCALE, MY+y*SCALE];}
+function poly(pts){ctx.beginPath();
+  pts.forEach((p,i)=>{const s=w2s(p[0],p[1]);i?ctx.lineTo(s[0],s[1]):ctx.moveTo(s[0],s[1]);});
+  ctx.closePath();}
+ctx.clearRect(0,0,cv.width,cv.height);
+ctx.strokeStyle='#13243a';ctx.lineWidth=1;
+for(let x=0;x<=10;x++){const a=w2s(x,0),b=w2s(x,YMAX);
+  ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();}
+for(let y=0;y<=4;y++){const a=w2s(0,y),b=w2s(XMAX,y);
+  ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();}
+poly(OUTER);ctx.fillStyle='#16202e';ctx.fill();
+poly(INNER);ctx.fillStyle='#0a121e';ctx.fill();
+poly(OUTER);ctx.strokeStyle='#0f8';ctx.lineWidth=3;
+ctx.shadowColor='#0f8';ctx.shadowBlur=6;ctx.stroke();ctx.shadowBlur=0;
+poly(INNER);ctx.strokeStyle='#0bf';ctx.lineWidth=2.5;
+ctx.shadowColor='#0bf';ctx.shadowBlur=6;ctx.stroke();ctx.shadowBlur=0;
+REFS.forEach((p,i)=>{
+  const s=w2s(p[0],p[1]); const isPenin=(i===4);
+  ctx.beginPath();ctx.arc(s[0],s[1],20,0,6.283);
+  ctx.fillStyle=isPenin?'#f93':'#ff3';ctx.fill();
+  ctx.strokeStyle='#fff';ctx.lineWidth=2.5;ctx.stroke();
+  ctx.fillStyle='#000';ctx.font='bold 20px monospace';
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(i+1,s[0],s[1]);
+});
+</script>
+</body></html>
