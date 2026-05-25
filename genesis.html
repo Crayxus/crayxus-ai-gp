@@ -2,9 +2,37 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#050810">
 <title>Crayxus AI·GP Genesis · Where AI Races</title>
-<meta name="description" content="The world's first self-assembling AI racing system. Transparent F1 cars, modular robotic tracks, TRON-inspired aesthetics. Built with Vibe Coding.">
+<meta name="description" content="The world's first self-assembling AI racing system. Transparent F1 cars, modular robotic tracks, TRON-inspired aesthetics. Built by ZJU Zhang Lab × Crayxus × ZTMotor.">
+
+<!-- Open Graph (WeChat / Facebook / LinkedIn 分享缩略图) -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Crayxus AI·GP Genesis · Where AI Races">
+<meta property="og:description" content="全球首个自我组装的 AI 赛车系统 · 透明发光 F1 + 自移动赛道砖 + TRON 美学。浙大张旭光 AI 团队 × Crayxus × ZTMotor 联合研发。">
+<meta property="og:image" content="https://crayxus.com.au/genesis_thumb.jpg">
+<meta property="og:image:width" content="600">
+<meta property="og:image:height" content="600">
+<meta property="og:url" content="https://crayxus.com.au/genesis.html">
+<meta property="og:site_name" content="Crayxus AI">
+
+<!-- WeChat 微信专用 (微信也读 OG, 这是额外保险) -->
+<meta itemprop="name" content="Crayxus AI·GP Genesis · Where AI Races">
+<meta itemprop="description" content="全球首个自我组装的 AI 赛车系统 · 透明发光 F1 + 自移动赛道砖 + TRON 美学。">
+<meta itemprop="image" content="https://crayxus.com.au/genesis_thumb.jpg">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Crayxus AI·GP Genesis · Where AI Races">
+<meta name="twitter:description" content="The world's first self-assembling AI racing system.">
+<meta name="twitter:image" content="https://crayxus.com.au/genesis_thumb.jpg">
+
+<!-- Favicons -->
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -104,6 +132,7 @@
   .hero {
     position: relative;
     min-height: 100vh;
+    min-height: 100svh; /* fix iOS Safari address bar */
     display: flex; align-items: center;
     padding: 0 48px; overflow: hidden;
   }
@@ -387,6 +416,11 @@
     box-shadow: 0 0 20px rgba(0, 184, 255, 0.15);
   }
   .palette-item:active { cursor: grabbing; }
+  .palette-item.selected {
+    border-color: var(--blue);
+    background: rgba(0, 184, 255, 0.18);
+    box-shadow: 0 0 22px rgba(0, 184, 255, 0.45);
+  }
   .palette-item .module-name {
     position: absolute; bottom: 4px;
     font-family: var(--font-tech);
@@ -772,6 +806,86 @@
 
   .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.8s, transform 0.8s; }
   .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ====== Mobile 600px细化 ====== */
+  @media (max-width: 600px) {
+    nav { padding: 12px 16px; }
+    .logo { font-size: 14px; }
+    .logo .sub { display: none; }
+    .nav-cta { padding: 8px 14px; font-size: 11px; letter-spacing: 0.1em; }
+    .hero { padding: 90px 16px 40px; }
+    .hero-eyebrow { font-size: 11px; letter-spacing: 0.2em; margin-bottom: 14px; }
+    .hero-title { font-size: 44px; line-height: 0.95; margin-bottom: 12px; }
+    .hero-subtitle { font-size: 15px; letter-spacing: 0.08em; margin-bottom: 14px; }
+    .hero-desc { font-size: 14px; margin-bottom: 28px; }
+    .hero-ctas { flex-direction: column; gap: 10px; width: 100%; max-width: 320px; }
+    .btn { width: 100%; justify-content: center; padding: 14px 20px; font-size: 12px; letter-spacing: 0.12em; }
+    .stats-bar { padding: 20px 16px; gap: 12px; }
+    .stat-num { font-size: 28px; }
+    .stat-label { font-size: 10px; letter-spacing: 0.15em; }
+    .section-pad { padding: 60px 16px; }
+    .section-eyebrow { font-size: 11px; letter-spacing: 0.2em; }
+    .section-title { font-size: 28px; line-height: 1.15; }
+    .section-desc { font-size: 14px; }
+    .feature { padding: 26px 22px; }
+    .feature h3 { font-size: 19px; }
+    .feature p { font-size: 13.5px; }
+    .feature-icon { width: 48px; height: 48px; margin-bottom: 18px; }
+    .showcase { gap: 32px; }
+    .showcase-specs li { padding: 14px 0; }
+    .spec-key { font-size: 11px; }
+    .spec-val { font-size: 13px; }
+    .customizer-section { padding: 60px 16px; }
+    .customizer { gap: 24px; }
+    .color-pill { padding: 14px 16px; gap: 12px; }
+    .color-swatch { width: 22px; height: 22px; }
+    .color-name { font-size: 13px; }
+    .color-desc { font-size: 11px; }
+    .color-price { font-size: 12px; }
+    .builder-section { padding: 60px 16px; }
+    .builder { padding: 16px; gap: 18px; }
+    .builder-palette h4, .builder-readout h4 { font-size: 10px; letter-spacing: 0.18em; margin-bottom: 12px; }
+    .builder-palette .palette-items {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+    .palette-item { aspect-ratio: 1; }
+    .palette-item .module-name { font-size: 7px; bottom: 2px; }
+    .palette-item svg { width: 50%; height: 50%; }
+    .canvas-hint { font-size: 11px; line-height: 1.6; padding: 8px; }
+    .demo-badge { font-size: 8px; padding: 3px 8px; top: 10px; right: 10px; }
+    .readout-row { padding: 11px 13px; }
+    .readout-row .k { font-size: 9px; letter-spacing: 0.15em; }
+    .readout-row .v { font-size: 15px; }
+    .builder-btn { padding: 11px 13px; font-size: 11px; letter-spacing: 0.1em; }
+    .race-system { min-height: 70vh; }
+    .race-system-content { padding: 60px 16px; }
+    .vibe-section { padding: 60px 16px; }
+    .vibe-header { margin-bottom: 40px; }
+    .vibe-col { padding: 24px 20px; }
+    .vibe-col h3 { font-size: 19px; }
+    .vibe-stat { font-size: 28px; }
+    .vibe-list li { font-size: 13px; }
+    .code-header { padding: 12px 14px; font-size: 10px; }
+    .code-title { font-size: 11px; }
+    .code-body { padding: 18px 14px; font-size: 11.5px; line-height: 1.6; min-height: 220px; }
+    .product { padding: 28px 22px; }
+    .product-name { font-size: 21px; }
+    .product-price { font-size: 30px; }
+    .product-price-unit { font-size: 11px; }
+    .product-specs li { font-size: 13px; }
+    .product-cta { padding: 12px; font-size: 11px; }
+    .preorder { padding: 60px 16px; }
+    .preorder h2 { font-size: 30px; }
+    .preorder p { font-size: 14px; margin-bottom: 28px; }
+    .email-form input { padding: 14px 18px; font-size: 14px; }
+    .email-form button { padding: 14px; font-size: 12px; }
+    footer { padding: 28px 16px; }
+    .footer-logo { font-size: 14px; }
+    .footer-tagline { font-size: 11px; margin-bottom: 16px; }
+    .footer-meta { font-size: 11px; }
+  }
 </style>
 </head>
 <body>
@@ -987,7 +1101,7 @@
     </div>
     <div class="builder-canvas-wrap">
       <svg class="builder-canvas" id="canvas" viewBox="0 0 800 800" preserveAspectRatio="xMidYMid meet"></svg>
-      <div class="canvas-hint" id="canvasHint">↞  从左侧拖入模块到此处  ↠<br><span style="font-size:11px; color:var(--gray);">单击旋转 90° · 右键删除</span></div>
+      <div class="canvas-hint" id="canvasHint">↞ 拖入 / 点选模块到此处 ↠<br><span style="font-size:11px; color:var(--gray);">单击旋转 90° · 右键删除</span></div>
       <div class="demo-badge" id="demoBadge">▸ Auto-assembly demo · 拖入任意模块停止</div>
     </div>
     <div class="builder-readout">
@@ -1274,12 +1388,24 @@ function updateReadout() {
   document.getElementById('rdSpeed').textContent = topSpeed === '--' ? '--' : `${topSpeed} km/h`;
 }
 
-// drag-and-drop
+// Desktop: drag-and-drop · Mobile: tap-to-select + tap-to-place
 let draggedType = null;
+let selectedType = null;  // for mobile tap mode
+
 document.querySelectorAll('.palette-item').forEach(item => {
   item.addEventListener('dragstart', e => {
     draggedType = item.dataset.type;
     e.dataTransfer.effectAllowed = 'copy';
+  });
+  // Tap to select (mobile-friendly, also works on desktop)
+  item.addEventListener('click', e => {
+    document.querySelectorAll('.palette-item').forEach(p => p.classList.remove('selected'));
+    if (selectedType === item.dataset.type) {
+      selectedType = null;  // toggle off
+    } else {
+      item.classList.add('selected');
+      selectedType = item.dataset.type;
+    }
   });
 });
 
@@ -1288,21 +1414,33 @@ canvas.addEventListener('dragover', e => {
   e.dataTransfer.dropEffect = 'copy';
 });
 
+function placeAt(clientX, clientY, type) {
+  const rect = canvas.getBoundingClientRect();
+  const x = (clientX - rect.left) / rect.width * 800;
+  const y = (clientY - rect.top) / rect.height * 800;
+  const gx = Math.floor(x / CELL);
+  const gy = Math.floor(y / CELL);
+  if (gx < 0 || gx >= GRID_SIZE || gy < 0 || gy >= GRID_SIZE) return false;
+  stopDemo();
+  placed = placed.filter(m => !(m.gx === gx && m.gy === gy));
+  placed.push({ type, gx, gy, rot: 0, _new: true });
+  render();
+  return true;
+}
+
 canvas.addEventListener('drop', e => {
   e.preventDefault();
   if (!draggedType) return;
-  stopDemo();
-  const rect = canvas.getBoundingClientRect();
-  const x = (e.clientX - rect.left) / rect.width * 800;
-  const y = (e.clientY - rect.top) / rect.height * 800;
-  const gx = Math.floor(x / CELL);
-  const gy = Math.floor(y / CELL);
-  if (gx < 0 || gx >= GRID_SIZE || gy < 0 || gy >= GRID_SIZE) return;
-  // remove existing at same cell
-  placed = placed.filter(m => !(m.gx === gx && m.gy === gy));
-  placed.push({ type: draggedType, gx, gy, rot: 0 });
+  placeAt(e.clientX, e.clientY, draggedType);
   draggedType = null;
-  render();
+});
+
+// Tap-to-place (mobile): if user has selected a palette item and taps empty cell, place it
+canvas.addEventListener('click', e => {
+  if (!selectedType) return;
+  // If tap landed on an existing tile, let that handler (rotate) take precedence
+  if (e.target.closest('.placed-mod')) return;
+  placeAt(e.clientX, e.clientY, selectedType);
 });
 
 function clearTrack() { stopDemo(); placed = []; render(); }
