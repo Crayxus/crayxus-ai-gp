@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CRAYXUS AI · 让 AI 在每个垂直领域比人更厉害</title>
-<meta name="description" content="Crayxus AI 旗下三大 Alpha 产品矩阵 — AlphaCar 自动驾驶赛车、AlphaScore 留学提分、AlphaDan 掼蛋直播。K12 学生亲手训练真正能赢的 AI。">
+<meta name="description" content="Crayxus AI 四大金刚 — AlphaCub 玩具 AI 赛车、AlphaPilot AI 卡丁车智能头盔、AlphaScore 留学提分、AlphaDan 掼蛋直播。K12 学生亲手训练真正能赢的 AI。">
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   :root{
@@ -16,8 +16,10 @@
     --dim:#8da2bd;
     --mute:#5a6e8e;
     --silver:#cfd8e8;
-    --car:#ff7a45;
-    --car2:#ffa845;
+    --cub:#ff7a45;
+    --cub2:#ffa845;
+    --pilot:#5fa;
+    --pilot2:#8fc99c;
     --score:#00d4ff;
     --score2:#00ffcc;
     --dan:#ff5fff;
@@ -38,11 +40,11 @@
   .logo{font-weight:800;font-size:18px;letter-spacing:2px;
     background:linear-gradient(135deg,#fff 30%,var(--silver) 70%,#7a90b0);
     -webkit-background-clip:text;background-clip:text;color:transparent}
-  .logo .a{color:var(--car);font-weight:900}
+  .logo .a{color:var(--cub);font-weight:900}
   .nav-links{display:flex;gap:28px;font-size:13.5px;color:var(--dim)}
   .nav-links a{transition:color .15s}
   .nav-links a:hover{color:#fff}
-  .nav-cta{background:linear-gradient(135deg,var(--car),var(--car2));
+  .nav-cta{background:linear-gradient(135deg,var(--cub),var(--cub2));
     color:#0a0a0a;padding:9px 18px;border-radius:6px;font-size:13px;font-weight:700;
     box-shadow:0 0 24px rgba(255,122,69,.3);transition:all .2s}
   .nav-cta:hover{transform:translateY(-1px);box-shadow:0 0 30px rgba(255,122,69,.5)}
@@ -55,7 +57,7 @@
     radial-gradient(ellipse at 50% 80%,rgba(255,95,255,.05),transparent 50%);
     z-index:-1}
   .alpha-mark{font-size:160px;font-weight:900;
-    background:linear-gradient(135deg,var(--car) 0%,var(--score) 50%,var(--dan) 100%);
+    background:linear-gradient(135deg,var(--cub) 0%,var(--score) 50%,var(--dan) 100%);
     -webkit-background-clip:text;background-clip:text;color:transparent;
     line-height:1;margin-bottom:30px;letter-spacing:-8px;
     animation:pulse 3s ease-in-out infinite}
@@ -81,18 +83,19 @@
     letter-spacing:3px;margin-bottom:18px}
   .section-title{font-size:46px;font-weight:800;line-height:1.2;margin-bottom:16px}
   .section-title .accent{
-    background:linear-gradient(135deg,var(--car),var(--score),var(--dan));
+    background:linear-gradient(135deg,var(--cub),var(--score),var(--dan));
     -webkit-background-clip:text;background-clip:text;color:transparent}
   .section-sub{font-size:17px;color:var(--dim);max-width:780px;margin-bottom:60px}
 
-  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
   .card{background:var(--card);border:1px solid var(--line);border-radius:16px;
-    padding:32px 28px;position:relative;overflow:hidden;
-    transition:all .3s;display:flex;flex-direction:column;min-height:660px}
+    padding:30px 24px;position:relative;overflow:hidden;
+    transition:all .3s;display:flex;flex-direction:column;min-height:520px}
   .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
     background:var(--accent,#fff);box-shadow:0 0 20px var(--accent,#fff);opacity:.8}
   .card:hover{transform:translateY(-4px);border-color:var(--accent,#fff)}
-  .card.car{--accent:var(--car);--accent2:var(--car2)}
+  .card.cub{--accent:var(--cub);--accent2:var(--cub2)}
+  .card.pilot{--accent:var(--pilot);--accent2:var(--pilot2)}
   .card.score{--accent:var(--score);--accent2:var(--score2)}
   .card.dan{--accent:var(--dan);--accent2:var(--dan2)}
 
@@ -161,7 +164,7 @@
   .stat{text-align:center;padding:28px;background:var(--card);
     border:1px solid var(--line);border-radius:12px}
   .stat .big{font-size:54px;font-weight:900;line-height:1;
-    background:linear-gradient(135deg,var(--car),var(--score));
+    background:linear-gradient(135deg,var(--cub),var(--score));
     -webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:8px}
   .stat .lbl{font-size:12.5px;color:var(--dim);text-transform:uppercase;letter-spacing:1.5px}
 
@@ -169,7 +172,7 @@
   .contact{padding:120px 0;text-align:center}
   .contact h2{font-size:54px;font-weight:800;letter-spacing:-2px;margin-bottom:20px}
   .contact h2 .accent{
-    background:linear-gradient(135deg,var(--car),var(--score),var(--dan));
+    background:linear-gradient(135deg,var(--cub),var(--score),var(--dan));
     -webkit-background-clip:text;background-clip:text;color:transparent}
   .contact p{font-size:18px;color:var(--dim);margin-bottom:40px;
     max-width:600px;margin-left:auto;margin-right:auto}
@@ -195,8 +198,11 @@
   footer .alpha-family span{color:var(--mute)}
   footer .copy{margin-top:24px;color:var(--mute)}
 
+  @media(max-width:1180px){
+    .cards{grid-template-columns:repeat(2,1fr)}
+  }
   @media(max-width:980px){
-    .cards,.philo-grid,.team-grid,.moat-stats,.contact-grid{grid-template-columns:1fr 1fr}
+    .philo-grid,.team-grid,.moat-stats,.contact-grid{grid-template-columns:1fr 1fr}
     .hero h1{font-size:44px}
     .hero .sub{font-size:17px}
     .alpha-mark{font-size:120px}
@@ -204,7 +210,8 @@
     .hero{padding:120px 0 60px}
   }
   @media(max-width:640px){
-    .cards,.philo-grid,.team-grid,.moat-stats,.contact-grid{grid-template-columns:1fr}
+    .cards{grid-template-columns:1fr}
+    .philo-grid,.team-grid,.moat-stats,.contact-grid{grid-template-columns:1fr}
     .nav-links{display:none}
     .hero-meta{gap:30px}
   }
@@ -217,7 +224,7 @@
   <div class="wrap">
     <a href="#" class="logo">CRAYXUS <span class="a">α</span> AI</a>
     <div class="nav-links">
-      <a href="#products">Alpha 家族</a>
+      <a href="#products">四大金刚</a>
       <a href="#philo">哲学</a>
       <a href="#team">团队</a>
       <a href="#moat">专利</a>
@@ -233,12 +240,12 @@
     <div class="alpha-mark">α</div>
     <h1>让 AI 在每个垂直领域<br><span class="gradient">比人更厉害。</span></h1>
     <p class="sub">
-      Crayxus AI 旗下 <b>三大 Alpha 产品矩阵</b> —— 自动驾驶赛车、留学提分、掼蛋直播。<br>
+      Crayxus AI <b>四大金刚</b> —— 玩具 AI 赛车、AI 卡丁车智能头盔、留学提分、掼蛋直播。<br>
       每一个领域,我们都目标做出 <b>比人类专家更强</b> 的 AI。<br>
       <b>而训练这些 AI 的,是中国的 K12 学生。</b>
     </p>
     <div class="hero-meta">
-      <div><div class="num">3</div><div class="label">Alpha 垂类</div></div>
+      <div><div class="num">4</div><div class="label">Alpha 金刚</div></div>
       <div><div class="num">32</div><div class="label">专利申请</div></div>
       <div><div class="num">K12</div><div class="label">主要用户</div></div>
       <div><div class="num">2026</div><div class="label">Genesis 上线</div></div>
@@ -249,36 +256,59 @@
 <!-- ============ 3 CARDS ============ -->
 <section class="dashboard" id="products">
   <div class="wrap">
-    <span class="section-tag">▼ Alpha 家族</span>
-    <h2 class="section-title">三个 Alpha,<span class="accent">三个赛道,三个证据。</span></h2>
+    <span class="section-tag">▼ 四大金刚</span>
+    <h2 class="section-title">四个 Alpha,<span class="accent">四个赛道,四个冠军。</span></h2>
     <p class="section-sub">
-      AI 不是玩具,是冠军。我们用三条产品线证明同一件事 ——
-      在受限的垂直场景里,AI 一定能超过人类专家。剩下的只是时间。
+      AI 不是玩具,是冠军。Crayxus 四大金刚 —— 玩具、卡丁、提分、棋牌 ——
+      在每个受限场景里都做出 <b>比人类更强</b> 的 AI。
     </p>
 
     <div class="cards">
 
-      <!-- ===== ALPHA CAR ===== -->
-      <div class="card car">
-        <span class="card-status status-live">✅ 已上线</span>
-        <div class="card-icon">🏎️</div>
-        <h3 class="card-name"><span class="alpha-text">Alpha</span>Car</h3>
-        <div class="card-tag">自动驾驶赛车 · K12 AI 教育平台</div>
+      <!-- ===== ALPHA CUB · 玩具 AI 赛车 ===== -->
+      <div class="card cub">
+        <span class="card-status status-live">🚀 旗舰发布</span>
+        <div class="card-icon">🐯</div>
+        <h3 class="card-name"><span class="alpha-text">Alpha</span>Cub</h3>
+        <div class="card-tag">玩具 AI 赛车 · 让每个孩子都拥有 AI</div>
         <div class="card-desc">
-          中国第一款 K12 自动驾驶赛事(AI·GP)。学生亲手训练自己的赛车 AI,
-          从入门级 IMU 开环,进化到比职业玩家更快的 AlphaCar。
+          世界首个 <b>自我组装</b> 的 AI 赛车系统 —— 透明发光赛车 + 模块化机器人赛道
+          + 实时多车对决。让 K12 孩子在玩耍中,亲手训练比自己更快的 AI。
         </div>
         <ul class="card-feats">
-          <li>ZTMotor 烈驰 1/18 RC 战车(战略合作)</li>
-          <li>IMU + UWB + 视觉 多模融合</li>
-          <li>三阶段进化:上路 → 进阶 → 超越</li>
-          <li>杭州首发,目标全国 K12 AI 赛事 IP</li>
+          <li>开箱即玩 · 自动拼接赛道</li>
+          <li>家庭客厅就是 AI 赛车场</li>
+          <li>第一台属于孩子自己的 AI</li>
+          <li>面向 K12 + 极客 + 高端礼品</li>
         </ul>
         <div class="card-kpi">
-          <div class="num">11.x s</div>
-          <div class="lbl">2028 目标圈速 · 超职业玩家</div>
+          <div class="num">Genesis</div>
+          <div class="lbl">¥9,800 起 · 旗舰发售中</div>
         </div>
-        <a href="genesis.html" class="card-cta">了解 AlphaCar 详情 →</a>
+        <a href="genesis.html" class="card-cta">体验 AlphaCub →</a>
+      </div>
+
+      <!-- ===== ALPHA PILOT · AI 卡丁车 ===== -->
+      <div class="card pilot">
+        <span class="card-status status-soon">⚙️ 永康联手</span>
+        <div class="card-icon">🪖</div>
+        <h3 class="card-name"><span class="alpha-text">Alpha</span>Pilot</h3>
+        <div class="card-tag">AI 卡丁车 + 智能头盔 · 戴上即车手</div>
+        <div class="card-desc">
+          中国第一款 <b>AI 机器人卡丁车</b>。戴上 Jarvis 智能头盔,HUD 实时显示赛道、
+          AI 教练语音对话 —— 不只是开卡丁车,是和 AI 一起进化成真正的车手。
+        </div>
+        <ul class="card-feats">
+          <li>智能头盔 · HUD + Jarvis 对话</li>
+          <li>真实赛道 · 沉浸式驾驶体验</li>
+          <li>休闲 → 训练 → 赛事 三段进化</li>
+          <li>与永康产业带联合打造</li>
+        </ul>
+        <div class="card-kpi">
+          <div class="num">Iron Man</div>
+          <div class="lbl">同款沉浸式 AI 驾驶</div>
+        </div>
+        <a href="pilot.html" class="card-cta">体验 AlphaPilot →</a>
       </div>
 
       <!-- ===== ALPHA SCORE ===== -->
@@ -286,16 +316,16 @@
         <span class="card-status status-beta">🚧 Beta 内测</span>
         <div class="card-icon">📚</div>
         <h3 class="card-name"><span class="alpha-text">Alpha</span>Score</h3>
-        <div class="card-tag">AI 留学标化提分 · 自适应大模型家教</div>
+        <div class="card-tag">AI 留学提分 · 取代真人家教</div>
         <div class="card-desc">
-          用大模型 + 自适应算法,1/10 真人家教的价格,做到真人 80% 的提分效果。
-          SAT / TOEFL / IELTS / SSAT / GRE 全覆盖。
+          AI 大模型 + 自适应算法,以真人家教 <b>1/10 的价格</b>,做到 80% 的提分效果。
+          让中产家庭也能负担顶级辅导,改变留学辅导的格局。
         </div>
         <ul class="card-feats">
-          <li>实时自适应难度调整算法</li>
-          <li>错题归因 + 知识图谱定位薄弱</li>
-          <li>30 天平均提分 200+(SAT 基准)</li>
-          <li>覆盖 SAT / TOEFL / IELTS / SSAT</li>
+          <li>千人千面 · 真自适应难度</li>
+          <li>错题归因 · 直击薄弱知识</li>
+          <li>30 天平均提分 200+</li>
+          <li>SAT / TOEFL / IELTS / SSAT 全覆盖</li>
         </ul>
         <div class="card-kpi">
           <div class="num">¥99/月</div>
@@ -311,14 +341,14 @@
         <h3 class="card-name"><span class="alpha-text">Alpha</span>Dan</h3>
         <div class="card-tag">1v1 掼蛋 AI · 抖音直播挑战</div>
         <div class="card-desc">
-          三档 AI 难度:普通 V8.5、上帝、神级。开放 1v1 真人挑战,
-          抖音 / B 站直播孵化 AI 内容 IP,目标"人类大战 AlphaDan"。
+          三档 AI 难度。开放 1v1 真人挑战,抖音 / B 站直播孵化内容 IP ——
+          让中国掼蛋有自己的 <b>AlphaGo 时刻</b>。"人类大战 AlphaDan"。
         </div>
         <ul class="card-feats">
-          <li>三档难度:普通 / 上帝 / 神级</li>
-          <li>DMC 深度蒙特卡洛对局算法</li>
-          <li>抖音直播 1v1 实时对战</li>
-          <li>掼蛋 IP 流量增长引擎</li>
+          <li>三档 AI · 普通 / 上帝 / 神级</li>
+          <li>1v1 真人挑战 · 实时对战</li>
+          <li>抖音直播 IP · 内容流量引擎</li>
+          <li>让传统智力运动有 AI 灵魂</li>
         </ul>
         <div class="card-kpi">
           <div class="num">3 档</div>
@@ -382,13 +412,13 @@
         <p>AI 工程 + 教育产品。曾主导 AlphaDan、WSOPMTT(扑克 AI)、SoccerBurst(足球盘口)等多个垂直 AI 项目。</p>
       </div>
       <div class="person">
-        <div class="avatar" style="background:linear-gradient(135deg,var(--car),var(--car2));color:#0a0a0a">张</div>
+        <div class="avatar" style="background:linear-gradient(135deg,var(--cub),var(--cub2));color:#0a0a0a">张</div>
         <h4>张教授</h4>
         <div class="role">学术顾问 · 专利布局</div>
         <p>负责 AlphaCar + AlphaScore 共 32 项 IP 申报布局。教育 AI / 自动驾驶交叉领域专家。</p>
       </div>
       <div class="person">
-        <div class="avatar" style="background:linear-gradient(135deg,var(--car),var(--score));color:#0a0a0a">ZT</div>
+        <div class="avatar" style="background:linear-gradient(135deg,var(--cub),var(--score));color:#0a0a0a">ZT</div>
         <h4>ZTMotor 中天模型</h4>
         <div class="role">战略合作 · 硬件</div>
         <p>烈驰 1/18 RC 战车制造商。AlphaCar 全系列硬件平台合作伙伴,K12 AI·GP 联合赛事方。</p>
@@ -465,8 +495,9 @@
 <footer>
   <div class="wrap">
     <div class="links">
-      <a href="#products">Alpha 家族</a>
-      <a href="aigp.html">AlphaCar</a>
+      <a href="#products">四大金刚</a>
+      <a href="genesis.html">AlphaCub</a>
+      <a href="pilot.html">AlphaPilot</a>
       <a href="#contact">AlphaScore</a>
       <a href="#contact">AlphaDan</a>
       <a href="#philo">哲学</a>
@@ -474,7 +505,7 @@
       <a href="#moat">专利</a>
     </div>
     <div class="alpha-family">
-      🏎️ AlphaCar <span>·</span> 📚 AlphaScore <span>·</span> 🎴 AlphaDan
+      🐯 AlphaCub <span>·</span> 🪖 AlphaPilot <span>·</span> 📚 AlphaScore <span>·</span> 🎴 AlphaDan
     </div>
     <div class="copy">
       © 2026 Crayxus AI · crayxus.com.au · Made in 🇦🇺 Australia &amp; 🇨🇳 China

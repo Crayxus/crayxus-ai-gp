@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AlphaCar Smart Tile · 2 块 Demo BOM Checklist v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#050810;--bg2:#0a1525;--card:#0e1a2e;--line:#1a3050;
+  --txt:#e7eef8;--dim:#8da2bd;--mute:#5a6e8e;
+  --car:#ff7a45;--cyan:#00d4ff;--green:#00ff9c;--magenta:#ff2e8a;
+  --zave:#ff5b1a;
+  --ui:'Inter',-apple-system,"PingFang SC",sans-serif;
+  --mono:'JetBrains Mono','SF Mono',Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--txt);font-family:var(--ui);
+  background:radial-gradient(ellipse at 50% 0%,rgba(0,212,255,.06),transparent 60%),var(--bg);
+  -webkit-font-smoothing:antialiased;min-height:100vh}
+body{padding:20px 16px 90px;font-size:14px;line-height:1.5}
+
+.header{max-width:880px;margin:0 auto 24px;text-align:center}
+.brand{font-weight:800;letter-spacing:3px;font-size:13px;color:var(--cyan);margin-bottom:8px}
+.brand .a{color:var(--car)}
+.title{font-size:28px;font-weight:800;letter-spacing:-.5px;margin-bottom:6px;
+  background:linear-gradient(135deg,#fff 30%,var(--cyan) 70%);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{font-size:13px;color:var(--mute);letter-spacing:.5px}
+
+/* 顶部提示带 */
+.notice{max-width:880px;margin:14px auto;background:linear-gradient(90deg,rgba(255,91,26,.12),rgba(255,91,26,.04));
+  border:1px solid rgba(255,91,26,.4);border-radius:8px;padding:10px 14px;font-size:12.5px;color:var(--zave);
+  display:flex;align-items:center;gap:10px}
+.notice strong{color:#fff;font-weight:800}
+
+.progress-card{max-width:880px;margin:0 auto 24px;background:linear-gradient(180deg,var(--card),#070e1c);
+  border:1px solid var(--line);border-radius:12px;padding:18px 22px;
+  box-shadow:0 0 24px rgba(0,212,255,.06)}
+.progress-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.progress-stat{font-size:13px;color:var(--dim)}
+.progress-stat .val{color:var(--cyan);font-weight:700}
+.progress-stat .val.green{color:var(--green)}
+.progress-stat .val.orange{color:var(--car)}
+.bar{height:8px;background:#020409;border:1px solid var(--line);border-radius:4px;
+  overflow:hidden;margin-top:6px}
+.bar-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--green));
+  transition:width .4s;border-radius:4px;box-shadow:0 0 8px var(--cyan)}
+
+.container{max-width:880px;margin:0 auto}
+.category{background:var(--card);border:1px solid var(--line);border-radius:12px;
+  margin-bottom:16px;overflow:hidden}
+.cat-header{padding:14px 20px;display:flex;justify-content:space-between;align-items:center;
+  cursor:pointer;user-select:none;background:linear-gradient(90deg,rgba(0,212,255,.06),transparent);
+  transition:background .15s}
+.cat-header:hover{background:linear-gradient(90deg,rgba(0,212,255,.1),transparent)}
+.cat-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:10px;letter-spacing:.5px}
+.cat-meta{font-size:11px;color:var(--mute);font-family:var(--mono);font-variant-numeric:tabular-nums;letter-spacing:.5px}
+.cat-meta .num{color:var(--cyan);font-weight:700}
+.cat-meta .num.done{color:var(--green)}
+.cat-body{padding:0 8px 8px}
+
+.item{padding:12px 14px;border-radius:8px;transition:background .15s;
+  display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;
+  border-top:1px solid rgba(255,255,255,.03);position:relative}
+.item:hover{background:rgba(255,255,255,.02)}
+.item.done{opacity:.55}
+.item.done .name{text-decoration:line-through;color:var(--mute)}
+.item.new::before{content:'NEW';position:absolute;top:8px;right:8px;
+  background:var(--magenta);color:#fff;font-size:9px;font-weight:800;
+  padding:1px 5px;border-radius:3px;letter-spacing:1px;font-family:var(--mono)}
+
+.checkbox{width:22px;height:22px;border:2px solid var(--line);border-radius:5px;
+  background:#020409;cursor:pointer;transition:all .15s;
+  display:flex;align-items:center;justify-content:center;font-weight:900;color:transparent}
+.checkbox:hover{border-color:var(--cyan)}
+.checkbox.checked{background:var(--green);border-color:var(--green);color:#001a0a}
+.checkbox.checked::after{content:'✓';font-size:14px}
+
+.item-body{min-width:0}
+.name{font-size:14px;font-weight:600;color:var(--txt);margin-bottom:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.zave-badge{background:linear-gradient(135deg,#ff5b1a,#ff3030);color:#fff;font-size:9px;
+  font-weight:800;padding:2px 6px;border-radius:3px;letter-spacing:.5px;font-family:var(--mono)}
+.done-badge{background:var(--green);color:#001a0a;font-size:9px;font-weight:800;
+  padding:2px 6px;border-radius:3px;letter-spacing:.5px;font-family:var(--mono)}
+.spec{font-size:11.5px;color:var(--dim);font-family:var(--mono);letter-spacing:.3px}
+.search-row{display:flex;align-items:center;gap:8px;margin-top:5px;flex-wrap:wrap}
+.search-tag{font-size:10.5px;color:var(--cyan);background:rgba(0,212,255,.08);
+  padding:2px 8px;border-radius:10px;font-family:var(--mono);letter-spacing:.3px;
+  cursor:pointer;transition:.15s;border:1px solid rgba(0,212,255,.2)}
+.search-tag:hover{background:rgba(0,212,255,.15);color:#fff}
+.search-tag::before{content:'🔍 '}
+.shop-tag{font-size:10.5px;color:var(--mute);letter-spacing:.5px}
+
+.item-price{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;min-width:80px}
+.qty{font-size:11px;color:var(--mute);letter-spacing:.5px}
+.price{font-size:16px;font-weight:800;color:var(--car);margin-top:2px}
+.price::before{content:'¥'}
+.price.free{color:var(--green)}
+
+.actions{max-width:880px;margin:24px auto 0;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn{padding:10px 22px;border-radius:8px;font-size:13px;font-weight:700;letter-spacing:.5px;
+  cursor:pointer;border:none;font-family:var(--ui);transition:all .15s}
+.btn-primary{background:linear-gradient(135deg,var(--cyan),#5d8aff);color:#001a26}
+.btn-primary:hover{filter:brightness(1.1);box-shadow:0 0 16px rgba(0,212,255,.4)}
+.btn-zave{background:linear-gradient(135deg,var(--zave),#ff3030);color:#fff}
+.btn-zave:hover{filter:brightness(1.1);box-shadow:0 0 16px rgba(255,91,26,.5)}
+.btn-ghost{background:transparent;color:var(--dim);border:1px solid var(--line)}
+.btn-ghost:hover{color:#fff;border-color:var(--cyan)}
+.btn-danger{background:rgba(255,46,138,.15);color:var(--magenta);border:1px solid rgba(255,46,138,.3)}
+
+.sticky-total{position:fixed;bottom:0;left:0;right:0;
+  background:linear-gradient(180deg,rgba(5,8,16,.6),var(--bg));
+  backdrop-filter:blur(14px);border-top:1px solid var(--line);
+  padding:14px 16px;z-index:50}
+.sticky-content{max-width:880px;margin:0 auto;display:flex;justify-content:space-between;
+  align-items:center;flex-wrap:wrap;gap:12px}
+.total-display{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px}
+.total-display .big{font-size:22px;font-weight:900;color:var(--car);margin:0 6px}
+.total-display .sub-text{color:var(--dim);font-size:11px}
+.total-progress{font-size:11px;color:var(--mute);letter-spacing:.5px;font-family:var(--mono)}
+
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);
+  background:var(--green);color:#001a0a;padding:10px 18px;border-radius:8px;
+  font-weight:700;font-size:13px;z-index:100;opacity:0;transition:opacity .2s;
+  box-shadow:0 0 20px rgba(0,255,156,.5)}
+.toast.show{opacity:1}
+
+@media(max-width:600px){
+  .title{font-size:22px}
+  .item{grid-template-columns:auto 1fr;gap:10px}
+  .item-price{grid-column:2;text-align:left;display:flex;gap:10px;align-items:baseline}
+  .item-price .qty::after{content:' · '}
+  .price{font-size:14px}
+  .sticky-content{font-size:12px}
+  .total-display .big{font-size:18px}
+}
+
+@media print{
+  body{background:white;color:black}
+  .sticky-total,.actions,.search-tag,.notice{display:none}
+  .category{border:1px solid #ccc;break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="brand">ALPHACAR <span class="a">α</span> AI-GP</div>
+  <h1 class="title">Smart Tile · 2 块 Demo BOM v2</h1>
+  <div class="sub">2026-05-26 · Zave 同店合并 + 电磁吸合升级 · 周三 demo</div>
+</div>
+
+<div class="notice">
+  <span style="font-size:18px">🛒</span>
+  <span><strong>Zave 同店合并下单</strong>: ESP32-S3 + N20 编码器电机 (+ 可能配套轮 / 球 / 锂电) 一店一单, 省运费 ¥20+</span>
+</div>
+
+<div class="progress-card">
+  <div class="progress-row">
+    <div class="progress-stat">已购 <span class="val green" id="doneCount">0</span> / <span class="val" id="totalCount">22</span> 件</div>
+    <div class="progress-stat">还需 <span class="val orange" id="remainCount">22</span> 件</div>
+  </div>
+  <div class="bar"><div class="bar-fill" id="barFill" style="width:0%"></div></div>
+  <div class="progress-row" style="margin-top:10px;margin-bottom:0">
+    <div class="progress-stat">已花 <span class="val green" id="spent">¥0</span></div>
+    <div class="progress-stat">还需付 <span class="val orange" id="remain">¥325</span></div>
+  </div>
+</div>
+
+<div class="container" id="bom-list"></div>
+
+<div class="actions">
+  <button class="btn btn-zave" onclick="copyZaveList()">🛒 复制 Zave 同店清单</button>
+  <button class="btn btn-primary" onclick="window.print()">🖨 打印 / 保存 PDF</button>
+  <button class="btn btn-ghost" onclick="copyAllSearch()">📋 复制所有未购</button>
+  <button class="btn btn-danger" onclick="resetAll()">🗑 清空打勾</button>
+</div>
+
+<div class="sticky-total">
+  <div class="sticky-content">
+    <div class="total-display">
+      <span class="sub-text">总预算</span>
+      <span class="big" id="totalCost">¥325</span>
+      <span class="sub-text">(已购 ¥60 ESP32 不含)</span>
+    </div>
+    <div class="total-progress" id="liveProgress">0 / 22 完成 · 0%</div>
+  </div>
+</div>
+
+<div class="toast" id="toast">已复制!</div>
+
+<script>
+// ============ BOM 数据 v2 ============
+const BOM = [
+  {
+    cat: '🔵 机械结构', total: 85,
+    items: [
+      {id:'acrylic', name:'透明亚克力板 200×200×5mm', qty:4, price:32, spec:'4 块: 2 砖 × 顶底各 1', search:'亚克力板 200x200 5mm 透明 已切割', shop:'京东自营当天达'},
+      {id:'standoff', name:'M3 铜柱 30mm 双通', qty:12, price:15, spec:'砖间隔, 每砖 4 颗', search:'M3 铜柱 30mm 公母 双通 镀镍', shop:'淘宝小五金'},
+      {id:'m3screw', name:'M3 螺丝 + 螺母套装', qty:1, price:10, spec:'6/8/10mm 各 30 颗', search:'M3 螺丝套装 304不锈钢 6/8/10mm', shop:'京东自营'},
+      {id:'holesaw', name:'12mm 开孔器钻头', qty:1, price:15, spec:'打磁铁孔, 一次性投入', search:'12mm 开孔器 不锈钢 木工塑料', shop:'京东自营'},
+      {id:'glue502', name:'502 强力胶 5 支装', qty:1, price:10, spec:'粘磁铁', search:'502 胶水 5支装 强力'},
+    ]
+  },
+  {
+    cat: '🟢 驱动系统', total: 74,
+    items: [
+      {id:'n20motor', name:'Zave N20 减速电机 3V 25转 带霍尔编码器', qty:4, price:48, spec:'1:298, D 轴 10mm, 6P 端子线 (慢且力大)', search:'Zave N20 减速电机 25转 编码器 D轴', shop:'天猫 Zave 旗舰', zave:true},
+      {id:'wheel40', name:'40mm 橡胶轮 D 轴孔', qty:4, price:16, spec:'配 N20 D 轴 (问 Zave 客服有没有)', search:'40mm 橡胶轮 D型轴孔 N20', shop:'Zave 问客服 或 机器人配件店', zaveAsk:true},
+      {id:'caster', name:'12mm 万向球轮', qty:2, price:10, spec:'1 个/砖, M3 螺丝座', search:'12mm 万向球轮 机器人 M3', shop:'Zave 问客服 或 配件店', zaveAsk:true},
+    ]
+  },
+  {
+    cat: '🟠 电子核心', total: 58,
+    items: [
+      {id:'esp32s3', name:'ESP32-S3 N16R8 已焊排针', qty:2, price:60, spec:'¥30/块 × 2 = ¥60 (已购入)', search:'ESP32-S3 N16R8 已焊排针', shop:'Zave (已购)', zave:true, done:true, alreadyPaid:true},
+      {id:'drv8833', name:'DRV8833 双路电机驱动', qty:2, price:12, spec:'2 个/砖各 1', search:'DRV8833 双路电机驱动模块', shop:'淘宝电子模块'},
+      {id:'tp4056', name:'TP4056 USB-C 锂电充电板', qty:2, price:12, spec:'带过放保护', search:'TP4056 USB-C 充电板 过放保护 1A'},
+      {id:'lipo', name:'1S 500mAh Li-Po + JST 1.25', qty:2, price:30, spec:'砖供电', search:'1S 500mAh 锂电池 JST 1.25 保护板', shop:'Zave 问 或 锂电店陆运', zaveAsk:true},
+      {id:'switch', name:'拨动开关 6 脚自锁', qty:2, price:2, spec:'电源开关', search:'自锁开关 6脚 微型 SMD'},
+      {id:'usbc', name:'USB-A 转 USB-C 数据线 1m', qty:1, price:12, spec:'烧 + 充', search:'USB-A 转 USB-C 1米 数据线 编织', shop:'京东自营'},
+    ]
+  },
+  {
+    cat: '🔴 灯效 + 磁吸', total: 35,
+    items: [
+      {id:'led', name:'WS2812 LED 灯环 12 灯', qty:2, price:10, spec:'砖体边缘装饰', search:'WS2812 灯环 12灯 内径15mm 5V'},
+      {id:'magnet', name:'钕磁铁 12×3mm × 50 颗', qty:1, price:25, spec:'被动磁吸辅助', search:'钕磁铁 圆形 12x3 N35 50颗 强磁'},
+    ]
+  },
+  {
+    cat: '🟣 电磁吸合(自主组装)', total: 59, isNew: true,
+    items: [
+      {id:'electromag', name:'P25/20 电磁铁 5V', qty:8, price:48, spec:'4 边/砖 × 2 砖, 软件控制吸/断', search:'P25/20 电磁铁 5V 圆形 1KG', shop:'淘宝磁电模块', isNew:true},
+      {id:'mosfet', name:'IRLZ34N N-MOSFET TO-220', qty:8, price:8, spec:'驱动电磁铁 (ESP32 GPIO 直接开关)', search:'IRLZ34N N沟道 MOSFET TO-220', isNew:true},
+      {id:'diode', name:'1N4007 飞轮二极管', qty:8, price:2, spec:'反向保护 MOSFET', search:'1N4007 二极管 1A 1000V', isNew:true},
+      {id:'resistor', name:'10kΩ 金属膜电阻 1/4W', qty:1, price:1, spec:'拉低保护 (1 包够用)', search:'10K 欧 1/4W 金属膜电阻 100只', isNew:true},
+    ]
+  },
+  {
+    cat: '🟡 焊接 + 辅料', total: 38,
+    items: [
+      {id:'dupont', name:'杜邦线 40P 公母对插', qty:1, price:10, spec:'连接用', search:'杜邦线 40P 公母对插 20cm 彩色'},
+      {id:'solder', name:'焊锡丝 0.8mm 100g 免清洗', qty:1, price:15, spec:'焊接', search:'焊锡丝 0.8mm 100g 免清洗 高纯度'},
+      {id:'shrink', name:'热缩管套装 多尺寸', qty:1, price:8, spec:'绝缘保护', search:'热缩管套装 多尺寸 1.5/2.5/3/4mm'},
+      {id:'sticker', name:'AR 码不干胶 A4 哑光', qty:1, price:5, spec:'AlphaCar 顶面标识', search:'不干胶 A4 哑光 白色 喷墨'},
+    ]
+  }
+];
+
+const STORAGE_KEY = 'alphacar_bom_v2';
+let state = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+
+function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+
+function render(){
+  const list = document.getElementById('bom-list');
+  list.innerHTML = '';
+  let totalItems = 0, doneItems = 0, totalCost = 0, doneCost = 0, alreadyPaidCost = 0;
+
+  BOM.forEach((cat, ci) => {
+    let catDone = 0, catTotal = cat.items.length;
+
+    const items = cat.items.map(it => {
+      const isDone = state[it.id] || it.done;
+      if(isDone) { catDone++; doneItems++; doneCost += it.price; }
+      if(it.alreadyPaid) alreadyPaidCost += it.price;
+      totalItems++;
+      totalCost += it.price;
+
+      const badges = [];
+      if(it.zave) badges.push('<span class="zave-badge">Zave 同店</span>');
+      if(it.zaveAsk) badges.push('<span class="zave-badge" style="background:linear-gradient(135deg,#888,#444)">问 Zave 客服</span>');
+      if(it.done && it.alreadyPaid) badges.push('<span class="done-badge">已购</span>');
+
+      return `
+        <div class="item ${isDone ? 'done' : ''} ${it.isNew ? 'new' : ''}" data-id="${it.id}">
+          <div class="checkbox ${isDone ? 'checked' : ''}" onclick="toggle('${it.id}')"></div>
+          <div class="item-body">
+            <div class="name">${it.name} ${badges.join(' ')}</div>
+            <div class="spec">${it.spec}</div>
+            <div class="search-row">
+              <span class="search-tag" onclick="copy('${it.search.replace(/'/g, "\\'")}')">${it.search}</span>
+              ${it.shop ? `<span class="shop-tag">${it.shop}</span>` : ''}
+            </div>
+          </div>
+          <div class="item-price">
+            <div class="qty">×${it.qty}</div>
+            <div class="price ${it.alreadyPaid ? 'free' : ''}">${it.alreadyPaid ? '已付' : it.price}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    list.innerHTML += `
+      <div class="category">
+        <div class="cat-header" onclick="toggleCat(${ci})">
+          <div class="cat-title">${cat.cat} ${cat.isNew ? '<span class="zave-badge" style="background:var(--magenta)">NEW</span>' : ''}</div>
+          <div class="cat-meta"><span class="num ${catDone === catTotal ? 'done' : ''}">${catDone}/${catTotal}</span> · ¥${cat.total}</div>
+        </div>
+        <div class="cat-body" id="cat-body-${ci}">${items}</div>
+      </div>
+    `;
+  });
+
+  const remainCost = totalCost - doneCost;
+  document.getElementById('doneCount').textContent = doneItems;
+  document.getElementById('totalCount').textContent = totalItems;
+  document.getElementById('remainCount').textContent = totalItems - doneItems;
+  document.getElementById('spent').textContent = '¥' + doneCost;
+  document.getElementById('remain').textContent = '¥' + remainCost;
+  document.getElementById('totalCost').textContent = '¥' + remainCost;
+  document.getElementById('barFill').style.width = (doneItems / totalItems * 100) + '%';
+  document.getElementById('liveProgress').textContent =
+    `${doneItems} / ${totalItems} 完成 · ${(doneItems/totalItems*100).toFixed(0)}%`;
+}
+
+function toggle(id){ state[id] = !state[id]; saveState(); render(); }
+function toggleCat(ci){
+  const body = document.getElementById(`cat-body-${ci}`);
+  body.style.display = body.style.display === 'none' ? 'block' : 'none';
+}
+
+function copy(text){
+  navigator.clipboard.writeText(text).then(() => showToast('已复制: ' + text));
+}
+
+function copyZaveList(){
+  const items = BOM.flatMap(c => c.items.filter(i => (i.zave || i.zaveAsk) && !state[i.id]));
+  const msg = `Zave 旗舰店一店合并下单清单:\n\n${
+    items.map((i, idx) => `${idx+1}. ${i.name} × ${i.qty}  ${i.zaveAsk ? '(问客服库存)' : ''}`).join('\n')
+  }\n\n搜索关键词:\n${items.map(i => '  - ' + i.search).join('\n')}`;
+  navigator.clipboard.writeText(msg).then(() => showToast('已复制 Zave 合并下单清单'));
+}
+
+function copyAllSearch(){
+  const all = BOM.flatMap(c => c.items.filter(i => !state[i.id]).map(i => `${i.name} ── ${i.search}`)).join('\n');
+  navigator.clipboard.writeText(all).then(() => showToast('已复制所有未购搜索词'));
+}
+
+function resetAll(){
+  if(confirm('确定清空所有打勾状态?')){ state = {}; saveState(); render(); }
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1500);
+}
+
+render();
+</script>
+
+</body>
+</html>
