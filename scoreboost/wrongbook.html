@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>错题本 · Crayxus AI</title>
+<link rel="stylesheet" href="css/theme.css">
+<style>
+  .wb-hero { padding: 20px 18px 14px; }
+  .wb-tag { font-size: 10px; letter-spacing: 1.5px; color: var(--c-orange); margin-bottom: 6px; }
+  .wb-title { font-size: 24px; font-weight: 700; margin-bottom: 4px; background: linear-gradient(120deg, #fff, var(--c-orange)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .wb-sub { font-size: 12px; color: var(--c-text-dim); display: block; margin-bottom: 14px; }
+  .wb-stats { display: flex; gap: 8px; }
+  .ws-cell { flex: 1; padding: 10px; border-radius: 10px; background: rgba(255,255,255,0.04); border: 1px solid var(--c-line); display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .ws-cell.ws-teal { background: rgba(0, 212, 170, 0.08); border-color: rgba(0, 212, 170, 0.25); }
+  .ws-cell.ws-gold { background: rgba(255, 215, 0, 0.08); border-color: rgba(255, 215, 0, 0.25); }
+  .ws-num { font-size: 22px; font-weight: 700; }
+  .ws-cell.ws-teal .ws-num { color: var(--c-teal); }
+  .ws-cell.ws-gold .ws-num { color: var(--c-gold); }
+  .ws-lbl { font-size: 10.5px; color: var(--c-text-dim); }
+
+  .dim-dist { display: flex; flex-direction: column; gap: 8px; }
+  .dd-row { display: grid; grid-template-columns: 70px 1fr 32px; gap: 10px; align-items: center; }
+  .dd-name { font-size: 12px; }
+  .dd-bar { height: 6px; border-radius: 3px; background: rgba(255,255,255,0.06); overflow: hidden; }
+  .dd-fill { height: 100%; }
+  .dd-cnt { font-size: 13px; font-weight: 700; text-align: right; }
+
+  .wb-actions { display: flex; gap: 8px; padding: 4px 18px 12px; }
+  .wb-btn { flex: 1; padding: 12px; border-radius: 12px; text-align: center; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .wb-btn.ghost { background: rgba(255,255,255,0.05); border: 1px solid var(--c-line); color: var(--c-text); }
+  .wb-btn.primary { background: linear-gradient(135deg, #ff6b35, var(--c-gold)); color: #fff; }
+  .wb-btn.disabled { opacity: 0.4; pointer-events: none; }
+
+  .wb-list { padding: 0 18px; display: flex; flex-direction: column; gap: 8px; }
+  .wb-item { padding: 12px; border-radius: 10px; background: rgba(255,255,255,0.03); border: 1px solid var(--c-line); cursor: pointer; transition: all 0.2s; }
+  .wb-item:hover { border-color: var(--c-line-bright); }
+  .wi-head { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 11px; }
+  .wi-when { color: var(--c-text-muted); }
+  .wi-q { font-size: 13px; line-height: 1.5; display: block; margin-bottom: 6px; }
+  .wi-foot { display: flex; justify-content: space-between; align-items: center; font-size: 11px; }
+  .wi-attempts { padding: 2px 6px; border-radius: 4px; background: rgba(255, 107, 107, 0.15); color: var(--c-red); }
+  .wi-review { color: var(--c-cyan); }
+
+  .wb-empty { text-align: center; padding: 40px 18px; }
+  .emp-icon { font-size: 48px; display: block; margin-bottom: 14px; }
+  .emp-title { font-size: 16px; font-weight: 600; display: block; margin-bottom: 6px; }
+  .emp-desc { font-size: 12px; color: var(--c-text-dim); }
+
+  /* 详情 sheet */
+  .wb-overlay { position: fixed; inset: 0; z-index: 9000; display: none; }
+  .wb-overlay.show { display: block; }
+  .wb-mask { position: absolute; inset: 0; background: rgba(0,0,0,0.65); }
+  .wb-sheet {
+    position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 100%; max-width: 520px;
+    max-height: 86vh;
+    background: linear-gradient(180deg, #1a1a2e, #0a0a14);
+    border-top-left-radius: 20px; border-top-right-radius: 20px;
+    overflow-y: auto;
+    padding: 18px;
+    animation: slideUp 0.3s ease;
+  }
+  @keyframes slideUp { from { transform: translate(-50%, 100%); } to { transform: translate(-50%, 0); } }
+  .wb-sheet-handle { width: 40px; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.18); margin: 0 auto 16px; }
+  .wb-sheet-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .wb-sheet-tag { padding: 3px 10px; border-radius: 8px; font-size: 11px; border: 1px solid; }
+  .wb-sheet-close { font-size: 18px; color: var(--c-text-dim); cursor: pointer; padding: 4px 10px; }
+  .wb-sheet-q { font-size: 15px; line-height: 1.6; display: block; margin-bottom: 16px; }
+  .wb-sheet-opts { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+  .wb-opt { display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 10px; background: rgba(255,255,255,0.03); border: 1px solid var(--c-line); font-size: 13px; }
+  .wb-opt.correct { background: rgba(0,212,170,0.1); border-color: var(--c-teal); }
+  .wb-opt.wrong { background: rgba(255,107,107,0.1); border-color: var(--c-red); }
+  .wb-opt-letter { width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; }
+  .wb-opt-text { flex: 1; }
+  .wb-opt-mark { font-size: 11px; color: var(--c-teal); font-weight: 600; }
+  .wb-opt-mark.wrong { color: var(--c-red); }
+  .wb-sheet-sol { padding: 12px; border-radius: 10px; background: rgba(255,215,0,0.06); border: 1px solid rgba(255,215,0,0.2); margin-bottom: 12px; }
+
+  .ai-explain-zone { margin-top: 12px; }
+  .ai-explain-btn { padding: 14px; border-radius: 12px; background: linear-gradient(135deg, rgba(0,212,255,0.12), rgba(124,77,255,0.1)); border: 1px solid rgba(0,212,255,0.3); display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; }
+  .ai-explain-btn.loading { opacity: 0.7; pointer-events: none; }
+  .aie-icon { font-size: 20px; }
+  .aie-text { font-size: 13px; color: var(--c-cyan); font-weight: 600; }
+  .ai-explain-result { padding: 14px; border-radius: 12px; background: rgba(0,212,255,0.05); border: 1px solid rgba(0,212,255,0.25); }
+  .aie-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
+  .aie-badge { display: flex; align-items: center; gap: 6px; padding: 3px 8px; border-radius: 6px; background: rgba(0,212,255,0.12); font-size: 10px; letter-spacing: 0.8px; color: var(--c-cyan); }
+  .aie-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--c-cyan); box-shadow: 0 0 6px var(--c-cyan); animation: pulse 1.4s infinite; }
+  .aie-content { font-size: 13px; line-height: 1.6; color: var(--c-text); display: block; }
+  .aie-regen { margin-top: 10px; padding: 8px; text-align: center; border-radius: 8px; background: rgba(255,255,255,0.04); font-size: 12px; color: var(--c-text-dim); cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="app-frame midrow">
+
+  <div class="status-bar">CRAYXUS · 错题本</div>
+
+  <div class="top-tools">
+    <div class="tool-btn ghost" onclick="location.href='index.html'">← 返回 Hub</div>
+  </div>
+
+  <div class="wb-hero">
+    <div class="wb-tag">📚 ERROR REVIEW</div>
+    <div class="wb-title">错题本</div>
+    <span class="wb-sub" id="wbSub">— · 共 0 道错题 · 艾宾浩斯复习曲线</span>
+    <div class="wb-stats">
+      <div class="ws-cell"><span class="ws-num" id="statTotal">0</span><span class="ws-lbl">总数</span></div>
+      <div class="ws-cell ws-teal"><span class="ws-num" id="statToday">0</span><span class="ws-lbl">今日待复习</span></div>
+      <div class="ws-cell ws-gold"><span class="ws-num" id="statMastered">0</span><span class="ws-lbl">已掌握</span></div>
+    </div>
+  </div>
+
+  <div class="section" id="dimDistSec" style="display:none">
+    <div class="section-title"><span>🎯 错题维度分布</span><span class="section-tip">AI 已分析薄弱点</span></div>
+    <div class="dim-dist" id="dimDist"></div>
+  </div>
+
+  <div class="wb-actions">
+    <div class="wb-btn ghost" id="clearBtn">清空错题</div>
+    <div class="wb-btn primary" id="battleBtn">⚡ 再战一遍（10 题）</div>
+  </div>
+
+  <div class="wb-list" id="wbList"></div>
+  <div class="wb-empty" id="wbEmpty" style="display:none">
+    <span class="emp-icon">🎉</span>
+    <span class="emp-title">目前没有错题</span>
+    <span class="emp-desc">做题时答错的会自动进入这里</span>
+  </div>
+</div>
+
+<div class="wb-overlay" id="detailOverlay">
+  <div class="wb-mask" onclick="closeDetail()"></div>
+  <div class="wb-sheet">
+    <div class="wb-sheet-handle"></div>
+    <div class="wb-sheet-head">
+      <div class="wb-sheet-tag" id="detailTag">维度</div>
+      <span class="wb-sheet-close" onclick="closeDetail()">✕</span>
+    </div>
+    <span class="wb-sheet-q" id="detailQ"></span>
+    <div class="wb-sheet-opts" id="detailOpts"></div>
+    <div class="wb-sheet-sol" id="detailSol" style="display:none">
+      <span class="sol-label">💡 标准解析</span>
+      <span class="sol-text" id="detailSolText"></span>
+    </div>
+    <div class="ai-explain-zone" id="aiZone"></div>
+  </div>
+</div>
+
+<script src="js/subjects.js"></script>
+<script src="js/app.js"></script>
+<script>
+const { Storage, vibrate, showModal, showToast, relTime, attachAIHelper } = window.App
+const { getSubject } = window.Subjects
+
+const params = new URLSearchParams(location.search)
+const subjectId = params.get('subject') || Storage.get('sb_current_subject') || 'ielts'
+const subject = getSubject(subjectId)
+const WB_KEY = 'crayxus_wrongbook_' + subjectId
+
+let items = []
+let currentDetail = null
+
+function load() {
+  const data = Storage.get(WB_KEY) || { items: [] }
+  const dimMap = {}; subject.DIMS.forEach(d => dimMap[d.key] = d)
+  const now = Date.now()
+  const ONE_DAY = 86400 * 1000
+
+  items = (data.items || []).map(it => {
+    const dim = dimMap[it.dim] || { name: '其他', color: '#888' }
+    return {
+      ...it,
+      dimName: dim.name,
+      dimColor: dim.color,
+      qShort: (it.q || '').slice(0, 80) + ((it.q || '').length > 80 ? '...' : ''),
+      whenText: relTime(it.wrongAt),
+      ageDay: (now - (it.wrongAt || now)) / ONE_DAY,
+      attempts: it.attempts || 1
+    }
+  }).sort((a, b) => (b.wrongAt || 0) - (a.wrongAt || 0))
+
+  document.getElementById('wbSub').textContent = `${subject.shortName || subject.name} · 共 ${items.length} 道错题 · 艾宾浩斯复习曲线`
+  document.getElementById('statTotal').textContent = items.length
+
+  const reviewDays = [1, 3, 7, 15]
+  const todayReview = items.filter(it => reviewDays.some(d => Math.abs(it.ageDay - d) < 0.5)).length
+  const mastered = items.filter(it => it.ageDay > 3 && it.attempts === 1).length
+  document.getElementById('statToday').textContent = todayReview
+  document.getElementById('statMastered').textContent = mastered
+
+  // dim 分布
+  const dimCount = {}
+  items.forEach(it => dimCount[it.dim] = (dimCount[it.dim] || 0) + 1)
+  const maxC = Math.max(1, ...Object.values(dimCount))
+  const dist = subject.DIMS.map(d => ({ ...d, count: dimCount[d.key] || 0, pct: (dimCount[d.key] || 0) / maxC * 100 })).filter(d => d.count > 0).sort((a, b) => b.count - a.count)
+  document.getElementById('dimDistSec').style.display = dist.length > 0 ? 'block' : 'none'
+  document.getElementById('dimDist').innerHTML = dist.map(d => `
+    <div class="dd-row">
+      <span class="dd-name">${d.name}</span>
+      <div class="dd-bar"><div class="dd-fill" style="width:${d.pct}%;background:${d.color}"></div></div>
+      <span class="dd-cnt" style="color:${d.color}">${d.count}</span>
+    </div>`).join('')
+
+  // 列表
+  const empty = items.length === 0
+  document.getElementById('wbEmpty').style.display = empty ? 'block' : 'none'
+  document.getElementById('wbList').innerHTML = items.map((it, idx) => `
+    <div class="wb-item" onclick="viewItem(${idx})">
+      <div class="wi-head">
+        <span class="wi-dim" style="color:${it.dimColor}">${it.dimName}</span>
+        <span class="wi-when">${it.whenText}</span>
+      </div>
+      <span class="wi-q">${it.qShort}</span>
+      <div class="wi-foot">
+        <span class="wi-attempts">${it.attempts > 1 ? '错 ' + it.attempts + ' 次' : ''}</span>
+        <span class="wi-review">查看解析 →</span>
+      </div>
+    </div>`).join('')
+
+  document.getElementById('clearBtn').classList.toggle('disabled', empty)
+  document.getElementById('battleBtn').classList.toggle('disabled', empty)
+}
+
+function viewItem(idx) {
+  vibrate('light')
+  const it = items[idx]
+  if (!it) return
+  currentDetail = it
+  document.getElementById('detailTag').textContent = it.dimName
+  document.getElementById('detailTag').style.cssText = `background:${it.dimColor}22;color:${it.dimColor};border-color:${it.dimColor}55`
+  document.getElementById('detailQ').textContent = it.q
+  const letters = ['A', 'B', 'C', 'D']
+  document.getElementById('detailOpts').innerHTML = (it.options || []).map((opt, i) => `
+    <div class="wb-opt ${i === it.answer ? 'correct' : ''} ${i === it.selected && i !== it.answer ? 'wrong' : ''}">
+      <span class="wb-opt-letter">${letters[i]}</span>
+      <span class="wb-opt-text">${opt}</span>
+      ${i === it.answer ? '<span class="wb-opt-mark">✓ 正确</span>' : ''}
+      ${i === it.selected && i !== it.answer ? '<span class="wb-opt-mark wrong">✕ 你选的</span>' : ''}
+    </div>`).join('')
+  const solWrap = document.getElementById('detailSol')
+  if (it.solution) { solWrap.style.display = 'block'; document.getElementById('detailSolText').textContent = it.solution }
+  else solWrap.style.display = 'none'
+
+  document.getElementById('aiZone').innerHTML = `
+    <div class="ai-explain-btn" onclick="askAIExplain()">
+      <span class="aie-icon">🤖</span>
+      <span class="aie-text">🎯 找 AI 讲讲为什么错</span>
+    </div>`
+  document.getElementById('detailOverlay').classList.add('show')
+}
+
+function closeDetail() {
+  document.getElementById('detailOverlay').classList.remove('show')
+}
+window.viewItem = viewItem
+window.closeDetail = closeDetail
+
+const EXPLAIN_TEMPLATES = [
+  '你选错的原因, 我分析下来主要是因为你忽略了「{topic}」这个核心概念的细节差异。\n\n这道题正确答案是 {answer}, 关键在于：\n• {hint1}\n• {hint2}\n\n下次遇到这类题, 建议你先停 3 秒在脑中过一遍知识点框架, 再做选择。',
+  '看你这道题选错了, 是典型的「陷阱选项」问题。出题人特意设了一个看起来合理但实际偏离题意的干扰项。\n\n正解 {answer} 的逻辑链是：\n1. 抓题目关键词\n2. 排除明显错误\n3. 在剩余选项中选最贴合主旨的\n\n你下次试试这个 3 步法, 准确率能提 20% 以上。',
+  '这题考的不只是知识点本身, 还有应试技巧。你选错说明对 {topic} 的应用场景还不够熟。\n\n建议三步训练：\n① 把这个知识点的「核心定义」反复抄写 2 次\n② 找 3 道类似题刻意练习\n③ 用费曼学习法讲给别人听\n\n7 天后再做这道题, 大概率能秒选正确。'
+]
+
+function askAIExplain() {
+  const zone = document.getElementById('aiZone')
+  zone.innerHTML = `
+    <div class="ai-explain-btn loading">
+      <span class="aie-icon">⚡</span>
+      <span class="aie-text">Crayxus AI 分析中...</span>
+    </div>`
+  setTimeout(() => {
+    const it = currentDetail
+    const tpl = EXPLAIN_TEMPLATES[Math.floor(Math.random() * EXPLAIN_TEMPLATES.length)]
+    const ans = ['A', 'B', 'C', 'D'][it.answer] || '?'
+    const hints = (it.solution || '').split('。').filter(s => s.trim()).slice(0, 2)
+    const text = tpl
+      .replace('{topic}', it.dimName)
+      .replace('{answer}', ans + ' (' + (it.options[it.answer] || '') + ')')
+      .replace('{hint1}', hints[0] || '注意题干的限定词')
+      .replace('{hint2}', hints[1] || '排除掉表述绝对的选项')
+    zone.innerHTML = `
+      <div class="ai-explain-result">
+        <div class="aie-header">
+          <div class="aie-badge">
+            <span class="aie-badge-dot"></span>
+            <span>CRAYXUS AI 个性化讲解</span>
+          </div>
+        </div>
+        <span class="aie-content">${text.replace(/\n/g, '<br>')}</span>
+        <div class="aie-regen" onclick="askAIExplain()">🔄 换个讲法</div>
+      </div>`
+  }, 1400 + Math.random() * 600)
+}
+window.askAIExplain = askAIExplain
+
+document.getElementById('clearBtn').addEventListener('click', async () => {
+  if (items.length === 0) return
+  const r = await showModal({ title: '清空错题本？', content: `将永久删除 ${items.length} 道错题。`, confirmText: '清空', confirmColor: '#ff6b6b' })
+  if (r.confirm) { Storage.remove(WB_KEY); load(); showToast('已清空', { icon: 'success' }) }
+})
+document.getElementById('battleBtn').addEventListener('click', () => {
+  if (items.length === 0) return
+  showToast('再战功能即将上线 🎯')
+})
+
+load()
+attachAIHelper('wrongbook')
+</script>
+</body>
+</html>

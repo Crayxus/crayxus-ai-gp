@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>教师 Dashboard · Crayxus AI</title>
+<link rel="stylesheet" href="css/theme.css">
+<style>
+  .header { padding: 16px 18px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--c-line); }
+  .h-left { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+  .h-tag { font-size: 10px; letter-spacing: 1.5px; color: var(--c-cyan); }
+  .h-title { font-size: 18px; font-weight: 700; }
+  .h-sub { font-size: 11.5px; color: var(--c-text-dim); }
+  .h-avatar { font-size: 36px; }
+
+  .class-switch { padding: 12px 18px; display: flex; gap: 8px; overflow-x: auto; }
+  .class-switch::-webkit-scrollbar { display: none; }
+  .cls-tab { flex-shrink: 0; padding: 6px 12px; border-radius: 8px; font-size: 12px; background: rgba(255,255,255,0.04); border: 1px solid var(--c-line); cursor: pointer; }
+  .cls-tab.active { background: rgba(0, 212, 255, 0.12); border-color: var(--c-cyan); color: var(--c-cyan); }
+
+  .grid-4 { padding: 0 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .kpi-card { position: relative; padding: 14px; border-radius: 12px; background: rgba(255,255,255,0.04); border: 1px solid var(--c-line); display: flex; flex-direction: column; gap: 2px; }
+  .kpi-card.kpi-teal { background: rgba(0, 212, 170, 0.06); border-color: rgba(0, 212, 170, 0.25); }
+  .kpi-card.kpi-match { background: rgba(255, 215, 0, 0.06); border-color: rgba(255, 215, 0, 0.25); }
+  .kpi-card.kpi-boost { background: rgba(255, 107, 53, 0.06); border-color: rgba(255, 107, 53, 0.25); }
+  .kpi-mark { position: absolute; top: 8px; right: 10px; font-size: 11px; font-weight: 700; letter-spacing: 1px; opacity: 0.5; }
+  .kpi-num { font-size: 24px; font-weight: 800; }
+  .kpi-card.kpi-teal .kpi-num { color: var(--c-teal); }
+  .kpi-card.kpi-match .kpi-num { color: var(--c-gold); }
+  .kpi-card.kpi-boost .kpi-num { color: #ff6b35; }
+  .kpi-lbl { font-size: 11px; color: var(--c-text-dim); }
+
+  .top3-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .top3-card { padding: 12px; border-radius: 12px; text-align: center; border: 1px solid; }
+  .top3-card.gold { background: rgba(255, 215, 0, 0.1); border-color: var(--c-gold); }
+  .top3-card.silver { background: rgba(192, 192, 192, 0.1); border-color: #c0c0c0; }
+  .top3-card.bronze { background: rgba(205, 127, 50, 0.1); border-color: #cd7f32; }
+  .t3-medal { font-size: 28px; display: block; margin-bottom: 4px; }
+  .t3-name { font-size: 13px; font-weight: 600; display: block; }
+  .t3-score { font-size: 12px; color: var(--c-text-dim); display: block; margin: 2px 0; }
+  .t3-gain { font-size: 11px; color: var(--c-teal); display: block; }
+  .cert-action { margin-top: 12px; padding: 12px; border-radius: 10px; background: linear-gradient(135deg, rgba(255,215,0,0.12), rgba(255,107,53,0.1)); border: 1px solid rgba(255,215,0,0.3); text-align: center; font-size: 13px; color: var(--c-gold); cursor: pointer; }
+
+  .roster { padding: 0; }
+  .roster-head, .roster-row {
+    display: grid; grid-template-columns: 28px 1fr 56px 50px 50px 40px;
+    gap: 6px; align-items: center;
+    padding: 8px 10px;
+    font-size: 11.5px;
+  }
+  .roster-head { background: rgba(255,255,255,0.04); border-radius: 8px; color: var(--c-text-muted); margin-bottom: 4px; }
+  .roster-row { background: rgba(255,255,255,0.025); border-radius: 6px; margin-bottom: 4px; cursor: pointer; }
+  .roster-row:hover { background: rgba(255,255,255,0.04); }
+  .roster-row.top3 { background: rgba(255,215,0,0.06); border: 1px solid rgba(255,215,0,0.2); }
+  .rr-type { font-size: 10px; padding: 2px 4px; border-radius: 4px; text-align: center; }
+  .type-star { background: rgba(255,215,0,0.15); color: var(--c-gold); }
+  .type-year { background: rgba(124,77,255,0.15); color: #c9b6ff; }
+  .type-quarter { background: rgba(0,212,255,0.15); color: var(--c-cyan); }
+  .type-month { background: rgba(0,212,170,0.15); color: var(--c-teal); }
+  .type-trial { background: rgba(255,255,255,0.06); color: var(--c-text-dim); }
+  .rr-match { text-align: center; font-weight: 700; }
+  .rr-match.high { color: var(--c-teal); }
+  .rr-match.mid { color: var(--c-gold); }
+  .rr-match.low { color: var(--c-red); }
+  .rr-gain { text-align: center; font-weight: 600; }
+  .rr-gain.up { color: var(--c-teal); }
+  .rr-score { text-align: right; font-weight: 600; }
+
+  .action-row { display: flex; gap: 8px; padding: 14px 18px; }
+  .act-btn { flex: 1; padding: 12px; border-radius: 12px; text-align: center; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .act-btn.ghost { background: rgba(255,255,255,0.05); border: 1px solid var(--c-line); color: var(--c-text); }
+  .act-btn.primary { background: linear-gradient(135deg, var(--c-teal), var(--c-cyan)); color: #fff; }
+</style>
+</head>
+<body>
+<div class="app-frame midrow">
+
+  <div class="top-tools">
+    <div class="tool-btn ghost" onclick="location.href='index.html'">← 返回学生 Hub</div>
+  </div>
+
+  <div class="header">
+    <div class="h-left">
+      <span class="h-tag">TEACHER DASHBOARD</span>
+      <span class="h-title">王老师 · SAT / AP 老师</span>
+      <span class="h-sub">光华国际高中</span>
+    </div>
+    <div class="h-avatar">👩‍🏫</div>
+  </div>
+
+  <div class="class-switch" id="classSwitch"></div>
+
+  <div class="grid-4">
+    <div class="kpi-card"><span class="kpi-num">32</span><span class="kpi-lbl">班级人数</span></div>
+    <div class="kpi-card kpi-teal"><span class="kpi-num">28</span><span class="kpi-lbl">本月活跃</span></div>
+    <div class="kpi-card kpi-match"><span class="kpi-mark">M</span><span class="kpi-num">78</span><span class="kpi-lbl">匹配度均值</span></div>
+    <div class="kpi-card kpi-boost"><span class="kpi-mark">B</span><span class="kpi-num">+14</span><span class="kpi-lbl">提分均值</span></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>📊 班级六维能力平均值</span><span class="section-tip">AI 匹配度引擎输出</span></div>
+    <div class="dim-list" id="classDims"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>🏆 本月 Top 3 · 2026 年 5 月</span><span class="section-tip">次月免费 · 自动颁发证书</span></div>
+    <div class="top3-grid">
+      <div class="top3-card gold"><span class="t3-medal">🥇</span><span class="t3-name">陈嘉慧</span><span class="t3-score">92 分</span><span class="t3-gain">本月 +18</span></div>
+      <div class="top3-card silver"><span class="t3-medal">🥈</span><span class="t3-name">林若曦</span><span class="t3-score">88 分</span><span class="t3-gain">本月 +15</span></div>
+      <div class="top3-card bronze"><span class="t3-medal">🥉</span><span class="t3-name">王子墨</span><span class="t3-score">85 分</span><span class="t3-gain">本月 +12</span></div>
+    </div>
+    <div class="cert-action" onclick="issueCerts()">🎓 为 Top 3 一键发放免费月度使用权</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span>📋 全班排名</span><span class="section-tip">点击查看学生详情</span></div>
+    <div class="roster">
+      <div class="roster-head">
+        <span>#</span><span>姓名</span><span>账号</span><span>M 匹配</span><span>B 提分</span><span>最新</span>
+      </div>
+      <div id="rosterList"></div>
+    </div>
+  </div>
+
+  <div class="action-row">
+    <div class="act-btn ghost" onclick="exportReport()">📄 导出班级报告</div>
+    <div class="act-btn primary" onclick="startTest()">📝 发起班级月度测评</div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+const { showModal, showToast, vibrate, attachAIHelper } = window.App
+
+const CLASSES = [
+  { id: 'c10-2', name: '10 年级 2 班' },
+  { id: 'c10-3', name: '10 年级 3 班' },
+  { id: 'c11-1', name: '11 年级 1 班' }
+]
+let currentCls = 'c10-2'
+
+const CLASS_DIMS = [
+  { name: '代数运算', val: 78, color: '#00d4aa' },
+  { name: '几何图形', val: 65, color: '#7c4dff' },
+  { name: '词汇量',   val: 70, color: '#ffd700' },
+  { name: '阅读理解', val: 68, color: '#ff6b9d' },
+  { name: '学术写作', val: 62, color: '#4facfe' },
+  { name: '逻辑推理', val: 74, color: '#43e97b' },
+]
+
+const ROSTER = [
+  { rank:1, name:'陈嘉慧', match:92, score:92, gain:18, plan:'star',    planText:'月度之星' },
+  { rank:2, name:'林若曦', match:88, score:88, gain:15, plan:'star',    planText:'月度之星' },
+  { rank:3, name:'王子墨', match:85, score:85, gain:12, plan:'star',    planText:'月度之星' },
+  { rank:4, name:'李思远', match:82, score:78, gain:9,  plan:'year',    planText:'年付' },
+  { rank:5, name:'张小明', match:86, score:73, gain:6,  plan:'quarter', planText:'季度' },
+  { rank:6, name:'刘雨桐', match:75, score:71, gain:4,  plan:'quarter', planText:'季度' },
+  { rank:7, name:'赵梓涵', match:72, score:68, gain:3,  plan:'month',   planText:'月付' },
+  { rank:8, name:'周文浩', match:68, score:65, gain:2,  plan:'month',   planText:'月付' },
+  { rank:9, name:'吴佳怡', match:64, score:62, gain:0,  plan:'trial',   planText:'试用' },
+  { rank:10, name:'孙悦',  match:58, score:58, gain:-2, plan:'trial',   planText:'试用' }
+]
+
+function renderClasses() {
+  document.getElementById('classSwitch').innerHTML = CLASSES.map(c => `
+    <div class="cls-tab ${c.id === currentCls ? 'active' : ''}" data-id="${c.id}">${c.name}</div>`).join('')
+  document.querySelectorAll('.cls-tab').forEach(el => {
+    el.addEventListener('click', () => {
+      currentCls = el.dataset.id
+      vibrate('light')
+      renderClasses()
+      showToast('已切换到 ' + (CLASSES.find(c => c.id === currentCls).name))
+    })
+  })
+}
+function renderDims() {
+  document.getElementById('classDims').innerHTML = CLASS_DIMS.map(d => `
+    <div class="dim-row">
+      <span class="dim-icon"></span>
+      <span class="dim-name">${d.name}</span>
+      <div class="dim-bar"><div class="dim-fill" style="width:${d.val}%;background:${d.color}"></div></div>
+      <span class="dim-val" style="color:${d.color}">${d.val}</span>
+    </div>`).join('')
+}
+function renderRoster() {
+  document.getElementById('rosterList').innerHTML = ROSTER.map(s => `
+    <div class="roster-row ${s.rank <= 3 ? 'top3' : ''}" data-rank="${s.rank}">
+      <span class="rr-rank">${s.rank}</span>
+      <span class="rr-name">${s.name}</span>
+      <span class="rr-type type-${s.plan}">${s.planText}</span>
+      <span class="rr-match ${s.match >= 80 ? 'high' : s.match >= 65 ? 'mid' : 'low'}">${s.match}</span>
+      <span class="rr-gain ${s.gain > 0 ? 'up' : ''}">${s.gain > 0 ? '+' + s.gain : s.gain}</span>
+      <span class="rr-score">${s.score}</span>
+    </div>`).join('')
+  document.querySelectorAll('.roster-row').forEach(row => {
+    row.addEventListener('click', () => {
+      const rank = parseInt(row.dataset.rank)
+      const s = ROSTER.find(x => x.rank === rank)
+      if (!s) return
+      const gainText = s.gain > 0 ? '+' + s.gain : s.gain
+      showModal({ title: s.name, content: `匹配度 M · ${s.match} / 100\n提分 B · ${gainText}\n最新分数 · ${s.score}\n账号类型 · ${s.planText}`, confirmText: '关闭', showCancel: false })
+    })
+  })
+}
+function issueCerts() {
+  showModal({ title: '🎓 一键发放月度之星', content: '本月 Top 3:\n🥇 陈嘉慧\n🥈 林若曦\n🥉 王子墨\n\n确认后, 这三位同学将获得下月免费使用权, 并发送电子证书到家长端。', confirmText: '确认发放', confirmColor: '#ffd700' }).then(r => {
+    if (r.confirm) showToast('证书已发放 🏆', { icon: 'success' })
+  })
+}
+function exportReport() { showToast('报告已生成并发送至邮箱', { icon: 'success' }) }
+function startTest() {
+  showModal({ title: '📝 发起班级月度测评', content: '将通知 32 位学生完成 20 题测评, AI 自动出结果并更新榜单。', confirmText: '立即发起', confirmColor: '#00d4aa' }).then(r => {
+    if (r.confirm) showToast('已发起, 学生端已推送', { icon: 'success' })
+  })
+}
+window.issueCerts = issueCerts
+window.exportReport = exportReport
+window.startTest = startTest
+
+renderClasses(); renderDims(); renderRoster()
+attachAIHelper('teacher-dashboard')
+</script>
+</body>
+</html>

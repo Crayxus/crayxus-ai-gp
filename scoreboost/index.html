@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crayxus AI 提分系统</title>
+<link rel="stylesheet" href="css/theme.css">
+</head>
+<body>
+
+<div class="app-frame">
+<div class="pc-shell">
+
+  <!-- ============ 左侧导航 ============ -->
+  <aside class="pc-sidebar">
+    <div class="pc-logo">
+      <div class="pc-logo-mark">CX</div>
+      <div class="pc-logo-text">
+        <span class="pc-logo-name">CRAYXUS</span>
+        <span class="pc-logo-sub">AI 提分系统</span>
+      </div>
+    </div>
+
+    <div class="pc-nav-group">
+      <div class="pc-nav-label">📚 主科目</div>
+      <div id="navMainList"></div>
+    </div>
+
+    <div class="pc-nav-group">
+      <div class="pc-nav-label">🏛 贝赛思 6 学科</div>
+      <div id="navBasisList"></div>
+    </div>
+
+    <div class="pc-nav-divider"></div>
+
+    <div class="pc-nav-group">
+      <div class="pc-nav-label">🔧 工作台</div>
+      <div class="pc-nav-item" onclick="gotoWrongbook()">
+        <span class="pc-nav-icon">📕</span>
+        <span class="pc-nav-name">错题本</span>
+      </div>
+      <div class="pc-nav-item" id="speakingNav" onclick="location.href='speaking.html'">
+        <span class="pc-nav-icon">🎤</span>
+        <span class="pc-nav-name">自由口语</span>
+      </div>
+      <div class="pc-nav-item" onclick="location.href='teacher.html'">
+        <span class="pc-nav-icon">🧑‍🏫</span>
+        <span class="pc-nav-name">教师 Dashboard</span>
+      </div>
+    </div>
+
+    <div class="pc-nav-divider"></div>
+
+    <div class="pc-account">
+      <div class="avatar">👨‍🎓</div>
+      <div class="info">
+        <span class="name">张小明</span>
+        <span class="school">10 年级 2 班</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============ 中间主内容 ============ -->
+  <main class="pc-main">
+
+    <div class="pc-topbar">
+      <div class="pc-breadcrumb">
+        <span>CRAYXUS</span>
+        <span class="sep">›</span>
+        <span id="bcView">主科目</span>
+        <span class="sep">›</span>
+        <b id="bcSubject">SAT</b>
+      </div>
+      <div class="pc-quick-actions">
+        <div class="tool-btn" id="resetBtn" style="display:none">🗑 清除进度</div>
+        <div class="tool-btn ghost" onclick="upgradePlan()">💎 升级方案</div>
+      </div>
+    </div>
+
+    <!-- HERO -->
+    <div class="pc-hero-main">
+      <div class="pc-hero-tag" id="heroTag">CRAYXUS · 大模型自适应 · SAT</div>
+      <div class="pc-hero-title">AI 提分系统</div>
+      <div class="pc-hero-sub" id="heroSub">当前科目 · SAT · 400 → 1600</div>
+
+      <div class="pc-hero-stats">
+        <div class="pc-hero-stat">
+          <span class="lbl">本月排名</span>
+          <span class="val" style="color:var(--c-cyan)">#5<span style="font-size:13px;color:var(--c-text-muted)"> / 32</span></span>
+        </div>
+        <div class="pc-hero-stat">
+          <span class="lbl">累计做题</span>
+          <span class="val" id="statTotalDone">—</span>
+        </div>
+        <div class="pc-hero-stat">
+          <span class="lbl">学习连续</span>
+          <span class="val" id="statStreak">— <span style="font-size:13px;color:var(--c-text-muted)">天</span></span>
+        </div>
+        <div class="pc-hero-stat">
+          <span class="lbl">综合正确率</span>
+          <span class="val" id="statAccuracy">— <span style="font-size:13px;color:var(--c-text-muted)">%</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 顶部 3 KPI: 预测/匹配/提分 -->
+    <div class="pc-kpi-row">
+      <div class="pc-kpi-card kpi-predict">
+        <span class="pc-kpi-tag">🎯 AI · 预测分数</span>
+        <span class="pc-kpi-val" id="kpiPredict">—</span>
+        <span class="pc-kpi-desc" id="kpiPredictDesc">完成 1 次定级测评后开放预测</span>
+      </div>
+      <div class="pc-kpi-card kpi-match">
+        <span class="pc-kpi-tag">M · MATCH</span>
+        <span class="pc-kpi-val" id="kpiMatch">—</span>
+        <span class="pc-kpi-desc" id="kpiMatchDesc">匹配度未测评</span>
+      </div>
+      <div class="pc-kpi-card kpi-boost">
+        <span class="pc-kpi-tag">B · BOOST</span>
+        <span class="pc-kpi-val" id="kpiBoost">—</span>
+        <span class="pc-kpi-desc" id="kpiBoostDesc">累计提分</span>
+      </div>
+    </div>
+
+    <!-- 单板块定向练习 -->
+    <div class="pc-card" id="dimPracticeCard">
+      <div class="pc-card-title">
+        <span>🎯 单板块定向练习</span>
+        <span class="tip">选 1 个板块 · 10 道 AI 实时出题</span>
+      </div>
+      <div class="dim-practice-grid" id="dimPracticeGrid"></div>
+    </div>
+
+    <!-- 六维诊断 -->
+    <div class="pc-card" id="dimCard" style="display:none">
+      <div class="pc-card-title">
+        <span>📊 六维能力诊断</span>
+        <span class="tip" id="dimTip">Twin Drive 输出</span>
+      </div>
+      <div class="dim-list" id="dimList"></div>
+    </div>
+
+    <!-- 提分曲线 + 弱点 横排 -->
+    <div class="pc-row-2">
+      <div class="pc-card" id="curveCard" style="display:none">
+        <div class="pc-card-title">
+          <span>📈 提分曲线</span>
+          <span class="tip" id="curveTip"></span>
+        </div>
+        <div class="chart" id="chart"></div>
+      </div>
+
+      <div class="pc-card" id="weakCard" style="display:none">
+        <div class="pc-card-title">
+          <span>⚠️ AI 弱点诊断</span>
+          <span class="tip">大模型分析</span>
+        </div>
+        <div class="weak-list" id="weakList"></div>
+      </div>
+    </div>
+
+    <!-- 最近做题 -->
+    <div class="pc-card" id="histCard" style="display:none">
+      <div class="pc-card-title">
+        <span id="histTitle">最近做题</span>
+        <span class="tip">最多保留 30 条</span>
+      </div>
+      <div class="hist-list" id="histList"></div>
+    </div>
+
+    <!-- 空态 -->
+    <div class="pc-card empty-state" id="emptyState" style="display:none">
+      <span class="empty-icon">📋</span>
+      <span class="empty-title" id="emptyTitle"></span>
+      <span class="empty-desc" id="emptyDesc"></span>
+      <div class="empty-dims" id="emptyDims"></div>
+    </div>
+
+  </main>
+
+  <!-- ============ 右侧 widget ============ -->
+  <aside class="pc-aside">
+
+    <!-- TWIN DRIVE -->
+    <div class="twin-drive-card">
+      <div class="td-scan"></div>
+      <div class="td-status-bar">
+        <div class="td-dot"></div>
+        <span class="td-sys-name">TWIN DRIVE</span>
+        <span class="td-sys-state" id="tdState">STANDBY</span>
+      </div>
+      <div class="td-hero">
+        <div class="td-orb td-orb-left" id="matchOrb" onclick="launchMatch()">
+          <span class="td-orb-mark">M</span>
+          <span class="td-orb-tag">MATCH</span>
+        </div>
+        <div class="td-core">
+          <div class="td-metric">
+            <span class="td-m-lbl">匹配度</span>
+            <span class="td-m-val match-val" id="matchScore">—</span>
+          </div>
+          <div class="td-split"></div>
+          <div class="td-metric">
+            <span class="td-m-lbl">提分</span>
+            <span class="td-m-val boost-val" id="boostScore">—</span>
+          </div>
+        </div>
+        <div class="td-orb td-orb-right" id="boostOrb" onclick="launchBoost()">
+          <span class="td-orb-mark">B</span>
+          <span class="td-orb-tag">BOOST</span>
+        </div>
+      </div>
+      <div class="td-cta-row">
+        <div class="td-cta-pill match-cta" onclick="launchMatch()">▶ 匹配测评</div>
+        <div class="td-cta-pill boost-cta" onclick="launchBoost()">▶ 提分测评</div>
+      </div>
+      <div class="td-foot" id="tdFoot" style="display:none"></div>
+    </div>
+
+    <!-- 月度排行 -->
+    <div class="pc-card">
+      <div class="pc-card-title">
+        <span>🏆 本月冲榜</span>
+        <span class="tip">5 月 · 剩 8 天</span>
+      </div>
+      <div class="my-rank-card">
+        <div class="mr-left">
+          <span class="mr-lbl">我的排名</span>
+          <div class="mr-big">
+            <span class="mr-no">#5</span>
+            <span class="mr-of">/ 32</span>
+          </div>
+        </div>
+        <div class="mr-right">
+          <span class="mr-gap-lbl">距 Top 3</span>
+          <span class="mr-gap-val">12 分</span>
+          <span class="mr-hint">再做 40 道</span>
+        </div>
+      </div>
+      <div class="rank-list" id="rankList"></div>
+      <div class="rank-footer">Top 3 次月免费使用</div>
+    </div>
+
+  </aside>
+
+</div>
+</div>
+
+<script src="js/subjects.js"></script>
+<script src="js/app.js"></script>
+<script>
+const { Storage, vibrate, showToast, showModal, showActionSheet, relTime, attachAIHelper } = window.App
+const { getSubject, listTopSubjects, listBasisChildren } = window.Subjects
+
+const CURRENT_KEY = 'sb_current_subject'
+const storageKeyOf = id => 'sb_progress__' + id
+
+let state = {
+  currentId: Storage.get(CURRENT_KEY) || 'sat',
+}
+if (getSubject(state.currentId).isGroup) state.currentId = 'sat'
+
+const RANK_DATA = [
+  { rank: 1, name: '陈嘉慧', score: 92, gain: 18 },
+  { rank: 2, name: '林若曦', score: 88, gain: 15 },
+  { rank: 3, name: '王子墨', score: 85, gain: 12 },
+  { rank: 4, name: '***', score: 78, gain: 9 },
+  { rank: 5, name: '张小明 (你)', score: 73, gain: 6, isMe: true },
+  { rank: 6, name: '***', score: 71, gain: 4 },
+  { rank: 7, name: '***', score: 68, gain: 3 },
+]
+
+function progressOf(id) { return Storage.get(storageKeyOf(id)) || { history: [], mastery: {}, baseline: null } }
+
+function predict(subject, mastery, history) {
+  const DIMS = subject.DIMS || []
+  const vals = DIMS.map(d => mastery[d.key]).filter(v => v != null)
+  if (vals.length === 0) return { ready: false, hint: '完成 1 次定级测评后开放预测' }
+  const avg = vals.reduce((a, b) => a + b, 0) / vals.length
+  let trend = 0
+  if (history.length >= 3) {
+    const r3 = history.slice(-3).reduce((a, h) => a + h.score, 0) / 3
+    const all = history.reduce((a, h) => a + h.score, 0) / history.length
+    trend = r3 - all
+  }
+  const sid = subject.id
+  let score, max, label, color
+  if (sid === 'ielts') {
+    score = Math.round(Math.max(4, Math.min(9, 4 + (avg / 100) * 5 + trend * 0.02)) * 2) / 2
+    max = 9; label = 'Band'; color = '#00d4aa'
+  } else if (sid === 'toefl') {
+    score = Math.round(Math.max(0, Math.min(120, avg * 1.2 + trend * 0.5)))
+    max = 120; label = 'TOEFL'; color = '#00d4ff'
+  } else if (sid === 'sat') {
+    score = Math.round(Math.max(400, Math.min(1600, 400 + (avg / 100) * 1200 + trend * 5)) / 10) * 10
+    max = 1600; label = 'SAT'; color = '#7c4dff'
+  } else if (sid === 'ap') {
+    score = Math.max(1, Math.min(5, Math.round(1 + (avg / 100) * 4 + trend * 0.02)))
+    max = 5; label = 'AP'; color = '#ffd700'
+  } else if (sid === 'alevel') {
+    const v = avg + trend * 0.5
+    score = v >= 90 ? 'A*' : v >= 80 ? 'A' : v >= 70 ? 'B' : v >= 60 ? 'C' : v >= 50 ? 'D' : 'E'
+    max = 'A*'; label = 'A-Level'; color = '#ff9500'
+  } else {
+    score = Math.round(Math.max(0, Math.min(100, avg + trend * 0.5)))
+    max = 100; label = subject.shortName || '分数'; color = subject.color
+  }
+  return {
+    ready: true, score, max, label, color,
+    trend: trend > 1 ? 'up' : trend < -1 ? 'down' : 'stable',
+    trendText: trend > 1 ? `↗ +${trend.toFixed(1)}` : trend < -1 ? `↘ ${trend.toFixed(1)}` : '→ 稳定',
+    basis: `基于 ${vals.length} 维 + ${history.length} 次模考`
+  }
+}
+
+function renderNav() {
+  const mainList = listTopSubjects().filter(s => !s.isGroup)
+  const basisList = listBasisChildren()
+  const mainHtml = mainList.map(s => navItemHtml(s)).join('')
+  const basisHtml = basisList.map(s => navItemHtml(s)).join('')
+  document.getElementById('navMainList').innerHTML = mainHtml
+  document.getElementById('navBasisList').innerHTML = basisHtml
+  document.querySelectorAll('.pc-nav-item[data-sid]').forEach(el => {
+    el.addEventListener('click', () => selectSubject(el.dataset.sid))
+  })
+}
+function navItemHtml(s) {
+  const prog = progressOf(s.id)
+  const latest = prog.history.slice(-1)[0]
+  const score = latest ? latest.score : null
+  const isActive = s.id === state.currentId
+  return `<div class="pc-nav-item ${isActive ? 'active' : ''}" data-sid="${s.id}">
+    <span class="pc-nav-icon">${s.icon}</span>
+    <span class="pc-nav-name">${s.name}</span>
+    <span class="pc-nav-score">${score != null ? score : '—'}</span>
+  </div>`
+}
+function selectSubject(id) {
+  if (id === state.currentId) return
+  state.currentId = id
+  Storage.set(CURRENT_KEY, id)
+  vibrate('light')
+  renderAll()
+}
+
+function renderTopbar() {
+  const subject = getSubject(state.currentId)
+  const isBasis = subject.parentId === 'basis'
+  document.getElementById('bcView').textContent = isBasis ? '贝赛思 6 学科' : '主科目'
+  document.getElementById('bcSubject').textContent = subject.name
+}
+
+function renderHero() {
+  const subject = getSubject(state.currentId)
+  document.getElementById('heroTag').textContent = `CRAYXUS · 大模型自适应 · ${subject.shortName || subject.name}`
+  document.getElementById('heroSub').textContent = `当前科目 · ${subject.name} · ${subject.textbook.grade}`
+
+  // hero stats 来自 prog
+  const prog = progressOf(state.currentId)
+  const history = prog.history || []
+  document.getElementById('statTotalDone').textContent = history.length || '—'
+  const days = new Set(history.map(h => new Date(h.ts).toDateString()))
+  document.getElementById('statStreak').innerHTML = (days.size || '—') + ' <span style="font-size:13px;color:var(--c-text-muted)">天</span>'
+  const totalC = history.reduce((a, h) => a + h.correct, 0)
+  const totalQ = history.reduce((a, h) => a + h.total, 0)
+  const acc = totalQ > 0 ? Math.round(totalC / totalQ * 100) : null
+  document.getElementById('statAccuracy').innerHTML = (acc != null ? acc : '—') + ' <span style="font-size:13px;color:var(--c-text-muted)">%</span>'
+}
+
+function renderKpis() {
+  const subject = getSubject(state.currentId)
+  const prog = progressOf(state.currentId)
+  const pred = predict(subject, prog.mastery || {}, prog.history || [])
+  if (pred.ready) {
+    document.getElementById('kpiPredict').textContent = pred.score
+    document.getElementById('kpiPredictDesc').innerHTML = `${pred.label} · 满分 ${pred.max} · ${pred.trendText} · ${pred.basis}`
+    document.getElementById('kpiPredict').style.color = pred.color
+  } else {
+    document.getElementById('kpiPredict').textContent = '—'
+    document.getElementById('kpiPredictDesc').textContent = pred.hint
+  }
+  const ps = Storage.get('crayxus_prescreen') || {}
+  document.getElementById('kpiMatch').textContent = ps.done ? ps.score : '—'
+  document.getElementById('kpiMatchDesc').textContent = ps.done ? `${ps.personality} · 推荐 ${ps.recommendPlan}` : '点 TWIN DRIVE 开始测评'
+
+  const history = prog.history || []
+  const latest = history.slice(-1)[0]
+  const gain = (latest && prog.baseline != null) ? Math.max(0, latest.score - prog.baseline) : null
+  document.getElementById('kpiBoost').textContent = gain != null ? '+' + gain : '—'
+  document.getElementById('kpiBoostDesc').textContent = latest ? `基准 ${prog.baseline} → 最新 ${latest.score}` : '累计提分'
+}
+
+function renderDimPractice() {
+  const subject = getSubject(state.currentId)
+  if (!subject.DIMS || subject.isGroup) { document.getElementById('dimPracticeCard').style.display = 'none'; return }
+  document.getElementById('dimPracticeCard').style.display = 'block'
+  const prog = progressOf(state.currentId)
+  const mastery = prog.mastery || {}
+  const dims = subject.DIMS.map(d => ({ ...d, val: mastery[d.key] != null ? mastery[d.key] : 0 }))
+  document.getElementById('dimPracticeGrid').innerHTML = dims.map(d => `
+    <div class="dim-prac-card" data-key="${d.key}" style="border-color:${d.color}55;background:linear-gradient(135deg,${d.color}18,rgba(0,0,0,.3));">
+      <span class="dpc-icon">${d.icon}</span>
+      <span class="dpc-name">${d.name}</span>
+      <span class="dpc-mastery" style="color:${d.color}">${d.val}<span class="dpc-pct">%</span></span>
+      <span class="dpc-cta" style="color:${d.color}">练 10 题 →</span>
+    </div>`).join('')
+  document.querySelectorAll('.dim-prac-card').forEach(el => {
+    el.addEventListener('click', () => {
+      vibrate('light')
+      location.href = `quiz.html?subject=${state.currentId}&mode=adaptive&dim=${el.dataset.key}`
+    })
+  })
+}
+
+function renderDims() {
+  const subject = getSubject(state.currentId)
+  const prog = progressOf(state.currentId)
+  const has = !subject.isGroup && (prog.history || []).length > 0
+  const card = document.getElementById('dimCard')
+  if (!has) { card.style.display = 'none'; return }
+  card.style.display = 'block'
+  document.getElementById('dimTip').textContent = `${subject.shortName} · Twin Drive 输出`
+  const mastery = prog.mastery || {}
+  const dims = subject.DIMS.map(d => ({ ...d, val: mastery[d.key] != null ? mastery[d.key] : 0 }))
+  document.getElementById('dimList').innerHTML = dims.map(d => `
+    <div class="dim-row">
+      <span class="dim-icon">${d.icon}</span>
+      <span class="dim-name">${d.name}</span>
+      <div class="dim-bar"><div class="dim-fill" style="width:${d.val}%;background:${d.color}"></div></div>
+      <span class="dim-val" style="color:${d.color}">${d.val}</span>
+    </div>`).join('')
+}
+
+function renderWeakCurveHist() {
+  const subject = getSubject(state.currentId)
+  const prog = progressOf(state.currentId)
+  const history = prog.history || []
+  const hasHistory = !subject.isGroup && history.length > 0
+
+  if (!hasHistory) {
+    document.getElementById('weakCard').style.display = 'none'
+    document.getElementById('curveCard').style.display = 'none'
+    document.getElementById('histCard').style.display = 'none'
+    const es = document.getElementById('emptyState')
+    es.style.display = subject.isGroup ? 'none' : 'flex'
+    es.style.flexDirection = 'column'
+    document.getElementById('emptyTitle').textContent = `开始 ${subject.name} 定级测评`
+    document.getElementById('emptyDesc').textContent = `20 题 · 覆盖 ${subject.shortName} 六大维度 · 全程大模型解析`
+    if (!subject.isGroup) {
+      document.getElementById('emptyDims').innerHTML = subject.DIMS.map(d => `
+        <div class="empty-dim-item"><span class="ed-icon">${d.icon}</span><span class="ed-name">${d.name}</span></div>`).join('')
+    }
+    return
+  }
+  document.getElementById('emptyState').style.display = 'none'
+
+  const mastery = prog.mastery || {}
+  const weakness = subject.DIMS.map(d => {
+    const m = mastery[d.key]
+    if (m == null) return null
+    const level = m < 50 ? 'high' : m < 70 ? 'mid' : 'low'
+    const lvText = m < 50 ? '薄弱' : m < 70 ? '一般' : '掌握'
+    return { ...d, mastery: m, level, lvText }
+  }).filter(w => w && w.level !== 'low').sort((a, b) => a.mastery - b.mastery).slice(0, 4)
+
+  const weakCard = document.getElementById('weakCard')
+  weakCard.style.display = weakness.length > 0 ? 'block' : 'none'
+  document.getElementById('weakList').innerHTML = weakness.map(w => `
+    <div class="weak-row">
+      <div class="weak-head">
+        <span class="weak-topic">${w.name}</span>
+        <span class="weak-tag tag-${w.level}">${w.lvText}</span>
+      </div>
+      <div class="weak-bar"><div class="weak-fill" style="width:${w.mastery}%;background:${w.color}"></div></div>
+      <div class="weak-foot">
+        <span>掌握度 ${w.mastery}%</span>
+        <span class="weak-action" onclick="location.href='quiz.html?subject=${state.currentId}&mode=adaptive&dim=${w.key}'">定向强化 →</span>
+      </div>
+    </div>`).join('')
+
+  // 曲线
+  const latest = history[history.length - 1]
+  const baseline = prog.baseline != null ? prog.baseline : latest.score
+  document.getElementById('curveTip').textContent = `基准 ${baseline} → 最新 ${latest.score}`
+  document.getElementById('curveCard').style.display = 'block'
+  const recent = history.slice(-7)
+  const max = Math.max(60, ...recent.map(h => h.score))
+  let curve = recent.map((h, i) => ({
+    day: i + 1, score: h.score,
+    h: max > 0 ? Math.round(h.score / max * 100) : 0,
+    color: h.score >= 80 ? '#00d4aa' : h.score >= 60 ? '#ffd700' : '#ff6b6b'
+  }))
+  while (curve.length < 7) curve.unshift({ day: '-', score: 0, h: 0, color: 'rgba(255,255,255,.08)' })
+  document.getElementById('chart').innerHTML = curve.map(c => `
+    <div class="chart-col">
+      <span class="chart-val">${c.score > 0 ? c.score : ''}</span>
+      <div class="chart-bar" style="height:${c.h}%;background:linear-gradient(180deg,${c.color},${c.color}66)"></div>
+      <span class="chart-lbl">${c.day}</span>
+    </div>`).join('')
+
+  // 历史
+  document.getElementById('histCard').style.display = 'block'
+  document.getElementById('histTitle').textContent = `最近做题 · ${subject.shortName}`
+  document.getElementById('histList').innerHTML = history.slice(-5).reverse().map(h => `
+    <div class="hist-row">
+      <div class="hist-left">
+        <span class="hist-mode">${h.mode === 'assess' ? '定级测评' : '自适应训练'}</span>
+        <span class="hist-when">${relTime(h.ts)}</span>
+      </div>
+      <div class="hist-right">
+        <span class="hist-score" style="color:${h.score >= 80 ? '#00d4aa' : h.score >= 60 ? '#ffd700' : '#ff6b6b'}">${h.score}</span>
+        <span class="hist-sub">${h.correct}/${h.total}</span>
+      </div>
+    </div>`).join('')
+}
+
+function renderRank() {
+  document.getElementById('rankList').innerHTML = RANK_DATA.map(r => `
+    <div class="rank-row ${r.rank <= 3 ? 'top3' : ''} ${r.isMe ? 'me' : ''}">
+      <span class="rank-pos ${r.rank === 1 ? 'gold' : r.rank === 2 ? 'silver' : r.rank === 3 ? 'bronze' : ''}">${r.rank <= 3 ? (r.rank === 1 ? '🥇' : r.rank === 2 ? '🥈' : '🥉') : '#' + r.rank}</span>
+      <span class="rank-name">${r.name}</span>
+      <span class="rank-score">${r.score}</span>
+      <span class="rank-gain ${r.gain > 0 ? 'up' : ''}">${r.gain > 0 ? '+' + r.gain : r.gain}</span>
+    </div>`).join('')
+}
+
+function renderTwinDrive() {
+  const subject = getSubject(state.currentId)
+  const prog = progressOf(state.currentId)
+  const ps = Storage.get('crayxus_prescreen') || {}
+  document.getElementById('matchScore').textContent = ps.done ? ps.score : '—'
+  document.getElementById('tdState').textContent = ps.done ? 'ONLINE' : 'STANDBY'
+  document.getElementById('matchOrb').classList.toggle('active', !!ps.done)
+
+  const history = prog.history || []
+  const latest = history.slice(-1)[0]
+  const gain = (latest && prog.baseline != null) ? Math.max(0, latest.score - prog.baseline) : 0
+  document.getElementById('boostScore').textContent = history.length ? '+' + gain : '—'
+  document.getElementById('boostOrb').classList.toggle('active', history.length > 0)
+
+  const foot = document.getElementById('tdFoot')
+  if (ps.done) {
+    foot.style.display = 'block'
+    foot.textContent = `${ps.personality} · 推荐 ${ps.recommendPlan}`
+  } else { foot.style.display = 'none' }
+}
+
+function renderResetBtn() {
+  const subject = getSubject(state.currentId)
+  const prog = progressOf(state.currentId)
+  const has = !subject.isGroup && (prog.history || []).length > 0
+  const rb = document.getElementById('resetBtn')
+  rb.style.display = has ? 'block' : 'none'
+  rb.textContent = `🗑 清除 ${subject.shortName}`
+  rb.onclick = async () => {
+    const r = await showModal({ title: `清除 ${subject.shortName} 进度`, content: `确定要清除「${subject.name}」的所有学习记录？其他科目不受影响。`, confirmText: '清除', confirmColor: '#ff6b6b' })
+    if (r.confirm) {
+      Storage.remove(storageKeyOf(state.currentId))
+      Storage.remove('crayxus_wrongbook_' + state.currentId)
+      renderAll()
+      showToast('已清除', { icon: 'success' })
+    }
+  }
+}
+
+function renderAll() {
+  renderNav()
+  renderTopbar()
+  renderHero()
+  renderKpis()
+  renderDimPractice()
+  renderDims()
+  renderWeakCurveHist()
+  renderRank()
+  renderTwinDrive()
+  renderResetBtn()
+}
+
+function launchMatch() {
+  vibrate('light')
+  const ps = Storage.get('crayxus_prescreen')
+  if (ps && ps.done) {
+    showActionSheet(['📊 查看我的匹配报告', '🔄 重新测评']).then(r => {
+      if (r.tapIndex === 0) location.href = 'match-report.html'
+      else if (r.tapIndex === 1) startMatchFlow()
+    })
+  } else {
+    showModal({ title: '◆ MATCH DRIVE · 匹配度测评', content: '10 题 · 5 分钟 · AI 判定你的学习型人格 + Crayxus 兼容指数 + 推荐方案', confirmText: '开始评估', confirmColor: '#ffd700' }).then(r => {
+      if (r.confirm) startMatchFlow()
+    })
+  }
+}
+function startMatchFlow() {
+  const subject = getSubject(state.currentId)
+  const q = subject.isGroup ? '' : `?subject=${encodeURIComponent(subject.shortName)}&subjectId=${subject.id}`
+  location.href = 'match-test.html' + q
+}
+function launchBoost() {
+  vibrate('light')
+  const subject = getSubject(state.currentId)
+  if (subject.isGroup) { showToast('请先选择子学科'); return }
+  showModal({ title: '◆ BOOST DRIVE · 提分测评', content: `${subject.name} · 20 题 · AI 自适应定级 + 6 维诊断 + 弱点分析`, confirmText: '开始测评', confirmColor: '#ff6b35' }).then(r => {
+    if (r.confirm) location.href = `quiz.html?subject=${state.currentId}&mode=assess`
+  })
+}
+function gotoWrongbook() {
+  vibrate('light')
+  location.href = 'wrongbook.html?subject=' + state.currentId
+}
+function upgradePlan() {
+  showActionSheet(['月付 ¥199/人/科/月', '季度付 ¥499/人/科/季 (省 16%)', '年付 ¥1,680/人/科/年 (省 30%)']).then(r => {
+    if (r.tapIndex >= 0) showToast('已切换方案', { icon: 'success' })
+  })
+}
+
+window.launchMatch = launchMatch
+window.launchBoost = launchBoost
+window.gotoWrongbook = gotoWrongbook
+window.upgradePlan = upgradePlan
+
+renderAll()
+attachAIHelper('scoreboost')
+</script>
+
+</body>
+</html>

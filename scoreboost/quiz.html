@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>测评 · Crayxus AI</title>
+<link rel="stylesheet" href="css/theme.css">
+</head>
+<body>
+
+<div class="app-frame narrow">
+  <div class="status-bar">CRAYXUS · AI 测评</div>
+
+  <div class="ai-loading" id="aiLoading"></div>
+
+  <div class="top-bar">
+    <div class="close-btn" onclick="history.length > 1 ? history.back() : location.href='index.html'">✕</div>
+    <div class="progress-wrap"><div class="progress-fill" id="progressFill" style="width:5%"></div></div>
+    <span class="progress-txt" id="progressTxt">1 / 20</span>
+  </div>
+
+  <div class="mode-row">
+    <span class="mode-tag" id="modeTag">📖 加载中</span>
+    <span class="lesson-tag" id="lessonTag" style="display:none"></span>
+  </div>
+
+  <div class="q-card" id="qCard">
+    <div class="q-num" id="qNum">Q1</div>
+    <span class="q-text" id="qText"></span>
+    <div class="opt-list" id="optList"></div>
+    <div class="solution" id="solution" style="display:none">
+      <span class="sol-label">💡 解析</span>
+      <span class="sol-text" id="solText"></span>
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <div class="next-btn disabled" id="nextBtn">确认</div>
+  </div>
+
+  <div class="reward-overlay" id="rewardOverlay" style="display:none">
+    <div class="reward-box" id="rewardBox">
+      <div id="rewardClosed">
+        <span class="rb-title">🎁 连对 3 题</span>
+        <div class="rb-emoji">🎁</div>
+        <span class="rb-tip">点击打开盲盒</span>
+      </div>
+      <div id="rewardOpened" style="display:none">
+        <span class="ro-icon" id="roIcon"></span>
+        <span class="ro-label" id="roLabel"></span>
+        <span class="ro-rare" id="roRare" style="display:none">✨ 稀有 ✨</span>
+        <div class="ro-close" onclick="closeReward(event)">太棒了！继续答题</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="result-overlay" id="resultOverlay" style="display:none">
+    <div class="result-card">
+      <span class="result-title" id="resultTitle">📋 测评完成</span>
+      <div class="score-ring">
+        <span class="score-big" id="scoreBig">0</span>
+        <span class="score-max">/ 100</span>
+      </div>
+      <span class="result-sub" id="resultSub"></span>
+      <div class="dim-result-list" id="dimResultList"></div>
+      <div class="weak-tip" id="weakTip" style="display:none">🎯 薄弱点: <span class="weak-name" id="weakName"></span></div>
+      <div class="result-actions">
+        <div class="result-btn ghost" onclick="location.href='index.html'">返回</div>
+        <div class="result-btn primary" id="adaptiveAgainBtn" style="display:none">定向强化 →</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/subjects.js"></script>
+<script src="js/app.js"></script>
+<script>
+const { Storage, vibrate, showToast, startAILoader } = window.App
+const { getSubject, pickAdaptive } = window.Subjects
+
+const params = new URLSearchParams(location.search)
+const subjectId = params.get('subject') || Storage.get('sb_current_subject') || 'sat'
+const mode = params.get('mode') === 'adaptive' ? 'adaptive' : 'assess'
+const forcedDim = params.get('dim') || null
+
+const subject = getSubject(subjectId)
+const DIMS = subject.DIMS
+const dimMap = {}; DIMS.forEach(d => dimMap[d.key] = d)
+
+let questions = []
+let currentIdx = 0
+let selectedIdx = null
+let showResult = false
+let answers = []
+let correctStreak = 0
+const storageKeyOf = id => 'sb_progress__' + id
+
+function init() {
+  // 启动 AI loading 假动画
+  const messages = mode === 'assess'
+    ? ['启动 Crayxus AI 命题引擎...', '覆盖 6 大维度知识图谱...', '混合难度梯度（简单/中等/进阶）...', 'AI 校对题目与答案...', '即将完成, 准备就绪...']
+    : ['分析你的薄弱维度...', '定位你的当前水平...', 'AI 定制专属强化题目...', 'AI 校对质量...', '即将完成, 准备就绪...']
+  const loader = startAILoader(document.getElementById('aiLoading'), messages, { minDuration: 2200 })
+  loader.finish(() => {
+    if (mode === 'assess') {
+      questions = subject.QUESTION_BANK.slice(0, 20)
+    } else {
+      const prog = Storage.get(storageKeyOf(subjectId)) || { mastery: {} }
+      const mastery = prog.mastery || {}
+      if (forcedDim) {
+        const pool = subject.QUESTION_BANK.filter(q => q.dim === forcedDim)
+        // 如果同维度题不够 10 道, 补全
+        questions = pool.length >= 10 ? pool.slice(0, 10) : [...pool, ...pickAdaptive(subject, mastery, 10 - pool.length)]
+      } else {
+        questions = pickAdaptive(subject, mastery, 10)
+      }
+    }
+    document.getElementById('modeTag').className = 'mode-tag ' + (mode === 'assess' ? 'assess' : '')
+    document.getElementById('modeTag').textContent = `${subject.icon} ${subject.shortName} · ${mode === 'assess' ? '定级测评' : 'AI 自适应'}${mode === 'adaptive' ? ' · ✨ AI 实时出题' : ''}`
+    document.title = `${subject.shortName} · ${mode === 'assess' ? '定级测评' : 'AI 自适应训练'}`
+    renderQ()
+  })
+}
+
+function renderQ() {
+  const q = questions[currentIdx]
+  document.getElementById('qNum').textContent = `Q${currentIdx + 1}`
+  document.getElementById('qText').textContent = q.q
+  document.getElementById('progressTxt').textContent = `${currentIdx + 1} / ${questions.length}`
+  document.getElementById('progressFill').style.width = ((currentIdx + 1) / questions.length * 100) + '%'
+
+  const lessonTag = document.getElementById('lessonTag')
+  if (q.lesson && dimMap[q.dim]) {
+    lessonTag.style.display = ''
+    lessonTag.textContent = `${q.lesson} · ${dimMap[q.dim].name}`
+  } else { lessonTag.style.display = 'none' }
+
+  const list = document.getElementById('optList')
+  list.innerHTML = ''
+  const letters = ['A', 'B', 'C', 'D']
+  q.options.forEach((opt, i) => {
+    const row = document.createElement('div')
+    row.className = 'opt-row'
+    row.dataset.idx = i
+    row.innerHTML = `<span class="opt-letter">${letters[i]}</span><span class="opt-text">${opt}</span>`
+    row.addEventListener('click', () => onSelectOption(i))
+    list.appendChild(row)
+  })
+  document.getElementById('solution').style.display = 'none'
+  selectedIdx = null
+  showResult = false
+  const nb = document.getElementById('nextBtn')
+  nb.classList.add('disabled')
+  nb.textContent = '确认'
+}
+
+function onSelectOption(i) {
+  if (showResult) return
+  selectedIdx = i
+  document.querySelectorAll('.opt-row').forEach((r, idx) => r.classList.toggle('selected', idx === i))
+  document.getElementById('nextBtn').classList.remove('disabled')
+}
+
+document.getElementById('nextBtn').addEventListener('click', () => {
+  if (selectedIdx === null && !showResult) return
+  if (!showResult) {
+    showResult = true
+    const q = questions[currentIdx]
+    const correct = selectedIdx === q.answer
+    answers.push({ qid: q.id, selected: selectedIdx, correct, dim: q.dim })
+    correctStreak = correct ? correctStreak + 1 : 0
+    document.querySelectorAll('.opt-row').forEach((r, idx) => {
+      r.classList.remove('selected')
+      if (idx === q.answer) r.classList.add('correct')
+      if (idx === selectedIdx && idx !== q.answer) r.classList.add('wrong')
+      const mark = document.createElement('span')
+      mark.className = 'opt-mark' + (idx === selectedIdx && idx !== q.answer ? ' wrong' : '')
+      if (idx === q.answer) mark.textContent = '✓'
+      else if (idx === selectedIdx && idx !== q.answer) mark.textContent = '✕'
+      if (mark.textContent) r.appendChild(mark)
+    })
+    document.getElementById('solText').textContent = q.solution || ''
+    document.getElementById('solution').style.display = q.solution ? 'block' : 'none'
+    vibrate(correct ? 'light' : 'medium')
+    const nb = document.getElementById('nextBtn')
+    nb.textContent = currentIdx + 1 < questions.length ? '下一题 →' : '查看报告 →'
+
+    if (correctStreak >= 3) {
+      setTimeout(openReward, 600)
+    }
+    return
+  }
+  currentIdx++
+  if (currentIdx >= questions.length) { finish(); return }
+  renderQ()
+})
+
+const REWARD_POOL = [
+  { type:'token', icon:'⚡', label:'蛋力 +10', rare:false },
+  { type:'token', icon:'⚡', label:'蛋力 +5', rare:false },
+  { type:'token', icon:'💎', label:'蛋力 +20', rare:true },
+  { type:'card', icon:'🃏', label:'专注卡 · 罕见', rare:true },
+  { type:'card', icon:'🎴', label:'智慧卡 · 普通', rare:false },
+  { type:'praise', icon:'🌟', label:'"再连 3 题继续抽！"', rare:false },
+]
+function openReward() {
+  const isRare = Math.random() < 0.22
+  const pool = REWARD_POOL.filter(r => r.rare === isRare)
+  const item = pool[Math.floor(Math.random() * pool.length)]
+  correctStreak = 0
+  vibrate('heavy')
+  const overlay = document.getElementById('rewardOverlay')
+  overlay.style.display = 'flex'
+  document.getElementById('rewardClosed').style.display = ''
+  document.getElementById('rewardOpened').style.display = 'none'
+  document.getElementById('rewardBox').classList.remove('opened', 'rare')
+  document.getElementById('rewardBox').onclick = () => openBox(item)
+}
+function openBox(item) {
+  vibrate('medium')
+  document.getElementById('rewardBox').classList.add('opened')
+  if (item.rare) document.getElementById('rewardBox').classList.add('rare')
+  document.getElementById('rewardClosed').style.display = 'none'
+  document.getElementById('rewardOpened').style.display = ''
+  document.getElementById('roIcon').textContent = item.icon
+  document.getElementById('roLabel').textContent = item.label
+  document.getElementById('roRare').style.display = item.rare ? '' : 'none'
+}
+function closeReward(e) {
+  e.stopPropagation()
+  document.getElementById('rewardOverlay').style.display = 'none'
+}
+window.closeReward = closeReward
+
+function finish() {
+  const correctCount = answers.filter(a => a.correct).length
+  const totalScore = Math.round(correctCount / questions.length * 100)
+
+  const dimStats = {}
+  DIMS.forEach(d => dimStats[d.key] = { total: 0, correct: 0 })
+  answers.forEach(a => {
+    if (!dimStats[a.dim]) return
+    dimStats[a.dim].total++
+    if (a.correct) dimStats[a.dim].correct++
+  })
+  const dimResults = DIMS.map(d => {
+    const s = dimStats[d.key]
+    return { ...d, pct: s.total > 0 ? Math.round(s.correct / s.total * 100) : null, attempted: s.total > 0 }
+  }).filter(d => d.attempted)
+
+  const weak = dimResults.length > 0 ? dimResults.reduce((a, b) => a.pct < b.pct ? a : b) : null
+
+  const prog = Storage.get(storageKeyOf(subjectId)) || { history: [], mastery: {}, baseline: null }
+  const gain = prog.baseline != null ? totalScore - prog.baseline : 0
+  const mastery = { ...prog.mastery }
+  dimResults.forEach(d => {
+    const prev = mastery[d.key] != null ? mastery[d.key] : 50
+    mastery[d.key] = Math.round(prev * 0.5 + d.pct * 0.5)
+  })
+
+  const entry = {
+    ts: Date.now(), mode, score: totalScore, correct: correctCount, total: questions.length,
+    dimResults: dimResults.map(d => ({ key: d.key, pct: d.pct }))
+  }
+  const newProg = {
+    history: [...prog.history, entry].slice(-30),
+    mastery,
+    baseline: prog.baseline != null ? prog.baseline : totalScore,
+    updatedAt: Date.now()
+  }
+  Storage.set(storageKeyOf(subjectId), newProg)
+
+  // 错题本
+  const WB_KEY = 'crayxus_wrongbook_' + subjectId
+  const wb = Storage.get(WB_KEY) || { items: [] }
+  const existing = new Map(wb.items.map(it => [it.id, it]))
+  const now = Date.now()
+  answers.forEach((ans, i) => {
+    if (ans.correct) return
+    const q = questions[i]
+    if (!q) return
+    const ex = existing.get(q.id)
+    if (ex) { ex.attempts = (ex.attempts || 1) + 1; ex.wrongAt = now; ex.selected = ans.selected }
+    else existing.set(q.id, { id: q.id, dim: q.dim, q: q.q, options: q.options, answer: q.answer, selected: ans.selected, solution: q.solution, wrongAt: now, attempts: 1 })
+  })
+  const all = Array.from(existing.values()).sort((a, b) => (b.wrongAt || 0) - (a.wrongAt || 0)).slice(0, 200)
+  Storage.set(WB_KEY, { items: all, lastUpdated: now })
+
+  // 渲染结果
+  document.getElementById('resultTitle').textContent = mode === 'assess' ? '📋 测评完成' : '🚀 训练完成'
+  document.getElementById('scoreBig').textContent = totalScore
+  document.getElementById('resultSub').textContent = `正确 ${correctCount} / ${questions.length} · 提分 +${Math.max(0, gain)}`
+  document.getElementById('dimResultList').innerHTML = dimResults.map(d => `
+    <div class="dim-result-row">
+      <span class="drr-icon">${d.icon}</span>
+      <span class="drr-name">${d.name}</span>
+      <div class="drr-bar"><div class="drr-fill" style="width:${d.pct}%;background:${d.color}"></div></div>
+      <span class="drr-val" style="color:${d.color}">${d.pct}%</span>
+    </div>`).join('')
+  if (weak) {
+    document.getElementById('weakTip').style.display = 'block'
+    document.getElementById('weakName').textContent = weak.name
+    const btn = document.getElementById('adaptiveAgainBtn')
+    btn.style.display = 'block'
+    btn.onclick = () => location.href = `quiz.html?subject=${subjectId}&mode=adaptive&dim=${weak.key}`
+  }
+  document.getElementById('resultOverlay').style.display = 'flex'
+}
+
+init()
+window.App.attachAIHelper(mode === 'assess' ? 'sb-quiz-assess' : 'sb-quiz-adaptive')
+</script>
+</body>
+</html>

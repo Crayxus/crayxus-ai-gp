@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>口语 · Crayxus AI</title>
+<link rel="stylesheet" href="css/theme.css">
+<style>
+  .topic-card { margin: 14px 18px; padding: 16px; border-radius: 14px; background: rgba(0, 212, 255, 0.06); border: 1px solid rgba(0, 212, 255, 0.25); }
+  .tc-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .tc-tag { font-size: 10px; letter-spacing: 1px; color: var(--c-cyan); padding: 3px 8px; border-radius: 6px; background: rgba(0,212,255,0.15); }
+  .tc-change { font-size: 11px; color: var(--c-cyan); cursor: pointer; }
+  .tc-title { font-size: 16px; font-weight: 600; line-height: 1.5; display: block; margin-bottom: 12px; }
+  .tc-bullet-lbl { font-size: 11px; color: var(--c-text-dim); display: block; margin-bottom: 6px; }
+  .tc-bullet-row { display: flex; gap: 6px; font-size: 13px; line-height: 1.6; }
+  .tc-dot { color: var(--c-cyan); }
+
+  .rec-panel { padding: 30px 18px; text-align: center; }
+  .rp-hint { font-size: 12px; color: var(--c-text-dim); display: block; margin-bottom: 18px; }
+  .rec-btn-big { width: 120px; height: 120px; border-radius: 50%; margin: 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer; transition: all 0.3s; }
+  .rec-btn-big.start { background: radial-gradient(circle, rgba(0,212,170,0.3) 0%, rgba(0,212,170,0.08) 70%); border: 3px solid var(--c-teal); color: var(--c-teal); }
+  .rec-btn-big.stop { background: radial-gradient(circle, rgba(255,107,107,0.3) 0%, rgba(255,107,107,0.08) 70%); border: 3px solid var(--c-red); color: var(--c-red); animation: recPulse 1s ease-in-out infinite; }
+  @keyframes recPulse { 50% { box-shadow: 0 0 30px rgba(255,107,107,0.5); transform: scale(1.04); } }
+  .rb-mic { font-size: 36px; }
+  .rb-label { font-size: 13px; font-weight: 600; }
+
+  .rp-timer { font-size: 48px; font-weight: 800; color: var(--c-red); font-variant-numeric: tabular-nums; display: block; margin-bottom: 16px; }
+  .rp-unit { font-size: 18px; color: var(--c-text-dim); margin-left: 4px; }
+  .wave { display: flex; gap: 4px; justify-content: center; align-items: center; height: 50px; margin-bottom: 16px; }
+  .wave-bar { width: 4px; height: 12px; background: var(--c-red); border-radius: 2px; animation: wave 0.8s ease-in-out infinite alternate; }
+  @keyframes wave { from { height: 8px; opacity: 0.4; } to { height: 36px; opacity: 1; } }
+
+  .review-row { display: flex; gap: 10px; justify-content: center; margin-bottom: 18px; }
+  .rev-btn { padding: 12px 20px; border-radius: 12px; background: rgba(0,212,255,0.1); border: 1px solid var(--c-cyan); color: var(--c-cyan); font-size: 13px; cursor: pointer; }
+  .rev-btn.redo { background: rgba(255,255,255,0.04); border-color: var(--c-line); color: var(--c-text); }
+  .submit-btn { padding: 14px; border-radius: 14px; background: linear-gradient(135deg, var(--c-cyan), var(--c-violet)); color: #fff; font-size: 15px; font-weight: 600; max-width: 280px; margin: 0 auto; cursor: pointer; }
+  .err-msg { display: block; margin-top: 12px; color: var(--c-red); font-size: 12px; }
+
+  .upload-spin { width: 60px; height: 60px; margin: 0 auto 18px; border-radius: 50%; border: 3px solid rgba(0,212,255,0.2); border-top-color: var(--c-cyan); animation: spin 1s linear infinite; }
+  .rp-title { font-size: 16px; font-weight: 600; display: block; margin-bottom: 6px; color: var(--c-cyan); }
+
+  .result-wrap { padding: 14px 18px; }
+  .band-card { padding: 24px; border-radius: 16px; text-align: center; background: linear-gradient(135deg, rgba(0,212,170,0.15), rgba(0,212,255,0.1)); border: 1px solid var(--c-teal); margin-bottom: 14px; }
+  .bc-label { font-size: 11px; letter-spacing: 1.5px; color: var(--c-teal); display: block; margin-bottom: 6px; }
+  .bc-band { font-size: 56px; font-weight: 800; color: var(--c-teal); display: block; line-height: 1; margin-bottom: 8px; }
+  .bc-feedback { font-size: 13px; color: var(--c-text-dim); display: block; line-height: 1.5; }
+
+  .r-block { padding: 14px; border-radius: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--c-line); margin-bottom: 12px; }
+  .rb-title { font-size: 12px; font-weight: 600; color: var(--c-cyan); margin-bottom: 8px; }
+  .rb-text { font-size: 13px; line-height: 1.65; color: var(--c-text); }
+  .rb-text.small { font-size: 12px; color: var(--c-text-dim); }
+
+  .err-list { display: flex; flex-direction: column; gap: 10px; }
+  .err-row { padding: 10px; border-radius: 10px; background: rgba(255, 107, 107, 0.06); border: 1px solid rgba(255, 107, 107, 0.2); }
+  .er-tag { display: inline-block; padding: 2px 6px; border-radius: 4px; background: rgba(255,107,107,0.18); color: var(--c-red); font-size: 10px; margin-bottom: 6px; }
+  .er-cmp { display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px; }
+  .er-wrong { font-size: 12px; color: var(--c-red); }
+  .er-correct { font-size: 12px; color: var(--c-teal); }
+  .er-explain { font-size: 11.5px; color: var(--c-text-dim); display: block; }
+
+  .vocab-list { display: flex; flex-direction: column; gap: 8px; }
+  .voc-row { padding: 10px; border-radius: 10px; background: rgba(255, 215, 0, 0.06); border: 1px solid rgba(255, 215, 0, 0.2); }
+  .voc-pair { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; font-size: 13px; }
+  .voc-weak { color: var(--c-text-dim); text-decoration: line-through; }
+  .voc-arrow { color: var(--c-gold); }
+  .voc-better { color: var(--c-gold); font-weight: 600; }
+  .voc-explain { font-size: 11.5px; color: var(--c-text-dim); }
+
+  .r-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .r-block.half { margin-bottom: 0; }
+  .r-block.sample { background: rgba(124, 77, 255, 0.06); border-color: rgba(124,77,255,0.2); }
+  .r-block.sample .rb-title { color: var(--c-violet); }
+
+  .result-actions { display: flex; gap: 8px; padding-top: 14px; }
+  .ra-btn { flex: 1; padding: 12px; border-radius: 12px; text-align: center; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .ra-btn.primary { background: linear-gradient(135deg, var(--c-cyan), var(--c-violet)); color: #fff; }
+  .ra-btn.ghost { background: rgba(255,255,255,0.05); border: 1px solid var(--c-line); }
+</style>
+</head>
+<body>
+<div class="app-frame narrow">
+
+  <div class="top-tools">
+    <div class="tool-btn ghost" onclick="location.href='index.html'">← 返回 Hub</div>
+  </div>
+
+  <div class="topic-card" id="topicCard">
+    <div class="tc-head">
+      <span class="tc-tag" id="tcTag">IELTS Speaking · Part 2</span>
+      <span class="tc-change" onclick="changeTopic()">🔀 换一题</span>
+    </div>
+    <span class="tc-title" id="tcTitle"></span>
+    <span class="tc-bullet-lbl">You should say:</span>
+    <div id="tcBullets"></div>
+  </div>
+
+  <div id="phaseContainer"></div>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+const { showToast, vibrate, attachAIHelper } = window.App
+
+const TOPICS = [
+  { part: 2, title: 'Describe a city you have visited', bullets: ['where it is', 'when you went there', 'what you did there', 'and explain why you remember it'] },
+  { part: 2, title: 'Describe a person who has influenced you', bullets: ['who this person is', 'how you know them', 'what they did', 'and explain how they influenced you'] },
+  { part: 2, title: 'Describe a memorable meal you had', bullets: ['where it was', 'who you were with', 'what you ate', 'and explain why it was memorable'] },
+  { part: 2, title: 'Describe a book that changed your perspective', bullets: ['what the book is about', 'when you read it', 'why you chose it', 'and explain how it changed you'] },
+  { part: 2, title: 'Describe a place where you feel relaxed', bullets: ['where it is', 'how often you go there', 'what you do there', 'and explain why you feel relaxed there'] },
+  { part: 2, title: 'Describe a skill you would like to learn', bullets: ['what skill it is', 'why you want to learn it', 'how you would learn it', 'and explain how it would benefit you'] },
+]
+
+let topic = TOPICS[Math.floor(Math.random() * TOPICS.length)]
+let phase = 'topic'
+let secLeft = 60
+let timer = null
+let mediaRecorder = null
+let chunks = []
+let audioUrl = null
+let audioEl = null
+
+function setTopic(t) {
+  topic = t
+  document.getElementById('tcTag').textContent = `IELTS Speaking · Part ${t.part}`
+  document.getElementById('tcTitle').textContent = t.title
+  document.getElementById('tcBullets').innerHTML = t.bullets.map(b => `<div class="tc-bullet-row"><span class="tc-dot">•</span><span>${b}</span></div>`).join('')
+}
+function changeTopic() {
+  if (phase !== 'topic' && phase !== 'reviewing') return
+  let next = topic
+  while (next === topic) next = TOPICS[Math.floor(Math.random() * TOPICS.length)]
+  setTopic(next)
+  audioUrl = null
+  setPhase('topic')
+}
+window.changeTopic = changeTopic
+
+function setPhase(p) {
+  phase = p
+  const c = document.getElementById('phaseContainer')
+  if (p === 'topic') {
+    c.innerHTML = `<div class="rec-panel">
+      <span class="rp-hint">最长 60 秒 · 建议 1 分钟内说完 4 个要点</span>
+      <div class="rec-btn-big start" onclick="startRecord()">
+        <span class="rb-mic">🎤</span>
+        <span class="rb-label">开始录音</span>
+      </div>
+    </div>`
+  } else if (p === 'recording') {
+    c.innerHTML = `<div class="rec-panel">
+      <span class="rp-timer" id="timerEl">${secLeft}<span class="rp-unit">s</span></span>
+      <div class="wave">${Array(12).fill(0).map((_, i) => `<div class="wave-bar" style="animation-delay:${i * 0.08}s"></div>`).join('')}</div>
+      <span class="rp-hint">正在录音中...</span>
+      <div class="rec-btn-big stop" onclick="stopRecord()">
+        <span class="rb-mic">⏹</span>
+        <span class="rb-label">停止录音</span>
+      </div>
+    </div>`
+  } else if (p === 'reviewing') {
+    c.innerHTML = `<div class="rec-panel">
+      <span class="rp-hint">已录制 · 试听检查后提交评分</span>
+      <div class="review-row">
+        <div class="rev-btn" id="playBtn" onclick="playRecord()">▶ 试听</div>
+        <div class="rev-btn redo" onclick="redoRecord()">🔄 重录</div>
+      </div>
+      <div class="submit-btn" onclick="submitEval()">📤 提交 AI 评分</div>
+    </div>`
+  } else if (p === 'uploading') {
+    c.innerHTML = `<div class="rec-panel">
+      <div class="upload-spin"></div>
+      <span class="rp-title">AI 评分中</span>
+      <span class="rp-hint">语音转文字 → 语法分析 → 词汇评估 → 范例生成 · 约 5-8 秒</span>
+    </div>`
+  } else if (p === 'result') {
+    renderResult()
+  }
+}
+
+async function startRecord() {
+  vibrate('medium')
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+    chunks = []
+    mediaRecorder = new MediaRecorder(stream)
+    mediaRecorder.ondataavailable = e => chunks.push(e.data)
+    mediaRecorder.onstop = () => {
+      stream.getTracks().forEach(t => t.stop())
+      const blob = new Blob(chunks, { type: 'audio/webm' })
+      audioUrl = URL.createObjectURL(blob)
+      clearInterval(timer); timer = null
+      setPhase('reviewing')
+    }
+    mediaRecorder.start()
+    secLeft = 60
+    setPhase('recording')
+    timer = setInterval(() => {
+      secLeft--
+      const el = document.getElementById('timerEl')
+      if (el) el.innerHTML = `${secLeft}<span class="rp-unit">s</span>`
+      if (secLeft <= 0) stopRecord()
+    }, 1000)
+  } catch (err) {
+    console.warn(err)
+    showToast('录音失败 · 请允许麦克风权限并使用 HTTPS / localhost')
+    // mock: 直接进入 reviewing 让 demo 能走通
+    setTimeout(() => { audioUrl = ''; setPhase('reviewing') }, 800)
+  }
+}
+function stopRecord() {
+  vibrate('medium')
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    mediaRecorder.stop()
+  } else {
+    clearInterval(timer); timer = null
+    setPhase('reviewing')
+  }
+}
+function playRecord() {
+  if (!audioUrl) { showToast('录音为空 (mock 模式)'); return }
+  if (audioEl) audioEl.pause()
+  audioEl = new Audio(audioUrl)
+  audioEl.play()
+}
+function redoRecord() { audioUrl = null; setPhase('topic') }
+function submitEval() {
+  setPhase('uploading')
+  setTimeout(() => setPhase('result'), 4500 + Math.random() * 2000)
+}
+window.startRecord = startRecord
+window.stopRecord = stopRecord
+window.playRecord = playRecord
+window.redoRecord = redoRecord
+window.submitEval = submitEval
+
+function genResult() {
+  const bands = ['6.0', '6.5', '7.0', '7.5']
+  const band = bands[Math.floor(Math.random() * bands.length)]
+  const transcripts = [
+    'I would like to talk about Hangzhou, a beautiful city in eastern China that I visited last summer with my family. We stayed there for about a week and explored many famous spots including the West Lake which is really stunning. We tried local food like Longjing tea and Dongpo pork, and the experience was very memorable because of the combination of natural beauty and rich culture.',
+    'The book that really changed my perspective is "Sapiens" by Yuval Noah Harari. I read it during my summer break two years ago, and it completely changed how I see human history. The author argues that cognitive revolution was the turning point for our species, and that idea really stuck with me. After reading it, I started questioning many things I took for granted.'
+  ]
+  const errorsPool = [
+    [
+      { type: '时态', wrong: 'I have went there last year', correct: 'I went there last year', explain: 'last year 是过去时间, 用一般过去时 went, 不用现在完成时 have gone。' },
+      { type: '冠词', wrong: 'It is beautiful city', correct: 'It is a beautiful city', explain: 'city 是可数名词单数, 前面要加冠词 a。' },
+      { type: '搭配', wrong: 'make a photo', correct: 'take a photo', explain: 'take a photo 是固定搭配, take 表示拍摄。' }
+    ],
+    [
+      { type: '介词', wrong: 'depend of him', correct: 'depend on him', explain: 'depend 后接 on 而不是 of。' },
+      { type: '主谓', wrong: 'The book are interesting', correct: 'The book is interesting', explain: 'The book 为单数, 谓语用 is。' }
+    ]
+  ]
+  const vocabPool = [
+    [
+      { weak: 'very good', better: 'exceptional / outstanding', explain: '提升词汇丰富度 (Lexical Resource) 是 Band 7+ 的关键。' },
+      { weak: 'I think', better: 'In my view / From my perspective', explain: '正式表达, 适合 Speaking Part 2/3。' },
+      { weak: 'a lot of', better: 'a considerable number of', explain: '学术化替换, 给考官好印象。' }
+    ],
+    [
+      { weak: 'big problem', better: 'significant challenge', explain: 'big 是初级词, significant + 名词更具学术感。' },
+      { weak: 'happy', better: 'delighted / thrilled', explain: '描述情感避免反复用 happy。' }
+    ]
+  ]
+  return {
+    band,
+    feedback: band >= '7.0' ? '优秀！你的回答涵盖了所有要点, 流利度和词汇都不错, 继续保持。' : '不错！基础扎实, 但还有提升空间。重点关注词汇升级和时态准确性。',
+    transcript: transcripts[Math.floor(Math.random() * transcripts.length)],
+    errors: errorsPool[Math.floor(Math.random() * errorsPool.length)],
+    vocab: vocabPool[Math.floor(Math.random() * vocabPool.length)],
+    fluency: '你的语速适中, 偶有 1-2 处明显停顿和重复, 整体连贯。建议练习连读和弱读以更接近 Band 8。',
+    coherence: '回答按时间和因果展开, 但段间衔接词较单一。可加入 "On top of that", "What\'s more", "As a result" 提升结构感。',
+    sampleAnswer: `Today I'd like to talk about ${topic.title.replace('Describe a ', '')}—a topic that I find genuinely fascinating. ${topic.bullets.map((b, i) => `${i === 0 ? 'Firstly,' : i === 1 ? 'Secondly,' : i === 2 ? 'Furthermore,' : 'Most importantly,'} ${b}.`).join(' ')} All in all, this experience has left a lasting impression on me, and I genuinely treasure it.`
+  }
+}
+
+function renderResult() {
+  const r = genResult()
+  const c = document.getElementById('phaseContainer')
+  c.innerHTML = `
+    <div class="result-wrap">
+      <div class="band-card">
+        <span class="bc-label">PREDICTED BAND</span>
+        <span class="bc-band">${r.band}</span>
+        <span class="bc-feedback">${r.feedback}</span>
+      </div>
+
+      <div class="r-block">
+        <div class="rb-title">📝 你的回答 (语音转文字)</div>
+        <div class="rb-text">${r.transcript}</div>
+      </div>
+
+      <div class="r-block">
+        <div class="rb-title">⚠️ 语法 · 表达问题 (${r.errors.length})</div>
+        <div class="err-list">
+          ${r.errors.map(e => `
+            <div class="err-row">
+              <span class="er-tag">${e.type}</span>
+              <div class="er-cmp">
+                <span class="er-wrong">✗ ${e.wrong}</span>
+                <span class="er-correct">✓ ${e.correct}</span>
+              </div>
+              <span class="er-explain">${e.explain}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <div class="r-block">
+        <div class="rb-title">📚 词汇升级建议</div>
+        <div class="vocab-list">
+          ${r.vocab.map(v => `
+            <div class="voc-row">
+              <div class="voc-pair">
+                <span class="voc-weak">${v.weak}</span>
+                <span class="voc-arrow">→</span>
+                <span class="voc-better">${v.better}</span>
+              </div>
+              <span class="voc-explain">${v.explain}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <div class="r-row-2">
+        <div class="r-block half">
+          <div class="rb-title">🎵 流畅性</div>
+          <div class="rb-text small">${r.fluency}</div>
+        </div>
+        <div class="r-block half">
+          <div class="rb-title">🔗 连贯性</div>
+          <div class="rb-text small">${r.coherence}</div>
+        </div>
+      </div>
+
+      <div class="r-block sample">
+        <div class="rb-title">⭐ Band 8 范例答案</div>
+        <div class="rb-text">${r.sampleAnswer}</div>
+      </div>
+
+      <div class="result-actions">
+        <div class="ra-btn primary" onclick="changeTopic()">🎯 换一题再练</div>
+        <div class="ra-btn ghost" onclick="location.href='index.html'">返回</div>
+      </div>
+    </div>`
+  vibrate('heavy')
+}
+
+setTopic(topic)
+setPhase('topic')
+attachAIHelper('speaking-free')
+</script>
+</body>
+</html>

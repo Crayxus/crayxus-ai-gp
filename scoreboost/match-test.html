@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MATCH DRIVE · 匹配度测评</title>
+<link rel="stylesheet" href="css/theme.css">
+<style>
+  .q-card { margin-top: 20px; }
+  .q-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .q-dim { padding: 3px 10px; border-radius: 8px; font-size: 11px; background: rgba(255, 215, 0, 0.15); color: var(--c-gold); border: 1px solid rgba(255, 215, 0, 0.3); }
+  .q-idx { font-size: 14px; font-weight: 700; color: var(--c-text-dim); }
+  .q-title { font-size: 16px; line-height: 1.5; margin-bottom: 16px; display: block; }
+  .action-row { display: flex; gap: 8px; padding: 14px 18px; }
+  .btn-ghost, .btn-primary { flex: 1; padding: 12px; border-radius: 12px; text-align: center; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .btn-ghost { background: rgba(255,255,255,0.05); border: 1px solid var(--c-line); color: var(--c-text); }
+  .btn-primary { background: linear-gradient(135deg, var(--c-gold), var(--c-orange)); color: #fff; }
+  .btn-ghost.disabled, .btn-primary.disabled { opacity: 0.4; pointer-events: none; }
+  .analyzing { padding: 60px 24px; text-align: center; }
+  .ana-ring { width: 64px; height: 64px; margin: 0 auto 18px; border-radius: 50%; border: 3px solid rgba(255,215,0,0.18); border-top-color: var(--c-gold); border-right-color: var(--c-orange); animation: spin 1.2s linear infinite; }
+  .ana-title { font-size: 16px; font-weight: 600; color: var(--c-gold); display: block; margin-bottom: 6px; }
+  .ana-sub { font-size: 12px; color: var(--c-text-dim); display: block; }
+</style>
+</head>
+<body>
+<div class="app-frame narrow">
+
+  <div class="ai-loading" id="aiLoading"></div>
+
+  <div class="sys-bar">
+    <div class="sys-dot"></div>
+    <span class="sys-tag">MATCH DRIVE · EVALUATION</span>
+    <span class="sys-meta" id="qMeta">Q 1 / 10</span>
+  </div>
+
+  <div class="progress-wrap" style="margin: 12px 18px"><div class="progress-fill" id="progressFill" style="width:10%"></div></div>
+
+  <div class="q-card" id="qCard">
+    <div class="q-header">
+      <span class="q-dim" id="qDim">学习动机</span>
+      <span class="q-idx" id="qIdx">01</span>
+    </div>
+    <span class="q-title" id="qTitle"></span>
+    <div class="opt-list" id="optList"></div>
+  </div>
+
+  <div class="action-row" id="actionRow">
+    <div class="btn-ghost disabled" id="prevBtn">← 上一题</div>
+    <div class="btn-primary disabled" id="nextBtn">下一题 →</div>
+  </div>
+
+  <div class="analyzing" id="analyzing" style="display:none">
+    <div class="ana-ring"></div>
+    <span class="ana-title">AI 匹配度引擎分析中</span>
+    <span class="ana-sub">综合 10 项答题结果 · 生成你的专属报告...</span>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+const { Storage, vibrate, startAILoader, attachAIHelper } = window.App
+
+const QUESTIONS_TPL = [
+  { dim:'学习动机', title:'面对一道从未见过的 {{subject}}难题, 你的第一反应是?',
+    options:[{text:'立刻尝试解答, 喜欢挑战',score:5},{text:'先通读题目理清思路',score:4},{text:'跳过先做简单的',score:3},{text:'感觉有点畏难',score:2}] },
+  { dim:'时间投入', title:'每周你能拿出多少时间专门用于提分课程?',
+    options:[{text:'10 小时以上',score:5},{text:'5 - 10 小时',score:4},{text:'2 - 5 小时',score:3},{text:'不确定或很少',score:2}] },
+  { dim:'自驱力', title:'学习时遇到难题, 你更倾向于?',
+    options:[{text:'独立思考直到解决',score:5},{text:'搜索网上资料自学',score:4},{text:'请教老师或同学',score:4},{text:'先标记后跳过',score:3}] },
+  { dim:'专注耐力', title:'你做题时连续专注能持续多久?',
+    options:[{text:'1 小时以上',score:5},{text:'30 - 60 分钟',score:4},{text:'15 - 30 分钟',score:3},{text:'不到 15 分钟',score:2}] },
+  { dim:'竞争意识', title:'看到同学考得比你好, 你会?',
+    options:[{text:'非常在意, 想超过对方',score:5},{text:'分析差距, 改进方法',score:5},{text:'觉得各有所长',score:3},{text:'不太关注排名',score:2}] },
+  { dim:'奖励敏感', title:'对"每月 Top 3 免费使用"的机制你感兴趣吗?',
+    options:[{text:'非常期待, 会全力争取',score:5},{text:'感兴趣, 会努力试试',score:4},{text:'如果机会合适会参与',score:3},{text:'无所谓',score:2}] },
+  { dim:'计划性', title:'考试前一周你通常?',
+    options:[{text:'提前制定详细复习计划',score:5},{text:'重点复习薄弱知识点',score:4},{text:'加大练习题量',score:4},{text:'临时抱佛脚',score:2}] },
+  { dim:'数据倾向', title:'你更愿意接受哪种学习反馈?',
+    options:[{text:'详细数据 + AI 建议',score:5},{text:'老师口头点评',score:4},{text:'同学互相讨论',score:3},{text:'自己看结果就行',score:2}] },
+  { dim:'纠错执行', title:'如果 AI 告诉你某个知识点薄弱, 你会?',
+    options:[{text:'立刻针对性练习',score:5},{text:'制定补强计划',score:5},{text:'找时间再看',score:3},{text:'觉得影响不大',score:2}] },
+  { dim:'长期承诺', title:'你希望提分系统陪你多久?',
+    options:[{text:'到出国 / 毕业为止',score:5},{text:'至少一个学年',score:4},{text:'一个学期试试',score:3},{text:'看效果再说',score:2}] },
+]
+
+const params = new URLSearchParams(location.search)
+const subjectName = params.get('subject') ? decodeURIComponent(params.get('subject')) : ''
+const subjectId = params.get('subjectId') || ''
+
+const QUESTIONS = QUESTIONS_TPL.map(q => ({
+  ...q,
+  title: q.title.replace('{{subject}}', subjectName ? subjectName + ' ' : ''),
+  options: q.options.slice()
+}))
+
+let currentIdx = 0
+let answers = []
+
+function init() {
+  const messages = ['启动 Crayxus AI 大模型...', '读取你的备考画像...', '生成 10 道学习人格题...', 'AI 审核题目质量...', '即将完成, 准备就绪...']
+  const loader = startAILoader(document.getElementById('aiLoading'), messages, { minDuration: 2200 })
+  loader.finish(renderQ)
+}
+
+function renderQ() {
+  const q = QUESTIONS[currentIdx]
+  document.getElementById('qDim').textContent = q.dim
+  document.getElementById('qIdx').textContent = String(currentIdx + 1).padStart(2, '0')
+  document.getElementById('qTitle').textContent = q.title
+  document.getElementById('qMeta').textContent = `Q ${currentIdx + 1} / ${QUESTIONS.length}`
+  document.getElementById('progressFill').style.width = ((currentIdx + 1) / QUESTIONS.length * 100) + '%'
+
+  const letters = ['A', 'B', 'C', 'D']
+  const list = document.getElementById('optList')
+  list.innerHTML = ''
+  q.options.forEach((opt, i) => {
+    const row = document.createElement('div')
+    row.className = 'opt-row' + (answers[currentIdx] === i ? ' selected' : '')
+    row.innerHTML = `<span class="opt-letter">${letters[i]}</span><span class="opt-text">${opt.text}</span>`
+    row.addEventListener('click', () => {
+      answers[currentIdx] = i
+      vibrate('light')
+      document.querySelectorAll('.opt-row').forEach((r, idx) => r.classList.toggle('selected', idx === i))
+      document.getElementById('nextBtn').classList.remove('disabled')
+    })
+    list.appendChild(row)
+  })
+  document.getElementById('prevBtn').classList.toggle('disabled', currentIdx === 0)
+  document.getElementById('nextBtn').classList.toggle('disabled', answers[currentIdx] === undefined)
+  document.getElementById('nextBtn').textContent = currentIdx < QUESTIONS.length - 1 ? '下一题 →' : '▶ 生成报告'
+}
+
+document.getElementById('prevBtn').addEventListener('click', () => {
+  if (currentIdx === 0) return
+  currentIdx--
+  renderQ()
+})
+
+document.getElementById('nextBtn').addEventListener('click', () => {
+  if (answers[currentIdx] === undefined) return
+  vibrate('light')
+  if (currentIdx < QUESTIONS.length - 1) {
+    currentIdx++
+    renderQ()
+  } else {
+    finish()
+  }
+})
+
+function finish() {
+  document.getElementById('qCard').style.display = 'none'
+  document.getElementById('actionRow').style.display = 'none'
+  document.getElementById('analyzing').style.display = 'block'
+
+  let raw = 0
+  for (let i = 0; i < answers.length; i++) raw += QUESTIONS[i].options[answers[i]].score
+  const score = Math.min(100, Math.max(40, Math.round(raw / 50 * 100)))
+  let personality
+  if (score >= 88) personality = '策略型学习者'
+  else if (score >= 78) personality = '逻辑型学习者'
+  else if (score >= 68) personality = '均衡型学习者'
+  else personality = '探索型学习者'
+
+  const recommendPlan = score >= 85 ? '年付方案' : score >= 70 ? '季度付方案' : '月付方案'
+  const subjectsArr = ['AP · SAT', 'AP · A-Level', 'IB · SAT', 'A-Level · IGCSE']
+  const recommendSubject = subjectsArr[Math.floor(Math.random() * subjectsArr.length)]
+  const boostPotential = score >= 85 ? '强' : score >= 70 ? '中' : '弱'
+
+  Storage.set('crayxus_prescreen', {
+    done: true, score, personality, recommendPlan, recommendSubject, boostPotential,
+    testedAt: new Date().toISOString().slice(0, 10)
+  })
+
+  setTimeout(() => location.href = 'match-report.html', 2200)
+}
+
+init()
+attachAIHelper('pre-screen-test')
+</script>
+</body>
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MATCH 报告 · Crayxus AI</title>
+<link rel="stylesheet" href="css/theme.css">
+<style>
+  .hero-gauge { padding: 20px 18px; display: flex; align-items: center; gap: 16px; }
+  .gauge-ring {
+    position: relative;
+    width: 130px; height: 130px;
+    border-radius: 50%;
+    background: conic-gradient(var(--c-gold) 0%, var(--c-orange) var(--pct, 70%), rgba(255,255,255,0.08) var(--pct, 70%));
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .gauge-center {
+    width: 100px; height: 100px;
+    background: linear-gradient(180deg, #1a1a2e, #0e0e1a);
+    border-radius: 50%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 2px;
+  }
+  .gauge-lbl { font-size: 9px; letter-spacing: 1.2px; color: var(--c-text-muted); }
+  .gauge-num { font-size: 32px; font-weight: 800; color: var(--c-gold); line-height: 1; }
+  .gauge-max { font-size: 10px; color: var(--c-text-muted); }
+  .gauge-tier { font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-top: 4px; }
+  .tier-high { background: rgba(0, 212, 170, 0.18); color: var(--c-teal); }
+  .tier-mid { background: rgba(255, 215, 0, 0.18); color: var(--c-gold); }
+  .tier-low { background: rgba(255, 107, 107, 0.18); color: var(--c-red); }
+  .hero-meta { display: flex; flex-direction: column; gap: 4px; }
+  .hm-name { font-size: 20px; font-weight: 700; background: linear-gradient(120deg, var(--c-cyan), var(--c-violet)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hm-sub { font-size: 11px; color: var(--c-text-dim); }
+
+  .twin-engine-row {
+    margin: 4px 18px 12px;
+    padding: 14px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.06), rgba(255, 107, 53, 0.06));
+    border: 1px solid var(--c-line-bright);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .eng-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .eng-col.match { color: var(--c-gold); }
+  .eng-col.boost { color: #ff6b35; }
+  .eng-tag { font-size: 9px; letter-spacing: 1px; }
+  .eng-name { font-size: 11px; color: var(--c-text-dim); }
+  .eng-val { font-size: 26px; font-weight: 800; }
+  .eng-desc { font-size: 10px; color: var(--c-text-muted); }
+  .eng-x { color: var(--c-text-muted); padding: 0 8px; font-size: 14px; }
+
+  .dim-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .dim-cell { padding: 10px; border-radius: 10px; background: rgba(255,255,255,0.03); border: 1px solid var(--c-line); }
+  .dim-head { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .dim-icon { font-size: 14px; }
+  .dim-name { font-size: 12px; flex: 1; }
+  .dim-num { font-size: 13px; font-weight: 700; }
+  .dim-bar-wrap { height: 5px; border-radius: 3px; background: rgba(255,255,255,0.06); overflow: hidden; }
+  .dim-bar-fill { height: 100%; border-radius: 3px; }
+
+  .reco-list { display: flex; flex-direction: column; gap: 10px; }
+  .reco-item { display: flex; gap: 12px; padding: 12px; border-radius: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--c-line); }
+  .reco-no {
+    flex-shrink: 0;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--c-cyan), var(--c-violet));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; color: #fff;
+  }
+  .reco-body { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+  .reco-title { font-size: 13px; font-weight: 600; }
+  .reco-desc { font-size: 11.5px; color: var(--c-text-dim); line-height: 1.5; }
+
+  .plan-card {
+    position: relative;
+    padding: 16px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(124, 77, 255, 0.1), rgba(0, 212, 255, 0.08));
+    border: 1px solid rgba(124, 77, 255, 0.3);
+  }
+  .plan-badge {
+    position: absolute; top: 12px; right: 12px;
+    padding: 3px 8px; border-radius: 6px;
+    font-size: 9px; letter-spacing: 1px;
+    background: rgba(124, 77, 255, 0.18); color: #c9b6ff;
+    border: 1px solid rgba(124, 77, 255, 0.35);
+  }
+  .plan-name { font-size: 18px; font-weight: 700; display: block; margin-bottom: 8px; }
+  .plan-price { display: flex; align-items: baseline; gap: 2px; margin-bottom: 10px; }
+  .plan-pnum { font-size: 28px; font-weight: 800; color: var(--c-cyan); }
+  .plan-punit { font-size: 12px; color: var(--c-text-dim); }
+  .plan-reason { font-size: 12px; color: var(--c-text-dim); line-height: 1.55; display: block; margin-bottom: 12px; }
+  .plan-stats { display: flex; gap: 8px; padding-top: 12px; border-top: 1px dashed var(--c-line); }
+  .plan-stat { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+  .ps-lbl { font-size: 10px; color: var(--c-text-muted); }
+  .ps-val { font-size: 13px; font-weight: 600; color: var(--c-cyan); }
+
+  .footer-note { padding: 12px 18px; font-size: 10.5px; color: var(--c-text-muted); display: flex; justify-content: space-between; }
+
+  .action-row { display: flex; gap: 8px; padding: 14px 18px; }
+  .act-btn { flex: 1; padding: 12px; border-radius: 12px; text-align: center; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .act-btn.ghost { background: rgba(255,255,255,0.05); border: 1px solid var(--c-line); color: var(--c-text); }
+  .act-btn.primary { background: linear-gradient(135deg, var(--c-cyan), var(--c-violet)); color: #fff; }
+</style>
+</head>
+<body>
+<div class="app-frame midrow">
+
+  <div class="sys-bar">
+    <div class="sys-dot"></div>
+    <span class="sys-tag">TWIN DRIVE SYSTEM</span>
+    <span class="sys-status">ONLINE</span>
+    <span class="sys-meta" id="reportId">EVAL #CX-0427A</span>
+  </div>
+
+  <div class="hero-gauge">
+    <div class="gauge-ring" id="gaugeRing">
+      <div class="gauge-center">
+        <span class="gauge-lbl">COMPATIBILITY</span>
+        <span class="gauge-num" id="gaugeNum">—</span>
+        <span class="gauge-max">/ 100</span>
+        <span class="gauge-tier" id="gaugeTier"></span>
+      </div>
+    </div>
+    <div class="hero-meta">
+      <span class="hm-name" id="personalityName">—</span>
+      <span class="hm-sub">学习型人格 · 匹配度引擎输出</span>
+    </div>
+  </div>
+
+  <div class="twin-engine-row">
+    <div class="eng-col match">
+      <span class="eng-tag">◆ MATCH DRIVE</span>
+      <span class="eng-name">匹配度引擎</span>
+      <span class="eng-val" id="matchVal">—</span>
+      <span class="eng-desc">兼容指数</span>
+    </div>
+    <span class="eng-x">✕</span>
+    <div class="eng-col boost">
+      <span class="eng-tag">◆ BOOST DRIVE</span>
+      <span class="eng-name">提分引擎</span>
+      <span class="eng-val" id="boostVal">—</span>
+      <span class="eng-desc">提分潜力</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span><span class="sec-bar"></span>SIX-DIM ANALYSIS · 六维能力矩阵</span></div>
+    <div class="dim-grid" id="dimGrid"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span><span class="sec-bar"></span>AI RECOMMENDATIONS · AI 策略建议</span></div>
+    <div class="reco-list" id="recoList"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><span><span class="sec-bar"></span>RECOMMENDED PLAN · 智能推荐方案</span></div>
+    <div class="plan-card">
+      <div class="plan-badge">AI 推荐</div>
+      <span class="plan-name" id="planName">—</span>
+      <div class="plan-price">
+        <span class="plan-pnum" id="planPnum">—</span>
+        <span class="plan-punit" id="planPunit"></span>
+      </div>
+      <span class="plan-reason" id="planReason"></span>
+      <div class="plan-stats">
+        <div class="plan-stat"><span class="ps-lbl">主攻科目</span><span class="ps-val" id="planSubject">—</span></div>
+        <div class="plan-stat"><span class="ps-lbl">建议周投入</span><span class="ps-val" id="planHours">—</span></div>
+        <div class="plan-stat"><span class="ps-lbl">预期提分</span><span class="ps-val" id="planGain">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-row">
+    <div class="act-btn ghost" onclick="shareReport()">📤 分享给家长</div>
+    <div class="act-btn primary" onclick="location.href='index.html'">⚡ 进入学习 Hub</div>
+  </div>
+
+  <div class="footer-note">
+    <span id="testedAt">测评时间 · —</span>
+    <span>报告有效期 · 90 天</span>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+const { Storage, showModal, showToast, attachAIHelper } = window.App
+
+const ps = Storage.get('crayxus_prescreen')
+if (!ps || !ps.done) {
+  showToast('请先完成匹配度测评')
+  setTimeout(() => location.href = 'index.html', 1200)
+} else {
+  render(ps)
+}
+
+function render(ps) {
+  const score = ps.score
+  const tier = score >= 80 ? 'high' : score >= 65 ? 'mid' : 'low'
+  const tierText = score >= 80 ? '极佳匹配' : score >= 65 ? '良好匹配' : '一般匹配'
+  document.getElementById('gaugeNum').textContent = score
+  const ring = document.getElementById('gaugeRing')
+  ring.style.setProperty('--pct', score + '%')
+  // 重新设置 conic-gradient
+  ring.style.background = `conic-gradient(var(--c-gold) 0%, var(--c-orange) ${score}%, rgba(255,255,255,0.08) ${score}%)`
+  const tEl = document.getElementById('gaugeTier')
+  tEl.textContent = tierText
+  tEl.className = 'gauge-tier tier-' + tier
+  document.getElementById('personalityName').textContent = ps.personality
+  document.getElementById('matchVal').textContent = score
+  document.getElementById('boostVal').textContent = ps.boostPotential
+
+  // 六维 (基于人格 + score 生成)
+  const seed = score / 100
+  const dims = [
+    { key:'logic', name:'逻辑推理', icon:'🧠', val: Math.min(95, Math.round(seed * 95 + Math.random() * 8 - 4)), color:'#00eaff' },
+    { key:'memory', name:'记忆速度', icon:'💡', val: Math.min(92, Math.round(seed * 85 + Math.random() * 12)), color:'#ffd700' },
+    { key:'visual', name:'视觉空间', icon:'👁', val: Math.min(90, Math.round(seed * 88 + Math.random() * 10)), color:'#7c4dff' },
+    { key:'language', name:'语言组织', icon:'💬', val: Math.min(95, Math.round(seed * 92 + Math.random() * 6)), color:'#00d4aa' },
+    { key:'focus', name:'专注耐力', icon:'🎯', val: Math.min(88, Math.round(seed * 78 + Math.random() * 14)), color:'#ff6b35' },
+    { key:'motiv', name:'学习动机', icon:'🔥', val: Math.min(98, Math.round(seed * 96 + Math.random() * 6)), color:'#ff3b30' },
+  ]
+  document.getElementById('dimGrid').innerHTML = dims.map(d => `
+    <div class="dim-cell">
+      <div class="dim-head">
+        <span class="dim-icon">${d.icon}</span>
+        <span class="dim-name">${d.name}</span>
+        <span class="dim-num">${d.val}</span>
+      </div>
+      <div class="dim-bar-wrap"><div class="dim-bar-fill" style="width:${d.val}%;background:${d.color};box-shadow:0 0 8px ${d.color};"></div></div>
+    </div>`).join('')
+
+  // Reco
+  const recos = [
+    { title: `建议主攻 ${ps.recommendSubject} 方向`, desc: `你的逻辑推理与学习动机双高, 更适合结构化、长周期的标化考试冲刺。` },
+    { title: '专注耐力相对薄弱', desc: '建议单次学习 25-30 分钟为一个单元, 中间穿插 5 分钟休息, 提升效率 30%+。' },
+    { title: '充分利用自适应训练', desc: 'BOOST 引擎会根据你的薄弱点每周自动推 40-60 道高质量题, 坚持 6 周可提分 15-25。' },
+    { title: '每月冲榜 · Top 3 免费', desc: `以你当前能力, 只要每周完成 5 小时训练, 预计第 2 个月可进 Top 3, 获得次月免费使用权。` }
+  ]
+  document.getElementById('recoList').innerHTML = recos.map((r, i) => `
+    <div class="reco-item">
+      <div class="reco-no">0${i + 1}</div>
+      <div class="reco-body">
+        <span class="reco-title">${r.title}</span>
+        <span class="reco-desc">${r.desc}</span>
+      </div>
+    </div>`).join('')
+
+  // Plan
+  const priceMap = { '月付方案': [199, '科/月'], '季度付方案': [499, '科/季'], '年付方案': [1680, '科/年'] }
+  const [price, unit] = priceMap[ps.recommendPlan] || [499, '科/季']
+  document.getElementById('planName').textContent = ps.recommendPlan
+  document.getElementById('planPnum').textContent = '¥' + price
+  document.getElementById('planPunit').textContent = '/' + unit
+  document.getElementById('planReason').textContent = `基于你的动机 + 兼容指数 ${score}, ${ps.recommendPlan}是最适合你的节奏 —— 既有足够时间看到成绩, 又保留换档灵活性。按学科独立计费, 选几门修几门。`
+  document.getElementById('planSubject').textContent = ps.recommendSubject
+  document.getElementById('planHours').textContent = (score >= 85 ? 6 : score >= 75 ? 5 : 4) + ' 小时'
+  document.getElementById('planGain').textContent = '+' + (Math.round(score / 5) + 5) + ' 分'
+
+  document.getElementById('testedAt').textContent = '测评时间 · ' + (ps.testedAt || '—') + ' 14:22'
+}
+
+function shareReport() {
+  showModal({ title: '📤 分享给家长', content: '生成专属链接后, 可发送给家长端查看完整报告（含详细策略分析）。', confirmText: '生成链接', confirmColor: '#00eaff' }).then(r => {
+    if (r.confirm) showToast('链接已复制', { icon: 'success' })
+  })
+}
+window.shareReport = shareReport
+attachAIHelper('pre-screen')
+</script>
+</body>
+</html>
