@@ -146,7 +146,7 @@
 
   /* === TEAM === */
   .team{padding:100px 0}
-  .team-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:50px}
+  .team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:50px}
   .person{padding:28px;background:var(--card);border:1px solid var(--line);
     border-radius:12px;text-align:center}
   .person .avatar{width:80px;height:80px;border-radius:50%;
@@ -313,7 +313,7 @@
 
       <!-- ===== ALPHA SCORE ===== -->
       <div class="card score">
-        <span class="card-status status-beta">🚧 Beta 内测</span>
+        <span class="card-status status-live">✅ 已上线</span>
         <div class="card-icon">📚</div>
         <h3 class="card-name"><span class="alpha-text">Alpha</span>Score</h3>
         <div class="card-tag">AI 留学提分 · 取代真人家教</div>
@@ -331,12 +331,12 @@
           <div class="num">¥99/月</div>
           <div class="lbl">vs 真人家教 ¥800/小时</div>
         </div>
-        <a href="#contact" class="card-cta">预约 Beta 测试 →</a>
+        <a href="#alphascore-qr" class="card-cta" onclick="alert('微信扫码 「Crayxus 提分」 小程序进入 AlphaScore');return false;">微信小程序进入 →</a>
       </div>
 
       <!-- ===== ALPHA DAN ===== -->
       <div class="card dan">
-        <span class="card-status status-soon">🚧 内测中</span>
+        <span class="card-status status-live">✅ 已上线</span>
         <div class="card-icon">🎴</div>
         <h3 class="card-name"><span class="alpha-text">Alpha</span>Dan</h3>
         <div class="card-tag">1v1 掼蛋 AI · 抖音直播挑战</div>
@@ -354,7 +354,7 @@
           <div class="num">3 档</div>
           <div class="lbl">AI 难度 · 神级胜率 70%+</div>
         </div>
-        <a href="#contact" class="card-cta">关注直播 →</a>
+        <a href="https://aiguandan.au" target="_blank" class="card-cta">立即对战 →</a>
       </div>
 
     </div>
@@ -406,29 +406,40 @@
 
     <div class="team-grid">
       <div class="person">
-        <div class="avatar">J</div>
-        <h4>Jerhyn Zhang</h4>
-        <div class="role">创始人 · CEO</div>
-        <p>AI 工程 + 教育产品。曾主导 AlphaDan、WSOPMTT(扑克 AI)、SoccerBurst(足球盘口)等多个垂直 AI 项目。</p>
+        <div class="avatar" style="background:linear-gradient(135deg,#7b2cbf,#9d4edd);color:#fff;font-size:22px">ZJU</div>
+        <h4>浙江大学<br>张旭光 AI 团队</h4>
+        <div class="role">学术核心 · 算法 IP</div>
+        <p>多传感器融合、SLAM、自主驾驶决策模型。浙大机器人研究所产学研支撑,核心算法与论文输出。</p>
       </div>
       <div class="person">
-        <div class="avatar" style="background:linear-gradient(135deg,var(--cub),var(--cub2));color:#0a0a0a">张</div>
-        <h4>张教授</h4>
-        <div class="role">学术顾问 · 专利布局</div>
-        <p>负责 AlphaCar + AlphaScore 共 32 项 IP 申报布局。教育 AI / 自动驾驶交叉领域专家。</p>
+        <div class="avatar" style="background:linear-gradient(135deg,#012169,#E4002B);color:#fff;font-size:22px">AU</div>
+        <h4>The Newbility<br>PTY LTD</h4>
+        <div class="role">澳洲总部 · 创始主体</div>
+        <p>Crayxus AI 全球总部(澳大利亚),持有品牌 IP、海外业务与国际市场。Made in Australia & China。</p>
       </div>
       <div class="person">
-        <div class="avatar" style="background:linear-gradient(135deg,var(--cub),var(--score));color:#0a0a0a">ZT</div>
-        <h4>ZTMotor 中天模型</h4>
-        <div class="role">战略合作 · 硬件</div>
-        <p>烈驰 1/18 RC 战车制造商。AlphaCar 全系列硬件平台合作伙伴,K12 AI·GP 联合赛事方。</p>
+        <div class="avatar" style="background:linear-gradient(135deg,var(--score),var(--score2));color:#0a0a0a;font-family:'PingFang SC',sans-serif">择</div>
+        <h4>择大教育咨询<br>(杭州) 有限公司</h4>
+        <div class="role">中国主体 · 商业运营</div>
+        <p>Crayxus AI 中国子公司,负责四大金刚产品落地、教育服务、国内市场运营。杭州总部。</p>
+      </div>
+      <div class="person">
+        <div class="avatar" style="background:linear-gradient(135deg,var(--cub),var(--cub2));color:#0a0a0a">ZT</div>
+        <h4>ZTMotor<br>中天模型</h4>
+        <div class="role">战略合作 · AlphaCub 硬件</div>
+        <p>烈驰 1/18 RC 战车制造商。AlphaCub Genesis 玩具 AI 赛车全系列硬件平台,杭州量产合作方。</p>
+      </div>
+      <div class="person">
+        <div class="avatar" style="background:linear-gradient(135deg,#5fa,#8fc99c);color:#0a0a0a;font-size:22px">SD</div>
+        <h4>胜道博兵<br>SD International</h4>
+        <div class="role">战略合作 · AlphaPilot 赛场</div>
+        <p>SD International Karting Raceway。AlphaPilot AI 机器人卡丁车联合落地方,提供专业卡丁赛道与赛事运营。</p>
       </div>
       <div class="person">
         <div class="avatar" style="background:linear-gradient(135deg,var(--dan),var(--dan2));color:#0a0a0a">+</div>
         <h4>持续招募中</h4>
         <div class="role">技术 · 产品 · 内容</div>
-        <p>RL 算法、嵌入式、教育产品经理、抖音内容 ——
-        如果你想参与造一个"比人厉害的 AI",来聊。</p>
+        <p>RL 算法、嵌入式、教育产品经理、抖音内容 —— 想参与造"比人厉害的 AI"?来聊。</p>
       </div>
     </div>
   </div>
