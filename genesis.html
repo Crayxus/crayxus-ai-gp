@@ -1109,10 +1109,126 @@
     line-height: 1.6;
   }
 
+  /* ====== Mobile · 平板与大屏手机 (≤768px) ====== */
   @media (max-width: 768px) {
+    /* 3D Explode iframes */
     .explode-embed-wrap { aspect-ratio: 4 / 3; }
-    .explode-hint { font-size: 10px; padding: 6px 10px; bottom: 12px; right: 12px; }
+    .explode-hint {
+      font-size: 10px; padding: 6px 10px;
+      bottom: 12px; right: 12px;
+      letter-spacing: 0.18em;
+    }
+
+    /* Hero showcases (大渲染图 + specs) */
+    .showcase { gap: 28px !important; margin-bottom: 32px !important; }
+    .showcase h3 { font-size: 24px !important; line-height: 1.15 !important; }
+    .showcase p { font-size: 14px !important; line-height: 1.65 !important; }
+
+    /* Capability cards */
+    .cap-card { padding: 14px 16px; }
+    .cap-icon { font-size: 12px; margin-bottom: 6px; }
+    .cap-name { font-size: 14px; }
+    .cap-desc { font-size: 12px; line-height: 1.5; }
+
+    /* AI Track · Auto-Assembly Layout selector */
+    .layout-grid { gap: 8px; }
+    .layout-card { padding: 12px 8px; }
+    .layout-card svg { width: 48px; height: 24px; margin-bottom: 6px; }
+    .layout-name { font-size: 13px; }
+    .layout-desc { font-size: 9px; letter-spacing: 0.14em; }
+    .btn-assemble {
+      padding: 11px 22px;
+      font-size: 12px;
+      letter-spacing: 0.16em;
+      flex: 1; min-width: 180px;
+    }
+
+    /* AI Tune section */
+    .tune-tab-header {
+      padding: 14px 16px;
+      margin-bottom: 18px;
+    }
     .tune-tab-title { font-size: 18px; }
+    .tune-tab-desc { font-size: 13px; }
+    .tune-tab-eyebrow { font-size: 10px; letter-spacing: 0.22em; }
+
+    /* Explode fullscreen modal */
+    .explode-modal-close {
+      width: 40px; height: 40px;
+      top: 16px; right: 16px;
+      font-size: 18px;
+    }
+  }
+
+  /* ====== Mobile · 手机 (≤480px) ====== */
+  @media (max-width: 480px) {
+    /* Hero showcases — image full width, no side-by-side */
+    .showcase h3 { font-size: 22px !important; }
+
+    /* Capability cards — 2 col grid on small screens */
+    section#car > div.reveal[style*="grid-template-columns"],
+    section#track > div.reveal[style*="grid-template-columns"] {
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 10px !important;
+    }
+    .cap-card { padding: 12px 14px; }
+    .cap-name { font-size: 13px; }
+    .cap-desc { font-size: 11.5px; }
+
+    /* Auto-Assembly demo */
+    .layout-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .layout-card { padding: 10px 6px; }
+    .layout-card svg { width: 42px; height: 22px; }
+    .btn-assemble {
+      width: 100%;
+      padding: 13px 18px;
+      font-size: 12px;
+    }
+    /* Physical Boards 顶视图 — 小屏更紧凑 */
+    .tb-board { width: 90px; height: 56px; }
+    .tb-board-label { font-size: 26px; }
+    .tb-preset {
+      padding: 8px 14px;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+    }
+
+    /* Auto-Assembly Board IP inputs wrap nicely */
+    section#track input[id^="tb"][id$="Ip"] {
+      width: 90px !important;
+      font-size: 10px !important;
+    }
+
+    /* AI Tune Pilot canvas + live car control bar */
+    #pilotCv { aspect-ratio: 8 / 5; }
+    section#tune .readout-row .k { font-size: 9px; letter-spacing: 0.12em; }
+    section#tune .readout-row .v { font-size: 14px; }
+    section#tune > div > div[style*="LIVE CAR"] {
+      flex-direction: column !important;
+      align-items: stretch !important;
+      gap: 8px !important;
+    }
+    section#tune input#prIp { width: 100% !important; }
+
+    /* Vibe Coding input + presets */
+    section#vibe-drive input#vbInput {
+      font-size: 13px !important;
+      padding: 12px 14px !important;
+    }
+    section#vibe-drive button.vb-preset {
+      flex: 1; min-width: calc(50% - 4px);
+      font-size: 11px;
+      padding: 7px 10px;
+      letter-spacing: 0.08em;
+    }
+    #vbLog { font-size: 11.5px !important; line-height: 1.7 !important; }
+
+    /* Section headers tighter on small phones */
+    .section-pad > div[style*="text-align:center"] {
+      margin-bottom: 32px !important;
+    }
+    .section-title { font-size: 24px !important; }
+    .section-desc { font-size: 13.5px; }
   }
 </style>
 </head>
