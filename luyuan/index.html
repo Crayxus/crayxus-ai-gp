@@ -11,25 +11,30 @@
 <link rel="shortcut icon" type="image/png" href="images/favicon.png">
 <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
 
-<!-- Open Graph (微信/朋友圈分享卡片读取的就是这组标签) -->
+<!-- Open Graph · 微信分享卡片读取此组 (改用 500x500 正方形, 右下角缩略图最稳) -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="陆园 LUYUAN">
 <meta property="og:title" content="陆园 LUYUAN · 嘉兴湘家荡 150 亩水岸庄园">
 <meta property="og:description" content="嘉兴七星镇湘家荡 150 亩水岸庄园，三面环河，已规划水岸办公大楼。">
-<meta property="og:image" content="https://crayxus.com.au/luyuan/images/share-card.jpg">
+<meta property="og:image" content="https://crayxus.com.au/luyuan/images/share-thumb.jpg">
+<meta property="og:image:secure_url" content="https://crayxus.com.au/luyuan/images/share-thumb.jpg">
+<meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="500">
-<meta property="og:image:height" content="400">
+<meta property="og:image:height" content="500">
+<meta property="og:image:alt" content="嘉兴湘家荡水岸办公园区">
 <meta property="og:url" content="https://crayxus.com.au/luyuan/">
+<meta property="og:locale" content="zh_CN">
 
-<!-- 微信小程序 webview 分享专用 (部分版本读这个) -->
-<meta itemprop="image" content="https://crayxus.com.au/luyuan/images/share-card.jpg">
-<meta name="image" content="https://crayxus.com.au/luyuan/images/share-card.jpg">
+<!-- 微信小程序 webview / 老版本微信浏览器兜底 -->
+<meta itemprop="image" content="https://crayxus.com.au/luyuan/images/share-thumb.jpg">
+<meta name="image" content="https://crayxus.com.au/luyuan/images/share-thumb.jpg">
+<link rel="image_src" href="https://crayxus.com.au/luyuan/images/share-thumb.jpg">
 
-<!-- Twitter card (兼容其他平台) -->
+<!-- Twitter card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="陆园 LUYUAN · 嘉兴湘家荡 150 亩水岸庄园">
 <meta name="twitter:description" content="嘉兴七星镇湘家荡 150 亩水岸庄园，三面环河，已规划水岸办公大楼。">
-<meta name="twitter:image" content="https://crayxus.com.au/luyuan/images/share-card.jpg">
+<meta name="twitter:image" content="https://crayxus.com.au/luyuan/images/share-thumb.jpg">
 <style>
   :root {
     --bg: #fafaf8;
@@ -361,23 +366,147 @@
     color: #6c6c6c; font-size: 12px; letter-spacing: 0.1em;
   }
 
-  /* Responsive */
+  /* Responsive — tablet 横屏/竖屏过渡 */
   @media (max-width: 900px) {
-    .topbar { padding: 18px 24px; }
+    .topbar { padding: 16px 20px; }
     .topbar nav { display: none; }
-    section { padding: 80px 24px; }
-    .metrics { padding: 56px 24px; }
-    .metrics-grid { grid-template-columns: repeat(2, 1fr); gap: 32px 8px; }
+    .topbar .brand { font-size: 12px; letter-spacing: 0.18em; }
+
+    section { padding: 72px 22px; }
+    .metrics { padding: 56px 22px; }
+
+    .section-head { gap: 16px; padding-bottom: 12px; margin-bottom: 44px; }
+    .section-head .en { display: none; }
+    .section-head h2 { font-size: clamp(24px, 6vw, 32px); }
+
+    .hero { min-height: 560px; }
+    .hero-text {
+      left: 22px; right: 22px; bottom: 36px;
+      flex-direction: column; align-items: flex-start; gap: 28px;
+    }
+    .hero-text h1 { font-size: clamp(34px, 9vw, 54px); line-height: 1.08; }
+    .hero-text h1 small {
+      font-size: 11px; letter-spacing: 0.28em;
+      margin-bottom: 14px;
+    }
+    .hero-meta {
+      text-align: left;
+      font-size: 12px; line-height: 1.85;
+      min-width: 0;
+      opacity: 0.92;
+    }
+
+    .metrics-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px 20px;
+    }
     .metric { border-left: 0; padding: 0; }
-    .intro, .location-split, .design { grid-template-columns: 1fr; gap: 40px; }
-    .gallery .row2 { grid-template-columns: 1fr; }
-    .possibilities { grid-template-columns: 1fr; gap: 16px; }
-    .hero-text { left: 24px; right: 24px; bottom: 40px; flex-direction: column; align-items: flex-start; }
-    .hero-meta { text-align: left; }
-    .distances { grid-template-columns: 1fr 1fr; }
-    footer { padding: 48px 24px 32px; }
-    footer .container { grid-template-columns: 1fr; gap: 32px; }
-    footer .credit { flex-direction: column; gap: 12px; padding: 0 24px; }
+    .metric .val { font-size: clamp(30px, 9vw, 46px); margin-bottom: 8px; }
+    .metric .desc { font-size: 12px; }
+
+    .intro, .location-split, .design {
+      grid-template-columns: 1fr;
+      gap: 36px;
+    }
+    .intro .lead {
+      font-size: 18px;
+      line-height: 1.65;
+    }
+    .intro .body { font-size: 14px; }
+    .intro .body br { display: none; }
+
+    .estate { gap: 32px; }
+    .estate .figure-wrap { padding: 18px; }
+    .estate img { max-height: none; }
+    .estate-caption {
+      flex-direction: column; align-items: flex-start; gap: 10px;
+      margin-top: 14px;
+    }
+    .legend { gap: 16px; flex-wrap: wrap; font-size: 11px; }
+    /* N/S/W/E 三栏在移动端堆叠 */
+    .orient-grid {
+      grid-template-columns: 1fr !important;
+      gap: 22px !important;
+    }
+
+    .location-split .text { padding: 0; }
+    .location-split h3 { font-size: 19px; margin-bottom: 16px; }
+    .location-split p { font-size: 14px; line-height: 1.85; }
+    .distances {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 22px; padding-top: 20px;
+    }
+    .distances .item .city { font-size: 10px; letter-spacing: 0.16em; }
+    .distances .item .time { font-size: 17px; }
+
+    .gallery { gap: 16px; }
+    .gallery .row2 { grid-template-columns: 1fr; gap: 16px; }
+    .gallery .caption {
+      left: 14px; bottom: 12px;
+      font-size: 11px; letter-spacing: 0.12em;
+      padding: 6px 10px;
+    }
+
+    .spec-table th, .spec-table td {
+      padding: 13px 0; font-size: 14px;
+    }
+    .spec-table th { width: 42%; }
+
+    .possibilities { grid-template-columns: 1fr; gap: 14px; }
+    .card { padding: 26px 24px; }
+    .card h3 { font-size: 19px; margin-bottom: 12px; }
+    .card p { font-size: 13px; line-height: 1.8; }
+
+    footer { padding: 48px 22px 28px; }
+    footer .container { grid-template-columns: 1fr; gap: 28px; }
+    footer .credit {
+      flex-direction: column; gap: 10px;
+      padding: 20px 22px 0;
+      font-size: 11px;
+    }
+  }
+
+  /* 小屏手机 (iPhone SE 等 ≤ 414px) */
+  @media (max-width: 480px) {
+    section { padding: 60px 18px; }
+    .metrics { padding: 48px 18px; }
+    .section-head { margin-bottom: 36px; gap: 12px; }
+    .section-head h2 { font-size: 22px; }
+    .section-head .num { font-size: 11px; letter-spacing: 0.18em; }
+
+    .hero { min-height: 520px; }
+    .hero-text { left: 18px; right: 18px; bottom: 28px; gap: 22px; }
+    .hero-text h1 { font-size: 32px; }
+    .hero-text h1 small { margin-bottom: 12px; font-size: 10px; }
+    .hero-meta { font-size: 11.5px; line-height: 1.8; }
+
+    .metrics-grid { gap: 28px 14px; }
+    .metric .val { font-size: 32px; }
+    .metric .label { font-size: 11px; letter-spacing: 0.12em; }
+    .metric .desc { font-size: 11.5px; }
+
+    .intro .lead { font-size: 17px; }
+    .intro .body { font-size: 13.5px; line-height: 1.85; }
+
+    .distances { gap: 6px; }
+    .distances .item .city { font-size: 9.5px; }
+    .distances .item .time { font-size: 15px; }
+
+    .spec-table th, .spec-table td { padding: 11px 0; font-size: 13.5px; }
+
+    .card { padding: 22px 20px; }
+    .card h3 { font-size: 18px; }
+
+    footer { padding: 40px 18px 24px; }
+    footer h4 { font-size: 12px; letter-spacing: 0.14em; }
+    footer p { font-size: 12.5px; }
+    footer .credit { padding: 18px 18px 0; font-size: 10.5px; letter-spacing: 0.08em; }
+  }
+
+  /* iOS Safari 100vh 修复 (避免地址栏顶到 hero 视觉) */
+  @supports (height: 100dvh) {
+    .hero { height: 100dvh; }
   }
 </style>
 </head>
@@ -477,7 +606,7 @@
           </div>
         </div>
       </div>
-      <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:48px; margin-top:8px;">
+      <div class="orient-grid" style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:48px; margin-top:8px;">
         <div>
           <div style="font-size:12px; letter-spacing:0.2em; color:var(--muted); text-transform:uppercase; margin-bottom:10px;">North</div>
           <div style="font-size:15px; color:var(--ink); line-height:1.85;">湘家荡大道 · 城市主干路<br>临 320 国道辅道</div>
