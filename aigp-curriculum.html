@@ -384,6 +384,43 @@
     .pretty-table th, .pretty-table td { padding: 10px 12px; }
     .embed-wrap { min-height: 220px; }
   }
+  /* ====== Print to PDF · 1 slide = 1 page landscape ====== */
+  @media print {
+    @page { size: 297mm 167mm; margin: 0; }  /* 16:9 landscape */
+    html, body { width: 297mm; height: 167mm; overflow: visible !important; background: white; }
+    .deck { position: relative !important; inset: auto !important; overflow: visible !important; }
+    .slide {
+      position: relative !important;
+      inset: auto !important;
+      display: flex !important;
+      opacity: 1 !important;
+      width: 297mm; height: 167mm;
+      page-break-after: always;
+      page-break-inside: avoid;
+      break-after: page;
+      overflow: hidden !important;
+      background: var(--bg);
+      padding: 32px 48px;
+    }
+    .slide:last-child { page-break-after: auto; }
+    .nav-controls { display: none !important; }
+    h1 { font-size: 48px !important; }
+    h2 { font-size: 32px !important; }
+    h3 { font-size: 18px !important; }
+    .cover h1 { font-size: 64px !important; }
+    .embed-wrap { display: none !important; }  /* iframes don't print well */
+    .embed-wrap::after {
+      content: '▸ 该页含交互 3D 分解动画,请扫码或访问 crayxus.com.au/alphacar-explode.html 查看实时演示';
+      display: block; padding: 60px; text-align: center;
+      color: var(--blue); font-size: 18px; line-height: 1.8;
+      border: 2px dashed var(--blue);
+    }
+    .pretty-table { font-size: 11px !important; }
+    .pretty-table th, .pretty-table td { padding: 8px 10px !important; }
+    /* Prevent slide content from getting cut */
+    .slide > * { z-index: 1; }
+  }
+
 </style>
 </head>
 <body>
@@ -419,11 +456,11 @@
       <div class="toc-item" onclick="goto(6)"><div class="toc-num">03</div><div class="toc-text"><div class="toc-name">核心 PBL 项目模块</div><div class="toc-desc">CORE PBL · 5 大模块</div></div></div>
       <div class="toc-item" onclick="goto(8)"><div class="toc-num">04</div><div class="toc-text"><div class="toc-name">OMO 教学模式</div><div class="toc-desc">ONLINE × OFFLINE · 云端 + 本校</div></div></div>
       <div class="toc-item" onclick="goto(10)"><div class="toc-num">05</div><div class="toc-text"><div class="toc-name">设备与空间清单</div><div class="toc-desc">HARDWARE · 硬件 + 场地</div></div></div>
-      <div class="toc-item" onclick="goto(12)"><div class="toc-num">06</div><div class="toc-text"><div class="toc-name">课程与教学支持</div><div class="toc-desc">CURRICULUM · 课程 + 教师培训</div></div></div>
-      <div class="toc-item" onclick="goto(13)"><div class="toc-num">07</div><div class="toc-text"><div class="toc-name">典型落地成果</div><div class="toc-desc">CASE STUDIES · 学校案例</div></div></div>
-      <div class="toc-item" onclick="goto(14)"><div class="toc-num">08</div><div class="toc-text"><div class="toc-name">服务团队背景</div><div class="toc-desc">TEAM · 浙大 × Crayxus × ZT</div></div></div>
-      <div class="toc-item" onclick="goto(15)"><div class="toc-num">09</div><div class="toc-text"><div class="toc-name">实施流程与体系</div><div class="toc-desc">PROCESS · 6 步落地</div></div></div>
-      <div class="toc-item" onclick="goto(16)"><div class="toc-num">10</div><div class="toc-text"><div class="toc-name">价格体系与服务范围</div><div class="toc-desc">PRICING · 三档套餐</div></div></div>
+      <div class="toc-item" onclick="goto(15)"><div class="toc-num">06</div><div class="toc-text"><div class="toc-name">课程与教学支持</div><div class="toc-desc">CURRICULUM · 课程 + 教师培训</div></div></div>
+      <div class="toc-item" onclick="goto(16)"><div class="toc-num">07</div><div class="toc-text"><div class="toc-name">典型落地成果</div><div class="toc-desc">CASE STUDIES · 学校案例</div></div></div>
+      <div class="toc-item" onclick="goto(17)"><div class="toc-num">08</div><div class="toc-text"><div class="toc-name">服务团队背景</div><div class="toc-desc">TEAM · 浙大 × Crayxus × ZT</div></div></div>
+      <div class="toc-item" onclick="goto(18)"><div class="toc-num">09</div><div class="toc-text"><div class="toc-name">实施流程与体系</div><div class="toc-desc">PROCESS · 6 步落地</div></div></div>
+      <div class="toc-item" onclick="goto(19)"><div class="toc-num">10</div><div class="toc-text"><div class="toc-name">价格体系与服务范围</div><div class="toc-desc">PRICING · 三档套餐</div></div></div>
     </div>
   </section>
 
@@ -723,7 +760,137 @@
     </table>
   </section>
 
-  <!-- ============= 11: 05·空间布局图 ============= -->
+
+  <!-- ============= 11: 05·BOM · AI Car 详单 ============= -->
+  <section class="slide">
+    <div class="chrome-top">
+      <div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div>
+      <div class="page-num">05 · BOM · AI CAR</div>
+    </div>
+    <div class="section-num">05 · 设备与空间清单</div>
+    <div class="section-en">BOM · AI CAR (单台用料)</div>
+    <h2 style="margin-bottom:18px;">AI 赛车 BOM · <span style="color:var(--blue);">单台用料</span> <span style="color:var(--mute); font-size:18px;">(标配 × 8 台 / 班)</span></h2>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+      <table class="pretty-table" style="font-size:12.5px;">
+        <thead><tr><th style="font-size:10px;">机械 + 车身</th><th style="font-size:10px;">规格 / 数量</th></tr></thead>
+        <tbody>
+          <tr><td class="accent">透明 PETG 车壳</td><td>F1 单座车体 / 1 套</td></tr>
+          <tr><td class="accent">4 轮 + 悬挂组件</td><td>40mm 橡胶轮 × 4</td></tr>
+          <tr><td class="accent">M3 螺丝 / 铜柱</td><td>组件套装</td></tr>
+          <tr><td>无刷电机</td><td>高功率 / 30 km/h</td></tr>
+          <tr><td>舵机 (转向)</td><td>标准 1000-2000μs PWM</td></tr>
+          <tr><td>WS2812 LED 阵列</td><td>5 zones / 60 LED 总</td></tr>
+        </tbody>
+      </table>
+      <table class="pretty-table" style="font-size:12.5px;">
+        <thead><tr><th style="font-size:10px;">电子 + AI 模组</th><th style="font-size:10px;">规格 / 数量</th></tr></thead>
+        <tbody>
+          <tr><td class="accent-o">ESP32-S3 N16R8</td><td>主控 / 双核 240MHz / 16M Flash</td></tr>
+          <tr><td class="accent-o">ICM42688P</td><td>6 轴 IMU (SPI)</td></tr>
+          <tr><td class="accent-o">INA219</td><td>电流电压监测 (I2C)</td></tr>
+          <tr><td class="accent-o">蓝点 TWR-30 UWB</td><td>定位标签 / 50Hz</td></tr>
+          <tr><td>H 桥电机驱动</td><td>全桥 MOS / 16-24kHz PWM</td></tr>
+          <tr><td>MT3608 升压模块</td><td>3.7V → 5V / 2A</td></tr>
+          <tr><td>TP4056 充电板</td><td>USB-C 1A / 过放保护</td></tr>
+          <tr><td>1S Li-Po 锂电池</td><td>1500-2000 mAh / JST 1.25</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:18px; color:var(--gray); font-size:13px; line-height:1.65;">
+      <b style="color:var(--blue);">▸ 单车 BOM ≈ 30 件零件</b> · 学生在 9 年级第一学期亲手组装,认识每个模组的作用。教师培训含完整 SOP 装配视频 + 故障排查清单。
+    </p>
+  </section>
+
+  <!-- ============= 12: 05·BOM · Smart Tile 详单 ============= -->
+  <section class="slide">
+    <div class="chrome-top">
+      <div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div>
+      <div class="page-num">05 · BOM · SMART TILE</div>
+    </div>
+    <div class="section-num">05 · 设备与空间清单</div>
+    <div class="section-en">BOM · SMART TILE (单块用料)</div>
+    <h2 style="margin-bottom:18px;">Smart Tile BOM · <span style="color:var(--blue);">单块用料</span> <span style="color:var(--mute); font-size:18px;">(标配 × 24 块 / 班)</span></h2>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+      <table class="pretty-table" style="font-size:12.5px;">
+        <thead><tr><th style="font-size:10px;">机械结构</th><th style="font-size:10px;">规格 / 数量</th></tr></thead>
+        <tbody>
+          <tr><td class="accent">透明亚克力顶板</td><td>200×200×5 mm × 1</td></tr>
+          <tr><td class="accent">透明亚克力底板</td><td>200×200×5 mm × 1</td></tr>
+          <tr><td class="accent">M3 铜柱 30mm 双通</td><td>4 颗 (砖间隔)</td></tr>
+          <tr><td>M3 螺丝套装</td><td>6/8/10mm 各若干</td></tr>
+          <tr><td>12mm 开孔器</td><td>磁铁孔预打,班级共用 1 个</td></tr>
+          <tr><td>502 胶水</td><td>粘电磁铁</td></tr>
+        </tbody>
+      </table>
+      <table class="pretty-table" style="font-size:12.5px;">
+        <thead><tr><th style="font-size:10px;">驱动 + 定位</th><th style="font-size:10px;">规格 / 数量</th></tr></thead>
+        <tbody>
+          <tr><td class="accent">N20 减速电机</td><td>3V 25 转 + 编码器 × 2</td></tr>
+          <tr><td class="accent">40mm 橡胶轮 D 轴</td><td>2 个 (差速驱动)</td></tr>
+          <tr><td class="accent">12mm 万向球轮</td><td>2 个 (前后稳定)</td></tr>
+          <tr><td>DRV8833 电机驱动</td><td>双路 / 11V 1.5A</td></tr>
+          <tr><td class="accent-o">UWB 标签 (可选)</td><td>砖间定位升级版</td></tr>
+        </tbody>
+      </table>
+      <table class="pretty-table" style="font-size:12.5px;">
+        <thead><tr><th style="font-size:10px;">磁吸 + 电源</th><th style="font-size:10px;">规格 / 数量</th></tr></thead>
+        <tbody>
+          <tr><td class="accent-o">LSD-P20/15 电磁铁</td><td>DC5V / 3KG / 4 颗</td></tr>
+          <tr><td class="accent-o">4 路 MOSFET 模组</td><td>3-20V 输入 / 1 个</td></tr>
+          <tr><td>1S Li-Po 锂电池</td><td>500mAh JST 1.25 / 1 个</td></tr>
+          <tr><td>TP4056 充电板</td><td>USB-C 过放保护 / 1 个</td></tr>
+          <tr><td>MT3608 升压</td><td>3.7V → 5V / 1 个</td></tr>
+        </tbody>
+      </table>
+      <table class="pretty-table" style="font-size:12.5px;">
+        <thead><tr><th style="font-size:10px;">电子 + 装饰</th><th style="font-size:10px;">规格 / 数量</th></tr></thead>
+        <tbody>
+          <tr><td class="accent">ESP32-S3 N16R8</td><td>主控 / 已焊排针 × 1</td></tr>
+          <tr><td>拨动开关 6 脚</td><td>电源 / 1 个</td></tr>
+          <tr><td>WS2812 灯环 12 灯</td><td>边缘装饰 / 1 个</td></tr>
+          <tr><td>杜邦线 + 热缩管</td><td>装配辅料</td></tr>
+          <tr><td>AR 不干胶</td><td>顶面身份码</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:14px; color:var(--gray); font-size:13px; line-height:1.65;">
+      <b style="color:var(--blue);">▸ 单块 Smart Tile ≈ 22 件零件</b> · 比赛车更适合 9 年级第一周入门组装,焊接量少,亚克力切割已预打好。
+    </p>
+  </section>
+
+  <!-- ============= 13: 05·BOM · 基础设施 ============= -->
+  <section class="slide">
+    <div class="chrome-top">
+      <div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div>
+      <div class="page-num">05 · INFRASTRUCTURE</div>
+    </div>
+    <div class="section-num">05 · 设备与空间清单</div>
+    <div class="section-en">INFRASTRUCTURE · 基础设施</div>
+    <h2 style="margin-bottom:18px;">教室基础设施 · <span style="color:var(--blue);">单班一次性投入</span></h2>
+    <table class="pretty-table">
+      <thead>
+        <tr><th>类别</th><th>设备</th><th>数量</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="accent">UWB 定位</td><td>蓝点 TWR-30 基站</td><td>3 套</td><td>三角定位,标定 10×5m 室内场地,精度 ±10cm</td></tr>
+        <tr><td class="accent">3D 打印</td><td>Bambu Lab A1 + AMS</td><td>2 台</td><td>赛道模块致敬版打印 (8 站经典赛道几何复刻)</td></tr>
+        <tr><td class="accent-o">网络</td><td>千兆 WiFi 6 AP</td><td>1 个</td><td>多车并发通信,推荐 Mesh 覆盖</td></tr>
+        <tr><td class="accent-o">显示</td><td>75 寸大屏 / 投影</td><td>1 套</td><td>课堂演示 + 赛事直播主屏</td></tr>
+        <tr><td>转播 (Tier 2 含)</td><td>多机位转播架</td><td>2-6 路</td><td>固定 + 第一视角 + 鸟瞰</td></tr>
+        <tr><td>充电</td><td>桌面磁吸充电桩</td><td>10 个</td><td>Smart Tile 自动归位充电</td></tr>
+        <tr><td>工具</td><td>焊台 / 万用表 / 工具箱</td><td>4 套</td><td>每组 1 套,4 人一组分组装配</td></tr>
+        <tr><td>耗材 (年)</td><td>3D 线材 + 备用电池 + 维修包</td><td>年消耗</td><td>Crayxus 按学期补给</td></tr>
+        <tr><td>学生端</td><td>iPad / Chromebook (学校自备)</td><td>30 台</td><td>跑 Crayxus 小程序 + Vibe Coding 界面</td></tr>
+        <tr><td>教师端</td><td>赛事调度笔记本</td><td>1 台</td><td>Windows 10+ / 16GB+ / Crayxus Console 软件</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:16px; color:var(--gray); font-size:13px; line-height:1.6;">
+      <b style="color:var(--blue);">▸ 一次性投入约 70%,后续年度仅耗材补给</b> · 所有硬件均由 ZTMotor 本土供应链生产,保修 1 年,坏件 48 小时换新。
+    </p>
+  </section>
+
+
+  <!-- ============= 14: 05·空间布局图 ============= -->
   <section class="slide">
     <div class="chrome-top">
       <div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div>
@@ -1001,7 +1168,7 @@
 <!-- Navigation -->
 <div class="nav-controls">
   <button class="nav-btn" onclick="prev()">◀</button>
-  <div class="nav-counter"><b id="curN">1</b> / <span id="totN">17</span></div>
+  <div class="nav-counter"><b id="curN">1</b> / <span id="totN">20</span></div>
   <button class="nav-btn" onclick="next()">▶</button>
 </div>
 
