@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AlphaCar Smart Tile · Exploded View</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#050810;color:#cfe;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;overflow:hidden;height:100vh}
+  canvas{display:block}
+
+  .hud{position:fixed;top:24px;left:24px;z-index:10;pointer-events:none}
+  .brand{font-size:11px;letter-spacing:0.3em;color:#00d4ff;margin-bottom:8px;text-shadow:0 0 12px rgba(0,212,255,.6)}
+  .title{font-size:32px;font-weight:200;letter-spacing:0.04em;color:#e7eef8}
+  .subtitle{font-size:12px;color:#5a8aae;margin-top:6px;letter-spacing:0.2em}
+
+  .controls{position:fixed;bottom:32px;left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:14px}
+  .btn{
+    pointer-events:auto;padding:13px 26px;
+    background:rgba(0,212,255,0.04);
+    border:1px solid rgba(0,212,255,0.45);
+    color:#00d4ff;font-size:12px;letter-spacing:0.22em;
+    cursor:pointer;backdrop-filter:blur(10px);
+    transition:all .25s;font-family:inherit
+  }
+  .btn:hover{background:rgba(0,212,255,0.16);border-color:#00d4ff;box-shadow:0 0 24px rgba(0,212,255,.5)}
+  .btn.active{background:rgba(0,212,255,0.2);box-shadow:0 0 18px rgba(0,212,255,.5)}
+
+  .stats{position:fixed;top:24px;right:24px;z-index:10;text-align:right;font-size:11px;letter-spacing:0.18em;color:#5a8aae;line-height:1.9}
+  .stats b{color:#00d4ff;font-weight:500}
+
+  .label{
+    position:absolute;pointer-events:none;
+    color:#cfe;font-size:10.5px;letter-spacing:0.14em;
+    text-shadow:0 0 10px rgba(0,212,255,.9);
+    white-space:nowrap;
+    opacity:0;transform:translate(-50%,-50%);
+    transition:opacity .5s;font-weight:300
+  }
+  .label.show{opacity:.95}
+  .label::before{
+    content:'';position:absolute;left:-14px;top:50%;
+    width:8px;height:1px;background:#00d4ff;
+    transform:translateY(-50%);
+    box-shadow:0 0 6px #00d4ff
+  }
+  .label::after{
+    content:'';position:absolute;left:-18px;top:50%;
+    width:5px;height:5px;background:#00d4ff;border-radius:50%;
+    transform:translate(-50%,-50%);
+    box-shadow:0 0 8px #00d4ff
+  }
+
+  @media (max-width:600px){
+    .hud{top:18px;left:18px}
+    .title{font-size:24px}
+    .stats{top:18px;right:18px;font-size:10px}
+    .controls{bottom:24px;gap:10px}
+    .btn{padding:11px 18px;font-size:11px;letter-spacing:0.18em}
+    .label{font-size:9.5px}
+  }
+</style>
+</head>
+<body>
+<div class="hud">
+  <div class="brand">CRAYXUS · ALPHACAR</div>
+  <div class="title">Smart Tile</div>
+  <div class="subtitle">EXPLODED ASSEMBLY · 分解视图</div>
+</div>
+
+<div class="stats">
+  <b id="partCount">0</b> COMPONENTS<br>
+  <b>200×200×50</b> mm<br>
+  <b>ESP32-S3</b> · DRV8833 · P20/15
+</div>
+
+<div class="controls">
+  <button class="btn" id="btnExplode" onclick="toggleExplode()">分解 / 组装</button>
+  <button class="btn active" id="btnRotate" onclick="toggleAutoRotate()">自动旋转</button>
+  <button class="btn" id="btnLabels" onclick="toggleLabels()">隐藏标签</button>
+</div>
+
+<div id="labels"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
+
+<script>
+// ============= SCENE =============
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x050810, 0.045);
+
+const camera = new THREE.PerspectiveCamera(42, innerWidth / innerHeight, 0.1, 100);
+camera.position.set(5, 3.2, 6);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setClearColor(0x050810, 1);
+document.body.appendChild(renderer.domElement);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.06;
+controls.minDistance = 3;
+controls.maxDistance = 14;
+controls.autoRotate = true;
+controls.autoRotateSpeed = 0.55;
+controls.target.set(0, 0, 0);
+
+// Bloom for the Tron glow
+const composer = new THREE.EffectComposer(renderer);
+composer.addPass(new THREE.RenderPass(scene, camera));
+const bloom = new THREE.UnrealBloomPass(
+  new THREE.Vector2(innerWidth, innerHeight),
+  1.1, 0.55, 0.78
+);
+composer.addPass(bloom);
+
+// Lighting
+scene.add(new THREE.AmbientLight(0x223855, 0.5));
+const key = new THREE.PointLight(0x00d4ff, 1.4, 12);
+key.position.set(3, 5, 4);
+scene.add(key);
+const fill = new THREE.PointLight(0xff5b1a, 0.45, 10);
+fill.position.set(-3.5, 1.5, -2);
+scene.add(fill);
+
+// Grid floor
+const grid = new THREE.GridHelper(24, 48, 0x00d4ff, 0x0a1525);
+grid.material.transparent = true;
+grid.material.opacity = 0.28;
+grid.position.y = -1.6;
+scene.add(grid);
+
+// Subtle ring under the assembly
+const ring = new THREE.Mesh(
+  new THREE.RingGeometry(1.6, 1.65, 64),
+  new THREE.MeshBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.4, side: THREE.DoubleSide })
+);
+ring.rotation.x = -Math.PI / 2;
+ring.position.y = -1.595;
+scene.add(ring);
+
+// ============= COLORS =============
+const C = {
+  cyan: 0x00d4ff,
+  pcb: 0x00ff9c,
+  orange: 0xff5b1a,
+  silver: 0xc0d8e8,
+  magenta: 0xff2e8a,
+};
+
+// ============= FACTORIES =============
+function box(w, h, d, color, fillOpacity = 0.06) {
+  const g = new THREE.Group();
+  const geo = new THREE.BoxGeometry(w, h, d);
+  g.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
+    color, transparent: true, opacity: fillOpacity, depthWrite: false
+  })));
+  g.add(new THREE.LineSegments(
+    new THREE.EdgesGeometry(geo),
+    new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.95 })
+  ));
+  return g;
+}
+function cyl(r, h, color, segs = 18, fillOpacity = 0.1) {
+  const g = new THREE.Group();
+  const geo = new THREE.CylinderGeometry(r, r, h, segs);
+  g.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
+    color, transparent: true, opacity: fillOpacity, depthWrite: false
+  })));
+  g.add(new THREE.LineSegments(
+    new THREE.EdgesGeometry(geo, 14),
+    new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.85 })
+  ));
+  return g;
+}
+function torus(r, t, color) {
+  const geo = new THREE.TorusGeometry(r, t, 10, 28);
+  const g = new THREE.Group();
+  g.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
+    color, transparent: true, opacity: 0.12, depthWrite: false
+  })));
+  g.add(new THREE.LineSegments(
+    new THREE.EdgesGeometry(geo, 30),
+    new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.75 })
+  ));
+  return g;
+}
+function sphere(r, color) {
+  const geo = new THREE.SphereGeometry(r, 14, 10);
+  const g = new THREE.Group();
+  g.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
+    color, transparent: true, opacity: 0.18, depthWrite: false
+  })));
+  g.add(new THREE.LineSegments(
+    new THREE.EdgesGeometry(geo, 25),
+    new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.6 })
+  ));
+  return g;
+}
+
+// ============= ASSEMBLY =============
+const PARTS = [];
+function add(name, mesh, rest, explode, opts = {}) {
+  mesh.position.set(rest.x, rest.y, rest.z);
+  if (opts.rot) mesh.rotation.set(opts.rot.x || 0, opts.rot.y || 0, opts.rot.z || 0);
+  mesh.userData = {
+    name,
+    restPos: new THREE.Vector3(rest.x, rest.y, rest.z),
+    explodePos: new THREE.Vector3(explode.x, explode.y, explode.z),
+    restRot: mesh.rotation.clone(),
+    explodeRot: opts.explodeRot || mesh.rotation.clone(),
+    showLabel: opts.showLabel !== false,
+  };
+  scene.add(mesh);
+  PARTS.push(mesh);
+}
+
+const V = (x, y, z) => ({ x, y, z });
+
+// Top acrylic plate
+add('顶板亚克力 200×200×5', box(2.0, 0.05, 2.0, C.cyan, 0.04),
+  V(0, 0.3, 0), V(0, 2.8, 0));
+
+// Bottom acrylic plate
+add('底板亚克力 200×200×5', box(2.0, 0.05, 2.0, C.cyan, 0.04),
+  V(0, -0.3, 0), V(0, -2.4, 0));
+
+// ESP32-S3 PCB
+add('ESP32-S3 N16R8', box(0.6, 0.05, 0.32, C.pcb, 0.22),
+  V(0, 0.1, 0.05), V(-2.6, 1.0, 1.4));
+
+// MOSFET module
+add('4 路 MOSFET 模组', box(0.55, 0.05, 0.32, C.pcb, 0.22),
+  V(0, 0.1, -0.5), V(2.8, 0.9, -1.4));
+
+// DRV8833
+add('DRV8833 双路电机驱动', box(0.32, 0.05, 0.22, C.pcb, 0.22),
+  V(-0.55, -0.05, 0.5), V(-3.0, 0.4, 2.0));
+
+// TP4056 charge board
+add('TP4056 USB-C 充电板', box(0.28, 0.05, 0.2, C.pcb, 0.22),
+  V(0.55, -0.05, 0.5), V(3.0, 0.4, 2.0));
+
+// Li-Po battery
+add('1S 500mAh Li-Po', box(0.85, 0.1, 0.36, C.orange, 0.22),
+  V(0, -0.13, -0.5), V(0, -1.0, -3.0));
+
+// 4 M3 standoffs at corners
+const corners = [[-0.93,-0.93],[0.93,-0.93],[-0.93,0.93],[0.93,0.93]];
+corners.forEach(([cx, cz], i) => {
+  add(`M3 铜柱 30mm #${i+1}`, cyl(0.04, 0.5, C.cyan, 12),
+    V(cx, 0, cz),
+    V(cx * 1.6, 1.2, cz * 1.6),
+    { showLabel: i === 0 });
+});
+
+// 2 N20 driving motors at center sides (differential drive)
+const motors = [
+  { p: [-0.55, -0.18, 0], side: -1 },
+  { p: [ 0.55, -0.18, 0], side:  1 },
+];
+motors.forEach((m, i) => {
+  const body = cyl(0.13, 0.42, C.silver, 16, 0.18);
+  add(`N20 编码器电机 #${i+1}`, body,
+    V(...m.p),
+    V(m.side * 2.8, 0.2, 0),
+    { rot: { z: Math.PI / 2 }, showLabel: i === 0 });
+
+  // 40mm wheel
+  const w = torus(0.2, 0.07, C.cyan);
+  const wheelPos = [m.p[0] + m.side * 0.25, m.p[1], m.p[2]];
+  add(`40mm 橡胶轮 #${i+1}`, w,
+    V(...wheelPos),
+    V(m.side * 3.8, -0.3, 0),
+    { rot: { y: Math.PI / 2 }, showLabel: i === 0 });
+});
+
+// 5 electromagnets — 4 at edges + 1 spare (matches purchase)
+const mags = [
+  { name: '电磁铁 #1 (左)',  p: [-0.95, -0.05, 0],    ex: [-3.4, 0.0, 0] },
+  { name: '电磁铁 #2 (右)',  p: [ 0.95, -0.05, 0],    ex: [ 3.4, 0.0, 0] },
+  { name: '电磁铁 #3 (后)',  p: [0, -0.05, -0.95],   ex: [0, 0.0, -3.4] },
+  { name: '电磁铁 #4 (前)',  p: [0, -0.05,  0.95],   ex: [0, 0.0,  3.4] },
+  { name: '电磁铁 #5 (备份)',p: [0, 0.18, 0],         ex: [-1.5, 3.0, 1.5] },
+];
+mags.forEach((m, i) => {
+  const em = cyl(0.1, 0.15, 0xa8c0d8, 16, 0.18);
+  add(m.name, em, V(...m.p), V(...m.ex), { showLabel: i < 5 ? (i === 0 || i === 4) : false });
+});
+
+// 2 Omni caster balls (front + back)
+add('万向球轮 12mm #1 (前)', sphere(0.1, C.cyan),
+  V(0, -0.4, 0.78),
+  V(0, -1.4, 3.2),
+  { showLabel: true });
+add('万向球轮 12mm #2 (后)', sphere(0.1, C.cyan),
+  V(0, -0.4, -0.78),
+  V(0, -1.4, -3.2),
+  { showLabel: false });
+
+// WS2812 LED ring (decorative top edge)
+const ledTorus = torus(0.95, 0.025, C.magenta);
+ledTorus.rotation.x = Math.PI / 2;
+add('WS2812 LED 灯环', ledTorus,
+  V(0, 0.27, 0), V(0, 2.4, 0));
+
+// Switch
+add('拨动开关 (电源)', box(0.12, 0.06, 0.08, C.orange, 0.3),
+  V(0.6, -0.2, 0.9), V(2.0, -0.5, 2.6));
+
+// ============= LABELS =============
+const labelsContainer = document.getElementById('labels');
+PARTS.forEach(p => {
+  if (!p.userData.showLabel) return;
+  const el = document.createElement('div');
+  el.className = 'label';
+  el.textContent = p.userData.name;
+  labelsContainer.appendChild(el);
+  p.userData.labelEl = el;
+});
+document.getElementById('partCount').textContent = PARTS.length;
+
+// ============= EXPLODE LOGIC =============
+let exploded = false;
+let labelsHidden = false;
+
+function toggleExplode() {
+  exploded = !exploded;
+  PARTS.forEach((p, i) => {
+    const target = exploded ? p.userData.explodePos : p.userData.restPos;
+    gsap.to(p.position, {
+      x: target.x, y: target.y, z: target.z,
+      duration: 1.4,
+      delay: i * 0.02,
+      ease: exploded ? 'power3.out' : 'power3.inOut',
+    });
+    if (p.userData.labelEl) {
+      if (exploded) {
+        clearTimeout(p.userData._lblT);
+        p.userData._lblT = setTimeout(() => {
+          if (!labelsHidden) p.userData.labelEl.classList.add('show');
+        }, 900 + i * 25);
+      } else {
+        p.userData.labelEl.classList.remove('show');
+      }
+    }
+  });
+  document.getElementById('btnExplode').classList.toggle('active', exploded);
+}
+
+function toggleAutoRotate() {
+  controls.autoRotate = !controls.autoRotate;
+  document.getElementById('btnRotate').classList.toggle('active', controls.autoRotate);
+}
+
+function toggleLabels() {
+  labelsHidden = !labelsHidden;
+  document.getElementById('btnLabels').textContent = labelsHidden ? '显示标签' : '隐藏标签';
+  document.getElementById('labels').style.display = labelsHidden ? 'none' : 'block';
+}
+
+// ============= LABEL POSITIONING =============
+const tmpV = new THREE.Vector3();
+function updateLabels() {
+  if (labelsHidden) return;
+  PARTS.forEach(p => {
+    if (!p.userData.labelEl) return;
+    p.getWorldPosition(tmpV);
+    tmpV.project(camera);
+    const x = (tmpV.x * 0.5 + 0.5) * innerWidth;
+    const y = (-tmpV.y * 0.5 + 0.5) * innerHeight;
+    const inFront = tmpV.z < 1 && tmpV.z > -1;
+    p.userData.labelEl.style.left = x + 'px';
+    p.userData.labelEl.style.top = y + 'px';
+    p.userData.labelEl.style.display = inFront ? 'block' : 'none';
+  });
+}
+
+// ============= ANIMATE =============
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  updateLabels();
+  // Subtle ring pulse
+  const t = performance.now() * 0.001;
+  ring.material.opacity = 0.3 + Math.sin(t * 1.5) * 0.12;
+  composer.render();
+}
+animate();
+
+// Resize
+addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+  composer.setSize(innerWidth, innerHeight);
+  bloom.setSize(innerWidth, innerHeight);
+});
+
+// Auto-trigger first explode after 2 seconds (showcase)
+setTimeout(toggleExplode, 2200);
+</script>
+</body>
+</html>

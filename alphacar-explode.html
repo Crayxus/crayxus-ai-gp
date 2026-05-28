@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CRAYXUS · AI GP Genesis · Exploded</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#050810;color:#cfe;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;overflow:hidden;height:100vh}
+  canvas{display:block}
+
+  .hud{position:fixed;top:24px;left:24px;z-index:10;pointer-events:none}
+  .brand{font-size:11px;letter-spacing:0.34em;color:#00b8ff;margin-bottom:8px;text-shadow:0 0 14px rgba(0,184,255,.7)}
+  .title{font-size:38px;font-weight:200;letter-spacing:0.03em;color:#e7eef8;line-height:1}
+  .title .grad{background:linear-gradient(135deg,#00b8ff 0%,#ff8800 100%);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:600}
+  .subtitle{font-size:12px;color:#5a8aae;margin-top:8px;letter-spacing:0.24em}
+
+  .controls{position:fixed;bottom:32px;left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:14px}
+  .btn{
+    pointer-events:auto;padding:13px 26px;
+    background:rgba(0,184,255,0.04);
+    border:1px solid rgba(0,184,255,0.45);
+    color:#00b8ff;font-size:12px;letter-spacing:0.22em;
+    cursor:pointer;backdrop-filter:blur(10px);
+    transition:all .25s;font-family:inherit
+  }
+  .btn:hover{background:rgba(0,184,255,0.16);border-color:#00b8ff;box-shadow:0 0 24px rgba(0,184,255,.5)}
+  .btn.active{background:rgba(0,184,255,0.2);box-shadow:0 0 18px rgba(0,184,255,.5)}
+
+  .stats{position:fixed;top:24px;right:24px;z-index:10;text-align:right;font-size:11px;letter-spacing:0.18em;color:#5a8aae;line-height:1.9}
+  .stats b{color:#00b8ff;font-weight:500}
+  .stats .orange{color:#ff8800}
+
+  .label{
+    position:absolute;pointer-events:none;
+    color:#cfe;font-size:10.5px;letter-spacing:0.14em;
+    text-shadow:0 0 10px rgba(0,184,255,.9);
+    white-space:nowrap;opacity:0;transform:translate(-50%,-50%);
+    transition:opacity .5s;font-weight:300
+  }
+  .label.show{opacity:.95}
+  .label.orange{color:#ffd0a0;text-shadow:0 0 10px rgba(255,136,0,.9)}
+  .label::before{content:'';position:absolute;left:-14px;top:50%;width:8px;height:1px;background:#00b8ff;transform:translateY(-50%);box-shadow:0 0 6px #00b8ff}
+  .label.orange::before{background:#ff8800;box-shadow:0 0 6px #ff8800}
+  .label::after{content:'';position:absolute;left:-18px;top:50%;width:5px;height:5px;background:#00b8ff;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 8px #00b8ff}
+  .label.orange::after{background:#ff8800;box-shadow:0 0 8px #ff8800}
+
+  /* Scanline overlay */
+  .scanlines{position:fixed;inset:0;pointer-events:none;z-index:5;
+    background:repeating-linear-gradient(0deg,rgba(0,184,255,0.025) 0,rgba(0,184,255,0.025) 1px,transparent 1px,transparent 3px);
+    mix-blend-mode:overlay}
+
+  @media (max-width:600px){
+    .hud{top:18px;left:18px}
+    .title{font-size:28px}
+    .stats{top:18px;right:18px;font-size:10px}
+    .controls{bottom:24px;gap:10px}
+    .btn{padding:11px 18px;font-size:11px;letter-spacing:0.18em}
+    .label{font-size:9.5px}
+  }
+</style>
+</head>
+<body>
+<div class="scanlines"></div>
+
+<div class="hud">
+  <div class="brand">CRAYXUS · AI GP GENESIS</div>
+  <div class="title"><span class="grad">α</span> Genesis</div>
+  <div class="subtitle">TRANSPARENT AI RACE CAR · 透明 AI 赛车</div>
+</div>
+
+<div class="stats">
+  <b id="partCount">0</b> COMPONENTS<br>
+  <span class="orange">ESP32-S3 · IMU · INA · UWB</span><br>
+  <span class="orange">H 桥 · 舵机 · 升压</span><br>
+  <b>WHERE</b> AI <span class="orange">RACES</span>
+</div>
+
+<div class="controls">
+  <button class="btn" id="btnExplode" onclick="toggleExplode()">分解 / 组装</button>
+  <button class="btn active" id="btnRotate" onclick="toggleAutoRotate()">自动旋转</button>
+  <button class="btn" id="btnLabels" onclick="toggleLabels()">隐藏标签</button>
+</div>
+
+<div id="labels"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.2/dist/gsap.min.js"></script>
+
+<script>
+// ============= SCENE =============
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x050810, 0.038);
+
+const camera = new THREE.PerspectiveCamera(38, innerWidth / innerHeight, 0.1, 100);
+camera.position.set(6, 2.5, 7);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setClearColor(0x050810, 1);
+document.body.appendChild(renderer.domElement);
+
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.06;
+controls.minDistance = 4;
+controls.maxDistance = 18;
+controls.autoRotate = true;
+controls.autoRotateSpeed = 0.6;
+controls.target.set(0, 0.3, 0);
+
+// Bloom
+const composer = new THREE.EffectComposer(renderer);
+composer.addPass(new THREE.RenderPass(scene, camera));
+const bloom = new THREE.UnrealBloomPass(
+  new THREE.Vector2(innerWidth, innerHeight),
+  1.2, 0.5, 0.75
+);
+composer.addPass(bloom);
+
+// Lighting
+scene.add(new THREE.AmbientLight(0x223855, 0.4));
+const key = new THREE.PointLight(0x00b8ff, 1.6, 14);
+key.position.set(3, 5, 5);
+scene.add(key);
+const fill = new THREE.PointLight(0xff8800, 0.8, 12);
+fill.position.set(-4, 2, -3);
+scene.add(fill);
+const rim = new THREE.PointLight(0xffffff, 0.4, 8);
+rim.position.set(0, -2, 0);
+scene.add(rim);
+
+// Grid floor
+const grid = new THREE.GridHelper(40, 80, 0x00b8ff, 0x0a1525);
+grid.material.transparent = true;
+grid.material.opacity = 0.3;
+grid.position.y = -0.65;
+scene.add(grid);
+
+// Speed streaks (subtle background lines)
+const streakGeo = new THREE.BufferGeometry();
+const streakPts = [];
+for (let i = 0; i < 30; i++) {
+  const z = (Math.random() - 0.5) * 30;
+  const y = -0.6 + Math.random() * 0.05;
+  const x1 = -15, x2 = 15;
+  streakPts.push(x1, y, z, x2, y, z);
+}
+streakGeo.setAttribute('position', new THREE.Float32BufferAttribute(streakPts, 3));
+const streaks = new THREE.LineSegments(
+  streakGeo,
+  new THREE.LineBasicMaterial({ color: 0x00b8ff, transparent: true, opacity: 0.18 })
+);
+scene.add(streaks);
+
+// Ring under car
+const ring = new THREE.Mesh(
+  new THREE.RingGeometry(2.6, 2.65, 96),
+  new THREE.MeshBasicMaterial({ color: 0x00b8ff, transparent: true, opacity: 0.45, side: THREE.DoubleSide })
+);
+ring.rotation.x = -Math.PI / 2;
+ring.position.y = -0.648;
+scene.add(ring);
+
+// ============= COLORS =============
+const C = {
+  blue: 0x00b8ff,
+  orange: 0xff8800,
+  silver: 0xc0d8e8,
+  pcb: 0x00ff9c,
+  red: 0xff3060,
+  white: 0xeef6ff,
+};
+
+// ============= FACTORIES =============
+function box(w, h, d, color, fillOpacity = 0.06) {
+  const g = new THREE.Group();
+  const geo = new THREE.BoxGeometry(w, h, d);
+  g.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
+    color, transparent: true, opacity: fillOpacity, depthWrite: false
+  })));
+  g.add(new THREE.LineSegments(
+    new THREE.EdgesGeometry(geo),
+    new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.95 })
+  ));
+  return g;
+}
+function cyl(r, h, color, segs = 18, fillOpacity = 0.1) {
+  const g = new THREE.Group();
+  const geo = new THREE.CylinderGeometry(r, r, h, segs);
+  g.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
+    color, transparent: true, opacity: fillOpacity, depthWrite: false
+  })));
+  g.add(new THREE.LineSegments(
+    new THREE.EdgesGeometry(geo, 14),
+    new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.85 })
+  ));
+  return g;
+}
+function cone(r, h, color, segs = 16, fillOpacity = 0.1) {
+  const g = new THREE.Group();
+  const geo = new THREE.ConeGeometry(r, h, segs);
+  g.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
+    color, transparent: true, opacity: fillOpacity, depthWrite: false
+  })));
+  g.add(new THREE.LineSegments(
+    new THREE.EdgesGeometry(geo, 14),
+    new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.85 })
+  ));
+  return g;
+}
+function torus(r, t, color, segs = 28) {
+  const geo = new THREE.TorusGeometry(r, t, 12, segs);
+  const g = new THREE.Group();
+  g.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
+    color, transparent: true, opacity: 0.14, depthWrite: false
+  })));
+  g.add(new THREE.LineSegments(
+    new THREE.EdgesGeometry(geo, 30),
+    new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.85 })
+  ));
+  return g;
+}
+function trapezoid(wTop, wBot, h, d, color, fillOpacity = 0.06) {
+  // Approximated trapezoid using extruded shape
+  const shape = new THREE.Shape();
+  shape.moveTo(-wBot / 2, 0);
+  shape.lineTo(wBot / 2, 0);
+  shape.lineTo(wTop / 2, h);
+  shape.lineTo(-wTop / 2, h);
+  shape.closePath();
+  const geo = new THREE.ExtrudeGeometry(shape, { depth: d, bevelEnabled: false });
+  geo.translate(0, -h / 2, -d / 2);
+  const g = new THREE.Group();
+  g.add(new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
+    color, transparent: true, opacity: fillOpacity, depthWrite: false
+  })));
+  g.add(new THREE.LineSegments(
+    new THREE.EdgesGeometry(geo),
+    new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.9 })
+  ));
+  return g;
+}
+
+// ============= ASSEMBLY =============
+const PARTS = [];
+function add(name, mesh, rest, explode, opts = {}) {
+  mesh.position.set(rest.x, rest.y, rest.z);
+  if (opts.rot) mesh.rotation.set(opts.rot.x || 0, opts.rot.y || 0, opts.rot.z || 0);
+  mesh.userData = {
+    name,
+    restPos: new THREE.Vector3(rest.x, rest.y, rest.z),
+    explodePos: new THREE.Vector3(explode.x, explode.y, explode.z),
+    showLabel: opts.showLabel !== false,
+    labelColor: opts.labelColor || 'blue',
+  };
+  scene.add(mesh);
+  PARTS.push(mesh);
+}
+const V = (x, y, z) => ({ x, y, z });
+
+// === FRONT (+X = forward) ===
+
+// Front wing — wide thin plate
+add('前翼 Front Wing', box(0.18, 0.05, 1.5, C.blue, 0.1),
+  V(2.4, -0.32, 0), V(4.5, 0.3, 0));
+
+// Front wing endplates × 2
+add('前翼端板 Endplate', box(0.32, 0.28, 0.05, C.blue, 0.12),
+  V(2.4, -0.18, 0.78), V(5.0, 0.3, 1.8), { showLabel: false });
+add('前翼端板 Endplate', box(0.32, 0.28, 0.05, C.blue, 0.12),
+  V(2.4, -0.18, -0.78), V(5.0, 0.3, -1.8), { showLabel: false });
+
+// Nose cone — long cone pointing forward (rotated so apex is forward = +X)
+const noseCone = cone(0.18, 1.2, C.blue, 16, 0.08);
+add('鼻锥 Nose Cone', noseCone,
+  V(1.7, -0.1, 0), V(4.2, 0.6, 0),
+  { rot: { z: -Math.PI / 2 } });
+
+// === FRONT WHEELS ===
+const fL = [1.05, -0.32, 0.95];  // front left
+const fR = [1.05, -0.32, -0.95]; // front right
+const rL = [-1.55, -0.32, 0.95];
+const rR = [-1.55, -0.32, -0.95];
+
+[
+  { p: fL, name: '前左轮 Front Left',  side:  1, axis: 'front' },
+  { p: fR, name: '前右轮 Front Right', side: -1, axis: 'front' },
+  { p: rL, name: '后左轮 Rear Left',   side:  1, axis: 'rear' },
+  { p: rR, name: '后右轮 Rear Right',  side: -1, axis: 'rear' },
+].forEach((w, i) => {
+  // Tyre — default torus is in XY plane with hole along Z = exactly a car wheel orientation
+  const t = torus(0.32, 0.13, 0xffffff, 28);
+  add(w.name, t,
+    V(...w.p),
+    V(w.p[0] + (w.axis === 'front' ? 1.5 : -1.5) * 0.3, -0.6, w.side * 3.4),
+    { showLabel: i === 0 });
+
+  // Wheel hub (rim) — cylinder axis needs to be along Z (sideways), so rotate X by 90°
+  const hub = cyl(0.12, 0.28, C.orange, 14, 0.2);
+  add(`轮毂 Wheel Hub`, hub,
+    V(...w.p),
+    V(w.p[0] + (w.axis === 'front' ? 1.2 : -1.2) * 0.4, -0.4, w.side * 3.4),
+    { rot: { x: Math.PI / 2 }, showLabel: i === 0, labelColor: 'orange' });
+
+  // Suspension arm (thin box from chassis to wheel)
+  const armPos = [(w.p[0] + (w.axis === 'front' ? 0.5 : -0.5)) / 1, -0.25, w.side * 0.45];
+  const arm = box(0.6, 0.04, 0.04, C.silver, 0.3);
+  arm.lookAt(new THREE.Vector3(...w.p));
+  add('悬挂臂 Suspension', arm,
+    V(...armPos),
+    V(armPos[0] * 1.4, 0.5, w.side * 2.2),
+    { showLabel: false });
+});
+
+// === CHASSIS / COCKPIT ===
+
+// Main chassis tub (monocoque)
+add('单体壳 Monocoque', box(2.4, 0.35, 0.6, C.blue, 0.05),
+  V(-0.1, -0.05, 0), V(-0.5, 0.5, 0));
+
+// Cockpit canopy (visible interior box)
+add('座舱 Cockpit', box(0.75, 0.28, 0.5, C.blue, 0.04),
+  V(0.45, 0.25, 0), V(1.2, 1.6, 0));
+
+// Driver seat
+add('座椅 Seat', box(0.35, 0.2, 0.35, C.silver, 0.25),
+  V(0.35, 0.16, 0), V(1.8, 2.4, 0));
+
+// Steering wheel
+const sw = torus(0.11, 0.025, C.silver, 22);
+add('方向盘 Steering Wheel', sw,
+  V(0.7, 0.22, 0), V(2.8, 2.2, 0),
+  { rot: { y: Math.PI / 2 } });
+
+// Halo (driver protection — F1 signature)
+// Approximate as a curved bar — use a torus segment via thin torus
+const haloR = 0.35;
+const halo = new THREE.Group();
+const haloGeo = new THREE.TorusGeometry(haloR, 0.03, 8, 16, Math.PI);
+const haloMesh = new THREE.Mesh(haloGeo, new THREE.MeshBasicMaterial({
+  color: C.silver, transparent: true, opacity: 0.4
+}));
+haloMesh.rotation.x = Math.PI / 2;
+const haloEdges = new THREE.LineSegments(
+  new THREE.EdgesGeometry(haloGeo, 14),
+  new THREE.LineBasicMaterial({ color: C.silver, transparent: true, opacity: 0.85 })
+);
+haloEdges.rotation.x = Math.PI / 2;
+halo.add(haloMesh, haloEdges);
+add('Halo 防护架', halo,
+  V(0.45, 0.5, 0), V(0.45, 2.4, 0));
+
+// === SIDE PODS ===
+add('左侧裙 Left Sidepod', box(1.0, 0.28, 0.18, C.blue, 0.08),
+  V(-0.1, -0.05, 0.5), V(-0.5, 0.5, 2.0));
+add('右侧裙 Right Sidepod', box(1.0, 0.28, 0.18, C.blue, 0.08),
+  V(-0.1, -0.05, -0.5), V(-0.5, 0.5, -2.0), { showLabel: false });
+
+// === INTERNALS · The AI Stack (橙色高亮: AI 大脑 + 感知 + 驱动) ===
+
+// AI Brain board (ESP32-S3)
+add('ESP32-S3 · AI 主控', box(0.55, 0.06, 0.32, C.orange, 0.5),
+  V(0.0, 0.16, 0), V(0.5, 2.4, -1.4),
+  { labelColor: 'orange' });
+
+// ICM42688P · 6-axis IMU (gyro + accel)
+add('ICM42688P · 6轴 IMU 姿态', box(0.18, 0.04, 0.14, C.orange, 0.6),
+  V(0.0, 0.22, 0.12), V(-0.5, 3.0, -2.2),
+  { labelColor: 'orange' });
+
+// INA219 · current/voltage monitor
+add('INA219 · 电压电流监测', box(0.18, 0.04, 0.14, C.orange, 0.6),
+  V(-0.3, 0.04, -0.18), V(-1.5, -0.5, -2.4),
+  { labelColor: 'orange' });
+
+// UWB module · localization tag (DW1000-style)
+add('UWB · 蓝点 TWR-30 定位标签', box(0.32, 0.05, 0.18, C.orange, 0.55),
+  V(-0.1, 0.22, -0.15), V(-1.0, 3.2, 1.8),
+  { labelColor: 'orange' });
+
+// H-Bridge motor driver (大功率全桥 MOS)
+add('H 桥 · 全桥电机驱动', box(0.28, 0.05, 0.2, C.orange, 0.5),
+  V(-0.7, 0.05, 0.18), V(-2.2, 1.5, 2.4),
+  { labelColor: 'orange' });
+
+// Servo (steering)
+add('舵机 · 转向', box(0.18, 0.18, 0.1, C.silver, 0.45),
+  V(1.05, 0.0, 0), V(2.6, 0.8, 0),
+  { labelColor: 'orange' });
+
+// MT3608 boost converter
+add('MT3608 · 5V 升压模块', box(0.16, 0.04, 0.12, C.orange, 0.6),
+  V(-0.55, 0.05, -0.25), V(-2.2, 1.5, -2.4),
+  { labelColor: 'orange' });
+
+// Battery pack
+add('1S 锂电池组 Power Pack', box(0.9, 0.12, 0.42, C.orange, 0.45),
+  V(-0.4, -0.1, 0), V(-0.4, -1.6, 0),
+  { labelColor: 'orange' });
+
+// TP4056 charge board
+add('TP4056 · USB-C 充电', box(0.18, 0.04, 0.14, C.pcb, 0.5),
+  V(-1.0, 0.05, -0.15), V(-3.0, 0.6, -1.8));
+
+// === REAR ===
+
+// Engine cover (hood)
+add('引擎盖 Engine Cover', box(1.1, 0.18, 0.45, C.blue, 0.05),
+  V(-0.7, 0.2, 0), V(-0.7, 1.4, 0));
+
+// Rear diffuser
+add('扩散器 Diffuser', box(0.6, 0.06, 0.85, C.blue, 0.1),
+  V(-1.65, -0.32, 0), V(-2.8, -0.7, 0));
+
+// Rear wing — main plane
+add('后翼 Rear Wing', box(0.25, 0.05, 1.1, C.blue, 0.1),
+  V(-2.05, 0.45, 0), V(-4.4, 1.0, 0));
+
+// Rear wing endplates × 2
+add('后翼端板', box(0.35, 0.5, 0.05, C.blue, 0.12),
+  V(-2.05, 0.25, 0.56), V(-4.8, 0.8, 1.6), { showLabel: false });
+add('后翼端板', box(0.35, 0.5, 0.05, C.blue, 0.12),
+  V(-2.05, 0.25, -0.56), V(-4.8, 0.8, -1.6), { showLabel: false });
+
+// Rear wing pylons (struts connecting wing to chassis)
+add('后翼支柱', box(0.15, 0.5, 0.04, C.silver, 0.2),
+  V(-2.05, 0.2, 0.18), V(-4.5, 0.5, 0.6), { showLabel: false });
+add('后翼支柱', box(0.15, 0.5, 0.04, C.silver, 0.2),
+  V(-2.05, 0.2, -0.18), V(-4.5, 0.5, -0.6), { showLabel: false });
+
+// Exhaust pipes × 2
+const exh1 = cyl(0.05, 0.3, C.silver, 12);
+exh1.rotation.z = Math.PI / 2;
+add('排气尾管 Exhaust', exh1,
+  V(-1.55, 0.0, 0.18), V(-3.8, -0.2, 0.6),
+  { rot: { z: Math.PI / 2 }, showLabel: false });
+
+const exh2 = cyl(0.05, 0.3, C.silver, 12);
+exh2.rotation.z = Math.PI / 2;
+add('排气尾管 Exhaust', exh2,
+  V(-1.55, 0.0, -0.18), V(-3.8, -0.2, -0.6),
+  { rot: { z: Math.PI / 2 }, showLabel: false });
+
+// Brake discs at each wheel — axis along Z to match wheel orientation
+[fL, fR, rL, rR].forEach((p, i) => {
+  const disc = cyl(0.18, 0.04, C.red, 18, 0.5);
+  add('刹车碟 Brake Disc', disc,
+    V(p[0], p[1], p[2] * 0.92),
+    V(p[0] * 1.5, p[1] - 0.5, p[2] * 2.6),
+    { rot: { x: Math.PI / 2 }, showLabel: i === 0, labelColor: 'orange' });
+});
+
+// === LABELS ===
+const labelsContainer = document.getElementById('labels');
+PARTS.forEach(p => {
+  if (!p.userData.showLabel) return;
+  const el = document.createElement('div');
+  el.className = 'label' + (p.userData.labelColor === 'orange' ? ' orange' : '');
+  el.textContent = p.userData.name;
+  labelsContainer.appendChild(el);
+  p.userData.labelEl = el;
+});
+document.getElementById('partCount').textContent = PARTS.length;
+
+// === EXPLODE LOGIC ===
+let exploded = false;
+let labelsHidden = false;
+
+function toggleExplode() {
+  exploded = !exploded;
+  PARTS.forEach((p, i) => {
+    const target = exploded ? p.userData.explodePos : p.userData.restPos;
+    gsap.to(p.position, {
+      x: target.x, y: target.y, z: target.z,
+      duration: 1.6,
+      delay: i * 0.015,
+      ease: exploded ? 'power3.out' : 'power3.inOut',
+    });
+    if (p.userData.labelEl) {
+      if (exploded) {
+        clearTimeout(p.userData._lblT);
+        p.userData._lblT = setTimeout(() => {
+          if (!labelsHidden) p.userData.labelEl.classList.add('show');
+        }, 1000 + i * 20);
+      } else {
+        p.userData.labelEl.classList.remove('show');
+      }
+    }
+  });
+  document.getElementById('btnExplode').classList.toggle('active', exploded);
+}
+
+function toggleAutoRotate() {
+  controls.autoRotate = !controls.autoRotate;
+  document.getElementById('btnRotate').classList.toggle('active', controls.autoRotate);
+}
+
+function toggleLabels() {
+  labelsHidden = !labelsHidden;
+  document.getElementById('btnLabels').textContent = labelsHidden ? '显示标签' : '隐藏标签';
+  document.getElementById('labels').style.display = labelsHidden ? 'none' : 'block';
+}
+
+// === LABEL POSITIONING ===
+const tmpV = new THREE.Vector3();
+function updateLabels() {
+  if (labelsHidden) return;
+  PARTS.forEach(p => {
+    if (!p.userData.labelEl) return;
+    p.getWorldPosition(tmpV);
+    tmpV.project(camera);
+    const x = (tmpV.x * 0.5 + 0.5) * innerWidth;
+    const y = (-tmpV.y * 0.5 + 0.5) * innerHeight;
+    const inFront = tmpV.z < 1 && tmpV.z > -1;
+    p.userData.labelEl.style.left = x + 'px';
+    p.userData.labelEl.style.top = y + 'px';
+    p.userData.labelEl.style.display = inFront ? 'block' : 'none';
+  });
+}
+
+// === ANIMATE ===
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  updateLabels();
+  const t = performance.now() * 0.001;
+  ring.material.opacity = 0.35 + Math.sin(t * 1.4) * 0.15;
+  // Streaks slow drift
+  streaks.position.x = (Math.sin(t * 0.3) * 0.5);
+  composer.render();
+}
+animate();
+
+// Resize
+addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+  composer.setSize(innerWidth, innerHeight);
+  bloom.setSize(innerWidth, innerHeight);
+});
+
+// Auto-trigger first explode for showcase
+setTimeout(toggleExplode, 2500);
+</script>
+</body>
+</html>

@@ -886,6 +886,234 @@
     .footer-tagline { font-size: 11px; margin-bottom: 16px; }
     .footer-meta { font-size: 11px; }
   }
+
+
+  /* AI Car capability cards */
+  .cap-card {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    padding: 18px 20px;
+    transition: all .25s;
+  }
+  .cap-card:hover {
+    border-color: var(--blue);
+    background: rgba(0, 184, 255, 0.06);
+    box-shadow: 0 0 18px rgba(0, 184, 255, 0.18);
+    transform: translateY(-2px);
+  }
+  .cap-icon {
+    font-family: var(--font-tech);
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.06em;
+    color: var(--blue);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+  .cap-name {
+    font-family: var(--font-display);
+    font-size: 15px; font-weight: 700;
+    color: #e7eef8;
+    margin-bottom: 4px;
+    letter-spacing: 0.01em;
+  }
+  .cap-desc {
+    font-size: 12.5px;
+    color: var(--gray);
+    line-height: 1.55;
+  }
+
+
+  /* AI Track auto-assembly layout selector */
+  .layout-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+  }
+  .layout-card {
+    background: #06090f;
+    border: 1px solid var(--line);
+    padding: 16px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all .2s;
+    color: var(--gray);
+  }
+  .layout-card:hover {
+    border-color: var(--blue);
+    color: var(--blue);
+    background: rgba(0, 184, 255, 0.06);
+  }
+  .layout-card.active {
+    border-color: var(--blue);
+    background: rgba(0, 184, 255, 0.14);
+    color: var(--blue);
+    box-shadow: 0 0 18px rgba(0, 184, 255, 0.35);
+  }
+  .layout-card svg {
+    width: 60px; height: 30px;
+    margin: 0 auto 10px;
+    display: block;
+  }
+  .layout-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 14px;
+    color: #e7eef8;
+    margin-bottom: 2px;
+  }
+  .layout-card.active .layout-name { color: var(--blue); }
+  .layout-desc {
+    font-family: var(--font-tech);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--mute);
+  }
+
+  .btn-assemble {
+    background: var(--blue);
+    color: var(--bg);
+    border: none;
+    padding: 12px 28px;
+    font-family: var(--font-tech);
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all .2s;
+    box-shadow: 0 0 18px rgba(0,184,255,.5);
+  }
+  .btn-assemble:hover:not(:disabled) {
+    box-shadow: 0 0 28px rgba(0,184,255,.7);
+    transform: translateY(-1px);
+  }
+  .btn-assemble:disabled {
+    background: var(--bg-soft);
+    color: var(--mute);
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+  .btn-assemble .ico {
+    margin-right: 6px;
+  }
+
+  /* ====== Explode Embed (3D animation iframe + click to expand) ====== */
+  .explode-embed-wrap {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+    aspect-ratio: 16 / 9;
+    background: #050810;
+    border: 1px solid var(--blue);
+    box-shadow: 0 0 32px rgba(0, 184, 255, 0.2);
+    cursor: zoom-in;
+    overflow: hidden;
+    transition: box-shadow .3s, transform .3s;
+  }
+  .explode-embed-wrap:hover {
+    box-shadow: 0 0 48px rgba(0, 184, 255, 0.45);
+    transform: translateY(-2px);
+  }
+  .explode-embed {
+    width: 100%; height: 100%;
+    border: 0;
+    display: block;
+    pointer-events: none;
+  }
+  .explode-hint {
+    position: absolute;
+    bottom: 18px; right: 18px;
+    font-family: var(--font-tech);
+    font-size: 12px; letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--blue);
+    background: rgba(5, 8, 16, 0.7);
+    border: 1px solid var(--blue);
+    padding: 8px 14px;
+    backdrop-filter: blur(6px);
+    pointer-events: none;
+    transition: all .25s;
+  }
+  .explode-embed-wrap:hover .explode-hint {
+    background: rgba(0, 184, 255, 0.18);
+    box-shadow: 0 0 20px rgba(0, 184, 255, 0.4);
+  }
+
+  /* Fullscreen modal */
+  .explode-modal {
+    position: fixed; inset: 0;
+    z-index: 9999;
+    background: rgba(5, 8, 16, 0.96);
+    display: none;
+    animation: modalFade .3s ease-out;
+  }
+  .explode-modal.open { display: block; }
+  .explode-modal iframe {
+    width: 100%; height: 100%;
+    border: 0;
+  }
+  .explode-modal-close {
+    position: fixed;
+    top: 22px; right: 22px;
+    z-index: 10000;
+    width: 48px; height: 48px;
+    background: rgba(5, 8, 16, 0.85);
+    border: 1px solid var(--blue);
+    color: var(--blue);
+    font-size: 22px;
+    cursor: pointer;
+    font-family: var(--font-tech);
+    transition: all .25s;
+    backdrop-filter: blur(8px);
+  }
+  .explode-modal-close:hover {
+    background: rgba(0, 184, 255, 0.25);
+    box-shadow: 0 0 24px rgba(0, 184, 255, 0.6);
+  }
+  @keyframes modalFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* AI Tune section sub-headers */
+  .tune-tab-header {
+    background: rgba(0, 184, 255, 0.04);
+    border-left: 3px solid var(--blue);
+    padding: 18px 24px;
+    margin-bottom: 24px;
+  }
+  .tune-mode-2 .tune-tab-header {
+    border-left-color: var(--orange);
+    background: rgba(255, 136, 0, 0.04);
+  }
+  .tune-tab-eyebrow {
+    font-family: var(--font-tech);
+    font-size: 11px; letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+  .tune-tab-title {
+    font-family: var(--font-display);
+    font-size: 22px; font-weight: 700;
+    color: #e7eef8;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+  .tune-tab-desc {
+    font-size: 14px;
+    color: var(--gray);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 768px) {
+    .explode-embed-wrap { aspect-ratio: 4 / 3; }
+    .explode-hint { font-size: 10px; padding: 6px 10px; bottom: 12px; right: 12px; }
+    .tune-tab-title { font-size: 18px; }
+  }
 </style>
 </head>
 <body>
@@ -898,14 +1126,11 @@
     <span class="sub">AI·GP GENESIS</span>
   </div>
   <div class="nav-links">
-    <a href="#car">AI Car</a>
-    <a href="#customize">Customize</a>
-    <a href="#track">Track</a>
-    <a href="#builder">Builder</a>
-    <a href="#vibe">Team</a>
-    <a href="#products">Products</a>
+    <a href="#car">AI 赛车</a>
+    <a href="#track">AI 赛道</a>
+    <a href="#tune">AI Tune</a>
   </div>
-  <button class="nav-cta" onclick="document.getElementById('preorder').scrollIntoView()">Pre-order</button>
+  <button class="nav-cta" onclick="document.getElementById('tune').scrollIntoView({behavior:'smooth'})">Try Now</button>
 </nav>
 
 <!-- ===== HERO ===== -->
@@ -920,210 +1145,163 @@
       Crayxus AI·GP Genesis 重新定义了"AI 赛车"——不是遥控车,而是一个能自我组装、自主比赛、永不重复的智能赛事系统。
     </p>
     <div class="hero-ctas">
-      <button class="btn btn-primary" onclick="document.getElementById('preorder').scrollIntoView()">
-        Pre-order Now
+      <button class="btn btn-primary" onclick="document.getElementById('car').scrollIntoView({behavior:'smooth'})">
+        Explore Genesis
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
       </button>
-      <button class="btn btn-secondary" onclick="document.getElementById('builder').scrollIntoView()">Try Track Builder</button>
+      <button class="btn btn-secondary" onclick="document.getElementById('tune').scrollIntoView({behavior:'smooth'})">Try AI Tune</button>
     </div>
   </div>
 </section>
 
-<!-- ===== STATS BAR ===== -->
-<div class="stats-bar">
-  <div class="stat"><div class="stat-num">0</div><div class="stat-label">遥控器</div></div>
-  <div class="stat"><div class="stat-num">12</div><div class="stat-label">模块化赛道</div></div>
-  <div class="stat"><div class="stat-num">8</div><div class="stat-label">多车同跑</div></div>
-  <div class="stat"><div class="stat-num">∞</div><div class="stat-label">赛道形状</div></div>
-</div>
-
-<!-- ===== FEATURES ===== -->
-<section class="section-pad" id="features">
-  <div style="max-width:1280px; margin:0 auto 64px; text-align:center;">
-    <div class="section-eyebrow reveal">Core Technology</div>
-    <h2 class="section-title reveal">三个第一,定义全新品类</h2>
+<!-- ===== AI 赛车 (F1 Explode) ===== -->
+<section class="section-pad explode-section" id="car">
+  <div style="max-width:1280px; margin:0 auto 32px; text-align:center;">
+    <div class="section-eyebrow reveal">AI Car · Alpha Genesis</div>
+    <h2 class="section-title reveal">透明赛车<br>每一根线都是 AI</h2>
+    <p class="section-desc reveal" style="margin: 0 auto;">点击下方画面进入全屏 — 可分解 20+ 零件，看清 ESP32 / IMU / INA / UWB / H 桥 / 升压 / 舵机 这套 AI 模组怎么塞进一台 F1 单座。</p>
   </div>
-  <div class="features">
-    <div class="feature reveal">
-      <div class="feature-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><path d="M10 6.5h4M10 17.5h4M6.5 10v4M17.5 10v4" stroke-dasharray="2"/></svg></div>
-      <h3>自动拼接赛道</h3>
-      <p>每块赛道是一个独立机器人。在 App 上画形状,所有模块自动跑到位置、磁吸对接——60 秒成型一条全新赛道。</p>
-    </div>
-    <div class="feature reveal">
-      <div class="feature-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.2 4.2l2.8 2.8M17 17l2.8 2.8M1 12h4M19 12h4M4.2 19.8l2.8-2.8M17 7l2.8-2.8"/></svg></div>
-      <h3>AI 自主驾驶</h3>
-      <p>没有遥控器、没有人工干预。视觉识别 + UWB 定位 + 多传感器融合,AI 看见赛道、理解规则、自己跑、自己赢。</p>
-    </div>
-    <div class="feature reveal">
-      <div class="feature-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h2l3-9 6 18 3-9h4"/></svg></div>
-      <h3>实时多车对决</h3>
-      <p>4-8 辆 AI 车同场竞速,实时避碰、动态调度、智能策略。每一局比赛都不一样,因为对手是会学习的 AI。</p>
-    </div>
+  <div class="reveal explode-embed-wrap" onclick="expandFrame('alphacar-explode.html')">
+    <iframe class="explode-embed" src="alphacar-explode.html" loading="lazy"></iframe>
+    <div class="explode-hint">⛶ 点击放大 · Click to Expand</div>
   </div>
-</section>
-
-<!-- ===== AI CAR SHOWCASE ===== -->
-<section class="section-pad" id="car" style="background: var(--bg-soft);">
-  <div class="showcase">
-    <div class="showcase-img reveal"><img src="genesis_car.png" alt="Crayxus AI·GP Genesis - Transparent Racing Car"></div>
-    <div class="reveal">
-      <div class="section-eyebrow">AI Car · Blueprint 01</div>
-      <h2 class="section-title">透明发光 F1<br>致敬 Light Cycle</h2>
-      <p class="section-desc">经典 F1 单座方程式车身,完全透明的亚克力外壳,内置 LED 矩阵。车体轮廓发光、四轮 LED 环转动、车尾留下蓝色光迹——这不是玩具,是赛博朋克美学的实物落地。</p>
-      <ul class="showcase-specs">
-        <li><span class="spec-key">Top Speed</span><span class="spec-val">30 km/h</span></li>
-        <li><span class="spec-key">Drive System</span><span class="spec-val">AI Autonomous</span></li>
-        <li><span class="spec-key">Body Material</span><span class="spec-val">Transparent PETG</span></li>
-        <li><span class="spec-key">Lighting</span><span class="spec-val">5 Programmable Zones</span></li>
-        <li><span class="spec-key">Color Skins</span><span class="spec-val">6 Default Colors</span></li>
-      </ul>
+  <!-- AI Car · Capability Grid -->
+  <div class="reveal" style="max-width:1200px; margin:32px auto 0; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px;">
+    <div class="cap-card">
+      <div class="cap-icon">AI</div>
+      <div class="cap-name">AI 自主驾驶</div>
+      <div class="cap-desc">UWB + 视觉融合，看见赛道，自己跑赢</div>
+    </div>
+    <div class="cap-card">
+      <div class="cap-icon">LED</div>
+      <div class="cap-name">透明发光车身</div>
+      <div class="cap-desc">亚克力外壳 · 5 区可编程 LED · TRON 视觉</div>
+    </div>
+    <div class="cap-card">
+      <div class="cap-icon">30km/h</div>
+      <div class="cap-name">高速电机</div>
+      <div class="cap-desc">高功率电机 · 全 H 桥驱动 · 厘米级油门</div>
+    </div>
+    <div class="cap-card">
+      <div class="cap-icon">UWB</div>
+      <div class="cap-name">UWB 厘米级定位</div>
+      <div class="cap-desc">蓝点 TWR-30 · 50Hz 实时位姿</div>
+    </div>
+    <div class="cap-card">
+      <div class="cap-icon">4-8</div>
+      <div class="cap-name">实时多车对决</div>
+      <div class="cap-desc">同场避碰、智能策略、永不重复</div>
+    </div>
+    <div class="cap-card">
+      <div class="cap-icon">2-3h</div>
+      <div class="cap-name">长续航</div>
+      <div class="cap-desc">1S 锂电 + MT3608 升压 + TP4056 充电</div>
     </div>
   </div>
 </section>
 
-<!-- ===== CAR CUSTOMIZER (Interactive) ===== -->
-<section class="section-pad customizer-section" id="customize">
-  <div style="max-width:1280px; margin:0 auto 64px; text-align:center;">
-    <div class="section-eyebrow reveal">Live Customizer</div>
-    <h2 class="section-title reveal">选你的颜色,<br>定义你的队伍</h2>
-    <p class="section-desc reveal" style="margin: 0 auto;">六种 LED 配色,点一下立刻预览。每一种都对应一个赛车队伍 IP——你站哪一边?</p>
+<!-- ===== AI 赛道 (Smart Tile Explode) ===== -->
+<section class="section-pad explode-section" id="track" style="background:var(--bg-soft);">
+  <div style="max-width:1280px; margin:0 auto 32px; text-align:center;">
+    <div class="section-eyebrow reveal">AI Track · Smart Tile</div>
+    <h2 class="section-title reveal">每块赛道<br>都是一个机器人</h2>
+    <p class="section-desc reveal" style="margin: 0 auto;">30×30 cm 模块化智能砖 — 自带电池、电机、电磁吸合、定位。多砖之间软件控制磁吸/分离，60 秒自动拼成任意赛道。点击放大看内部分解。</p>
   </div>
-  <div class="customizer">
-    <div class="car-stage reveal">
-      <div class="car-img-wrap" id="carImgWrap">
-        <img src="genesis_car.png" alt="Customizable AI Car">
+  <div class="reveal explode-embed-wrap" onclick="expandFrame('track-tile-explode.html')">
+    <iframe class="explode-embed" src="track-tile-explode.html" loading="lazy"></iframe>
+    <div class="explode-hint">⛶ 点击放大 · Click to Expand</div>
+  </div>
+
+  <!-- AI Track · Auto-Assembly Live Demo (Physical Boards) -->
+  <div class="reveal" style="max-width:1080px; margin:32px auto 0; background:var(--bg-card); border:1px solid var(--line); padding:24px;">
+    <div style="display:flex; align-items:center; gap:14px; margin-bottom:18px; flex-wrap:wrap;">
+      <div style="font-family:var(--font-tech); font-size:12px; letter-spacing:0.22em;
+        text-transform:uppercase; color:var(--blue); font-weight:700;">AUTO-ASSEMBLY · LIVE</div>
+      <span style="font-family:var(--font-mono); font-size:12px; color:var(--gray);">
+        Board A: <b id="tbAConn" style="color:#FF0040">o</b>
+        <input id="tbAIp" value="172.20.10.6"
+          style="background:#06090f; color:#fff; border:1px solid var(--line); padding:3px 8px;
+          font-family:var(--font-mono); font-size:11px; width:110px; border-radius:3px; margin:0 4px;"></span>
+      <span style="font-family:var(--font-mono); font-size:12px; color:var(--gray);">
+        Board B: <b id="tbBConn" style="color:#FF0040">o</b>
+        <input id="tbBIp" value="172.20.10.7"
+          style="background:#06090f; color:#fff; border:1px solid var(--line); padding:3px 8px;
+          font-family:var(--font-mono); font-size:11px; width:110px; border-radius:3px; margin:0 4px;"></span>
+      <button onclick="tbPingAll()" style="background:transparent; color:var(--blue); border:1px solid var(--blue);
+        padding:5px 12px; font-family:var(--font-tech); font-size:11px; letter-spacing:0.1em;
+        text-transform:uppercase; cursor:pointer;">PING ALL</button>
+    </div>
+    <!-- Top-down map (UI animation synced with real boards) -->
+    <div style="position:relative; width:100%; height:200px; background:#06090f;
+      border:1px solid var(--line); margin-bottom:16px; overflow:hidden;">
+      <svg width="100%" height="100%" style="position:absolute; inset:0; opacity:.18;">
+        <defs><pattern id="tbGrid" width="40" height="40" patternUnits="userSpaceOnUse">
+          <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#00B8FF" stroke-width="0.5"/>
+        </pattern></defs>
+        <rect width="100%" height="100%" fill="url(#tbGrid)"/>
+      </svg>
+      <div id="tbBoardA" class="tb-board" style="background:linear-gradient(135deg, rgba(0,184,255,.25), rgba(0,184,255,.08));
+        border:2px solid var(--blue); box-shadow:0 0 18px rgba(0,184,255,.4);
+        transform:translate(40px, 60px) rotate(0deg);">
+        <div class="tb-board-label">A</div>
+      </div>
+      <div id="tbBoardB" class="tb-board" style="background:linear-gradient(135deg, rgba(255,136,0,.25), rgba(255,136,0,.08));
+        border:2px solid var(--orange); box-shadow:0 0 18px rgba(255,136,0,.4);
+        transform:translate(480px, 90px) rotate(0deg);">
+        <div class="tb-board-label">B</div>
       </div>
     </div>
-    <div class="color-pills reveal">
-      <div class="color-pill active" data-hue="0" data-color="#00B8FF" data-name="Blue Genesis" data-desc="经典 TRON 蓝 · 默认配色" data-price="¥59,800">
-        <div class="color-swatch" style="background:#00B8FF; color:#00B8FF;"></div>
-        <div class="color-info">
-          <div class="color-name">Blue Genesis</div>
-          <div class="color-desc">经典 TRON 蓝 · 默认配色</div>
-        </div>
-        <div class="color-price">¥59,800</div>
+    <!-- Step 1: Select layout -->
+    <div style="font-family:var(--font-tech); font-size:11px; letter-spacing:0.22em; text-transform:uppercase; color:var(--gray); margin-bottom:10px;">Step 1 · 选择赛道布局</div>
+    <div class="layout-grid">
+      <div class="layout-card" data-layout="straight" onclick="tbSelect('straight')">
+        <svg viewBox="0 0 60 30" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="6" y1="15" x2="54" y2="15"/></svg>
+        <div class="layout-name">直线</div>
+        <div class="layout-desc">Straight</div>
       </div>
-      <div class="color-pill" data-hue="-130" data-color="#FF8800" data-name="Orange Clu" data-desc="TRON: Legacy 反派色" data-price="¥59,800">
-        <div class="color-swatch" style="background:#FF8800; color:#FF8800;"></div>
-        <div class="color-info">
-          <div class="color-name">Orange Clu</div>
-          <div class="color-desc">TRON: Legacy 反派色</div>
-        </div>
-        <div class="color-price">¥59,800</div>
+      <div class="layout-card" data-layout="oval" onclick="tbSelect('oval')">
+        <svg viewBox="0 0 60 30" fill="none" stroke="currentColor" stroke-width="2.5"><ellipse cx="30" cy="15" rx="22" ry="10"/></svg>
+        <div class="layout-name">椭圆</div>
+        <div class="layout-desc">Oval Loop</div>
       </div>
-      <div class="color-pill" data-hue="70" data-color="#B026FF" data-name="Purple Cipher" data-desc="赛博朋克紫 · 限定版" data-price="¥69,800">
-        <div class="color-swatch" style="background:#B026FF; color:#B026FF;"></div>
-        <div class="color-info">
-          <div class="color-name">Purple Cipher</div>
-          <div class="color-desc">赛博朋克紫 · 限定版</div>
-        </div>
-        <div class="color-price">¥69,800</div>
+      <div class="layout-card" data-layout="scurve" onclick="tbSelect('scurve')">
+        <svg viewBox="0 0 60 30" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M 6 22 Q 20 22 30 15 T 54 8"/></svg>
+        <div class="layout-name">S 弯</div>
+        <div class="layout-desc">S-Curve</div>
       </div>
-      <div class="color-pill" data-hue="-180" data-color="#FF0040" data-name="Red Phoenix" data-desc="战斗模式 · 红队冠军" data-price="¥69,800">
-        <div class="color-swatch" style="background:#FF0040; color:#FF0040;"></div>
-        <div class="color-info">
-          <div class="color-name">Red Phoenix</div>
-          <div class="color-desc">战斗模式 · 红队冠军</div>
-        </div>
-        <div class="color-price">¥69,800</div>
-      </div>
-      <div class="color-pill" data-hue="100" data-color="#00FF9D" data-name="Green Vector" data-desc="数据流绿 · 极客限定" data-price="¥69,800">
-        <div class="color-swatch" style="background:#00FF9D; color:#00FF9D;"></div>
-        <div class="color-info">
-          <div class="color-name">Green Vector</div>
-          <div class="color-desc">数据流绿 · 极客限定</div>
-        </div>
-        <div class="color-price">¥69,800</div>
-      </div>
-      <div class="color-pill" data-hue="0" data-color="#ffffff" data-name="White Origin" data-desc="纯白限量版 · 仅 100 台" data-price="¥98,800" data-extra-class="white-mode">
-        <div class="color-swatch" style="background:#ffffff; color:#ffffff;"></div>
-        <div class="color-info">
-          <div class="color-name">White Origin</div>
-          <div class="color-desc">纯白限量版 · 仅 100 台</div>
-        </div>
-        <div class="color-price">¥98,800</div>
+      <div class="layout-card" data-layout="split" onclick="tbSelect('split')">
+        <svg viewBox="0 0 60 30" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="6" y1="15" x2="22" y2="15"/><line x1="38" y1="15" x2="54" y2="15"/><path d="M 22 12 L 26 15 L 22 18" stroke-linejoin="round"/><path d="M 38 12 L 34 15 L 38 18" stroke-linejoin="round"/></svg>
+        <div class="layout-name">分离</div>
+        <div class="layout-desc">Split Apart</div>
       </div>
     </div>
+
+    <!-- Step 2: Click to assemble -->
+    <div style="margin-top:18px; display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+      <div style="font-family:var(--font-tech); font-size:11px; letter-spacing:0.22em; text-transform:uppercase; color:var(--gray);">Step 2 ·</div>
+      <button class="btn-assemble" onclick="tbExecute()" id="btnAssemble" disabled>
+        <span class="ico">▶</span> 组合 ASSEMBLE
+      </button>
+      <span style="flex:1"></span>
+      <button class="tb-preset" onclick="tbStopAll()" style="border-color:#FF0040; color:#FF0040;">■ STOP</button>
+    </div>
+    <div id="tbMsg" style="text-align:center; font-family:var(--font-mono); font-size:11px;
+      color:var(--gray); margin-top:12px; min-height:16px;">先选一种布局 → 点 ASSEMBLE → 上方 UI 板平滑滑动，同时真板按时序自动开过去对齐</div>
   </div>
 </section>
 
-<!-- ===== AI TRACK SHOWCASE ===== -->
-<section class="section-pad" id="track">
-  <div class="showcase reverse">
-    <div class="showcase-img reveal"><img src="genesis_module.png" alt="Modular Track Tile"></div>
-    <div class="reveal">
-      <div class="section-eyebrow">AI Track · Module 01</div>
-      <h2 class="section-title">每块赛道<br>都是一个机器人</h2>
-      <p class="section-desc">30×30 cm 模块化设计,自带电池、电机、定位系统。天花板视觉追踪 + 磁吸边缘对齐,毫米级精度自动拼接。想要 8 字、椭圆、星形、迷宫?在 App 上画一笔,赛道自己组装出来。</p>
-      <ul class="showcase-specs">
-        <li><span class="spec-key">Dimensions</span><span class="spec-val">300 × 300 × 30 mm</span></li>
-        <li><span class="spec-key">Positioning</span><span class="spec-val">UWB + ArUco Vision</span></li>
-        <li><span class="spec-key">Docking</span><span class="spec-val">Magnetic Auto-align</span></li>
-        <li><span class="spec-key">Battery Life</span><span class="spec-val">2-3 hours</span></li>
-        <li><span class="spec-key">Charging</span><span class="spec-val">Magnetic Auto-dock</span></li>
-      </ul>
-    </div>
+<!-- ===== AI TUNE · Pilot Drag ===== -->
+<section class="section-pad" id="tune">
+  <div style="max-width:1280px; margin:0 auto 32px; text-align:center;">
+    <div class="section-eyebrow reveal">AI Tune · Two Ways to Train Your AI Driver</div>
+    <h2 class="section-title reveal">AI Tune<br>调教你的 AI 车手</h2>
+    <p class="section-desc reveal" style="margin: 16px auto 0;">两种方式 — <strong style="color:var(--blue)">拖动调试</strong> 与 <strong style="color:var(--orange)">自然语言对话</strong>。一个给工程师,一个给所有人。</p>
   </div>
-</section>
-
-<!-- ===== TRACK BUILDER (Interactive) ===== -->
-<section class="builder-section" id="builder" style="background: var(--bg-soft);">
-  <div style="max-width:1280px; margin:0 auto; text-align:center;">
-    <div class="section-eyebrow reveal">Live Builder</div>
-    <h2 class="section-title reveal">拖一拖,<br>拼出你的专属赛道</h2>
-    <p class="section-desc reveal" style="margin: 0 auto;">从左侧拖入赛道模块,在网格上拼出任意形状。实时计算赛道长度 + AI 预测圈速。</p>
-  </div>
-  <div class="builder reveal">
-    <div class="builder-palette">
-      <h4>Modules</h4>
-      <div class="palette-items">
-        <div class="palette-item" draggable="true" data-type="straight">
-          <svg viewBox="0 0 60 60" fill="none" stroke="#00B8FF" stroke-width="3"><line x1="30" y1="5" x2="30" y2="55"/></svg>
-          <div class="module-name">Straight</div>
-        </div>
-        <div class="palette-item" draggable="true" data-type="curve-tl">
-          <svg viewBox="0 0 60 60" fill="none" stroke="#00B8FF" stroke-width="3"><path d="M 30 55 Q 30 30, 5 30"/></svg>
-          <div class="module-name">Turn L</div>
-        </div>
-        <div class="palette-item" draggable="true" data-type="curve-tr">
-          <svg viewBox="0 0 60 60" fill="none" stroke="#00B8FF" stroke-width="3"><path d="M 30 55 Q 30 30, 55 30"/></svg>
-          <div class="module-name">Turn R</div>
-        </div>
-        <div class="palette-item" draggable="true" data-type="cross">
-          <svg viewBox="0 0 60 60" fill="none" stroke="#00B8FF" stroke-width="3"><line x1="30" y1="5" x2="30" y2="55"/><line x1="5" y1="30" x2="55" y2="30"/></svg>
-          <div class="module-name">Cross</div>
-        </div>
-        <div class="palette-item" draggable="true" data-type="start">
-          <svg viewBox="0 0 60 60" fill="none" stroke="#FF8800" stroke-width="3"><line x1="30" y1="5" x2="30" y2="55"/><circle cx="30" cy="30" r="6" fill="#FF8800"/></svg>
-          <div class="module-name">Start</div>
-        </div>
-      </div>
-    </div>
-    <div class="builder-canvas-wrap">
-      <svg class="builder-canvas" id="canvas" viewBox="0 0 800 800" preserveAspectRatio="xMidYMid meet"></svg>
-      <div class="canvas-hint" id="canvasHint">↞ 拖入 / 点选模块到此处 ↠<br><span style="font-size:11px; color:var(--gray);">单击旋转 90° · 右键删除</span></div>
-      <div class="demo-badge" id="demoBadge">▸ Auto-assembly demo · 拖入任意模块停止</div>
-    </div>
-    <div class="builder-readout">
-      <h4>Real-time Telemetry</h4>
-      <div class="readout-row"><div class="k">Modules</div><div class="v" id="rdModules">0</div></div>
-      <div class="readout-row"><div class="k">Track Length</div><div class="v glow" id="rdLength">0.0 m</div></div>
-      <div class="readout-row"><div class="k">Est. Lap Time</div><div class="v glow" id="rdLap">--</div></div>
-      <div class="readout-row"><div class="k">Top Speed</div><div class="v" id="rdSpeed">--</div></div>
-      <div class="builder-actions">
-        <button class="builder-btn" onclick="clearTrack()">Clear Track</button>
-        <button class="builder-btn" onclick="randomTrack()">Random Layout</button>
-        <button class="builder-btn primary" onclick="alert('赛道方案已保存!\\n首批 100 套预订发售中,扫码获取详细信息。')">▶ Simulate Race</button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== AI PILOT TUNING (Waypoint Drag) ===== -->
-<section class="section-pad" id="pilot">
-  <div style="max-width:1280px; margin:0 auto 48px; text-align:center;">
-    <div class="section-eyebrow reveal">AI Pilot Tuning</div>
-    <h2 class="section-title reveal">拖动路径点,<br>调教你的 AI 车手</h2>
+  <div style="max-width:1280px; margin:0 auto 24px;">
+    <div class="tune-tab-header reveal">
+      <div class="tune-tab-eyebrow">Mode 01 · UI Drag</div>
+      <h3 class="tune-tab-title">拖动路径点 — 工程师视角</h3>
+      <p class="tune-tab-desc">真实赛道 Track 5(UWB 标定 10.27 × 4.78 m),8 个 waypoint 是 AI 决策点。拖一拖,实时看撞墙 · 圈速 · 顶速。</p>
     <p class="section-desc reveal" style="margin: 0 auto;">这是 <strong style="color:var(--blue)">真实赛道 Track 5</strong>(UWB 标定 10.27 × 4.78 m,墙体数据来自实地校准)。8 个 waypoint 是 AI 决策点,拖动它定义过弯线 — 橙色幽灵车实时跟随,实时检测撞墙。这就是 Crayxus AI 的可解释驾驶。</p>
   </div>
   <div class="reveal" style="max-width:1080px; margin:0 auto; background:var(--bg-card); border:1px solid var(--line); padding:24px;">
@@ -1136,130 +1314,135 @@
       <div class="readout-row"><div class="k">Top Speed</div><div class="v" id="plSpeed">--</div></div>
       <div class="readout-row"><div class="k">Wall Status</div><div class="v" id="plG">--</div></div>
     </div>
+
+    <!-- ============ LIVE CAR CONTROL BAR ============ -->
+    <div style="margin-top:18px; padding:16px 20px; background:rgba(0,184,255,0.05);
+      border:1px solid var(--blue); display:flex; gap:14px; align-items:center; flex-wrap:wrap;">
+      <div style="font-family:var(--font-tech); font-size:12px; letter-spacing:0.22em;
+        text-transform:uppercase; color:var(--blue); font-weight:700;">▶ LIVE CAR</div>
+      <span style="font-family:var(--font-mono); font-size:12px; color:var(--gray);">
+        车: <b id="prConn" style="color:#FF0040">○ 离线</b></span>
+      <span style="font-family:var(--font-mono); font-size:12px; color:var(--gray);">
+        IP <input id="prIp" value="172.20.10.5"
+          style="background:#06090f; color:#fff; border:1px solid var(--line); padding:4px 8px;
+            font-family:var(--font-mono); font-size:12px; width:120px; border-radius:3px;"></span>
+      <button onclick="prPing()" style="background:transparent; color:var(--blue); border:1px solid var(--blue);
+        padding:6px 12px; font-family:var(--font-tech); font-size:11px; letter-spacing:0.12em;
+        text-transform:uppercase; cursor:pointer;">测试连接</button>
+      <span style="flex:1"></span>
+      <button onclick="prStop()" style="background:#FF0040; color:#fff; border:none;
+        padding:8px 18px; font-family:var(--font-tech); font-weight:700; font-size:13px;
+        letter-spacing:0.15em; text-transform:uppercase; cursor:pointer; box-shadow:0 0 14px rgba(255,0,64,.4);">
+        ■ 急停 (空格)</button>
+      <button onclick="prApplyAndGo()" style="background:var(--blue); color:var(--bg); border:none;
+        padding:8px 22px; font-family:var(--font-tech); font-weight:700; font-size:13px;
+        letter-spacing:0.15em; text-transform:uppercase; cursor:pointer; box-shadow:0 0 18px rgba(0,184,255,.5);">
+        ▶ 真车按此路线跑</button>
+    </div>
+    <div id="prMsg" style="text-align:center; font-family:var(--font-mono); font-size:11px;
+      color:var(--gray); margin-top:8px; min-height:16px;">手机开热点 · 车连热点 · 测试连接 → 跑</div>
   </div>
 </section>
 
-<!-- ===== RACE SYSTEM ===== -->
-<section class="race-system" id="race">
-  <div class="race-system-bg"></div>
-  <div class="race-system-content reveal">
-    <div class="section-eyebrow">Real-time AI Racing League</div>
-    <h2 class="section-title">不是单局对战<br>是一个完整的赛事宇宙</h2>
-    <p class="section-desc" style="margin: 0 auto;">
-      实时计分、AI 排名、数据回放、跨场对战。Crayxus AI·GP Genesis 不只是产品,是世界上第一个 <strong style="color:var(--blue)">真实物理 + AI 驱动的微型赛车联盟</strong>。杭州、上海、北京——每一台 Genesis 都接入同一个云端赛事系统。
-    </p>
+<!-- ===== VIBE CODING · TALK TO YOUR CAR ===== -->
+<!-- AI Tune · Mode 02 · Vibe Coding -->
+<section class="section-pad tune-mode-2" id="vibe-drive" style="background:var(--bg-soft);">
+  <div style="max-width:1280px; margin:0 auto 32px;">
+    <div class="tune-tab-header reveal" style="text-align:center;">
+      <div class="tune-tab-eyebrow" style="color:var(--orange)">Mode 02 · Vibe Coding</div>
+      <h3 class="tune-tab-title">自然语言对话 — 所有人视角</h3>
+      <p class="tune-tab-desc">不用写代码,不用拖点 — 直接说人话。「WP3 往右 0.5 米」「让车跑一圈」。这是孩子和 AI 协作的真正方式。</p>
+    </div>
+  </div>
+  <div class="reveal" style="max-width:980px; margin:0 auto; background:var(--bg-card); border:1px solid var(--line); padding:24px;">
+
+    <!-- 输入框 -->
+    <div style="display:flex; gap:10px; margin-bottom:14px;">
+      <input id="vbInput" placeholder="例: WP2 跑太远了调整一下 / 让车跑一圈 / 拐弯太急了 / 反向跑"
+        style="flex:1; background:#06090f; color:#fff; border:1px solid var(--blue);
+        padding:14px 18px; font-family:var(--font-mono); font-size:14px;
+        border-radius:3px; outline:none;"
+        onkeydown="if(event.key==='Enter') vbExec()">
+      <button onclick="vbExec()" style="background:var(--blue); color:var(--bg); border:none;
+        padding:0 28px; font-family:var(--font-tech); font-weight:700; font-size:13px;
+        letter-spacing:0.18em; text-transform:uppercase; cursor:pointer; box-shadow:0 0 18px rgba(0,184,255,.5);">
+        ▶ 发送</button>
+    </div>
+
+    <!-- 预设按钮 (现场万无一失) -->
+    <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:18px;">
+      <button class="vb-preset" onclick="vbPreset('让车跑一圈')">▶ 让车跑一圈</button>
+      <button class="vb-preset" onclick="vbPreset('急停')">■ 急停</button>
+      <button class="vb-preset" onclick="vbPreset('反向跑')">⟲ 反向跑</button>
+      <button class="vb-preset" onclick="vbPreset('WP2 跑太远了调整一下')">↺ WP2 跑太远</button>
+      <button class="vb-preset" onclick="vbPreset('WP4 拐弯太急了')">⌒ WP4 弯太急</button>
+      <button class="vb-preset" onclick="vbPreset('全部 WP 收紧0.2米')">⊙ 全部收紧过弯线</button>
+    </div>
+
+    <!-- 解析历史 (终端风) -->
+    <div id="vbLog" style="background:#06090f; border:1px solid var(--line); border-radius:3px;
+      padding:14px 18px; font-family:var(--font-mono); font-size:12.5px; line-height:1.8;
+      min-height:140px; max-height:220px; overflow-y:auto; color:var(--gray);">
+      <div style="color:var(--blue);">crayxus-ai:~$ </div>
+      <div>等待输入 ... 试试上面的预设按钮 →</div>
+    </div>
+
   </div>
 </section>
 
-<!-- ===== VIBE CODING ===== -->
-<section class="vibe-section" id="vibe">
-  <div class="vibe-header">
-    <div class="section-eyebrow reveal">Behind Genesis</div>
-    <h2 class="section-title reveal">学术 · IP · 制造<br>中国顶级铁三角</h2>
-    <p class="section-desc reveal" style="margin: 16px auto 0;">
-      Genesis 不是一家公司单打独斗。<strong style="color:var(--blue)">浙江大学张旭光 AI 团队</strong> 的核心算法、<strong style="color:var(--blue)">Crayxus AI</strong> 的产品定义与 IP 设计、<strong style="color:var(--blue)">ZTMotor 中天模型</strong> 的产线制造——三方协同,这才是 Genesis 能从论文跑到量产的真正原因。
-    </p>
-  </div>
-  <div class="vibe-compare">
-    <div class="vibe-col reveal">
-      <div class="vibe-col-eyebrow">Academic Research</div>
-      <h3>浙江大学<br>张旭光 AI 团队</h3>
-      <div class="vibe-stat">15+</div>
-      <div class="vibe-stat-label">核心论文 / 专利</div>
-      <ul class="vibe-list">
-        <li>多传感器融合 + SLAM 核心算法</li>
-        <li>自主驾驶决策模型(MPC + RL)</li>
-        <li>浙大机器人研究所产学研支撑</li>
-        <li>博士与研究生团队深度参与</li>
-      </ul>
-    </div>
-    <div class="vibe-col featured reveal">
-      <div class="vibe-col-eyebrow">Product & IP</div>
-      <h3>Crayxus AI<br>产品定义 + IP</h3>
-      <div class="vibe-stat">32+</div>
-      <div class="vibe-stat-label">已布局发明专利</div>
-      <ul class="vibe-list">
-        <li>AI Track × AI Car 双智能架构 IP</li>
-        <li>TRON 视觉美学与品牌资产</li>
-        <li>赛事系统 + 云端联盟运营</li>
-        <li>面向 K12 教育 + 高端家庭双市场</li>
-      </ul>
-    </div>
-    <div class="vibe-col reveal">
-      <div class="vibe-col-eyebrow">Manufacturing</div>
-      <h3>ZTMotor<br>中天模型制造</h3>
-      <div class="vibe-stat">10 年+</div>
-      <div class="vibe-stat-label">模型车产业经验</div>
-      <ul class="vibe-list">
-        <li>浙江本土成熟产线与模具能力</li>
-        <li>F1 单座车体 OEM 量产基础</li>
-        <li>电机 / 电池 / 传动系统供应链</li>
-        <li>本土制造,品控可追溯</li>
-      </ul>
-    </div>
-  </div>
-  <div class="code-demo reveal">
-    <div class="code-header">
-      <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
-      <div class="code-title">ai_pilot.py · 浙大 × Crayxus 联合研发</div>
-      <div class="code-tag">LIVE</div>
-    </div>
-    <div class="code-body" id="codeBody"></div>
-  </div>
-</section>
-
-<!-- ===== PRODUCT MATRIX ===== -->
-<section class="section-pad" id="products">
-  <div style="max-width:1280px; margin:0 auto 64px; text-align:center;">
-    <div class="section-eyebrow reveal">Product Lineup</div>
-    <h2 class="section-title reveal">四档产品矩阵</h2>
-    <p class="section-desc reveal" style="margin: 0 auto;">从入门到旗舰,从家庭到场馆,Genesis 全系列已就位。</p>
-  </div>
-  <div class="matrix">
-    <div class="product reveal">
-      <div class="product-tier">Tier 01</div>
-      <h3 class="product-name">Genesis Lite</h3>
-      <div class="product-price">¥9,800</div>
-      <div class="product-price-unit">CNY / Set</div>
-      <ul class="product-specs"><li>2 辆 AI 车</li><li>10 块手动拼接赛道</li><li>基础课程包</li><li>App 控制</li></ul>
-      <button class="product-cta">Pre-order</button>
-    </div>
-    <div class="product featured reveal">
-      <div class="product-tier">Tier 02 · Recommended</div>
-      <h3 class="product-name">Genesis Neon Pro</h3>
-      <div class="product-price">¥59,800</div>
-      <div class="product-price-unit">CNY / Set</div>
-      <ul class="product-specs"><li>2 辆透明发光 AI 车</li><li>10 块自移动赛道砖</li><li>天花板视觉系统</li><li>1 年云端赛事订阅</li></ul>
-      <button class="product-cta">Pre-order</button>
-    </div>
-    <div class="product reveal">
-      <div class="product-tier">Tier 03</div>
-      <h3 class="product-name">Genesis Club</h3>
-      <div class="product-price">¥148,000</div>
-      <div class="product-price-unit">CNY / Set</div>
-      <ul class="product-specs"><li>8 辆 AI 车(4 队配色)</li><li>20 块自移动赛道砖</li><li>实时赛事直播系统</li><li>团建 / 俱乐部专用</li></ul>
-      <button class="product-cta">Pre-order</button>
-    </div>
-    <div class="product reveal">
-      <div class="product-tier">Tier 04 · Coming Q4 2026</div>
-      <h3 class="product-name">Genesis Arena</h3>
-      <div class="product-price">¥298,000+</div>
-      <div class="product-price-unit">CNY / Venue</div>
-      <ul class="product-specs"><li>LED 地板沉浸赛道</li><li>动态变化赛道形状</li><li>商业空间永久部署</li><li>城市加盟方案</li></ul>
-      <button class="product-cta">Contact</button>
-    </div>
-  </div>
-</section>
-
-<!-- ===== PRE-ORDER ===== -->
-<section class="preorder" id="preorder">
-  <h2>Join the Genesis.</h2>
-  <p>首批 100 套限量发售,2026 Q3 交付。留下邮箱,你将是世界上第一批拥有 AI 自主赛车系统的人。</p>
-  <form class="email-form" onsubmit="event.preventDefault(); alert('已加入候补名单 · 我们会在 48 小时内联系您'); this.reset();">
-    <input type="email" placeholder="your@email.com" required>
-    <button type="submit">Reserve</button>
-  </form>
-</section>
+<style>
+  .vb-preset {
+    background: transparent;
+    color: var(--gray);
+    border: 1px solid var(--line);
+    padding: 8px 14px;
+    font-family: var(--font-tech);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all .2s;
+    border-radius: 3px;
+  }
+  .vb-preset:hover {
+    color: var(--blue);
+    border-color: var(--blue);
+    box-shadow: 0 0 12px rgba(0,184,255,.25);
+  }
+  /* Physical Boards 顶视图 */
+  .tb-board {
+    position: absolute;
+    width: 130px;
+    height: 80px;
+    border-radius: 4px;
+    transition: transform 1.8s cubic-bezier(.42,0,.28,1);
+    display: flex; align-items: center; justify-content: center;
+    will-change: transform;
+  }
+  .tb-board-label {
+    font-family: var(--font-display);
+    font-weight: 900; font-size: 38px;
+    color: rgba(255,255,255,.6);
+    letter-spacing: 0.05em;
+  }
+  .tb-preset {
+    background: transparent;
+    color: var(--gray);
+    border: 1px solid var(--line);
+    padding: 9px 18px;
+    font-family: var(--font-tech);
+    font-size: 13px; font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all .2s;
+    border-radius: 3px;
+  }
+  .tb-preset:hover {
+    color: var(--blue);
+    border-color: var(--blue);
+    box-shadow: 0 0 12px rgba(0,184,255,.25);
+  }
+</style>
 
 <!-- ===== FOOTER ===== -->
 <footer>
@@ -1287,331 +1470,6 @@ const nav = document.querySelector('nav');
 window.addEventListener('scroll', () => {
   nav.style.background = window.scrollY > 50 ? 'rgba(5,8,16,0.92)' : 'rgba(5,8,16,0.6)';
 });
-
-/* ====== Car Color Customizer ====== */
-const carImgWrap = document.getElementById('carImgWrap');
-document.querySelectorAll('.color-pill').forEach(pill => {
-  pill.addEventListener('click', () => {
-    document.querySelectorAll('.color-pill').forEach(p => p.classList.remove('active'));
-    pill.classList.add('active');
-    const hue = parseInt(pill.dataset.hue);
-    const color = pill.dataset.color;
-    const isWhite = pill.dataset.extraClass === 'white-mode';
-    if (isWhite) {
-      carImgWrap.style.filter = `grayscale(0.7) brightness(1.4) drop-shadow(0 0 40px rgba(255,255,255,0.5))`;
-    } else {
-      carImgWrap.style.filter = `hue-rotate(${hue}deg) drop-shadow(0 0 40px ${color}99)`;
-    }
-    document.querySelector('.car-stage').style.background =
-      `radial-gradient(ellipse at center, ${color}22, transparent 60%)`;
-  });
-});
-
-/* ====== Track Builder (SVG drag + drop) ====== */
-const canvas = document.getElementById('canvas');
-const hint = document.getElementById('canvasHint');
-const GRID_SIZE = 8;
-const CELL = 800 / GRID_SIZE;
-let placed = []; // {type, gx, gy}
-
-// draw grid
-function drawGrid() {
-  let html = '';
-  for (let i = 0; i <= GRID_SIZE; i++) {
-    const v = i * CELL;
-    html += `<line x1="${v}" y1="0" x2="${v}" y2="800" stroke="rgba(0,184,255,0.08)" stroke-width="1"/>`;
-    html += `<line x1="0" y1="${v}" x2="800" y2="${v}" stroke="rgba(0,184,255,0.08)" stroke-width="1"/>`;
-  }
-  return html;
-}
-
-function moduleSvg(type, gx, gy, rot, isFresh) {
-  const x = gx * CELL, y = gy * CELL, c = CELL / 2;
-  const cx = x + c, cy = y + c;
-  let inner = '';
-  const stroke = type === 'start' ? '#FF8800' : '#00B8FF';
-  const glow = type === 'start' ? '#FF8800' : '#00B8FF';
-  if (type === 'straight') {
-    inner = `<line x1="${cx}" y1="${y+8}" x2="${cx}" y2="${y+CELL-8}" stroke="${stroke}" stroke-width="3"/>`;
-  } else if (type === 'curve-tl') {
-    inner = `<path d="M ${cx} ${y+CELL-8} Q ${cx} ${cy}, ${x+8} ${cy}" stroke="${stroke}" stroke-width="3" fill="none"/>`;
-  } else if (type === 'curve-tr') {
-    inner = `<path d="M ${cx} ${y+CELL-8} Q ${cx} ${cy}, ${x+CELL-8} ${cy}" stroke="${stroke}" stroke-width="3" fill="none"/>`;
-  } else if (type === 'cross') {
-    inner = `<line x1="${cx}" y1="${y+8}" x2="${cx}" y2="${y+CELL-8}" stroke="${stroke}" stroke-width="3"/><line x1="${x+8}" y1="${cy}" x2="${x+CELL-8}" y2="${cy}" stroke="${stroke}" stroke-width="3"/>`;
-  } else if (type === 'start') {
-    inner = `<line x1="${cx}" y1="${y+8}" x2="${cx}" y2="${y+CELL-8}" stroke="${stroke}" stroke-width="3"/><circle cx="${cx}" cy="${cy}" r="8" fill="${stroke}"/>`;
-  }
-  const cls = isFresh ? 'placed-mod fresh' : 'placed-mod';
-  return `<g class="${cls}" data-gx="${gx}" data-gy="${gy}" transform="rotate(${rot||0} ${cx} ${cy})" style="cursor:pointer; filter: drop-shadow(0 0 8px ${glow}); transition: transform 0.25s ease-out;">
-    <rect x="${x+2}" y="${y+2}" width="${CELL-4}" height="${CELL-4}" fill="rgba(0,184,255,0.04)" stroke="rgba(0,184,255,0.2)" stroke-width="1"/>
-    ${inner}
-  </g>`;
-}
-
-function render() {
-  let html = drawGrid();
-  placed.forEach(m => html += moduleSvg(m.type, m.gx, m.gy, m.rot, m._new));
-  // clear _new flag so the animation only plays once
-  placed.forEach(m => { if (m._new) { setTimeout(() => { m._new = false; }, 600); } });
-  canvas.innerHTML = html;
-  hint.classList.toggle('hidden', placed.length > 0);
-  updateReadout();
-  // Left click: rotate 90° CW · Right click: delete
-  canvas.querySelectorAll('.placed-mod').forEach(g => {
-    g.addEventListener('click', (e) => {
-      if (typeof stopDemo === 'function') stopDemo();
-      const gx = parseInt(g.dataset.gx), gy = parseInt(g.dataset.gy);
-      const mod = placed.find(m => m.gx === gx && m.gy === gy);
-      if (mod) {
-        mod.rot = ((mod.rot || 0) + 90) % 360;
-        render();
-      }
-    });
-    g.addEventListener('contextmenu', (e) => {
-      e.preventDefault();
-      if (typeof stopDemo === 'function') stopDemo();
-      const gx = parseInt(g.dataset.gx), gy = parseInt(g.dataset.gy);
-      placed = placed.filter(m => !(m.gx === gx && m.gy === gy));
-      render();
-    });
-  });
-}
-
-function updateReadout() {
-  const lengthM = (placed.length * 0.3).toFixed(1);
-  const lapSec = placed.length ? (placed.length * 0.5).toFixed(1) : '--';
-  const topSpeed = placed.length ? Math.min(30, 15 + placed.length * 1.2).toFixed(0) : '--';
-  document.getElementById('rdModules').textContent = placed.length;
-  document.getElementById('rdLength').textContent = `${lengthM} m`;
-  document.getElementById('rdLap').textContent = lapSec === '--' ? '--' : `${lapSec} s`;
-  document.getElementById('rdSpeed').textContent = topSpeed === '--' ? '--' : `${topSpeed} km/h`;
-}
-
-// Desktop: drag-and-drop · Mobile: tap-to-select + tap-to-place
-let draggedType = null;
-let selectedType = null;  // for mobile tap mode
-
-document.querySelectorAll('.palette-item').forEach(item => {
-  item.addEventListener('dragstart', e => {
-    draggedType = item.dataset.type;
-    e.dataTransfer.effectAllowed = 'copy';
-  });
-  // Tap to select (mobile-friendly, also works on desktop)
-  item.addEventListener('click', e => {
-    document.querySelectorAll('.palette-item').forEach(p => p.classList.remove('selected'));
-    if (selectedType === item.dataset.type) {
-      selectedType = null;  // toggle off
-    } else {
-      item.classList.add('selected');
-      selectedType = item.dataset.type;
-    }
-  });
-});
-
-canvas.addEventListener('dragover', e => {
-  e.preventDefault();
-  e.dataTransfer.dropEffect = 'copy';
-});
-
-function placeAt(clientX, clientY, type) {
-  const rect = canvas.getBoundingClientRect();
-  const x = (clientX - rect.left) / rect.width * 800;
-  const y = (clientY - rect.top) / rect.height * 800;
-  const gx = Math.floor(x / CELL);
-  const gy = Math.floor(y / CELL);
-  if (gx < 0 || gx >= GRID_SIZE || gy < 0 || gy >= GRID_SIZE) return false;
-  stopDemo();
-  placed = placed.filter(m => !(m.gx === gx && m.gy === gy));
-  placed.push({ type, gx, gy, rot: 0, _new: true });
-  render();
-  return true;
-}
-
-canvas.addEventListener('drop', e => {
-  e.preventDefault();
-  if (!draggedType) return;
-  placeAt(e.clientX, e.clientY, draggedType);
-  draggedType = null;
-});
-
-// Tap-to-place (mobile): if user has selected a palette item and taps empty cell, place it
-canvas.addEventListener('click', e => {
-  if (!selectedType) return;
-  // If tap landed on an existing tile, let that handler (rotate) take precedence
-  if (e.target.closest('.placed-mod')) return;
-  placeAt(e.clientX, e.clientY, selectedType);
-});
-
-function clearTrack() { stopDemo(); placed = []; render(); }
-function randomTrack() {
-  stopDemo();
-  placed = [];
-  // load the 20-tile standard circuit layout (same as auto-demo)
-  demoSequence.forEach(([x,y,t,r]) => placed.push({type:t, gx:x, gy:y, rot:r}));
-  render();
-}
-
-render();
-
-/* ====== Auto-assembly demo (plays on first scroll-into-view) ====== */
-// Standard 20-tile rectangular circuit (clockwise visual loop in 8x8 grid)
-const demoSequence = [
-  [3,6,'start',90],         // start at bottom-center, heading left
-  [2,6,'straight',90],      // bottom ←
-  [1,6,'curve-tr',270],     // SW corner ← to ↑
-  [1,5,'straight',0],       // left ↑
-  [1,4,'straight',0],
-  [1,3,'straight',0],
-  [1,2,'straight',0],
-  [1,1,'curve-tr',0],       // NW corner ↑ to →
-  [2,1,'straight',90],      // top →
-  [3,1,'straight',90],
-  [4,1,'straight',90],
-  [5,1,'straight',90],
-  [6,1,'curve-tr',90],      // NE corner → to ↓
-  [6,2,'straight',0],       // right ↓
-  [6,3,'straight',0],
-  [6,4,'straight',0],
-  [6,5,'straight',0],
-  [6,6,'curve-tr',180],     // SE corner ↓ to ←
-  [5,6,'straight',90],      // bottom ←
-  [4,6,'straight',90]       // bottom ← (closes loop to start)
-];
-let demoStep = 0;
-let demoActive = false;
-let demoTimer = null;
-const demoBadge = document.getElementById('demoBadge');
-
-function tickDemo() {
-  if (!demoActive) return;
-  if (demoStep >= demoSequence.length) {
-    demoTimer = setTimeout(() => {
-      if (!demoActive) return;
-      placed = [];
-      demoStep = 0;
-      render();
-      demoTimer = setTimeout(tickDemo, 900);
-    }, 2800);
-    return;
-  }
-  const [x, y, t, r] = demoSequence[demoStep];
-  placed.push({ type: t, gx: x, gy: y, rot: r, _new: true });
-  demoStep++;
-  render();
-  demoTimer = setTimeout(tickDemo, 580);
-}
-
-function startDemo() {
-  if (demoActive) return;
-  demoActive = true;
-  demoBadge.classList.remove('hidden');
-  placed = [];
-  demoStep = 0;
-  render();
-  demoTimer = setTimeout(tickDemo, 400);
-}
-
-function stopDemo() {
-  if (!demoActive) return;
-  demoActive = false;
-  if (demoTimer) { clearTimeout(demoTimer); demoTimer = null; }
-  demoBadge.classList.add('hidden');
-}
-
-// kick off when Track Builder enters the viewport
-const builderObserver = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      startDemo();
-      builderObserver.disconnect();
-    }
-  });
-}, { threshold: 0.4 });
-builderObserver.observe(document.querySelector('.builder-canvas-wrap'));
-
-/* ====== Vibe Coding Code Typewriter ====== */
-const codeSnippet = [
-  { txt: '# ', cls: 'com' },
-  { txt: 'Adaptive cornering with UWB + visual sensor fusion', cls: 'com' },
-  { txt: '\n# Zhang Lab (ZJU) × Crayxus AI · ICRA 2026 submission', cls: 'com' },
-  { txt: '\n\n', cls: '' },
-  { txt: 'def ', cls: 'kw' },
-  { txt: 'corner_strategy', cls: 'fn' },
-  { txt: '(uwb_pos, curvature, speed):\n', cls: '' },
-  { txt: '    ', cls: '' },
-  { txt: '# Derived from MPC-Lite framework (Zhang et al., 2025)\n', cls: 'com' },
-  { txt: '    ', cls: '' },
-  { txt: 'optimal_speed = ', cls: '' },
-  { txt: '30 ', cls: 'num' },
-  { txt: '* (', cls: '' },
-  { txt: '1 ', cls: 'num' },
-  { txt: '- ', cls: '' },
-  { txt: 'abs', cls: 'fn' },
-  { txt: '(curvature) * ', cls: '' },
-  { txt: '0.6', cls: 'num' },
-  { txt: ')\n', cls: '' },
-  { txt: '    throttle = ', cls: '' },
-  { txt: 'max', cls: 'fn' },
-  { txt: '(', cls: '' },
-  { txt: '0.3', cls: 'num' },
-  { txt: ', ', cls: '' },
-  { txt: 'min', cls: 'fn' },
-  { txt: '(', cls: '' },
-  { txt: '1.0', cls: 'num' },
-  { txt: ', optimal_speed / speed))\n', cls: '' },
-  { txt: '    steering = curvature * ', cls: '' },
-  { txt: '0.85 ', cls: 'num' },
-  { txt: '+ (uwb_pos.lateral_error * ', cls: '' },
-  { txt: '0.15', cls: 'num' },
-  { txt: ')\n', cls: '' },
-  { txt: '    \n', cls: '' },
-  { txt: '    ', cls: '' },
-  { txt: 'return ', cls: 'kw' },
-  { txt: '{', cls: '' },
-  { txt: '"throttle"', cls: 'str' },
-  { txt: ': throttle, ', cls: '' },
-  { txt: '"steering"', cls: 'str' },
-  { txt: ': steering}\n\n', cls: '' },
-  { txt: '# ', cls: 'com' },
-  { txt: '✓ 论文已 submission · 专利已布局 · ZTMotor 量产中', cls: 'com' },
-];
-
-const codeBody = document.getElementById('codeBody');
-let typedHTML = '';
-let snipIdx = 0, charIdx = 0;
-function typeCode() {
-  if (snipIdx >= codeSnippet.length) {
-    codeBody.innerHTML = typedHTML + '<span class="code-cursor"></span>';
-    setTimeout(() => {
-      typedHTML = ''; snipIdx = 0; charIdx = 0;
-      typeCode();
-    }, 6000);
-    return;
-  }
-  const cur = codeSnippet[snipIdx];
-  if (charIdx === 0 && cur.cls) typedHTML += `<span class="${cur.cls}">`;
-  typedHTML += cur.txt[charIdx];
-  charIdx++;
-  if (charIdx >= cur.txt.length) {
-    if (cur.cls) typedHTML += '</span>';
-    snipIdx++; charIdx = 0;
-  }
-  codeBody.innerHTML = typedHTML + '<span class="code-cursor"></span>';
-  const delay = cur.cls === 'com' ? 8 : 18;
-  setTimeout(typeCode, delay);
-}
-// start when section in view
-const vibeObserver = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting && !codeBody.dataset.started) {
-      codeBody.dataset.started = '1';
-      typeCode();
-      vibeObserver.disconnect();
-    }
-  });
-}, { threshold: 0.3 });
-vibeObserver.observe(document.querySelector('.code-demo'));
 
 /* ====== AI Pilot Waypoint Tuner · Real Track 5 (UWB-calibrated walls) ====== */
 // Real Track 5 outer/inner wall polygons (from ref_points.html, meters)
@@ -1880,6 +1738,353 @@ function animateGhost() {
 }
 drawPilot();
 animateGhost();
+
+// ============ LIVE CAR CONTROL ============
+// Convert the 8 waypoints to (delta_deg, dur_ms) segments and POST to /set_lap.
+// Sample Catmull-Rom into N small segments for smoother real-car driving.
+function prMsg(t, ok){
+  const m = document.getElementById('prMsg');
+  m.textContent = t;
+  m.style.color = ok ? '#00FF9D' : (ok===0 ? '#FF0040' : '#8892a8');
+}
+function prIp(){ return document.getElementById('prIp').value.trim(); }
+function prSetConn(s){
+  const e = document.getElementById('prConn');
+  e.textContent = s ? '● 在线' : '○ 离线';
+  e.style.color = s ? '#00FF9D' : '#FF0040';
+}
+function prPing(){
+  const ac = new AbortController();
+  let done = false;
+  const to = setTimeout(()=>{ if(!done){ done=true; ac.abort(); prSetConn(0); prMsg('车未响应 — 检查 IP / 热点', 0);} }, 2500);
+  fetch('http://'+prIp()+'/tm', {mode:'cors', signal: ac.signal})
+    .then(r => r.json())
+    .then(j => {
+      if(done) return; done = true; clearTimeout(to);
+      prSetConn(1);
+      const bv = j.bv ? j.bv.toFixed(2)+'V' : '?';
+      prMsg('车在线 · 电池 '+bv+' · 准备就绪', 1);
+    })
+    .catch(() => { if(!done){ done=true; clearTimeout(to); prSetConn(0); prMsg('连接失败', 0);} });
+}
+// Sample the smooth racing line into N segments and convert to (delta_heading, duration_ms) pairs
+function prBuildSegments(N = 32, v = 1.95){
+  const samples = [];
+  for(let s = 0; s < N; s++) samples.push(ghostPos(s / N));
+  samples.push(ghostPos(0)); // close loop
+  const segs = [];
+  let prevH = null;
+  for(let i = 0; i < samples.length - 1; i++){
+    const a = samples[i], b = samples[i+1];
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const len = Math.hypot(dx, dy);
+    if(len < 0.01) continue;
+    const h = Math.atan2(dy, dx) * 180 / Math.PI;
+    let delta = (prevH === null) ? 0 : (h - prevH);
+    while(delta > 180) delta -= 360;
+    while(delta < -180) delta += 360;
+    segs.push({d: +delta.toFixed(1), t: Math.round(len / v * 1000)});
+    prevH = h;
+  }
+  return segs;
+}
+function prApplyAndGo(){
+  const segs = prBuildSegments(32, 1.95);
+  if(!segs.length){ prMsg('路径为空', 0); return; }
+  const d = segs.map(s => s.d + ',' + s.t).join(';');
+  const ip = prIp();
+  fetch('http://'+ip+'/set_lap?d='+d, {mode:'no-cors'})
+    .then(() => {
+      prMsg('已发送 '+segs.length+' 段 · 启动跑车 ...', 1);
+      setTimeout(() => {
+        fetch('http://'+ip+'/c?x=MB', {mode:'no-cors'})
+          .then(() => prMsg('▶ 跑 (空格急停)', 1))
+          .catch(() => prMsg('启动指令失败', 0));
+      }, 250);
+    })
+    .catch(() => prMsg('set_lap 发送失败', 0));
+}
+function prStop(){
+  const ip = prIp();
+  // 连发 5 次防丢包 (复用 lap_editor 的急停策略)
+  for(let k = 0; k < 5; k++){
+    setTimeout(() => fetch('http://'+ip+'/c?x=S', {mode:'no-cors'}).catch(()=>{}), k * 70);
+  }
+  prMsg('■ 急停 ×5', 1);
+}
+window.addEventListener('keydown', e => {
+  if((e.code === 'Space' || e.code === 'Escape') &&
+     !['INPUT','TEXTAREA'].includes(document.activeElement.tagName)){
+    e.preventDefault();
+    prStop();
+  }
+});
+// 自动 ping (低频, 不打扰)
+setInterval(prPing, 4000);
+setTimeout(prPing, 800);
+
+// ============ VIBE CODING · NATURAL LANGUAGE PARSER ============
+// 把人话翻译成: (a) 改 waypoints (b) 调用真车 (c) 急停
+// 中文数字 → 数字
+const VB_CN_NUM = {'零':0,'一':1,'二':2,'三':3,'四':4,'五':5,'六':6,'七':7,'八':8,'九':9,'十':10,
+                   '第一':1,'第二':2,'第三':3,'第四':4,'第五':5,'第六':6,'第七':7,'第八':8};
+
+function vbLog(line, cls){
+  const log = document.getElementById('vbLog');
+  const colors = {ok:'#00FF9D', err:'#FF0040', cmd:'#00B8FF', echo:'#FF8800', '':'#8892a8'};
+  const div = document.createElement('div');
+  div.style.color = colors[cls||''];
+  div.innerHTML = line;
+  log.appendChild(div);
+  log.scrollTop = log.scrollHeight;
+}
+function vbPreset(text){
+  document.getElementById('vbInput').value = text;
+  vbExec();
+}
+function vbParseWpIdx(txt){
+  // "WP3" / "第3个WP" / "第三个WP" / "第二个" → 1-based 编号 → 转 0-based
+  let m = txt.match(/WP\s*(\d+)/i);
+  if(m) return parseInt(m[1]) - 1;
+  m = txt.match(/第\s*(\d+)\s*个/);
+  if(m) return parseInt(m[1]) - 1;
+  m = txt.match(/第\s*([一二三四五六七八])/);
+  if(m) return (VB_CN_NUM[m[1]]||0) - 1;
+  return -1;
+}
+function vbParseDist(txt){
+  // 提取距离 (米/m/cm), 返回米数
+  let m = txt.match(/(\d+\.?\d*)\s*(米|m)\b/i);
+  if(m) return parseFloat(m[1]);
+  m = txt.match(/(\d+\.?\d*)\s*cm/i);
+  if(m) return parseFloat(m[1]) / 100;
+  m = txt.match(/(\d+\.?\d*)/);
+  return m ? parseFloat(m[1]) : 0;
+}
+function vbExec(){
+  const raw = document.getElementById('vbInput').value.trim();
+  if(!raw) return;
+  vbLog('<span style="color:#00B8FF">$</span> ' + raw, 'echo');
+  document.getElementById('vbInput').value = '';
+
+  const t = raw.toLowerCase();
+
+  // 1. 急停
+  if(/停|急停|stop|s\b/.test(t)){
+    prStop();
+    vbLog('  → 急停指令已连发 ×5', 'ok');
+    return;
+  }
+  // 2. 跑车
+  if(/跑.*圈|跑车|开跑|发车|go|run|start|gogogo/.test(t)){
+    vbLog('  → 解析: cmd MB · 真车启动', 'cmd');
+    prApplyAndGo();
+    return;
+  }
+  // 3. 反向
+  if(/反向|倒|reverse|逆/.test(t)){
+    waypoints.reverse();
+    vbLog('  → waypoints 已反向 · '+waypoints.length+' 点', 'ok');
+    drawPilot();
+    return;
+  }
+  // 4. 全部 WP 收紧/扩张 (向中心靠 / 向外扩)
+  if(/全部|所有|all/.test(t) && /(收紧|内|靠中|tight)/.test(t)){
+    const d = vbParseDist(raw) || 0.2;
+    const cx = TRACK_X / 2, cy = TRACK_Y / 2;
+    waypoints.forEach(wp => {
+      const dx = cx - wp.x, dy = cy - wp.y, L = Math.hypot(dx, dy) || 1;
+      wp.x += dx / L * d; wp.y += dy / L * d;
+    });
+    vbLog('  → 全部 WP 向赛道中心收紧 '+d+' 米', 'ok');
+    drawPilot();
+    return;
+  }
+  if(/全部|所有|all/.test(t) && /(扩|外|宽|wide)/.test(t)){
+    const d = vbParseDist(raw) || 0.2;
+    const cx = TRACK_X / 2, cy = TRACK_Y / 2;
+    waypoints.forEach(wp => {
+      const dx = wp.x - cx, dy = wp.y - cy, L = Math.hypot(dx, dy) || 1;
+      wp.x += dx / L * d; wp.y += dy / L * d;
+    });
+    vbLog('  → 全部 WP 向外扩 '+d+' 米', 'ok');
+    drawPilot();
+    return;
+  }
+  // 5. 单个 WP 操作
+  const wpIdx = vbParseWpIdx(raw);
+  if(wpIdx >= 0 && wpIdx < waypoints.length){
+    const wp = waypoints[wpIdx];
+    const cx = TRACK_X / 2, cy = TRACK_Y / 2;
+
+    // 5a. 显式方向 (右/左/前/后)
+    let dx = 0, dy = 0;
+    const dist = vbParseDist(raw) || 0.3;
+    if(/右/.test(raw)) dx = +dist;
+    if(/左/.test(raw)) dx = -dist;
+    if(/前|上/.test(raw)) dy = -dist;     // 屏幕向上 = -y
+    if(/后|下/.test(raw)) dy = +dist;
+
+    if(dx !== 0 || dy !== 0){
+      wp.x = Math.max(0.1, Math.min(TRACK_X - 0.1, wp.x + dx));
+      wp.y = Math.max(0.1, Math.min(TRACK_Y - 0.1, wp.y + dy));
+      vbLog('  → WP'+(wpIdx+1)+'  Δ=('+dx.toFixed(2)+','+dy.toFixed(2)+') → ('+
+            wp.x.toFixed(2)+','+wp.y.toFixed(2)+')', 'ok');
+      drawPilot();
+      return;
+    }
+
+    // 5b. 模糊语义: "跑太远 / 过头 / 出去了" → 向中心收
+    if(/远|过头|超|出去|偏外|太外/.test(t)){
+      const vx = cx - wp.x, vy = cy - wp.y, L = Math.hypot(vx, vy) || 1;
+      wp.x += vx / L * dist;
+      wp.y += vy / L * dist;
+      vbLog('  → 解析「跑太远」· WP'+(wpIdx+1)+' 向赛道中心收 '+dist.toFixed(2)+'米', 'ok');
+      drawPilot();
+      return;
+    }
+    // 5c. "太近 / 不够 / 短了 / 偏内" → 向外推
+    if(/近|不够|短|偏内|太内/.test(t)){
+      const vx = wp.x - cx, vy = wp.y - cy, L = Math.hypot(vx, vy) || 1;
+      wp.x += vx / L * dist;
+      wp.y += vy / L * dist;
+      vbLog('  → 解析「太近」· WP'+(wpIdx+1)+' 向外推 '+dist.toFixed(2)+'米', 'ok');
+      drawPilot();
+      return;
+    }
+    // 5d. "拐弯太急 / 弯太大" → 把 WP 拉到上/下 WP 的中点 (平滑)
+    if(/拐.{0,2}急|弯.{0,2}急|过.{0,2}急|急转|smooth/.test(t)){
+      const prev = waypoints[(wpIdx-1+waypoints.length)%waypoints.length];
+      const next = waypoints[(wpIdx+1)%waypoints.length];
+      wp.x = wp.x * 0.5 + (prev.x + next.x) / 2 * 0.5;
+      wp.y = wp.y * 0.5 + (prev.y + next.y) / 2 * 0.5;
+      vbLog('  → 解析「拐弯太急」· WP'+(wpIdx+1)+' 向前后 WP 中点平滑 50%', 'ok');
+      drawPilot();
+      return;
+    }
+    // 5e. "调整 / 改一下 / 动一动" — 默认小幅向中心微调
+    if(/调整|改|动|微调|tweak|adjust|tune/.test(t)){
+      const vx = cx - wp.x, vy = cy - wp.y, L = Math.hypot(vx, vy) || 1;
+      wp.x += vx / L * 0.2;
+      wp.y += vy / L * 0.2;
+      vbLog('  → 默认微调 WP'+(wpIdx+1)+' 向中心 0.2米 (要更精确请说: 往右/左/前/后 + 距离)', 'ok');
+      drawPilot();
+      return;
+    }
+    vbLog('  → 识别到 WP'+(wpIdx+1)+' 但没听懂操作 — 试试「跑太远」「太近」「拐弯太急」「往右0.3米」', 'err');
+    return;
+  }
+  // 6. 兜底
+  vbLog('  ⚠ 没听懂 — 试试: 「WP2跑太远了调整一下」「让车跑一圈」「反向跑」「急停」', 'err');
+}
+// ============ PHYSICAL BOARDS · AUTO-ASSEMBLY (restored) ============
+const TB_LAYOUTS = {
+  straight: { A: {ui: 'translate(120px, 60px) rotate(0deg)',  seq: 'F600'},
+              B: {ui: 'translate(260px, 60px) rotate(0deg)',  seq: 'F600'}},
+  oval:     { A: {ui: 'translate(80px, 30px) rotate(-15deg)',  seq: 'L200,F500,R200'},
+              B: {ui: 'translate(260px, 90px) rotate(15deg)',  seq: 'R200,F500,L200'}},
+  scurve:   { A: {ui: 'translate(60px, 90px) rotate(30deg)',   seq: 'L300,F400'},
+              B: {ui: 'translate(280px, 30px) rotate(-30deg)', seq: 'R300,F400'}},
+  split:    { A: {ui: 'translate(20px, 60px) rotate(0deg)',    seq: 'B500'},
+              B: {ui: 'translate(420px, 60px) rotate(0deg)',   seq: 'F500'}}
+};
+function tbMsg(t, ok){
+  const m = document.getElementById('tbMsg');
+  if(!m) return;
+  m.textContent = t;
+  m.style.color = ok ? '#00FF9D' : (ok===0 ? '#FF0040' : '#8892a8');
+}
+function tbSetConn(which, ok){
+  const e = document.getElementById('tb'+which+'Conn');
+  if(!e) return;
+  e.textContent = ok ? '*' : 'o';
+  e.style.color = ok ? '#00FF9D' : '#FF0040';
+}
+function tbPingOne(which){
+  const ipEl = document.getElementById('tb'+which+'Ip');
+  if(!ipEl) return;
+  const ip = ipEl.value.trim();
+  const ac = new AbortController();
+  let done = false;
+  const to = setTimeout(()=>{ if(!done){done=true; ac.abort(); tbSetConn(which, 0);}}, 1500);
+  fetch('http://'+ip+'/tm', {mode:'cors', signal: ac.signal})
+    .then(r => r.json())
+    .then(() => { if(!done){done=true; clearTimeout(to); tbSetConn(which, 1);}})
+    .catch(() => { if(!done){done=true; clearTimeout(to); tbSetConn(which, 0);}});
+}
+function tbPingAll(){ tbPingOne('A'); tbPingOne('B'); }
+function tbSendSeq(which, seq){
+  if(!seq) return;
+  const ipEl = document.getElementById('tb'+which+'Ip');
+  if(!ipEl) return;
+  const ip = ipEl.value.trim();
+  fetch('http://'+ip+'/seq?cmd='+encodeURIComponent(seq), {mode:'no-cors'}).catch(()=>{});
+}
+let _tbSelected = null;
+function tbSelect(layoutName){
+  _tbSelected = layoutName;
+  document.querySelectorAll('.layout-card').forEach(c => {
+    c.classList.toggle('active', c.dataset.layout === layoutName);
+  });
+  const btn = document.getElementById('btnAssemble');
+  if(btn) btn.disabled = false;
+  tbMsg('已选: '+layoutName.toUpperCase()+' → 点 ASSEMBLE 启动', null);
+}
+function tbExecute(){
+  if(!_tbSelected){ tbMsg('请先选择一个布局', 0); return; }
+  tbAssemble(_tbSelected);
+}
+function tbAssemble(layoutName){
+  const L = TB_LAYOUTS[layoutName];
+  if(!L){ tbMsg('Unknown layout '+layoutName, 0); return; }
+  const a = document.getElementById('tbBoardA');
+  const b = document.getElementById('tbBoardB');
+  if(a) a.style.transform = L.A.ui;
+  if(b) b.style.transform = L.B.ui;
+  tbSendSeq('A', L.A.seq);
+  tbSendSeq('B', L.B.seq);
+  tbMsg('▶ '+layoutName.toUpperCase()+' · A→「'+L.A.seq+'」B→「'+L.B.seq+'」', 1);
+}
+function tbStopAll(){
+  const ipA = document.getElementById('tbAIp');
+  const ipB = document.getElementById('tbBIp');
+  if(!ipA || !ipB) return;
+  for(let k = 0; k < 3; k++){
+    setTimeout(()=>{
+      fetch('http://'+ipA.value.trim()+'/stop', {mode:'no-cors'}).catch(()=>{});
+      fetch('http://'+ipB.value.trim()+'/stop', {mode:'no-cors'}).catch(()=>{});
+    }, k * 80);
+  }
+  tbMsg('STOP x3 -> A & B', 1);
+}
+setTimeout(tbPingAll, 1200);
+setInterval(tbPingAll, 5000);
+
+</script>
+
+<!-- ===== EXPLODE FULLSCREEN MODAL ===== -->
+<div class="explode-modal" id="explodeModal">
+  <button class="explode-modal-close" onclick="closeFrame()" title="按 ESC 关闭">✕</button>
+  <iframe id="explodeModalFrame" src="about:blank"></iframe>
+</div>
+<script>
+function expandFrame(src) {
+  const modal = document.getElementById('explodeModal');
+  const frame = document.getElementById('explodeModalFrame');
+  frame.src = src;
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeFrame() {
+  const modal = document.getElementById('explodeModal');
+  const frame = document.getElementById('explodeModalFrame');
+  modal.classList.remove('open');
+  frame.src = 'about:blank';
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeFrame();
+});
 </script>
 
 </body>
