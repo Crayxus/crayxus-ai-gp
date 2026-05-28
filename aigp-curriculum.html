@@ -393,6 +393,7 @@
       position: relative !important;
       inset: auto !important;
       display: flex !important;
+      flex-direction: column !important;
       opacity: 1 !important;
       width: 297mm; height: 167mm;
       page-break-after: always;
@@ -400,8 +401,23 @@
       break-after: page;
       overflow: hidden !important;
       background: var(--bg);
-      padding: 32px 48px;
+      padding: 28px 44px;
     }
+    .slide::before, .slide::after { display: none !important; }
+    .chrome-top { margin-bottom: 18px !important; }
+    .section-en { margin-bottom: 18px !important; }
+    .pretty-table { margin-top: 10px !important; }
+    .two-col { grid-template-columns: 1fr 1fr !important; gap: 24px !important; }
+    .three-col { grid-template-columns: repeat(3, 1fr) !important; gap: 14px !important; }
+    .four-col { grid-template-columns: repeat(4, 1fr) !important; gap: 12px !important; }
+    .toc-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px 24px !important; }
+    .stats-row { grid-template-columns: repeat(4, 1fr) !important; gap: 10px !important; }
+    .card { padding: 16px 14px !important; }
+    .card h4 { font-size: 15px !important; margin-bottom: 6px !important; }
+    .card p, .card .feat-list li { font-size: 12px !important; line-height: 1.55 !important; }
+    .feat-list li { padding: 5px 0 5px 22px !important; }
+    h2 { margin-bottom: 14px !important; }
+    p.lead { font-size: 14px !important; margin-bottom: 10px !important; }
     .slide:last-child { page-break-after: auto; }
     .nav-controls { display: none !important; }
     h1 { font-size: 48px !important; }
