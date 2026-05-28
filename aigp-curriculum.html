@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Crayxus AI·GP · 学校合作产品手册</title>
+<link rel="icon" type="image/png" href="favicon-32.png">
+<style>
+  :root {
+    --bg: #050810;
+    --bg2: #0a1525;
+    --card: #0e1a2e;
+    --line: #1a3050;
+    --line-soft: #243759;
+    --txt: #e7eef8;
+    --gray: #8da2bd;
+    --mute: #5a6e8e;
+    --blue: #00b8ff;
+    --blue-deep: #0066ff;
+    --orange: #ff8800;
+    --green: #00ff9c;
+    --font-display: 'Inter', -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    --font-tech: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{
+    height:100vh;width:100vw;overflow:hidden;
+    background:#000;color:var(--txt);
+    font-family:var(--font-display);
+    -webkit-font-smoothing:antialiased;
+  }
+  body { font-weight: 300; }
+
+  /* Slide container */
+  .deck {
+    position: fixed; inset: 0;
+    overflow: hidden;
+  }
+  .slide {
+    position: absolute; inset: 0;
+    background: var(--bg);
+    padding: 56px 72px;
+    display: none;
+    opacity: 0;
+    transition: opacity .4s ease;
+    overflow: auto;
+  }
+  .slide.active { display: flex; opacity: 1; flex-direction: column; }
+
+  /* Tron grid background */
+  .slide::before {
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(0,184,255,.08), transparent 60%),
+      linear-gradient(0deg, transparent 90%, rgba(0,184,255,.04) 100%);
+  }
+  .slide::after {
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background-image:
+      linear-gradient(rgba(0,184,255,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,184,255,.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+  }
+  .slide > * { position: relative; z-index: 1; }
+
+  /* Slide chrome */
+  .chrome-top {
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom: 32px;
+  }
+  .brand {
+    font-family: var(--font-tech);
+    font-size: 11px; letter-spacing: 0.32em;
+    color: var(--blue);
+    font-weight: 700;
+  }
+  .brand .a { color: var(--orange); }
+  .page-num {
+    font-family: var(--font-tech);
+    font-size: 11px; letter-spacing: 0.2em;
+    color: var(--mute);
+  }
+
+  /* Section header */
+  .section-num {
+    font-family: var(--font-tech);
+    font-size: 14px; font-weight: 800;
+    letter-spacing: 0.28em;
+    color: var(--blue);
+    margin-bottom: 8px;
+    text-shadow: 0 0 16px rgba(0,184,255,.6);
+  }
+  .section-en {
+    font-family: var(--font-tech);
+    font-size: 11px; letter-spacing: 0.32em;
+    color: var(--mute);
+    margin-bottom: 32px;
+    text-transform: uppercase;
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-size: 64px; font-weight: 800;
+    line-height: 1.05; letter-spacing: -0.02em;
+    margin-bottom: 24px;
+  }
+  h1 .grad {
+    background: linear-gradient(135deg, var(--blue) 0%, var(--orange) 100%);
+    -webkit-background-clip: text; background-clip: text;
+    color: transparent;
+  }
+  h2 {
+    font-family: var(--font-display);
+    font-size: 40px; font-weight: 800;
+    line-height: 1.1; letter-spacing: -0.01em;
+    margin-bottom: 22px;
+  }
+  h3 {
+    font-family: var(--font-display);
+    font-size: 22px; font-weight: 700;
+    color: var(--txt);
+    margin-bottom: 12px;
+  }
+  p { font-size: 16px; line-height: 1.7; color: var(--gray); }
+  p.lead { font-size: 19px; color: var(--txt); line-height: 1.6; }
+
+  /* COVER */
+  .cover {
+    justify-content: center; align-items: flex-start;
+    padding: 96px 96px;
+  }
+  .cover .alpha {
+    font-family: var(--font-display);
+    font-size: 220px; font-weight: 900; line-height: 0.85;
+    color: rgba(0,184,255,.08);
+    position: absolute;
+    bottom: -40px; right: 60px;
+    pointer-events: none;
+  }
+  .cover h1 { font-size: 88px; margin-bottom: 32px; }
+  .cover .subtitle {
+    font-family: var(--font-tech);
+    font-size: 20px; letter-spacing: 0.18em;
+    color: var(--blue); margin-bottom: 24px;
+    text-shadow: 0 0 16px rgba(0,184,255,.5);
+  }
+  .cover .tagline {
+    font-size: 22px; color: var(--gray); max-width: 720px;
+    line-height: 1.6;
+  }
+  .cover .meta {
+    position: absolute; bottom: 56px; left: 96px; right: 96px;
+    display: flex; justify-content: space-between; align-items: flex-end;
+    font-family: var(--font-tech);
+    font-size: 11px; letter-spacing: 0.18em;
+    color: var(--mute); text-transform: uppercase;
+  }
+  .cover .meta b { color: var(--blue); font-weight: 700; }
+
+  /* TOC */
+  .toc-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px 32px;
+    flex: 1; align-content: flex-start;
+  }
+  .toc-item {
+    display: flex; align-items: center;
+    gap: 18px;
+    padding: 14px 20px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--blue);
+    transition: all .2s;
+    cursor: pointer;
+  }
+  .toc-item:hover {
+    border-color: var(--blue);
+    background: rgba(0,184,255,.06);
+    transform: translateX(4px);
+  }
+  .toc-num {
+    font-family: var(--font-tech);
+    font-size: 22px; font-weight: 800;
+    color: var(--blue);
+    min-width: 36px;
+  }
+  .toc-text { flex: 1; }
+  .toc-name {
+    font-size: 15px; font-weight: 600; color: var(--txt);
+  }
+  .toc-desc {
+    font-size: 12px; color: var(--mute);
+    margin-top: 2px; letter-spacing: 0.04em;
+  }
+
+  /* Generic 2-col layout */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    flex: 1; align-items: center;
+  }
+  .three-col {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+  .four-col {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    padding: 24px 22px;
+    transition: all .25s;
+    display: flex; flex-direction: column;
+  }
+  .card:hover {
+    border-color: var(--blue);
+    background: rgba(0,184,255,.05);
+    box-shadow: 0 0 24px rgba(0,184,255,.15);
+  }
+  .card.featured {
+    border-color: var(--blue);
+    background: rgba(0,184,255,.08);
+  }
+  .card .num {
+    font-family: var(--font-tech);
+    font-size: 11px; font-weight: 800;
+    letter-spacing: 0.28em;
+    color: var(--blue); margin-bottom: 10px;
+  }
+  .card.orange-accent .num { color: var(--orange); }
+  .card.orange-accent { border-left: 3px solid var(--orange); }
+  .card h4 {
+    font-size: 17px; font-weight: 700;
+    color: var(--txt); margin-bottom: 8px;
+  }
+  .card p {
+    font-size: 13.5px; line-height: 1.6;
+    color: var(--gray);
+  }
+
+  /* Table */
+  .pretty-table {
+    width: 100%; border-collapse: collapse;
+    margin-top: 16px;
+    font-size: 14px;
+  }
+  .pretty-table th {
+    text-align: left;
+    padding: 14px 18px;
+    background: var(--card);
+    color: var(--blue);
+    font-family: var(--font-tech);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--blue);
+  }
+  .pretty-table td {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--line);
+    color: var(--gray);
+    vertical-align: top;
+  }
+  .pretty-table tr:hover td {
+    background: rgba(0,184,255,.04);
+    color: var(--txt);
+  }
+  .pretty-table .accent { color: var(--blue); font-weight: 600; }
+  .pretty-table .accent-o { color: var(--orange); font-weight: 600; }
+
+  /* Stats row */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin: 20px 0;
+  }
+  .stat-box {
+    padding: 18px 20px;
+    background: rgba(0,184,255,.04);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--blue);
+  }
+  .stat-box .v {
+    font-family: var(--font-display);
+    font-size: 32px; font-weight: 900;
+    color: var(--blue);
+    line-height: 1; margin-bottom: 6px;
+  }
+  .stat-box .l {
+    font-family: var(--font-tech);
+    font-size: 10px; letter-spacing: 0.22em;
+    color: var(--mute); text-transform: uppercase;
+  }
+
+  /* Embed iframe (3D animation) */
+  .embed-wrap {
+    flex: 1; min-height: 320px;
+    background: #050810;
+    border: 1px solid var(--blue);
+    box-shadow: 0 0 32px rgba(0,184,255,.2);
+    margin-top: 16px;
+    overflow: hidden; position: relative;
+  }
+  .embed-wrap iframe { width: 100%; height: 100%; border: 0; }
+
+  /* Bullet list */
+  ul.feat-list { list-style: none; }
+  ul.feat-list li {
+    padding: 10px 0 10px 26px;
+    position: relative;
+    font-size: 15px; color: var(--gray);
+    line-height: 1.6;
+  }
+  ul.feat-list li::before {
+    content: '▸'; position: absolute;
+    left: 4px; top: 10px;
+    color: var(--blue);
+  }
+  ul.feat-list li b { color: var(--txt); font-weight: 600; }
+
+  /* Navigation */
+  .nav-controls {
+    position: fixed; bottom: 20px; left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    display: flex; align-items: center; gap: 16px;
+    background: rgba(5,8,16,.85);
+    border: 1px solid var(--line);
+    padding: 8px 18px;
+    backdrop-filter: blur(12px);
+  }
+  .nav-btn {
+    background: transparent;
+    border: 1px solid var(--blue);
+    color: var(--blue);
+    width: 32px; height: 32px;
+    cursor: pointer;
+    font-family: var(--font-tech);
+    transition: all .2s;
+    border-radius: 2px;
+  }
+  .nav-btn:hover {
+    background: var(--blue);
+    color: var(--bg);
+    box-shadow: 0 0 14px rgba(0,184,255,.5);
+  }
+  .nav-counter {
+    font-family: var(--font-tech);
+    font-size: 12px;
+    color: var(--gray);
+    letter-spacing: 0.2em;
+    min-width: 64px; text-align: center;
+  }
+  .nav-counter b { color: var(--blue); }
+
+  /* Mobile */
+  @media (max-width: 900px) {
+    .slide { padding: 32px 24px; }
+    h1 { font-size: 40px; }
+    h2 { font-size: 28px; }
+    h3 { font-size: 18px; }
+    p { font-size: 14px; }
+    .cover .alpha { font-size: 120px; }
+    .cover h1 { font-size: 44px; }
+    .cover .subtitle { font-size: 14px; }
+    .cover .tagline { font-size: 15px; }
+    .cover .meta { left: 24px; right: 24px; bottom: 24px; font-size: 9px; }
+    .two-col, .three-col, .four-col, .toc-grid {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .pretty-table { font-size: 12px; }
+    .pretty-table th, .pretty-table td { padding: 10px 12px; }
+    .embed-wrap { min-height: 220px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ============= 01: COVER ============= -->
+  <section class="slide cover active">
+    <div class="alpha">α</div>
+    <div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div>
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center;">
+      <div class="subtitle">CRAYXUS AI·GP CURRICULUM</div>
+      <h1>K12 AI 自动驾驶<br><span class="grad">学校合作版</span></h1>
+      <p class="tagline">中国首个面向 K12 的 AI 自动驾驶赛事教育系统。从硬件搭建到自然语言驾驶,孩子在真实赛场训练比自己更快的 AI。</p>
+    </div>
+    <div class="meta">
+      <div>EDITION · <b>2026 SCHOOL</b></div>
+      <div>ZJU × CRAYXUS × ZTMOTOR</div>
+      <div>VER. <b>1.0</b></div>
+    </div>
+  </section>
+
+  <!-- ============= 02: CONTENTS ============= -->
+  <section class="slide">
+    <div class="chrome-top">
+      <div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div>
+      <div class="page-num">CONTENTS · 目录</div>
+    </div>
+    <h2 style="margin-bottom:32px;">10 个章节，<span style="background:linear-gradient(135deg,var(--blue),var(--orange));-webkit-background-clip:text;background-clip:text;color:transparent;">完整学校落地路径</span></h2>
+    <div class="toc-grid">
+      <div class="toc-item" onclick="goto(2)"><div class="toc-num">01</div><div class="toc-text"><div class="toc-name">品牌理念与核心价值</div><div class="toc-desc">BRAND PHILOSOPHY · 我们是什么</div></div></div>
+      <div class="toc-item" onclick="goto(4)"><div class="toc-num">02</div><div class="toc-text"><div class="toc-name">学习目标与阶段成果</div><div class="toc-desc">LEARNING OBJECTIVES · 9-12 年级路径</div></div></div>
+      <div class="toc-item" onclick="goto(6)"><div class="toc-num">03</div><div class="toc-text"><div class="toc-name">核心 PBL 项目模块</div><div class="toc-desc">CORE PBL · 5 大模块</div></div></div>
+      <div class="toc-item" onclick="goto(8)"><div class="toc-num">04</div><div class="toc-text"><div class="toc-name">OMO 教学模式</div><div class="toc-desc">ONLINE × OFFLINE · 云端 + 本校</div></div></div>
+      <div class="toc-item" onclick="goto(10)"><div class="toc-num">05</div><div class="toc-text"><div class="toc-name">设备与空间清单</div><div class="toc-desc">HARDWARE · 硬件 + 场地</div></div></div>
+      <div class="toc-item" onclick="goto(12)"><div class="toc-num">06</div><div class="toc-text"><div class="toc-name">课程与教学支持</div><div class="toc-desc">CURRICULUM · 课程 + 教师培训</div></div></div>
+      <div class="toc-item" onclick="goto(13)"><div class="toc-num">07</div><div class="toc-text"><div class="toc-name">典型落地成果</div><div class="toc-desc">CASE STUDIES · 学校案例</div></div></div>
+      <div class="toc-item" onclick="goto(14)"><div class="toc-num">08</div><div class="toc-text"><div class="toc-name">服务团队背景</div><div class="toc-desc">TEAM · 浙大 × Crayxus × ZT</div></div></div>
+      <div class="toc-item" onclick="goto(15)"><div class="toc-num">09</div><div class="toc-text"><div class="toc-name">实施流程与体系</div><div class="toc-desc">PROCESS · 6 步落地</div></div></div>
+      <div class="toc-item" onclick="goto(16)"><div class="toc-num">10</div><div class="toc-text"><div class="toc-name">价格体系与服务范围</div><div class="toc-desc">PRICING · 三档套餐</div></div></div>
+    </div>
+  </section>
+
+  <!-- ============= 03: 01·品牌理念 — Why AI·GP ============= -->
+  <section class="slide">
+    <div class="chrome-top">
+      <div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div>
+      <div class="page-num">01 · BRAND PHILOSOPHY</div>
+    </div>
+    <div class="section-num">01 · 品牌理念与核心价值</div>
+    <div class="section-en">BRAND PHILOSOPHY</div>
+    <h2>我们不是积木,我们是 <span style="color:var(--blue);">AI 赛场</span></h2>
+    <div class="three-col" style="margin-top:32px;">
+      <div class="card orange-accent">
+        <div class="num">NOT THIS</div>
+        <h4>不是遥控车玩具</h4>
+        <p>市面 STEM 套件多停在「按遥控器跑」。Crayxus AI·GP 砍掉遥控器 — 学生写算法、调参数、训练 AI,让车自己跑赢。</p>
+      </div>
+      <div class="card orange-accent">
+        <div class="num">NOT THIS</div>
+        <h4>不是只玩软件</h4>
+        <p>纯软件 AI 课程脱离物理世界。我们用真实赛车 + 真实赛道,让 AI 决策有看得见的后果 — 撞墙、超车、夺冠。</p>
+      </div>
+      <div class="card featured">
+        <div class="num" style="color:var(--blue);">THIS IS US</div>
+        <h4>真实赛场 + 完整 AI 闭环</h4>
+        <p>透明 F1 + 自组装赛道 + 多车竞速 + AI Tune 三种调参模式。从感知、决策、控制到比赛,一套系统贯穿到底。</p>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:32px; max-width:900px;">
+      <b style="color:var(--blue);">设计哲学:</b> AI 不该取代孩子,而该让孩子升级成「能训练 AI 的人」。每一个 Crayxus 学员都拥有自己的 Jarvis,从九年级开始。
+    </p>
+  </section>
+
+  <!-- ============= 04: 01·品牌理念 — 课标对应 ============= -->
+  <section class="slide">
+    <div class="chrome-top">
+      <div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div>
+      <div class="page-num">01 · CURRICULUM ALIGNMENT</div>
+    </div>
+    <div class="section-num">01 · 品牌理念与核心价值</div>
+    <div class="section-en">CURRICULUM STANDARDS ALIGNMENT</div>
+    <h2>对标国内外课标 —— <span style="color:var(--blue);">直接进校</span></h2>
+    <table class="pretty-table">
+      <thead>
+        <tr>
+          <th>课标 / 框架</th>
+          <th>对应要求</th>
+          <th>AI·GP 切入</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="accent">教育部加强中小学 AI 教育 (2024)</td>
+          <td>2030 前全面普及中小学 AI 教育,小学重感知,中学重应用与创造</td>
+          <td>AI 赛车感知 + Smart Tile 自组装 + Vibe Coding 创造性应用</td>
+        </tr>
+        <tr>
+          <td class="accent">中小学 AI 通识教育指南 (2025)</td>
+          <td>普及 AI 工作原理 / 应用场景 / 协作能力</td>
+          <td>分阶段课程包含模型训练、UI 调参、自然语言驾驶三种 AI 协作方式</td>
+        </tr>
+        <tr>
+          <td class="accent">信息科技课程标准 (2022)</td>
+          <td>数据、算法、网络、信息处理四大主题</td>
+          <td>UWB 数据采集 + 路径规划算法 + 多车联网 + Vibe Coding 信息处理</td>
+        </tr>
+        <tr>
+          <td class="accent-o">AI4K12 (美国)</td>
+          <td>Perception · Reasoning · Representation · Natural Interaction · Societal Impact</td>
+          <td>5 大支柱我们全覆盖,自然交互(Vibe Coding) 是亮点</td>
+        </tr>
+        <tr>
+          <td class="accent-o">IB MYP Design / NGSS</td>
+          <td>设计循环 · 工程实践 · 项目式学习</td>
+          <td>AI Tune 拖参数 = 完整设计循环,可直接作为 MYP Design Project</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============= 05: 02·学习目标 ============= -->
+  <section class="slide">
+    <div class="chrome-top">
+      <div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div>
+      <div class="page-num">02 · LEARNING OBJECTIVES</div>
+    </div>
+    <div class="section-num">02 · 学习目标与阶段成果</div>
+    <div class="section-en">LEARNING OBJECTIVES</div>
+    <h2>分阶段递进 —— <span style="color:var(--blue);">9-12 年级</span> 连续四年课程</h2>
+    <table class="pretty-table">
+      <thead>
+        <tr>
+          <th>阶段</th>
+          <th>年级</th>
+          <th>学习站位</th>
+          <th>核心模块</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="accent">第一阶段</td>
+          <td>9 年级</td>
+          <td>硬件搭建 + 基础编程</td>
+          <td>AI 赛车组装 + Smart Tile 拼装 + Arduino/Python 入门</td>
+        </tr>
+        <tr>
+          <td class="accent">第二阶段</td>
+          <td>10 年级</td>
+          <td>感知 + UI 调参</td>
+          <td>UWB 定位 / 视觉融合 / AI Tune Mode 01 拖动调参</td>
+        </tr>
+        <tr>
+          <td class="accent">第三阶段</td>
+          <td>11 年级</td>
+          <td>算法 + 决策</td>
+          <td>路径规划 / 避障 / 多车决策 / Vibe Coding Mode 02 自然语言</td>
+        </tr>
+        <tr>
+          <td class="accent-o">第四阶段</td>
+          <td>12 年级</td>
+          <td>系统集成 + 竞赛</td>
+          <td>校际赛、AI 教练对话、Capstone 项目、个人 AI 训练 portfolio</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top:24px; font-size:13px; color:var(--mute); font-family:var(--font-tech); letter-spacing:0.12em;">▸ 每阶段交付物: 可演示作品 + 数据记录 + 技术文档 (适合 EPQ/IPQ/Capstone 直接用)</p>
+  </section>
+
+  <!-- ============= 06: 02·学习目标 — 能力地图 ============= -->
+  <section class="slide">
+    <div class="chrome-top">
+      <div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div>
+      <div class="page-num">02 · COMPETENCY MAP</div>
+    </div>
+    <div class="section-num">02 · 学习目标与阶段成果</div>
+    <div class="section-en">FOUR-YEAR COMPETENCY MAP</div>
+    <h2>4 维能力 · <span style="color:var(--blue);">9 → 12 年级</span></h2>
+    <table class="pretty-table" style="margin-top:8px;">
+      <thead>
+        <tr>
+          <th>能力维度</th>
+          <th>9 年级</th>
+          <th>10 年级</th>
+          <th>11 年级</th>
+          <th>12 年级</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="accent">编程能力</td>
+          <td>Arduino · Python 基础</td>
+          <td>Python + 数据可视化</td>
+          <td>ROS 2 · MicroPython</td>
+          <td>Multi-Agent 系统</td>
+        </tr>
+        <tr>
+          <td class="accent">AI 能力</td>
+          <td>规则判断 / 简单分类</td>
+          <td>目标检测 / 路径优化</td>
+          <td>LLM Prompt · Vibe Coding</td>
+          <td>AI Agent / 多模态决策</td>
+        </tr>
+        <tr>
+          <td class="accent-o">硬件能力</td>
+          <td>电路 / 焊接 / 3D 打印</td>
+          <td>IMU · UWB · 电机控制</td>
+          <td>SLAM · 视觉融合</td>
+          <td>系统集成 / 整车设计</td>
+        </tr>
+        <tr>
+          <td class="accent-o">项目能力</td>
+          <td>小作品搭建</td>
+          <td>主题项目</td>
+          <td>跨学科 PBL</td>
+          <td>团队 Capstone / 比赛</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============= 07: 03·核心 PBL 模块 ============= -->
+  <section class="slide">
+    <div class="chrome-top">
+      <div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div>
+      <div class="page-num">03 · CORE PBL MODULES</div>
+    </div>
+    <div class="section-num">03 · 核心 PBL 项目模块</div>
+    <div class="section-en">CORE PBL MODULES</div>
+    <h2>5 大核心模块,<span style="color:var(--blue);">从硬件到 AI 闭环</span></h2>
+    <div class="three-col" style="margin-top:18px;">
+      <div class="card">
+        <div class="num">MODULE 01</div>
+        <h4>AI 赛车搭建</h4>
+        <p>透明发光 F1 单座 + ESP32-S3 + IMU + INA + UWB + 升压 + 舵机 + H 桥。学生亲手组装一台能跑的 AI 赛车,认识每个模组的作用。</p>
+      </div>
+      <div class="card">
+        <div class="num">MODULE 02</div>
+        <h4>Smart Tile 智能赛道</h4>
+        <p>30×30 cm 模块化智能砖,自带电池、电机、电磁吸合。多砖软件控制自组装成直线/椭圆/S 弯。展现"自主硬件"概念。</p>
+      </div>
+      <div class="card">
+        <div class="num">MODULE 03</div>
+        <h4>AI Tune · UI 调参</h4>
+        <p>真实 Track 5 赛道,8 个 Waypoint 拖动定义过弯线,实时撞墙检测、圈速反馈。这是工程师视角的 AI 决策入门。</p>
+      </div>
+      <div class="card orange-accent">
+        <div class="num">MODULE 04</div>
+        <h4>Vibe Coding · 自然语言驾驶</h4>
+        <p>「WP3 往右 0.5 米」「让车跑一圈」 — Crayxus AI 解析自然语言直接发车。学生体验 LLM × Robotics 的最前沿。</p>
+      </div>
+      <div class="card orange-accent">
+        <div class="num">MODULE 05</div>
+        <h4>多车竞速 · 赛事系统</h4>
+        <p>4-8 台 AI 车同场竞速,实时避碰、动态调度、F1+NBA 三级积分制。从单车训练到联盟对决,完整赛事体验。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= 08: 03·PBL · 现场演示 AI Car ============= -->
+  <section class="slide">
+    <div class="chrome-top">
+      <div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div>
+      <div class="page-num">03 · LIVE DEMO · AI CAR</div>
+    </div>
+    <div class="section-num">03 · 核心 PBL 项目模块</div>
+    <div class="section-en">LIVE 3D EXPLODED VIEW · AI CAR</div>
+    <h2>AI 赛车 · <span style="color:var(--blue);">透明结构 + AI 模组</span></h2>
+    <p class="lead" style="margin-bottom:8px;">下方可交互 3D 分解视图。展示给老师/家长时直观,学生学时一眼看清每个传感器位置。</p>
+    <div class="embed-wrap">
+      <iframe src="alphacar-explode.html" loading="lazy"></iframe>
+    </div>
+  </section>
+
+  <!-- ============= 09: 04·OMO 教学模式 ============= -->
+  <section class="slide">
+    <div class="chrome-top">
+      <div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div>
+      <div class="page-num">04 · OMO TEACHING MODE</div>
+    </div>
+    <div class="section-num">04 · OMO 教学模式</div>
+    <div class="section-en">ONLINE + OFFLINE FUSION</div>
+    <h2>线上 + 线下 · <span style="color:var(--blue);">一套系统,两种场景</span></h2>
+    <div class="two-col" style="margin-top:24px;">
+      <div class="card featured" style="padding:32px;">
+        <div class="num" style="font-size:13px;">OFFLINE · 校内</div>
+        <h4 style="font-size:22px; margin-bottom:18px;">本校训练场</h4>
+        <ul class="feat-list">
+          <li><b>4-8 台 AI 赛车</b> · 实体硬件训练</li>
+          <li><b>12-24 块 Smart Tile</b> · 自组装赛道</li>
+          <li><b>UWB 三基站定位</b> · 厘米级精度</li>
+          <li><b>多机位直播</b> · 6 路 F1 级转播架</li>
+          <li><b>课后社团 / 兴趣班 / 课程班</b> 三种形态</li>
+        </ul>
+      </div>
+      <div class="card" style="padding:32px; border-color:var(--orange); border-left:3px solid var(--orange);">
+        <div class="num" style="color:var(--orange); font-size:13px;">ONLINE · 云端</div>
+        <h4 style="font-size:22px; margin-bottom:18px;">Crayxus 云端联盟</h4>
+        <ul class="feat-list">
+          <li><b>跨校赛事</b> · 学校之间 AI 远程对决</li>
+          <li><b>AI 教练对话</b> · LLM 实时答疑</li>
+          <li><b>训练 leaderboard</b> · 全国学校排行</li>
+          <li><b>课程视频库</b> · 老师远程学习</li>
+          <li><b>Crayxus Lab 远程指导</b> · 浙大团队答疑</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= 10: 05·设备清单 ============= -->
+  <section class="slide">
+    <div class="chrome-top">
+      <div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div>
+      <div class="page-num">05 · EQUIPMENT</div>
+    </div>
+    <div class="section-num">05 · 设备与空间清单</div>
+    <div class="section-en">HARDWARE & SPACE</div>
+    <h2>标准教室配置 <span style="color:var(--mute); font-size:24px;">/ 30 人一班</span></h2>
+    <div class="stats-row" style="margin: 20px 0 24px;">
+      <div class="stat-box"><div class="v">10×5m</div><div class="l">室内场地</div></div>
+      <div class="stat-box"><div class="v">8</div><div class="l">AI 赛车</div></div>
+      <div class="stat-box"><div class="v">24</div><div class="l">Smart Tile</div></div>
+      <div class="stat-box"><div class="v">3</div><div class="l">UWB 基站</div></div>
+    </div>
+    <table class="pretty-table">
+      <thead>
+        <tr><th>类别</th><th>设备</th><th>数量</th><th>说明</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="accent">赛车</td><td>透明发光 F1 AI 赛车</td><td>8 台</td><td>含 ESP32-S3 / IMU / INA / UWB / 升压 / 舵机 / 电池</td></tr>
+        <tr><td class="accent">赛道</td><td>Smart Tile 智能砖 30×30 cm</td><td>24 块</td><td>自带电池电机,软件控制自组装</td></tr>
+        <tr><td class="accent">定位</td><td>蓝点 TWR-30 UWB 基站</td><td>3 套</td><td>厘米级室内定位,标定 10×5 m</td></tr>
+        <tr><td class="accent-o">显示</td><td>大屏 / 投影 + 6 机位转播</td><td>1 套</td><td>用于赛事直播 / 课堂演示</td></tr>
+        <tr><td class="accent-o">学生端</td><td>iPad / Chromebook (学校自备)</td><td>30 台</td><td>跑 Crayxus 小程序 + Vibe Coding 界面</td></tr>
+        <tr><td>耗材</td><td>3D 打印滤芯 / 电池 / 维修包</td><td>年用量</td><td>Crayxus 按学期补给,本地物流</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============= 11: 05·空间布局图 ============= -->
+  <section class="slide">
+    <div class="chrome-top">
+      <div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div>
+      <div class="page-num">05 · SPACE LAYOUT</div>
+    </div>
+    <div class="section-num">05 · 设备与空间清单</div>
+    <div class="section-en">CLASSROOM SPACE LAYOUT</div>
+    <h2>10×5m 室内训练场 · <span style="color:var(--blue);">三区一体</span></h2>
+    <div style="flex:1; display:flex; align-items:center; justify-content:center; margin-top:20px;">
+      <svg viewBox="0 0 600 320" style="width:100%; max-width:800px; height:auto;">
+        <defs>
+          <pattern id="gridB" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(0,184,255,.18)" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+        <rect x="20" y="20" width="560" height="280" fill="url(#gridB)" stroke="#00b8ff" stroke-width="2"/>
+        <!-- Track zone -->
+        <rect x="60" y="60" width="340" height="200" fill="rgba(0,184,255,.04)" stroke="#00b8ff" stroke-width="1.5" stroke-dasharray="6 4"/>
+        <text x="230" y="160" text-anchor="middle" fill="#00b8ff" font-family="Inter" font-size="14" font-weight="700">TRACK ZONE · 赛道区</text>
+        <text x="230" y="180" text-anchor="middle" fill="#8da2bd" font-size="11">12-24 块 Smart Tile 自由拼接</text>
+        <!-- UWB anchors -->
+        <circle cx="60" cy="60" r="6" fill="#ff8800"/>
+        <circle cx="400" cy="60" r="6" fill="#ff8800"/>
+        <circle cx="230" cy="260" r="6" fill="#ff8800"/>
+        <text x="65" y="50" fill="#ff8800" font-size="10" font-family="JetBrains Mono">A0</text>
+        <text x="405" y="50" fill="#ff8800" font-size="10" font-family="JetBrains Mono">A1</text>
+        <text x="225" y="278" fill="#ff8800" font-size="10" font-family="JetBrains Mono">A2</text>
+        <!-- Pit zone -->
+        <rect x="420" y="60" width="160" height="100" fill="rgba(255,136,0,.05)" stroke="#ff8800" stroke-width="1.5"/>
+        <text x="500" y="105" text-anchor="middle" fill="#ff8800" font-size="13" font-weight="700">PIT · 维修区</text>
+        <text x="500" y="125" text-anchor="middle" fill="#8da2bd" font-size="10">充电桩 + 3D 打印</text>
+        <!-- Spectator zone -->
+        <rect x="420" y="180" width="160" height="80" fill="rgba(0,255,157,.04)" stroke="#00ff9c" stroke-width="1.5"/>
+        <text x="500" y="215" text-anchor="middle" fill="#00ff9c" font-size="13" font-weight="700">PADDOCK · 操作区</text>
+        <text x="500" y="232" text-anchor="middle" fill="#8da2bd" font-size="10">学生 iPad 控制台</text>
+        <!-- Dimensions -->
+        <text x="300" y="15" text-anchor="middle" fill="#5a6e8e" font-family="JetBrains Mono" font-size="11">10 m</text>
+        <text x="10" y="160" text-anchor="middle" fill="#5a6e8e" font-family="JetBrains Mono" font-size="11" transform="rotate(-90, 10, 160)">5 m</text>
+      </svg>
+    </div>
+    <p style="text-align:center; color:var(--mute); font-size:12px; font-family:var(--font-tech); letter-spacing:0.18em; margin-top:12px;">▸ UWB 三基站 A0/A1/A2 标定后,赛道区任意位置均能厘米级定位</p>
+  </section>
+
+  <!-- ============= 12: 06·课程与教学支持 ============= -->
+  <section class="slide">
+    <div class="chrome-top">
+      <div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div>
+      <div class="page-num">06 · CURRICULUM SUPPORT</div>
+    </div>
+    <div class="section-num">06 · 课程与教学支持</div>
+    <div class="section-en">CURRICULUM & TEACHER SUPPORT</div>
+    <h2>不是给一堆器材就完事 —— <span style="color:var(--blue);">课程 · 教师 · 答疑</span> 全套</h2>
+    <div class="four-col" style="margin-top:20px;">
+      <div class="card">
+        <div class="num">A</div>
+        <h4>40 课时教案</h4>
+        <p>每学期完整教案,每节课含 PPT、视频、学生工作纸、评估标准。9-12 年级各 4 学期版本。</p>
+      </div>
+      <div class="card">
+        <div class="num">B</div>
+        <h4>教师培训 3 天</h4>
+        <p>赛事季前一周线下/线上工作坊,Crayxus + 浙大团队联合培训。考核通过发证。</p>
+      </div>
+      <div class="card">
+        <div class="num">C</div>
+        <h4>课程材料包</h4>
+        <p>STL 文件、Arduino 代码、Python 模板、Vibe Coding prompt 库,持续更新版本。</p>
+      </div>
+      <div class="card orange-accent">
+        <div class="num">D</div>
+        <h4>远程答疑通道</h4>
+        <p>专属企业微信群 + 每周 Office Hour 视频。技术问题 24h 响应,Crayxus Lab 浙大博士直接对接。</p>
+      </div>
+    </div>
+    <p style="margin-top:28px; color:var(--gray); font-size:15px; line-height:1.7;">
+      <b style="color:var(--blue);">学校老师反馈最关心的:</b> "我们的物理/信息老师没学过 AI 怎么办?" — Crayxus 培训不要求老师懂 AI,只要会基础编程。一周入门,一学期上手,两学期开自有项目。
+    </p>
+  </section>
+
+  <!-- ============= 13: 07·典型成果 ============= -->
+  <section class="slide">
+    <div class="chrome-top">
+      <div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div>
+      <div class="page-num">07 · CASE STUDIES</div>
+    </div>
+    <div class="section-num">07 · 典型落地成果</div>
+    <div class="section-en">CASE STUDIES · EARLY PARTNERS</div>
+    <h2>首批合作目标学校 · <span style="color:var(--blue);">2026 暑假窗口</span></h2>
+    <div class="three-col" style="margin-top:24px;">
+      <div class="card featured">
+        <div class="num">案例 01 · 杭州试点</div>
+        <h4>K12 国际学校</h4>
+        <p>2026 Q2 启动,Crayxus AI·GP 进入 9-10 年级选修课,首批 30 名学生。学期末校内赛事,选拔代表队参加首届杭州站。</p>
+      </div>
+      <div class="card">
+        <div class="num">案例 02 · 公立重点</div>
+        <h4>课后服务 / 兴趣班</h4>
+        <p>对接杭州市教育局课后服务名录,3 所重点中学试点。学生作品入选省级科创竞赛,推送至高校自主招生通道。</p>
+      </div>
+      <div class="card orange-accent">
+        <div class="num">案例 03 · 海外学校</h4>
+        <h4>IB · A-Level · MYP</h4>
+        <p>Crayxus AI·GP 直接挂钩 MYP Design / IB CAS / EPQ。海外名校招生官认可,作品可写入大学申请 Common App。</p>
+      </div>
+    </div>
+    <div class="stats-row" style="margin-top:36px;">
+      <div class="stat-box"><div class="v">3-5</div><div class="l">首批合作校</div></div>
+      <div class="stat-box"><div class="v">200+</div><div class="l">学员目标</div></div>
+      <div class="stat-box"><div class="v">2026.07</div><div class="l">首届杭州赛</div></div>
+      <div class="stat-box"><div class="v">∞</div><div class="l">参赛形态</div></div>
+    </div>
+  </section>
+
+  <!-- ============= 14: 08·服务团队 ============= -->
+  <section class="slide">
+    <div class="chrome-top">
+      <div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div>
+      <div class="page-num">08 · TEAM</div>
+    </div>
+    <div class="section-num">08 · 服务团队背景</div>
+    <div class="section-en">ACADEMIC × PRODUCT × MANUFACTURING</div>
+    <h2>中国顶级铁三角 —— <span style="color:var(--blue);">学术 · 产品 · 制造</span></h2>
+    <div class="three-col" style="margin-top:24px;">
+      <div class="card">
+        <div class="num">ACADEMIC</div>
+        <h4>浙江大学<br>张旭光 AI 团队</h4>
+        <ul class="feat-list" style="margin-top:8px;">
+          <li>15+ 核心论文 / 专利</li>
+          <li>多传感器融合 + SLAM 算法</li>
+          <li>自动驾驶决策模型(MPC + RL)</li>
+          <li>博士与研究生团队深度参与</li>
+        </ul>
+      </div>
+      <div class="card featured">
+        <div class="num" style="color:var(--blue);">PRODUCT · IP</div>
+        <h4>Crayxus AI<br>产品定义 + 教学</h4>
+        <ul class="feat-list" style="margin-top:8px;">
+          <li>32+ 发明专利已布局</li>
+          <li>K12 课程体系 + OMO 平台</li>
+          <li>TRON 视觉美学与品牌资产</li>
+          <li>赛事系统 + 云端联盟运营</li>
+        </ul>
+      </div>
+      <div class="card orange-accent">
+        <div class="num">MANUFACTURING</div>
+        <h4>ZTMotor<br>中天模型制造</h4>
+        <ul class="feat-list" style="margin-top:8px;">
+          <li>10 年+ 模型车产业经验</li>
+          <li>浙江本土成熟产线</li>
+          <li>F1 单座车体 OEM 量产</li>
+          <li>本土供应链,品控可追溯</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============= 15: 09·实施流程 ============= -->
+  <section class="slide">
+    <div class="chrome-top">
+      <div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div>
+      <div class="page-num">09 · IMPLEMENTATION</div>
+    </div>
+    <div class="section-num">09 · 实施流程与服务体系</div>
+    <div class="section-en">90-DAY ROLLOUT</div>
+    <h2>6 步落地 · <span style="color:var(--blue);">90 天</span> 从签约到首场赛事</h2>
+    <div style="display:grid; grid-template-columns:repeat(6,1fr); gap:8px; margin-top:24px; align-items:stretch;">
+      <div class="card" style="text-align:center; padding:20px 12px;">
+        <div class="num">D 0-7</div>
+        <h4 style="font-size:14px;">需求评估</h4>
+        <p style="font-size:11.5px;">校方对接 / 实地踏勘 / 教师摸底</p>
+      </div>
+      <div class="card" style="text-align:center; padding:20px 12px;">
+        <div class="num">D 8-21</div>
+        <h4 style="font-size:14px;">方案定制</h4>
+        <p style="font-size:11.5px;">课程版本 / 套餐选型 / 时间表</p>
+      </div>
+      <div class="card" style="text-align:center; padding:20px 12px;">
+        <div class="num">D 22-45</div>
+        <h4 style="font-size:14px;">设备到位</h4>
+        <p style="font-size:11.5px;">硬件运输 / 调试 / UWB 标定</p>
+      </div>
+      <div class="card featured" style="text-align:center; padding:20px 12px;">
+        <div class="num" style="color:var(--blue);">D 46-60</div>
+        <h4 style="font-size:14px;">教师培训</h4>
+        <p style="font-size:11.5px;">3 天工作坊 + 考核 + 发证</p>
+      </div>
+      <div class="card" style="text-align:center; padding:20px 12px;">
+        <div class="num">D 61-80</div>
+        <h4 style="font-size:14px;">课程启动</h4>
+        <p style="font-size:11.5px;">首批学生入营 / 远程答疑开通</p>
+      </div>
+      <div class="card orange-accent" style="text-align:center; padding:20px 12px;">
+        <div class="num">D 81-90</div>
+        <h4 style="font-size:14px;">校内赛事</h4>
+        <p style="font-size:11.5px;">首场比赛 + 校内媒体宣发</p>
+      </div>
+    </div>
+    <p style="margin-top:32px; color:var(--gray); font-size:14px; line-height:1.7;">
+      <b style="color:var(--blue);">关键里程碑:</b> D45 设备到位 / D60 教师培训完成 / D90 首届校内赛 — 整个流程由 Crayxus 专属客户经理跟进,每周双方周会同步,任何环节延误 Crayxus 责任在线。
+    </p>
+  </section>
+
+  <!-- ============= 16: 10·价格体系 ============= -->
+  <section class="slide">
+    <div class="chrome-top">
+      <div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div>
+      <div class="page-num">10 · PRICING</div>
+    </div>
+    <div class="section-num">10 · 价格体系与服务范围</div>
+    <div class="section-en">PRICING TIERS</div>
+    <h2>三档套餐 · <span style="color:var(--blue);">按学校规模选</span></h2>
+    <div class="three-col" style="margin-top:24px;">
+      <div class="card" style="padding:32px 24px;">
+        <div class="num">TIER 1 · 入门</div>
+        <h4 style="font-size:24px; margin-bottom:6px;">兴趣社团版</h4>
+        <p style="color:var(--blue); font-size:14px; margin-bottom:14px;">¥ 价格协商 · 8 学生 / 学期</p>
+        <ul class="feat-list" style="font-size:13px;">
+          <li>2 台 AI 赛车 + 8 块 Smart Tile</li>
+          <li>1 套 UWB (单基站,小空间)</li>
+          <li>9-10 年级课程 1 学期</li>
+          <li>每月 2 次远程答疑</li>
+        </ul>
+      </div>
+      <div class="card featured" style="padding:32px 24px;">
+        <div class="num" style="color:var(--blue);">TIER 2 · 标准</div>
+        <h4 style="font-size:24px; margin-bottom:6px;">课程班版 ⭐</h4>
+        <p style="color:var(--blue); font-size:14px; margin-bottom:14px;">¥ 价格协商 · 30 学生 / 学年</p>
+        <ul class="feat-list" style="font-size:13px;">
+          <li>8 台 AI 赛车 + 24 块 Smart Tile</li>
+          <li>3 套 UWB (10×5 m 完整场地)</li>
+          <li>9-12 年级全年级课程</li>
+          <li>3 天教师培训 + 周答疑</li>
+          <li>每学期校内赛事 + 多机位直播</li>
+        </ul>
+      </div>
+      <div class="card orange-accent" style="padding:32px 24px;">
+        <div class="num">TIER 3 · 旗舰</div>
+        <h4 style="font-size:24px; margin-bottom:6px;">联盟基地版</h4>
+        <p style="color:var(--orange); font-size:14px; margin-bottom:14px;">¥ 价格协商 · 城市基地</p>
+        <ul class="feat-list" style="font-size:13px;">
+          <li>20 台 AI 赛车 + 48 块 Smart Tile</li>
+          <li>专业 UWB 阵列 + 6 机位转播</li>
+          <li>全部模块 + Vibe Coding 完整版</li>
+          <li>承办市级 / 省级 AI·GP 赛事</li>
+          <li>浙大 AI Lab 季度访校</li>
+        </ul>
+      </div>
+    </div>
+    <p style="margin-top:24px; text-align:center; color:var(--mute); font-size:12px; font-family:var(--font-tech); letter-spacing:0.2em;">
+      ▸ 具体价格按学校规模、地区、年度采购量定制 · 联系 GENERAL@CRAYXUS.COM.AU
+    </p>
+  </section>
+
+  <!-- ============= 17: CLOSING ============= -->
+  <section class="slide cover">
+    <div class="alpha">α</div>
+    <div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div>
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:center;">
+      <div class="subtitle">LET'S BUILD THE FUTURE TOGETHER</div>
+      <h1>让每个学生<br><span class="grad">拥有自己的 Jarvis</span></h1>
+      <p class="tagline" style="margin-bottom:32px;">从九年级第一个 ESP32 焊接,到十二年级 Capstone 多车 AI 决策。Crayxus AI·GP —— 中国第一个完整的 K12 AI 自动驾驶教育系统。</p>
+      <div style="font-family:var(--font-tech); font-size:14px; letter-spacing:0.22em; color:var(--blue);">
+        ▸ <a href="mailto:general@crayxus.com.au" style="color:var(--blue); text-decoration:none;">GENERAL@CRAYXUS.COM.AU</a>
+      </div>
+    </div>
+    <div class="meta">
+      <div>CRAYXUS AI · 2026</div>
+      <div>HANGZHOU × MELBOURNE</div>
+      <div>ZJU × CRAYXUS × ZTMOTOR</div>
+    </div>
+  </section>
+
+</div>
+
+<!-- Navigation -->
+<div class="nav-controls">
+  <button class="nav-btn" onclick="prev()">◀</button>
+  <div class="nav-counter"><b id="curN">1</b> / <span id="totN">17</span></div>
+  <button class="nav-btn" onclick="next()">▶</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  let cur = 0;
+  document.getElementById('totN').textContent = slides.length;
+
+  function show(i) {
+    if (i < 0) i = 0;
+    if (i >= slides.length) i = slides.length - 1;
+    slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+    document.getElementById('curN').textContent = i + 1;
+    cur = i;
+    // sync URL hash
+    if (history.replaceState) history.replaceState(null, '', '#' + (i + 1));
+  }
+  function next() { show(cur + 1); }
+  function prev() { show(cur - 1); }
+  function goto(i) { show(i); }
+
+  // Keyboard nav
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+    if (e.key === 'Home') show(0);
+    if (e.key === 'End') show(slides.length - 1);
+  });
+
+  // Touch swipe
+  let touchStartX = 0;
+  document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+  document.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 60) { dx > 0 ? prev() : next(); }
+  });
+
+  // Restore from hash
+  const h = parseInt(location.hash.replace('#', ''));
+  if (!isNaN(h) && h > 0 && h <= slides.length) show(h - 1);
+</script>
+</body>
+</html>
