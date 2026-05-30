@@ -4,8 +4,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
-:root{--ui:'Inter',-apple-system,"Segoe UI","PingFang SC",sans-serif;
- --mono:'JetBrains Mono','SF Mono',ui-monospace,Consolas,monospace}
+:root{--ui:'Inter',-apple-system,"Segoe UI","PingFang SC",sans-serif;--mono:'JetBrains Mono',ui-monospace,Consolas,monospace}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{font-family:var(--ui);background:#050810;color:#cfe;overflow:hidden;
@@ -13,73 +12,62 @@ body{font-family:var(--ui);background:#050810;color:#cfe;overflow:hidden;
 #stage{position:relative;width:100vw;height:100vh}
 canvas{display:block;width:100%;height:100%}
 .hud{position:absolute;pointer-events:none;font-variant-numeric:tabular-nums}
-.title{top:18px;left:0;right:0;text-align:center;font-size:22px;letter-spacing:6px;
- font-weight:300;color:#9cf;text-shadow:0 0 16px #0bf8}
+.title{top:16px;left:0;right:0;text-align:center;font-size:21px;letter-spacing:6px;font-weight:300;color:#9cf;text-shadow:0 0 16px #0bf8}
 .title b{color:#0bf;font-weight:900}
-/* 左上 LIVE 徽章 */
-.badge{top:20px;left:24px;display:flex;align-items:center;gap:9px;font-family:var(--mono);
- font-size:14px;font-weight:800;letter-spacing:2px;background:rgba(10,18,30,.7);
- border:1px solid #1a3050;border-radius:8px;padding:7px 13px;backdrop-filter:blur(6px)}
-.badge .bdot{width:10px;height:10px;border-radius:50%}
-.badge.live{color:#3f8} .badge.live .bdot{background:#3f8;box-shadow:0 0 10px #3f8;animation:bp 1.2s infinite}
-.badge.weak{color:#fc4} .badge.weak .bdot{background:#fc4;box-shadow:0 0 10px #fc4;animation:bp .8s infinite}
-.badge.sim{color:#b8f} .badge.sim .bdot{background:#b8f;box-shadow:0 0 10px #b8f;animation:bp 1.6s infinite}
+.badge{top:18px;left:22px;display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:14px;font-weight:800;
+ letter-spacing:2px;background:rgba(10,18,30,.7);border:1px solid #1a3050;border-radius:8px;padding:7px 13px;backdrop-filter:blur(6px)}
+.badge .bd{width:10px;height:10px;border-radius:50%}
+.badge.live{color:#3f8}.badge.live .bd{background:#3f8;box-shadow:0 0 10px #3f8;animation:bp 1.2s infinite}
+.badge.weak{color:#fc4}.badge.weak .bd{background:#fc4;box-shadow:0 0 10px #fc4;animation:bp .8s infinite}
+.badge.sim{color:#b8f}.badge.sim .bd{background:#b8f;box-shadow:0 0 10px #b8f;animation:bp 1.6s infinite}
 @keyframes bp{0%,100%{opacity:1}50%{opacity:.25}}
-/* 数据面板 */
-.panel{top:66px;left:24px;background:rgba(10,18,30,.72);border:1px solid #1a3050;
- border-radius:12px;padding:16px 20px;backdrop-filter:blur(6px);box-shadow:0 0 28px #0bf3;
- font-family:var(--mono);min-width:248px}
+.panel{top:60px;left:22px;background:rgba(10,18,30,.72);border:1px solid #1a3050;border-radius:12px;padding:15px 18px;
+ backdrop-filter:blur(6px);box-shadow:0 0 28px #0bf3;font-family:var(--mono);min-width:236px}
 .panel .sub{font-size:11px;color:#566;letter-spacing:1px;margin-bottom:2px}
-.panel .big{font-size:38px;font-weight:800;color:#0bf;line-height:1.05;letter-spacing:-1px;
- text-shadow:0 0 18px #0bf7;margin:2px 0 12px}
+.panel .big{font-size:34px;font-weight:800;color:#0bf;line-height:1.05;letter-spacing:-1px;text-shadow:0 0 18px #0bf7;margin:2px 0 10px}
 .panel .big.off{color:#fc4;text-shadow:0 0 18px #fc47}
 .panel .row{display:flex;justify-content:space-between;gap:18px;margin:6px 0;font-size:13px;color:#9ab}
 .panel .row b{color:#fff;font-weight:800;font-size:14px}
 .panel .row b.ai{color:#0ff;text-shadow:0 0 10px #0ff8}
-.panel .row b.mag{color:#f6c;text-shadow:0 0 10px #f6c8}
-.panel hr{border:0;border-top:1px solid #1a3050;margin:10px 0}
-.aiflash{transition:opacity .25s;opacity:0;color:#0ff;font-size:11px;letter-spacing:1px;margin-top:4px}
-.aiflash.on{opacity:1}
-/* 右侧 AI 建议面板 */
-.panelR{top:66px;right:24px;left:auto;max-width:330px}
-.adv{font-size:12.5px;line-height:1.5;color:#bcd;margin:8px 0}
-.adv.warn{color:#fc7} .adv.good{color:#7f9}
+.panel hr{border:0;border-top:1px solid #1a3050;margin:9px 0}
+.panelR{top:60px;right:22px;left:auto;max-width:320px}
+.adv{font-size:12.5px;line-height:1.5;color:#bcd;margin:7px 0}
+.adv.warn{color:#fc7}.adv.good{color:#7f9}
 .gain{font-family:var(--mono);font-size:13px;color:#9ab;margin-top:6px;line-height:1.6}
-.gain .now{color:#fc7} .gain .pot{color:#0ff;font-weight:800;text-shadow:0 0 10px #0ff8}
-/* 控件 */
-.ctrl{bottom:20px;left:0;right:0;text-align:center;pointer-events:auto}
-.ctrl input{background:#0a1422;color:#cfe;border:1px solid #2a4060;border-radius:6px;
- padding:6px 9px;font-family:var(--mono);font-size:13px;width:120px}
-.ctrl button{background:#13243a;color:#cfe;border:1px solid #2a4060;border-radius:6px;
- padding:7px 14px;font-size:13px;cursor:pointer;margin:0 3px;font-family:var(--ui)}
-.ctrl button:hover{background:#1c3252}
-.ctrl button.on{background:#0bf;color:#021;font-weight:700}
-.foot{bottom:64px;left:0;right:0;text-align:center;font-size:11px;color:#456;letter-spacing:2px}
+.gain .pot{color:#0ff;font-weight:800;text-shadow:0 0 10px #0ff8}
+.legend{position:absolute;bottom:58px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:11px;color:#9ab;
+ display:flex;align-items:center;gap:8px;background:rgba(10,18,30,.6);border:1px solid #1a3050;border-radius:8px;padding:6px 12px}
+.legbar{width:120px;height:8px;border-radius:4px;background:linear-gradient(90deg,#f33,#fd3,#3f6)}
+.ctrl{bottom:18px;left:0;right:0;text-align:center;pointer-events:auto}
+.ctrl input{background:#0a1422;color:#cfe;border:1px solid #2a4060;border-radius:6px;padding:6px 9px;font-family:var(--mono);font-size:13px;width:120px}
+.ctrl button{background:#13243a;color:#cfe;border:1px solid #2a4060;border-radius:6px;padding:7px 14px;font-size:13px;cursor:pointer;margin:0 3px;font-family:var(--ui)}
+.ctrl button:hover{background:#1c3252}.ctrl button.on{background:#0bf;color:#021;font-weight:700}
 </style></head><body>
 <div id="stage">
   <canvas id="cv"></canvas>
-  <div class="hud title">CRAYXUS <b>AI·GP</b> · 实时最佳线模拟</div>
-  <div class="hud badge sim" id="badge"><span class="bdot"></span><span id="badgeTxt">连接中…</span></div>
+  <div class="hud title">CRAYXUS <b>AI·GP</b> · 实时最佳线</div>
+  <div class="hud badge sim" id="badge"><span class="bd"></span><span id="badgeTxt">加载中…</span></div>
 
   <div class="hud panel" id="panel">
     <div class="sub">车辆位置 (m)</div>
     <div class="big" id="pos">—,—</div>
     <div class="row"><span>实测速度</span><b id="spd">0.00 m/s</b></div>
-    <div class="row"><span>刷新率</span><b id="hz">0 Hz</b></div>
+    <div class="row"><span>偏离最优线</span><b id="dev">— m</b></div>
     <hr>
-    <div class="sub">AI 最佳线</div>
-    <div class="row"><span>预计圈速</span><b class="ai" id="lap">— s</b></div>
-    <div class="row"><span>自动避墙修正</span><b class="mag" id="fix">— 处</b></div>
-    <div class="aiflash" id="aiflash">▸ AI 正在重算最佳线…</div>
+    <div class="sub">AI 最优线 (CMA-ES)</div>
+    <div class="row"><span>理想圈速</span><b class="ai" id="lap">— s</b></div>
+    <div class="row"><span>速度区间</span><b id="vr">— m/s</b></div>
   </div>
 
   <div class="hud panel panelR" id="panelAdv">
     <div class="sub">AI 优化建议</div>
-    <div id="advBox"><div class="adv">等待路线…</div></div>
+    <div id="advBox"><div class="adv">加载赛道…</div></div>
     <hr>
-    <div class="sub">成绩提升 · AI 线 vs 新手线</div>
+    <div class="sub">成绩提升 · AI 线 vs 基准线</div>
     <div class="gain" id="gain">—</div>
   </div>
+
+  <div class="hud legend"><span>慢</span><span class="legbar"></span><span>快</span><span style="color:#566">· 最优线按速度上色</span></div>
 
   <div class="hud ctrl">
     IP <input id="ip" value="172.20.10.5">
@@ -88,298 +76,177 @@ canvas{display:block;width:100%;height:100%}
     <button onclick="clearTrail()">清轨迹</button>
     <button onclick="document.documentElement.requestFullscreen()">全屏</button>
   </div>
-  <div class="hud foot">三基站 UWB 实时定位 · AI 根据车辆位置不断重算最优行车线</div>
 </div>
 
-<script src="sim_core.js"></script>
+<script src="mapb_track.js"></script>
 <script>
-var SIM = window.SIM;
-var WPS = SIM.WAYPOINTS;
-var cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+var M=window.MAPB;
 
-/* ===== 相机: 自动把整条赛道铺满屏幕 ===== */
+/* ===== 相机: 把 10.27x4.78 赛道方正铺满 ===== */
 var DPR=Math.max(1,window.devicePixelRatio||1);
 var W=0,H=0,S=60,OX=0,OY=0;
-function trackBounds(){
-  var pts=SIM.OUTER.concat(SIM.INNER).concat(WPS);
-  var a={minX:1e9,maxX:-1e9,minY:1e9,maxY:-1e9};
-  pts.forEach(function(p){a.minX=Math.min(a.minX,p[0]);a.maxX=Math.max(a.maxX,p[0]);
-    a.minY=Math.min(a.minY,p[1]);a.maxY=Math.max(a.maxY,p[1]);});
-  return a;
-}
-var BD=trackBounds();
 function resize(){
-  W=window.innerWidth; H=window.innerHeight;
-  cv.width=W*DPR; cv.height=H*DPR; cv.style.width=W+'px'; cv.style.height=H+'px';
+  W=window.innerWidth;H=window.innerHeight;
+  cv.width=W*DPR;cv.height=H*DPR;cv.style.width=W+'px';cv.style.height=H+'px';
   ctx.setTransform(DPR,0,0,DPR,0,0);
-  var spanX=(BD.maxX-BD.minX)*1.18, spanY=(BD.maxY-BD.minY)*1.32; // 留边, 顶部给标题
-  S=Math.min(W/spanX, H/spanY);
-  var cx=(BD.minX+BD.maxX)/2, cy=(BD.minY+BD.maxY)/2;
-  OX=W/2 - cx*S; OY=H/2 + cy*S + 16;   // +16 整体下移给顶部标题让位
+  var spanX=M.SIZE[0]*1.10, spanY=M.SIZE[1]*1.42;   // 上下留标题/图例
+  S=Math.min(W/spanX,H/spanY);
+  OX=W/2 - M.SIZE[0]/2*S; OY=H/2 + M.SIZE[1]/2*S + 8;
 }
-function w2s(x,y){ return [OX + x*S, OY - y*S]; }   // 世界y向上, 屏幕y向下 -> 翻转
+function w2s(x,y){ return [OX+x*S, OY-y*S]; }          // CAD y 向上 -> 屏幕翻转
+function uwb2cad(x,y){var T=M.UWB2CAD;return [T.a*x+T.b*y+T.c, T.d*x+T.e*y+T.f];}
+
+var cv=document.getElementById('cv'),ctx=cv.getContext('2d');
 
 /* ===== 状态 ===== */
-var trail=[], showTrail=true, MAXTRAIL=320;
-var carTarget=null, carDisp=null, heading=null;
-var spd=0, hz=0, lastPos=null, lastFrames=0, lastSampleT=0;
-var lastFreshT=-1e9;
-var forceDemo=false;
+var trail=[],showTrail=true,MAXTRAIL=320;
+var carTarget=null,carDisp=null,heading=null,spd=0,lastPos=null,lastFrames=0,lastSampleT=0,lastFreshT=-1e9;
+var dev=0,forceDemo=false,ghostF=0;
 
-/* ===== AI 最佳线 (实时, 从车当前位置重算) ===== */
-var aiRes=null, lastAIt=-1e9, lastAIpos=null;
-function nearestWP(c){
-  var bi=0,bd=1e9;
-  for(var i=0;i<WPS.length;i++){var d=Math.hypot(WPS[i][0]-c[0],WPS[i][1]-c[1]); if(d<bd){bd=d;bi=i;}}
-  return bi;
+/* ===== 最优线速度上色 ===== */
+function vColor(v,a){
+  var t=(v-M.VMIN)/(M.VMAX-M.VMIN);t=Math.max(0,Math.min(1,t));
+  var r,g;
+  if(t<0.5){r=255;g=Math.round(80+350*t);} else {r=Math.round(255-330*(t-0.5));g=255;}
+  return 'rgba('+r+','+g+',70,'+(a==null?1:a)+')';
 }
-function computeAIline(c){
-  try{
-    var k=nearestWP(c);
-    if(Math.hypot(WPS[k][0]-c[0],WPS[k][1]-c[1])<0.5) k++;   // 已贴近就看下一个, 让线始终朝前
-    var rest=[];
-    for(var i=k;i<WPS.length;i++) rest.push(WPS[i]);
-    rest.push(WPS[0]);                                       // 闭合回起点 = 完整一圈最优线
-    var route=[c].concat(rest);
-    if(route.length<2) return null;
-    var A=SIM.autoRoute(route);
-    if(!A.res||!A.res.traj.length) return null;
-    var e=A.res.traj[A.res.traj.length-1];
-    return {traj:A.res.traj, segs:A.segs, fixes:A.fixes, time:e.t, hit:A.res.hit};
-  }catch(err){ return null; }
+function nearestRL(x,y){
+  var bd=1e9,bi=0,N=M.RACELINE.length;
+  for(var i=0;i<N;i++){var p=M.RACELINE[i],d=Math.hypot(p[0]-x,p[1]-y);if(d<bd){bd=d;bi=i;}}
+  return {d:bd,i:bi};
 }
-function requestAIrecompute(){
-  var now=performance.now();
-  if(now-lastAIt<600) return;                               // 限频, autoRoute 较重
-  if(lastAIpos && Math.hypot(carTarget.x-lastAIpos.x,carTarget.y-lastAIpos.y)<0.05) return;
-  lastAIt=now; lastAIpos={x:carTarget.x,y:carTarget.y};
-  var r=computeAIline([carTarget.x,carTarget.y]);
-  if(r){ aiRes=r; flashAI(); }
-}
-var flashT=0;
-function flashAI(){ var f=document.getElementById('aiflash'); f.classList.add('on'); flashT=performance.now()+500; }
 
-/* ===== 兜底: 无车时沿完整最优线跑一个"幽灵车"演示 ===== */
-var ghost=(function(){
-  try{
-    var A=SIM.autoRoute(WPS.concat([WPS[0]]));
-    return {traj:A.res.traj, segs:A.segs, time:A.res.traj[A.res.traj.length-1].t, fixes:A.fixes};
-  }catch(e){ return {traj:[],segs:[],time:0,fixes:0}; }
-})();
-var ghostIdx=0;
-
-/* ===== 成绩提升基线: 新手直连线 vs AI 优化线 (整圈, 固定不变) ===== */
-var BASELINE=(function(){
-  try{
-    var loop=WPS.concat([WPS[0]]);
-    var raw=SIM.planRoute(loop), rr=SIM.simulate(loop[0],raw[0].legH,raw);
-    var A=SIM.autoRoute(loop), e=A.res.traj[A.res.traj.length-1];
-    return { rawHit:!!rr.hit, rawSeg:rr.hit?rr.hit.seg+1:0,
-             rawTime:rr.hit?rr.hit.t:rr.traj[rr.traj.length-1].t,
-             aiTime:e.t, aiFixes:A.fixes };
-  }catch(e){ return null; }
-})();
-
-/* ===== 轮询真车 (自调度, 不堆积; 掉线防抖) ===== */
-function smoothAngle(a,b,k){ var d=((b-a+540)%360)-180; return a+d*k; }
+/* ===== 轮询真车 (自调度+掉线防抖), /pos 是 UWB -> 转 CAD ===== */
+function smoothAngle(a,b,k){var d=((b-a+540)%360)-180;return a+d*k;}
 function poll(){
   var ip=document.getElementById('ip').value;
-  var ac=new AbortController(); var to=setTimeout(function(){ac.abort();},1200);
+  var ac=new AbortController(),to=setTimeout(function(){ac.abort();},1200);
   fetch('http://'+ip+'/pos',{mode:'cors',signal:ac.signal})
     .then(function(r){return r.json();})
     .then(function(j){
       clearTimeout(to);
-      var fresh=(j.age_ms>=0 && j.age_ms<800);
+      var fresh=(j.age_ms>=0&&j.age_ms<800);
       if(fresh){
-        var now=performance.now();
-        lastFreshT=now;
-        carTarget={x:j.x,y:j.y};
-        if(!carDisp) carDisp={x:j.x,y:j.y};
-        if(lastPos){
-          var dt=(now-lastSampleT)/1000;
-          if(dt>0){
-            var dx=j.x-lastPos.x, dy=j.y-lastPos.y, d=Math.hypot(dx,dy);
+        var now=performance.now();lastFreshT=now;
+        var c=uwb2cad(j.x,j.y); carTarget={x:c[0],y:c[1]};
+        if(!carDisp)carDisp={x:c[0],y:c[1]};
+        if(lastPos){var dt=(now-lastSampleT)/1000;
+          if(dt>0){var dx=c[0]-lastPos.x,dy=c[1]-lastPos.y,d=Math.hypot(dx,dy);
             spd=spd*0.6+(d/dt)*0.4;
-            hz=hz*0.6+((j.frames-lastFrames)/Math.max(dt,1e-3))*0.4;
-            if(d>0.03){ var hh=Math.atan2(dy,dx)*180/Math.PI; heading=(heading==null)?hh:smoothAngle(heading,hh,0.3); }
-          }
-        }
-        lastPos={x:j.x,y:j.y}; lastFrames=j.frames; lastSampleT=now;
-        requestAIrecompute();
+            if(d>0.03){var hh=Math.atan2(dy,dx)*180/Math.PI;heading=(heading==null)?hh:smoothAngle(heading,hh,0.3);}}}
+        lastPos={x:c[0],y:c[1]};lastFrames=j.frames;lastSampleT=now;
+        var nr=nearestRL(c[0],c[1]); dev=nr.d;
       }
-      hudUpdate(j,fresh);
+      hud(j);
     })
-    .catch(function(){ clearTimeout(to); })
-    .then(function(){ setTimeout(poll,110); });             // 收到响应再发下一次
+    .catch(function(){clearTimeout(to);})
+    .then(function(){setTimeout(poll,110);});
 }
+function mode(){if(forceDemo)return'sim';var s=performance.now()-lastFreshT;return s<1500?'live':(s<3500?'weak':'sim');}
 
-/* ===== HUD ===== */
-function curMode(){
-  if(forceDemo) return 'sim';
-  var since=performance.now()-lastFreshT;
-  if(since<1500) return 'live';
-  if(since<3500) return 'weak';
-  return 'sim';
-}
-function hudUpdate(j,fresh){
-  var m=curMode();
-  var badge=document.getElementById('badge'), bt=document.getElementById('badgeTxt');
-  badge.className='hud badge '+m;
-  bt.textContent = m=='live'?'● LIVE 实时':(m=='weak'?'信号微弱·重连中':'AI 模拟演示');
+function hud(){
+  var m=mode(),b=document.getElementById('badge');
+  b.className='hud badge '+m;
+  document.getElementById('badgeTxt').textContent=m=='live'?'● LIVE 实时':(m=='weak'?'信号微弱·重连中':'AI 模拟演示');
   var pos=document.getElementById('pos');
-  if(m=='live' && carTarget){
-    pos.className='big'; pos.textContent=carTarget.x.toFixed(2)+' , '+carTarget.y.toFixed(2);
+  if(m=='live'&&carTarget){pos.className='big';pos.textContent=carTarget.x.toFixed(2)+' , '+carTarget.y.toFixed(2);
     document.getElementById('spd').textContent=Math.max(0,spd).toFixed(2)+' m/s';
-    document.getElementById('hz').textContent=Math.max(0,hz).toFixed(0)+' Hz';
-  }else if(m=='weak' && carTarget){
-    pos.className='big off'; pos.textContent=carTarget.x.toFixed(2)+' , '+carTarget.y.toFixed(2);
-  }else{
-    pos.className='big off'; pos.textContent='AI 模拟';
-    document.getElementById('spd').textContent=SIM.CAL.V.toFixed(2)+' m/s';
-    document.getElementById('hz').textContent='—';
-  }
-  var disp = (m=='sim')?ghost:aiRes;
-  if(disp){
-    document.getElementById('lap').textContent=(disp.time||0).toFixed(1)+' s';
-    document.getElementById('fix').textContent=(disp.fixes>=0?disp.fixes:'—')+' 处';
-  }
-  updateAdvice(disp);
+    document.getElementById('dev').textContent=dev.toFixed(2)+' m';}
+  else if(m=='weak'&&carTarget){pos.className='big off';pos.textContent=carTarget.x.toFixed(2)+' , '+carTarget.y.toFixed(2);}
+  else{pos.className='big off';pos.textContent='AI 模拟';
+    document.getElementById('spd').textContent='—';document.getElementById('dev').textContent='—';}
+  document.getElementById('lap').textContent=M.META.lap.toFixed(2)+' s';
+  document.getElementById('vr').textContent=M.VMIN.toFixed(1)+'–'+M.VMAX.toFixed(1)+' m/s';
+  advice(m);
 }
 
-/* ===== AI 优化建议 + 成绩提升 ===== */
-function updateAdvice(disp){
-  var box=document.getElementById('advBox');
-  if(!disp||!disp.segs||!disp.segs.length){ box.innerHTML='<div class="adv">等待路线…</div>'; }
-  else{
-    var segs=disp.segs, sharp={delta:0,i:0};
-    segs.forEach(function(s,i){ if(Math.abs(s.delta)>Math.abs(sharp.delta)) sharp={delta:s.delta,i:i}; });
-    var html='';
-    if(disp.fixes>0) html+='<div class="adv warn">⚠ 自动避墙修正 '+disp.fixes+' 处 — 航点离墙偏近,AI 已外移行车线</div>';
-    else html+='<div class="adv good">✓ 全程无碰撞,行车线安全可发车</div>';
-    var apexSave=Math.min(0.6,(Math.abs(sharp.delta)/90)*0.4).toFixed(1);
-    html+='<div class="adv">🔻 最急弯 段'+(sharp.i+1)+' '+Math.round(Math.abs(sharp.delta))+'° 是耗时瓶颈 — 走「外-内-外」apex 线, 预计再省 ~'+apexSave+'s</div>';
-    html+='<div class="adv">🔋 满电 1.95→亏电 1.62 m/s (慢≈17%) — 每 2 圈换电可稳定成绩</div>';
-    box.innerHTML=html;
+/* ===== AI 建议 + 成绩提升 (用真实 CMA 数据) ===== */
+function advice(m){
+  // 最慢弯 (速度最低点)
+  var slow={v:1e9,i:0};
+  for(var i=0;i<M.RACELINE.length;i++){if(M.RACELINE[i][2]<slow.v){slow={v:M.RACELINE[i][2],i:i};}}
+  var sp=M.RACELINE[slow.i];
+  var html='';
+  html+='<div class="adv good">✓ CMA-ES 全局最优线, 全程无碰撞, 入弯自动减速</div>';
+  html+='<div class="adv">🔻 最慢弯 ('+sp[0].toFixed(1)+','+sp[1].toFixed(1)+') 仅 '+slow.v.toFixed(1)+' m/s — 提前刹车、晚出弯走大半径可提速</div>';
+  if(m=='live'){
+    if(dev>0.30) html+='<div class="adv warn">⚠ 当前偏离最优线 '+dev.toFixed(2)+'m — 往最优线(彩线)靠</div>';
+    else html+='<div class="adv good">👍 紧贴最优线 (偏离 '+dev.toFixed(2)+'m)</div>';
+  } else {
+    html+='<div class="adv">🔋 满电巡航 8.3 m/s, 亏电会变慢 — 每 2 圈换电稳定成绩</div>';
   }
-  var g=document.getElementById('gain');
-  if(BASELINE){
-    if(BASELINE.rawHit)
-      g.innerHTML='<span class="now">新手直连线 ✗ 段'+BASELINE.rawSeg+' 撞墙</span><br>↳ <span class="pot">AI 优化线 ✓ '+BASELINE.aiTime.toFixed(1)+'s 跑通全程</span>';
-    else{
-      var pct=Math.max(0,(BASELINE.rawTime-BASELINE.aiTime)/BASELINE.rawTime*100);
-      g.innerHTML='<span class="now">新手线 '+BASELINE.rawTime.toFixed(1)+'s</span> → <span class="pot">AI 线 '+BASELINE.aiTime.toFixed(1)+'s (↓'+pct.toFixed(0)+'%)</span>';
-    }
-  }
+  document.getElementById('advBox').innerHTML=html;
+  var g=document.getElementById('gain'),mt=M.META;
+  if(mt.baseLaps&&mt.optLaps){
+    var pct=((mt.optLaps-mt.baseLaps)/mt.baseLaps*100);
+    g.innerHTML='180 秒内: <span style="color:#fc7">基准线 '+mt.baseLaps+' 圈</span> → <span class="pot">AI 优化线 '+mt.optLaps+' 圈 (+'+pct.toFixed(0)+'%)</span>';
+  } else g.innerHTML='理想圈速 '+mt.lap.toFixed(2)+' s';
 }
 
 /* ===== 绘制 ===== */
-function drawPoly(poly,color,lw,glow){
-  ctx.strokeStyle=color; ctx.lineWidth=lw; ctx.shadowColor=glow||color; ctx.shadowBlur=glow?10:0;
-  for(var i=0;i<poly.length-1;i++){
-    var a=poly[i],b=poly[i+1];
-    if(Math.hypot(b[0]-a[0],b[1]-a[1])>=4.2) continue;       // 跳变线不画
-    var p=w2s(a[0],a[1]),q=w2s(b[0],b[1]);
-    ctx.beginPath();ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);ctx.stroke();
-  }
-  ctx.shadowBlur=0;
+function poly(pts,close){for(var i=0;i<pts.length;i++){var s=w2s(pts[i][0],pts[i][1]);i?ctx.lineTo(s[0],s[1]):ctx.moveTo(s[0],s[1]);}if(close)ctx.closePath();}
+function drawTrack(){
+  // 路面 (外多边形挖去内岛, even-odd)
+  ctx.beginPath();poly(M.OUTER,true);poly(M.INNER,true);
+  ctx.fillStyle='#0c1420';ctx.fill('evenodd');
+  // 路肩
+  ctx.lineJoin='round';
+  ctx.strokeStyle='#27406a';ctx.lineWidth=3;ctx.beginPath();poly(M.OUTER,true);ctx.stroke();
+  ctx.strokeStyle='#1c3358';ctx.lineWidth=3;ctx.beginPath();poly(M.INNER,true);ctx.stroke();
+  // 起跑线
+  var a=w2s(M.START[0][0],M.START[0][1]),b=w2s(M.START[1][0],M.START[1][1]);
+  ctx.strokeStyle='#fff';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();
+  ctx.fillStyle='#fff';ctx.font='bold 11px var(--mono)';ctx.textAlign='center';
+  ctx.fillText('起/终',(a[0]+b[0])/2,Math.min(a[1],b[1])-8);
 }
-function drawGrid(){
-  ctx.strokeStyle='rgba(20,40,70,.5)';ctx.lineWidth=1;
-  for(var gx=Math.ceil(BD.minX);gx<=Math.floor(BD.maxX);gx++){
-    var a=w2s(gx,BD.minY),b=w2s(gx,BD.maxY);ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();}
-  for(var gy=Math.ceil(BD.minY);gy<=Math.floor(BD.maxY);gy++){
-    var c=w2s(BD.minX,gy),d=w2s(BD.maxX,gy);ctx.beginPath();ctx.moveTo(c[0],c[1]);ctx.lineTo(d[0],d[1]);ctx.stroke();}
-}
-function drawWaypoints(){
-  for(var i=0;i<WPS.length;i++){
-    var s=w2s(WPS[i][0],WPS[i][1]);
-    ctx.beginPath();ctx.arc(s[0],s[1],4,0,6.28);
-    ctx.fillStyle='rgba(255,235,80,.55)';ctx.fill();
-  }
-  // 起/终点标记 (WP1)
-  var s0=w2s(WPS[0][0],WPS[0][1]);
-  ctx.beginPath();ctx.arc(s0[0],s0[1],9,0,6.28);
-  ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
-  ctx.fillStyle='#fff';ctx.font='bold 11px var(--mono)';ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.fillText('起/终',s0[0],s0[1]-18);
-}
-function drawAIline(traj,headIdx){
-  if(!traj||traj.length<2) return;
-  // 主线: 青色发光
-  ctx.strokeStyle='#0ff';ctx.lineWidth=3.5;ctx.shadowColor='#0ff';ctx.shadowBlur=16;
-  ctx.beginPath();
-  for(var i=0;i<traj.length;i++){var s=w2s(traj[i].x,traj[i].y); i?ctx.lineTo(s[0],s[1]):ctx.moveTo(s[0],s[1]);}
-  ctx.stroke();ctx.shadowBlur=0;
-  // 流动光点 (沿线跑, 强调"AI 在算")
-  var hi=headIdx%traj.length, hp=w2s(traj[hi].x,traj[hi].y);
-  ctx.fillStyle='#fff';ctx.shadowColor='#0ff';ctx.shadowBlur=18;
-  ctx.beginPath();ctx.arc(hp[0],hp[1],5,0,6.28);ctx.fill();ctx.shadowBlur=0;
-}
-function drawTrail(){
-  if(!showTrail||trail.length<2) return;
-  for(var i=1;i<trail.length;i++){
-    var a=w2s(trail[i-1].x,trail[i-1].y),b=w2s(trail[i].x,trail[i].y);
-    ctx.strokeStyle='rgba(255,210,60,'+(i/trail.length*0.8)+')';ctx.lineWidth=2.5;
-    ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();
-  }
+function drawRaceline(){
+  var R=M.RACELINE,N=R.length;
+  // 发光底
+  ctx.strokeStyle='rgba(0,255,255,.10)';ctx.lineWidth=11;ctx.lineCap='round';ctx.beginPath();
+  for(var i=0;i<N;i++){var s=w2s(R[i][0],R[i][1]);i?ctx.lineTo(s[0],s[1]):ctx.moveTo(s[0],s[1]);}
+  var s0=w2s(R[0][0],R[0][1]);ctx.lineTo(s0[0],s0[1]);ctx.stroke();
+  // 速度上色
+  ctx.lineWidth=4;ctx.lineCap='round';
+  for(var j=0;j<N;j++){var a=R[j],b=R[(j+1)%N],pa=w2s(a[0],a[1]),pb=w2s(b[0],b[1]);
+    ctx.strokeStyle=vColor((a[2]+b[2])/2);ctx.beginPath();ctx.moveTo(pa[0],pa[1]);ctx.lineTo(pb[0],pb[1]);ctx.stroke();}
 }
 function drawCar(x,y,h,live){
-  var cs=w2s(x,y), hr=(h||0)*Math.PI/180;
-  // 光环
-  ctx.shadowColor=live?'#0bf':'#b8f';ctx.shadowBlur=24;
-  ctx.fillStyle=live?'#0bf':'#b8f';ctx.beginPath();ctx.arc(cs[0],cs[1],10,0,6.28);ctx.fill();
-  ctx.shadowBlur=0;
-  // 车头三角
+  var cs=w2s(x,y),hr=(h||0)*Math.PI/180;
+  ctx.shadowColor=live?'#0bf':'#b8f';ctx.shadowBlur=22;
+  ctx.fillStyle=live?'#0bf':'#b8f';ctx.beginPath();ctx.arc(cs[0],cs[1],9,0,6.28);ctx.fill();ctx.shadowBlur=0;
   ctx.save();ctx.translate(cs[0],cs[1]);ctx.rotate(-hr);
   ctx.fillStyle='#fff';ctx.strokeStyle=live?'#0bf':'#b8f';ctx.lineWidth=2;
-  ctx.beginPath();ctx.moveTo(13,0);ctx.lineTo(-8,7);ctx.lineTo(-8,-7);ctx.closePath();
-  ctx.fill();ctx.stroke();ctx.restore();
+  ctx.beginPath();ctx.moveTo(12,0);ctx.lineTo(-7,6);ctx.lineTo(-7,-6);ctx.closePath();ctx.fill();ctx.stroke();ctx.restore();
 }
-var flowIdx=0;
+function drawTrail(){if(!showTrail||trail.length<2)return;
+  for(var i=1;i<trail.length;i++){var a=w2s(trail[i-1].x,trail[i-1].y),b=w2s(trail[i].x,trail[i].y);
+    ctx.strokeStyle='rgba(255,210,60,'+(i/trail.length*0.8)+')';ctx.lineWidth=2.5;
+    ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();}}
+
 function render(){
   ctx.clearRect(0,0,W,H);
-  drawGrid();
-  drawPoly(SIM.OUTER,'#0a7a4a',2.5,'#0f8');
-  drawPoly(SIM.INNER,'#0a6a9a',2.5,'#0bf');
-  drawWaypoints();
-
-  var m=curMode();
-  flowIdx+=2;
+  drawTrack();drawRaceline();
+  var m=mode(),R=M.RACELINE,N=R.length;
   if(m=='sim'){
-    // 兜底: 幽灵车沿完整最优线跑
-    drawAIline(ghost.traj, flowIdx);
-    if(ghost.traj.length){
-      ghostIdx=(ghostIdx+5) % ghost.traj.length;   // 约 6x 实时演示
-      var g=ghost.traj[Math.floor(ghostIdx)];
-      drawCar(g.x,g.y,g.h,false);
-    }
-  }else{
-    // 实时: AI 线 (从车当前位置算) + 真车
-    if(aiRes) drawAIline(aiRes.traj, flowIdx);
-    if(carDisp){
-      // 平滑插值, 大屏移动丝滑
-      if(carTarget){ carDisp.x+=(carTarget.x-carDisp.x)*0.25; carDisp.y+=(carTarget.y-carDisp.y)*0.25; }
-      if(m=='live'){ trail.push({x:carDisp.x,y:carDisp.y}); if(trail.length>MAXTRAIL)trail.shift(); }
-      drawTrail();
-      ctx.globalAlpha=(m=='weak')?0.5:1;
-      drawCar(carDisp.x,carDisp.y,heading,true);
-      ctx.globalAlpha=1;
-    }
+    // 幽灵车沿最优线跑, 速度跟 v_target (快慢有别)
+    var idx=Math.floor(ghostF)%N,cur=R[idx],nx=R[(idx+1)%N];
+    ghostF+=(cur[2]/M.VMAX)*5+0.4;
+    var hh=Math.atan2(nx[1]-cur[1],nx[0]-cur[0])*180/Math.PI;
+    drawCar(cur[0],cur[1],hh,false);
+  } else if(carDisp){
+    if(carTarget){carDisp.x+=(carTarget.x-carDisp.x)*0.25;carDisp.y+=(carTarget.y-carDisp.y)*0.25;}
+    if(m=='live'){trail.push({x:carDisp.x,y:carDisp.y});if(trail.length>MAXTRAIL)trail.shift();}
+    drawTrail();
+    ctx.globalAlpha=(m=='weak')?0.5:1;drawCar(carDisp.x,carDisp.y,heading,true);ctx.globalAlpha=1;
   }
-  if(performance.now()>flashT) document.getElementById('aiflash').classList.remove('on');
   requestAnimationFrame(render);
 }
 
-/* ===== 控件 ===== */
-function toggleTrail(){showTrail=!showTrail;var b=document.getElementById('btnTrail');
-  b.textContent='轨迹: '+(showTrail?'开':'关');b.className=showTrail?'on':'';}
+function toggleTrail(){showTrail=!showTrail;var b=document.getElementById('btnTrail');b.textContent='轨迹: '+(showTrail?'开':'关');b.className=showTrail?'on':'';}
 function clearTrail(){trail=[];}
-function toggleDemo(){forceDemo=!forceDemo;var b=document.getElementById('btnDemo');
-  b.textContent='演示模式: '+(forceDemo?'强制开':'自动');b.className=forceDemo?'on':'';}
+function toggleDemo(){forceDemo=!forceDemo;var b=document.getElementById('btnDemo');b.textContent='演示模式: '+(forceDemo?'强制开':'自动');b.className=forceDemo?'on':'';}
 
 window.addEventListener('resize',resize);
-resize();
-requestAnimationFrame(render);
-poll();
+resize();requestAnimationFrame(render);poll();
 </script>
 </body></html>
