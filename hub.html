@@ -1,0 +1,110 @@
+<!DOCTYPE html><html lang="zh"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CRAYXUS AI·GP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Inter:wght@300;600;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--ui:'Inter',-apple-system,"Segoe UI","PingFang SC",sans-serif;--mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+ --bd:#1a3050;--cyan:#0bf;--orange:#ff9a3c;--gold:#ffd23c}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--ui);background:#050810;color:#cfe;min-height:100vh;
+ background-image:radial-gradient(circle at 50% -10%,#0e2347 0%,#050810 60%);padding:28px 18px 40px}
+/* 顶栏 */
+.top{display:flex;align-items:center;justify-content:space-between;max-width:1180px;margin:0 auto 6px}
+.logo{font-family:var(--mono);font-weight:800;letter-spacing:3px;font-size:15px;color:#9cf}
+.logo b{color:var(--cyan);text-shadow:0 0 12px #0bf7}
+.live{font-family:var(--mono);font-size:12px;color:#3f8;display:flex;align-items:center;gap:7px}
+.live .d{width:8px;height:8px;border-radius:50%;background:#3f8;box-shadow:0 0 8px #3f8;animation:bp 1.3s infinite}
+@keyframes bp{0%,100%{opacity:1}50%{opacity:.3}}
+/* Hero */
+.hero{text-align:center;margin:34px auto 8px}
+.hero h1{font-size:clamp(34px,7vw,68px);font-weight:900;letter-spacing:2px;line-height:1}
+.hero h1 b{color:var(--cyan);text-shadow:0 0 26px #0bf8}
+.hero .tag{margin-top:18px;font-family:var(--mono);font-size:clamp(13px,2.4vw,18px);color:#9cf;letter-spacing:1px}
+.hero .tag span{color:#fff;font-weight:800}
+.hero .tag i{color:#456;font-style:normal;margin:0 10px}
+/* 三卡动线 */
+.flow{display:flex;align-items:stretch;justify-content:center;gap:0;flex-wrap:wrap;max-width:1180px;margin:46px auto 0}
+.card{flex:1 1 300px;min-width:280px;max-width:360px;background:linear-gradient(180deg,#0f1a2c,#0a121e);
+ border:1px solid var(--bd);border-radius:16px;padding:26px 24px;position:relative;
+ box-shadow:0 0 24px #0bf2;transition:transform .15s,box-shadow .15s,border-color .15s}
+.card:hover{transform:translateY(-6px);box-shadow:0 12px 40px #0bf4;border-color:#2a4a72}
+.card .no{font-family:var(--mono);font-size:13px;font-weight:800;letter-spacing:2px;opacity:.6}
+.card .ic{font-size:42px;margin:10px 0 6px;line-height:1}
+.card h2{font-size:24px;font-weight:900;letter-spacing:1px}
+.card h2 small{display:block;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:3px;
+ opacity:.7;margin-top:4px}
+.card p{font-size:13.5px;color:#9ab;line-height:1.65;margin:14px 0 20px;min-height:66px}
+.card .btns{display:flex;flex-direction:column;gap:9px}
+.card a.b{display:flex;align-items:center;justify-content:space-between;text-decoration:none;
+ padding:11px 15px;border-radius:10px;font-size:14px;font-weight:800;transition:transform .08s,filter .1s}
+.card a.b:hover{transform:translateX(3px);filter:brightness(1.12)}
+.card a.b .ar{font-weight:900;opacity:.8}
+.card a.b2{background:transparent;border:1px solid var(--bd);color:#9cf}
+.card .soon{font-size:11px;color:#566;text-align:center;margin-top:3px;letter-spacing:1px}
+/* 阶段配色 */
+.c1{--ac:var(--orange)} .c2{--ac:var(--cyan)} .c3{--ac:var(--gold)}
+.card.c1{border-top:3px solid var(--orange)} .card.c2{border-top:3px solid var(--cyan)} .card.c3{border-top:3px solid var(--gold)}
+.card .no,.card .ic,.card h2{color:var(--ac)}
+.card a.b{background:var(--ac);color:#021}
+.card a.b2{background:transparent;color:var(--ac);border-color:var(--ac)}
+/* 箭头 */
+.arrow{display:flex;align-items:center;justify-content:center;color:#2a4a72;font-size:30px;flex:0 0 44px;font-weight:900}
+@media(max-width:1000px){.arrow{transform:rotate(90deg);flex-basis:30px;margin:2px 0}}
+.foot{text-align:center;margin-top:40px;font-family:var(--mono);font-size:11px;color:#456;letter-spacing:2px}
+</style></head><body>
+
+<div class="top">
+  <div class="logo">CRAYXUS <b>AI·GP</b></div>
+  <div class="live"><span class="d"></span>AI 赛车教育系统</div>
+</div>
+
+<div class="hero">
+  <h1>AI 赛车 <b>三段闯关</b></h1>
+  <div class="tag"><span>拼出车与赛道</span><i>→</i><span>AI Tune 调最优线</span><i>→</i><span>上场比圈速</span></div>
+</div>
+
+<div class="flow">
+
+  <div class="card c1">
+    <div class="no">01</div>
+    <div class="ic">🔧</div>
+    <h2>造车造道<small>BUILD</small></h2>
+    <p>不只是拼赛车 —— 智能赛道砖也要自己搭。看懂每个零件，亲手装出一套 AI 赛车 + 智能赛道。</p>
+    <div class="btns">
+      <a class="b" href="alphacar-explode.html">🚗 赛车 · 整车爆炸图 <span class="ar">→</span></a>
+      <a class="b b2" href="track-tile-explode.html">🛣️ 赛道砖 · 爆炸图 <span class="ar">→</span></a>
+      <a class="b b2" href="bom_checklist.html">📋 赛道砖 · BOM 清单 <span class="ar">→</span></a>
+    </div>
+  </div>
+
+  <div class="arrow">→</div>
+
+  <div class="card c2">
+    <div class="no">02</div>
+    <div class="ic">🎯</div>
+    <h2>AI Tune<small>TRAIN</small></h2>
+    <p>用积木给车编程，再用 AI Tune 调校 —— AI 根据车辆实时位置不断算出最优行车线，并告诉你哪里还能更快。</p>
+    <div class="btns">
+      <a class="b" href="blocks.html">积木编程驾驶 <span class="ar">→</span></a>
+      <a class="b b2" href="live_sim.html">AI Tune · 最优线教练 <span class="ar">→</span></a>
+    </div>
+  </div>
+
+  <div class="arrow">→</div>
+
+  <div class="card c3">
+    <div class="no">03</div>
+    <div class="ic">🏆</div>
+    <h2>赛事<small>COMPETE</small></h2>
+    <p>上场跑圈，大屏实时圈速对决 —— AI 最优线 vs 人类驾驶。采用中天模型定制的赛事规则体系，正规比赛标准。</p>
+    <div class="btns">
+      <a class="b" href="live_sim.html">实时赛屏 <span class="ar">→</span></a>
+      <div class="soon">计时赛 · 最佳圈排行榜 · 中天模型赛规 即将上线</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="foot">CRAYXUS AI·GP · BUILD → TRAIN → COMPETE</div>
+</body></html>

@@ -1,0 +1,242 @@
+<!DOCTYPE html><html lang="zh"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CRAYXUS AI·GP · 积木编程</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;800&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--ui:'Inter',-apple-system,"Segoe UI","PingFang SC",sans-serif;--mono:'JetBrains Mono',ui-monospace,Consolas,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--ui);background:#050810;color:#cfe;min-height:100vh;
+ background-image:radial-gradient(circle at 50% 0%,#0e1f3e 0%,#050810 60%);padding:14px}
+h1{font-size:20px;letter-spacing:4px;font-weight:300;text-align:center;margin:4px 0 14px}
+h1 b{color:#0bf;font-weight:900;text-shadow:0 0 14px #0bf6}
+.wrap{display:flex;gap:14px;justify-content:center;align-items:flex-start;flex-wrap:wrap;max-width:1280px;margin:0 auto}
+.col{background:linear-gradient(180deg,#0e1828,#0a121e);border:1px solid #1a3050;border-radius:12px;
+ padding:14px;box-shadow:0 0 18px #0bf2}
+.col h2{font-size:13px;color:#0bf;letter-spacing:1px;margin:0 0 10px;font-weight:700}
+/* 积木区 */
+.palette{width:178px}
+.pblock{display:flex;align-items:center;gap:8px;border:none;border-radius:10px;color:#021;
+ font-weight:800;font-size:15px;padding:12px 14px;margin:9px 0;cursor:pointer;width:100%;
+ box-shadow:0 3px 0 rgba(0,0,0,.35);transition:transform .08s}
+.pblock:hover{transform:translateY(-2px)} .pblock:active{transform:translateY(1px);box-shadow:0 1px 0 rgba(0,0,0,.35)}
+.pblock .ic{font-size:18px}
+.hintp{font-size:11px;color:#678;margin-top:6px;line-height:1.5}
+/* 程序区 */
+.program{width:300px;min-height:380px}
+#stack{min-height:320px}
+.empty{color:#456;font-size:13px;text-align:center;padding:40px 10px;border:1.5px dashed #1a3050;border-radius:10px}
+.block{position:relative;border-radius:10px;color:#021;font-weight:800;padding:13px 12px;margin:0 0 7px;
+ box-shadow:0 3px 0 rgba(0,0,0,.32);display:flex;align-items:center;gap:8px;cursor:grab;
+ /* 拼块上下凸卯 */ }
+.block::before{content:'';position:absolute;top:-6px;left:26px;width:22px;height:8px;border-radius:0 0 6px 6px;background:inherit}
+.block.drag{opacity:.4} .block.over{outline:2px dashed #fff;outline-offset:2px}
+.block .ic{font-size:17px}
+.block .nm{font-size:14px;min-width:42px}
+.block input{width:62px;border:none;border-radius:6px;padding:5px 7px;font-family:var(--mono);
+ font-size:14px;font-weight:800;text-align:center;background:rgba(255,255,255,.85);color:#021}
+.block .unit{font-size:13px;opacity:.85}
+.block .del{margin-left:auto;background:rgba(0,0,0,.22);color:#fff;border:none;border-radius:6px;
+ width:26px;height:26px;cursor:pointer;font-size:14px;font-weight:800}
+.block .del:hover{background:rgba(0,0,0,.45)}
+.repeat{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13px;color:#b8f}
+.repeat input{width:54px;border:1px solid #2a4060;border-radius:6px;padding:5px 7px;background:#0a1422;
+ color:#b8f;font-family:var(--mono);font-weight:800;text-align:center}
+.toolbar{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.toolbar button{background:#13243a;color:#cfe;border:1px solid #2a4060;border-radius:7px;padding:7px 11px;
+ font-size:12px;cursor:pointer}
+.toolbar button:hover{background:#1c3252}
+/* 预览区 */
+.preview{width:420px}
+canvas{background:#0a121e;border:1px solid #1a3050;border-radius:8px;width:100%;display:block}
+.verdict{font-size:15px;font-weight:800;padding:9px;border-radius:8px;text-align:center;margin:10px 0}
+.ok{background:#0a3a1a;color:#3f8;border:1px solid #0f6} .bad{background:#3a0a12;color:#f66;border:1px solid #f44}
+.code{background:#0a1422;color:#ff3;padding:8px 10px;border-radius:6px;font-family:var(--mono);
+ font-size:11px;word-break:break-all;margin:8px 0;line-height:1.5}
+.run{display:flex;gap:7px;align-items:center;margin-top:10px}
+.run input{background:#0a1422;color:#cfe;border:1px solid #2a4060;border-radius:6px;padding:7px 9px;
+ font-family:var(--mono);font-size:13px;width:118px}
+.btnGo{background:#0bf;color:#021;border:none;border-radius:8px;padding:9px 18px;font-size:14px;
+ font-weight:800;cursor:pointer;box-shadow:0 3px 0 #0894c0}
+.btnGo:active{transform:translateY(1px)} .btnGo:hover{background:#3cf}
+.btnRst{background:#13243a;color:#cfe;border:1px solid #2a4060;border-radius:8px;padding:9px 12px;cursor:pointer;font-size:13px}
+#msg{font-size:12px;color:#9cf;margin-top:7px;min-height:16px}
+</style></head><body>
+<h1>CRAYXUS <b>AI·GP</b> · 积木编程驾驶</h1>
+<div class="wrap">
+
+  <!-- 积木区 -->
+  <div class="col palette">
+    <h2>积木区</h2>
+    <button class="pblock" style="background:#2dd6a0" onclick="add('fwd')"><span class="ic">▶</span>前进</button>
+    <button class="pblock" style="background:#ff9a3c" onclick="add('left')"><span class="ic">↰</span>左转</button>
+    <button class="pblock" style="background:#ffbe4d" onclick="add('right')"><span class="ic">↱</span>右转</button>
+    <div class="hintp">点积木 → 加到右边程序<br>拖动积木可调顺序<br>改格子里的数字调参数</div>
+  </div>
+
+  <!-- 程序区 -->
+  <div class="col program">
+    <h2>我的程序</h2>
+    <div id="stack"></div>
+    <div class="repeat">↻ 整段重复 <input id="rep" type="number" min="1" max="20" value="1" onchange="refresh()"> 次</div>
+    <div class="toolbar">
+      <button onclick="loadSample()">载入示例</button>
+      <button onclick="clearAll()">清空</button>
+    </div>
+  </div>
+
+  <!-- 预览 + 发车 -->
+  <div class="col preview">
+    <h2>AI 仿真预览</h2>
+    <canvas id="cv" width="392" height="330"></canvas>
+    <div id="verdict" class="verdict ok">—</div>
+    <h2 style="margin-top:6px">发给真车 (set_lap)</h2>
+    <div class="code" id="setlap">—</div>
+    <div class="run">
+      IP <input id="ip" value="172.20.10.5">
+      <button class="btnGo" onclick="sendCar()">▶ 发车</button>
+      <button class="btnRst" onclick="resetCar()">复位</button>
+    </div>
+    <div id="msg"></div>
+  </div>
+</div>
+
+<script src="sim_core.js"></script>
+<script>
+var SIM=window.SIM, CAL=SIM.CAL;
+var WP1=SIM.WAYPOINTS[0], WP2=SIM.WAYPOINTS[1];
+var H0=Math.atan2(WP2[1]-WP1[1],WP2[0]-WP1[0])*180/Math.PI;   // 起步朝向 (WP1->WP2)
+
+var DEF={
+  fwd:{name:'前进',ic:'▶',unit:'m',def:1.0,min:0.1,step:0.1,color:'#2dd6a0'},
+  left:{name:'左转',ic:'↰',unit:'°',def:90,min:5,step:5,color:'#ff9a3c'},
+  right:{name:'右转',ic:'↱',unit:'°',def:90,min:5,step:5,color:'#ffbe4d'}
+};
+var prog=[], uid=1;
+
+function add(type){ prog.push({type:type,val:DEF[type].def,id:uid++}); render(); }
+function del(id){ prog=prog.filter(function(b){return b.id!=id;}); render(); }
+function clearAll(){ prog=[]; render(); }
+function loadSample(){ prog=[
+  {type:'fwd',val:1.5,id:uid++},{type:'left',val:90,id:uid++},
+  {type:'fwd',val:1.0,id:uid++},{type:'right',val:60,id:uid++},
+  {type:'fwd',val:0.8,id:uid++}]; render(); }
+
+/* ---- 渲染拼块 (含拖动排序) ---- */
+var dragIdx=-1;
+function render(){
+  var st=document.getElementById('stack');
+  if(!prog.length){ st.innerHTML='<div class="empty">点左边积木开始拼<br>或「载入示例」</div>'; refresh(); return; }
+  st.innerHTML='';
+  prog.forEach(function(b,i){
+    var d=DEF[b.type];
+    var el=document.createElement('div');
+    el.className='block'; el.style.background=d.color; el.draggable=true; el.dataset.i=i;
+    el.innerHTML='<span class="ic">'+d.ic+'</span><span class="nm">'+d.name+'</span>'
+      +'<input type="number" min="'+d.min+'" step="'+d.step+'" value="'+b.val+'">'
+      +'<span class="unit">'+d.unit+'</span>'
+      +'<button class="del">✕</button>';
+    el.querySelector('input').onchange=function(e){ b.val=parseFloat(e.target.value)||d.def; refresh(); };
+    el.querySelector('.del').onclick=function(){ del(b.id); };
+    el.ondragstart=function(){ dragIdx=i; el.classList.add('drag'); };
+    el.ondragend=function(){ el.classList.remove('drag'); };
+    el.ondragover=function(e){ e.preventDefault(); el.classList.add('over'); };
+    el.ondragleave=function(){ el.classList.remove('over'); };
+    el.ondrop=function(e){ e.preventDefault(); el.classList.remove('over');
+      var to=+el.dataset.i; if(dragIdx<0||dragIdx==to) return;
+      var m=prog.splice(dragIdx,1)[0]; prog.splice(to,0,m); render(); };
+    st.appendChild(el);
+  });
+  refresh();
+}
+
+/* ---- 编译: 积木 -> set_lap 段 ---- */
+function compileOnce(){
+  var segs=[];
+  prog.forEach(function(b){
+    if(b.type=='fwd'){ var d=Math.max(0.05,b.val);
+      segs.push({delta:0, dur:Math.max(1,Math.round((d-CAL.FWD_OFFSET)/CAL.V*1000))}); }
+    else if(b.type=='left'){ var a=Math.max(0,b.val);
+      segs.push({delta:-a, dur:Math.max(1,Math.round(a/CAL.YAW_RATE*1000))}); }
+    else if(b.type=='right'){ var a=Math.max(0,b.val);
+      segs.push({delta:+a, dur:Math.max(1,Math.round(a/CAL.YAW_RATE*1000))}); }
+  });
+  return segs;
+}
+function compileFull(){
+  var rep=Math.max(1,parseInt(document.getElementById('rep').value)||1);
+  var one=compileOnce(), all=[];
+  for(var r=0;r<rep;r++) all=all.concat(one);
+  return all;
+}
+
+/* ---- 刷新: 仿真 + 预览 + set_lap ---- */
+function refresh(){
+  var segs=compileFull();
+  var v=document.getElementById('verdict'), sl=document.getElementById('setlap');
+  if(!segs.length){ v.className='verdict ok'; v.textContent='拼几块积木试试'; sl.textContent='—'; draw(null); return; }
+  var res=SIM.simulate(WP1, H0, segs);
+  draw(res);
+  sl.textContent='/set_lap?d='+segs.map(function(s){return s.delta+','+s.dur;}).join(';');
+  if(res.hit){ v.className='verdict bad';
+    v.innerHTML='✘ 会撞墙 — 第 '+(res.hit.seg+1)+' 段处 ('+res.hit.x.toFixed(2)+','+res.hit.y.toFixed(2)+')'; }
+  else{ var e=res.traj[res.traj.length-1]; v.className='verdict ok';
+    v.innerHTML='✔ 跑通 — 用时 '+e.t.toFixed(1)+'s,行程 '+pathLen(res.traj).toFixed(2)+'m'; }
+}
+function pathLen(tr){ var L=0; for(var i=1;i<tr.length;i++) L+=Math.hypot(tr[i].x-tr[i-1].x,tr[i].y-tr[i-1].y); return L; }
+
+/* ---- 预览画布 (自动铺满) ---- */
+var cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+var BD=(function(){var p=SIM.OUTER.concat(SIM.INNER),a={x0:1e9,x1:-1e9,y0:1e9,y1:-1e9};
+  p.forEach(function(q){a.x0=Math.min(a.x0,q[0]);a.x1=Math.max(a.x1,q[0]);a.y0=Math.min(a.y0,q[1]);a.y1=Math.max(a.y1,q[1]);});return a;})();
+function fit(){ var pad=18,W=cv.width,H=cv.height;
+  var s=Math.min((W-2*pad)/(BD.x1-BD.x0),(H-2*pad)/(BD.y1-BD.y0));
+  return {s:s, ox:pad-BD.x0*s, oy:H-pad+BD.y0*s}; }
+function w2s(x,y,f){ return [f.ox+x*f.s, f.oy-y*f.s]; }
+function poly(p,c,lw,f){ ctx.strokeStyle=c;ctx.lineWidth=lw;
+  for(var i=0;i<p.length-1;i++){var a=p[i],b=p[i+1];
+    if(Math.hypot(b[0]-a[0],b[1]-a[1])>=4.2)continue;
+    var u=w2s(a[0],a[1],f),w=w2s(b[0],b[1],f);ctx.beginPath();ctx.moveTo(u[0],u[1]);ctx.lineTo(w[0],w[1]);ctx.stroke();} }
+function draw(res){
+  var f=fit(); ctx.clearRect(0,0,cv.width,cv.height);
+  poly(SIM.OUTER,'#0a7a4a',2,f); poly(SIM.INNER,'#0a6a9a',2,f);
+  var s0=w2s(WP1[0],WP1[1],f);   // 起点
+  ctx.fillStyle='#ff3';ctx.beginPath();ctx.arc(s0[0],s0[1],6,0,6.28);ctx.fill();
+  ctx.fillStyle='#fff';ctx.font='bold 10px monospace';ctx.textAlign='center';ctx.fillText('起点',s0[0],s0[1]-12);
+  if(!res||!res.traj) return;
+  var tr=res.traj;
+  ctx.strokeStyle='#0ff';ctx.lineWidth=3;ctx.shadowColor='#0ff';ctx.shadowBlur=10;ctx.beginPath();
+  for(var i=0;i<tr.length;i++){var p=w2s(tr[i].x,tr[i].y,f);i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]);}
+  ctx.stroke();ctx.shadowBlur=0;
+  var e=tr[tr.length-1],ep=w2s(e.x,e.y,f);   // 车
+  ctx.save();ctx.translate(ep[0],ep[1]);ctx.rotate(-e.h*Math.PI/180);
+  ctx.fillStyle='#fff';ctx.strokeStyle='#0bf';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(10,0);ctx.lineTo(-6,5);ctx.lineTo(-6,-5);ctx.closePath();ctx.fill();ctx.stroke();ctx.restore();
+  if(res.hit){var h=w2s(res.hit.x,res.hit.y,f);ctx.strokeStyle='#f44';ctx.lineWidth=3;
+    ctx.beginPath();ctx.moveTo(h[0]-8,h[1]-8);ctx.lineTo(h[0]+8,h[1]+8);
+    ctx.moveTo(h[0]+8,h[1]-8);ctx.lineTo(h[0]-8,h[1]+8);ctx.stroke();}
+}
+
+/* ---- 发车 / 复位 ---- */
+function msg(t,err){ var m=document.getElementById('msg'); m.textContent=t; m.style.color=err?'#f77':'#7f9'; }
+function sendCar(){
+  var segs=compileFull();
+  if(!segs.length){ msg('先拼积木再发车',true); return; }
+  var res=SIM.simulate(WP1,H0,segs);
+  if(res.hit && !confirm('⚠ 仿真显示会撞墙,仍要发车吗?')) return;
+  var ip=document.getElementById('ip').value;
+  var d=segs.map(function(s){return s.delta+','+s.dur;}).join(';');
+  msg('正在下发路线…');
+  fetch('http://'+ip+'/set_lap?d='+encodeURIComponent(d),{mode:'cors'})
+    .then(function(r){return r.text();})
+    .then(function(){ msg('路线已下发,启动跑圈…'); return fetch('http://'+ip+'/c?x=MB',{mode:'cors'}); })
+    .then(function(){ msg('✔ 已发车!车开始按积木跑'); })
+    .catch(function(e){ msg('✘ 发车失败: '+e.message+' (检查 IP / 车是否在线)',true); });
+}
+function resetCar(){ var ip=document.getElementById('ip').value;
+  fetch('http://'+ip+'/c?x=RST',{mode:'cors'}).then(function(){msg('已复位起点');})
+    .catch(function(e){msg('✘ 复位失败: '+e.message,true);}); }
+
+render();
+</script>
+</body></html>
