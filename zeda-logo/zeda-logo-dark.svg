@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 260" width="880" height="260" role="img" aria-label="择大 ZEDA — 择智能大师 Master the Intelligent Choice">
+  <defs>
+    <linearGradient id="blueD" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5BD4FF"/>
+      <stop offset="1" stop-color="#2C77FF"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- 背景(深色) -->
+  <rect x="0" y="0" width="880" height="260" rx="0" fill="#0B1220"/>
+
+  <!-- MARK -->
+  <g transform="translate(40,50)" filter="url(#glow)">
+    <rect x="0" y="0" width="160" height="160" rx="34" fill="#111A2B"/>
+    <rect x="8" y="8" width="144" height="144" rx="27" fill="none" stroke="url(#blueD)" stroke-width="2.5" opacity="0.7"/>
+    <path d="M40 94 L72 126 L138 42" fill="none" stroke="url(#blueD)" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="138" cy="42" r="11" fill="#FF7A18"/>
+  </g>
+
+  <!-- 分隔 -->
+  <rect x="232" y="64" width="2.5" height="132" rx="1.25" fill="#FFFFFF" opacity="0.14"/>
+
+  <!-- WORDMARK -->
+  <text x="262" y="150" font-family="'Microsoft YaHei','PingFang SC','Source Han Sans SC',sans-serif" font-size="98" font-weight="800" fill="#FFFFFF" letter-spacing="4">择大</text>
+  <text x="266" y="190" font-family="'Arial','Helvetica',sans-serif" font-size="26" font-weight="700" fill="#5BD4FF" letter-spacing="11">ZEDA</text>
+
+  <!-- TAGLINE -->
+  <text x="266" y="226" font-family="'Microsoft YaHei','PingFang SC',sans-serif" font-size="22" font-weight="500" fill="#9AA7B8">择智能大师 · Master the Intelligent Choice</text>
+</svg>
