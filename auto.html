@@ -143,10 +143,115 @@ svg{display:block;width:100%}
 .lockNote{font-size:11px;color:var(--mut);text-align:center;margin-top:4px}
 .foot{margin-top:14px;font-size:10.5px;color:var(--mut);text-align:center;letter-spacing:.5px;line-height:1.7}
 ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:rgba(96,132,210,.3);border-radius:3px}
+
+/* ============================================================
+   ===============  CYBERPUNK UPGRADE (集中管理)  ==============
+   仅视觉：背景/玻璃卡/霓虹/HUD/动效/层级。不改任何JS与数据。
+   主色 cyan #27e0e6 · 紫 #7c5cff · 金 #f5c451 · 涨红 #ff4d57 跌绿 #19d07a
+   ============================================================ */
+:root{--c:#27e0e6;--v:#7c5cff}
+body{background-color:#04060d}
+body::before{/* 远处光晕 + 更深的黑蓝渐变 */
+  content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background:
+    radial-gradient(60vw 40vw at 78% -6%,rgba(39,224,230,.10),transparent 60%),
+    radial-gradient(50vw 38vw at 8% 4%,rgba(124,92,255,.12),transparent 58%),
+    radial-gradient(46vw 44vw at 52% 116%,rgba(245,196,81,.06),transparent 60%),
+    linear-gradient(180deg,#060a14 0%,#04060d 60%,#03040a 100%);}
+/* 细网格 + 粒子光点层 */
+.fx{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;opacity:.55;
+  background-image:linear-gradient(rgba(96,132,210,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(96,132,210,.05) 1px,transparent 1px);
+  background-size:44px 44px;animation:gridDrift 70s linear infinite}
+@keyframes gridDrift{to{background-position:44px 44px,44px 44px}}
+.fx::before,.fx::after{content:"";position:absolute;inset:-20%;background-repeat:repeat;
+  background-image:radial-gradient(1.4px 1.4px at 20% 30%,rgba(39,224,230,.8),transparent),
+    radial-gradient(1.2px 1.2px at 70% 60%,rgba(124,92,255,.7),transparent),
+    radial-gradient(1.3px 1.3px at 45% 85%,rgba(39,224,230,.6),transparent),
+    radial-gradient(1.1px 1.1px at 85% 20%,rgba(245,196,81,.5),transparent),
+    radial-gradient(1.2px 1.2px at 12% 70%,rgba(39,224,230,.5),transparent);
+  background-size:480px 480px;animation:floaty 24s linear infinite;opacity:.5}
+.fx::after{background-size:360px 360px;animation-duration:38s;animation-direction:reverse;opacity:.32}
+@keyframes floaty{from{transform:translateY(0)}to{transform:translateY(-480px)}}
+
+/* 顶栏：玻璃 + 入场淡入 */
+.bar{animation:fadeDown .7s cubic-bezier(.2,.7,.2,1) both;
+  background:linear-gradient(180deg,rgba(18,28,52,.78),rgba(7,11,22,.62));box-shadow:0 8px 40px -18px rgba(39,224,230,.4)}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-12px)}}
+.logo{position:relative}
+.logo::after{content:"";position:absolute;inset:-3px;border-radius:13px;border:1px solid rgba(39,224,230,.35);animation:ringPulse 2.8s ease-out infinite}
+/* KPI → 横向小卡片，等宽数字 */
+.kpis{gap:10px}
+.kpi{padding:7px 13px;border:1px solid var(--line);border-radius:11px;background:rgba(12,20,38,.5);
+  position:relative;overflow:hidden;transition:.25s}
+.kpi:hover{border-color:rgba(39,224,230,.45);box-shadow:0 0 18px -6px rgba(39,224,230,.6)}
+.kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:linear-gradient(var(--c),var(--v));opacity:.7}
+.live{box-shadow:inset 0 0 14px -6px rgba(39,224,230,.7)}
+.live .dot{animation:breathe 1.6s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:1;box-shadow:0 0 12px var(--c)}50%{opacity:.35;box-shadow:0 0 4px var(--c)}}
+
+/* ticker：发光行情带 */
+.ticker{box-shadow:0 0 24px -12px rgba(39,224,230,.6)}
+.ticker .tag{background:linear-gradient(90deg,#27e0e6,#27a8e6);box-shadow:0 0 16px -4px var(--c)}
+.tk b{text-shadow:0 0 10px rgba(39,224,230,.6)}
+.tk .r{color:var(--up)} .tk .g{color:var(--down)}
+
+/* 卡片：cyber glass + 入场 slide-up + hover 上浮 */
+.deck>.card{animation:cardIn .6s cubic-bezier(.2,.7,.2,1) both}
+.deck>.card:nth-child(1){animation-delay:.06s}.deck>.card:nth-child(2){animation-delay:.12s}
+.deck>.card:nth-child(3){animation-delay:.18s}.deck>.card:nth-child(4){animation-delay:.24s}
+.deck>.card:nth-child(5){animation-delay:.30s}.deck>.card:nth-child(6){animation-delay:.36s}
+@keyframes cardIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.card{border-color:rgba(39,224,230,.18);
+  background:linear-gradient(180deg,rgba(13,21,40,.72),rgba(8,13,26,.6));
+  box-shadow:0 1px 0 rgba(39,224,230,.12) inset,0 18px 50px -30px rgba(0,0,0,.9);transition:transform .25s,border-color .25s,box-shadow .25s}
+.card:hover{transform:translateY(-3px);border-color:rgba(39,224,230,.42);
+  box-shadow:0 0 0 1px rgba(39,224,230,.18),0 22px 60px -28px rgba(39,224,230,.35)}
+.card::before{background:linear-gradient(90deg,transparent,rgba(39,224,230,.7),rgba(124,92,255,.5),transparent)}
+.cor{width:15px;height:15px;border-color:rgba(39,224,230,.55)}
+/* HUD 状态小标签 */
+.hud{display:inline-block;font-size:9px;letter-spacing:2px;font-weight:800;color:#04060d;
+  background:linear-gradient(90deg,var(--c),#3fd0ff);padding:2px 7px;border-radius:5px;margin-right:8px;
+  box-shadow:0 0 14px -4px var(--c);vertical-align:middle}
+.c-lock .hud{background:linear-gradient(90deg,var(--v),#9b8bff)}
+.c-trades .hud,.c-hold .hud{background:linear-gradient(90deg,#f5c451,#ffd87a)}
+
+/* AI 评分环：脉冲外圈 + 全息感 */
+.ringRow{position:relative}
+.ringRow::before{content:"";position:absolute;left:50%;top:50%;width:122px;height:122px;margin:-61px 0 0 -61px;
+  border-radius:50%;border:1px solid rgba(39,224,230,.45);animation:ringPulse 2.6s ease-out infinite}
+@keyframes ringPulse{0%{transform:scale(.82);opacity:.75}100%{transform:scale(1.28);opacity:0}}
+#rSvg{filter:drop-shadow(0 0 8px rgba(39,224,230,.45))}
+.radarWrap{position:relative}
+.radarWrap::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(closest-side,rgba(39,224,230,.10),transparent 70%)}
+
+/* K线区：网格底 + 标题 confidence */
+.kl{background-image:linear-gradient(rgba(96,132,210,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(96,132,210,.06) 1px,transparent 1px);
+  background-size:100% 25%,8% 100%;border-radius:10px}
+#kTitle{text-shadow:0 0 12px rgba(39,224,230,.4)}
+#kSvg{animation:chartFade .8s ease both}
+@keyframes chartFade{from{opacity:0}to{opacity:1}}
+
+/* 净值卡 */
+.navnow .big{text-shadow:0 0 16px rgba(39,224,230,.4)}
+
+/* 表格行 hover + pill */
+.row:hover,.hold:hover{background:rgba(39,224,230,.05)}
+.op,.pill{box-shadow:0 0 12px -5px currentColor}
+
+/* 锁定信号卡：高级 PRO */
+.lk{background:linear-gradient(120deg,rgba(45,32,80,.5),rgba(14,18,34,.4));box-shadow:inset 0 0 30px -16px rgba(124,92,255,.8)}
+.lk .pro{box-shadow:0 0 16px -4px rgba(245,196,81,.9)}
+.lk:hover{border-color:rgba(124,92,255,.7)}
+
+/* 宽屏适配 */
+@media(min-width:1700px){.wrap{max-width:1820px}.kpi .v{font-size:26px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
 </head>
 <body>
 <div class="scan"></div>
+<div class="fx"></div>
 <div class="wrap">
   <div class="bar">
     <div class="brand"><div class="logo">⬡</div>
@@ -166,35 +271,35 @@ svg{display:block;width:100%}
   <div class="deck">
     <!-- AI 首选信号 -->
     <div class="card c-sig"><span class="cor tl"></span><span class="cor br"></span>
-      <div class="h"><div class="t">★&nbsp;AI&nbsp;<b>首选信号</b></div><div class="tag2" id="sigMkt">ETF</div></div>
+      <div class="h"><div class="t"><span class="hud">AI SIGNAL</span>★&nbsp;AI&nbsp;<b>首选信号</b></div><div class="tag2" id="sigMkt">ETF</div></div>
       <div id="sigBox"><div class="empty">等待 AI 选股…</div></div>
     </div>
     <!-- 日线图 -->
     <div class="card c-kline"><span class="cor tl"></span><span class="cor br"></span>
-      <div class="h"><div class="t">日线&nbsp;<b id="kTitle">K线</b></div><div class="tag2">当日止盈/止损位</div></div>
+      <div class="h"><div class="t"><span class="hud">LIVE CHART</span>日线&nbsp;<b id="kTitle">K线</b></div><div class="tag2" id="kConf">日线</div></div>
       <div class="kl"><svg id="kSvg" viewBox="0 0 800 320" preserveAspectRatio="none" style="height:300px"></svg></div>
       <div class="legend" id="kLegend"></div>
       <div class="ladder" id="ladder"></div>
     </div>
     <!-- 净值 -->
     <div class="card c-nav"><span class="cor tl"></span><span class="cor br"></span>
-      <div class="h"><div class="t">净值&nbsp;<b>曲线</b></div><div class="tag2" id="modeTag">—</div></div>
+      <div class="h"><div class="t"><span class="hud">EQUITY</span>净值&nbsp;<b>曲线</b></div><div class="tag2" id="modeTag">—</div></div>
       <div class="navwrap"><svg id="navSvg" viewBox="0 0 600 142" preserveAspectRatio="none" style="height:142px"></svg>
         <div class="navnow"><div class="big mono" id="navBig">—</div><div class="sm" id="navSm"></div></div></div>
     </div>
     <!-- 自动交易记录 -->
     <div class="card c-trades"><span class="cor tl"></span><span class="cor br"></span>
-      <div class="h"><div class="t">自动交易&nbsp;·&nbsp;<b>每日记录</b></div><div class="tag2" id="tradeCnt">0 笔</div></div>
+      <div class="h"><div class="t"><span class="hud">EXECUTION</span>自动交易&nbsp;·&nbsp;<b>每日记录</b></div><div class="tag2" id="tradeCnt">0 笔</div></div>
       <div class="log" id="log"><div class="empty">等待开盘自动建仓…</div></div>
     </div>
     <!-- 持仓 -->
     <div class="card c-hold"><span class="cor tl"></span><span class="cor br"></span>
-      <div class="h"><div class="t">当前&nbsp;<b>持仓</b></div><div class="tag2" id="holdCnt">0</div></div>
+      <div class="h"><div class="t"><span class="hud">PORTFOLIO</span>当前&nbsp;<b>持仓</b></div><div class="tag2" id="holdCnt">0</div></div>
       <div id="holds"><div class="empty">空仓</div></div>
     </div>
     <!-- 锁定信号 -->
     <div class="card c-lock"><span class="cor tl"></span><span class="cor br"></span>
-      <div class="h"><div class="t">候选&nbsp;<b>信号</b></div><div class="tag2">PRO</div></div>
+      <div class="h"><div class="t"><span class="hud">SECURE</span>候选&nbsp;<b>信号</b></div><div class="tag2">PRO</div></div>
       <div id="locked"></div>
       <div class="lockNote">完整版解锁全部 AI 信号</div>
     </div>
@@ -216,11 +321,11 @@ async function tick(){
 }
 
 function render(d){
-  setK('kNav','¥'+fmt(d.nav,0),'');
-  setK('kRet',sign(d.total_return_pct,2)+'%',cls(d.total_return_pct));
-  setK('kToday',(d.today_pnl?sign(d.today_pnl,0):'0'),cls(d.today_pnl||0));
-  setK('kWin',d.win_rate_pct==null?'—':d.win_rate_pct+'%','cy');
-  setK('kDD','-'+fmt(d.max_drawdown_pct||0,2)+'%','down');
+  animK('kNav',d.nav,function(v){return '¥'+fmt(v,0)},'');
+  animK('kRet',d.total_return_pct,function(v){return sign(v,2)+'%'},cls(d.total_return_pct));
+  animK('kToday',d.today_pnl||0,function(v){return (Math.abs(v)<0.5?'0':sign(v,0))},cls(d.today_pnl||0));
+  animK('kWin',d.win_rate_pct==null?0:d.win_rate_pct,function(v){return d.win_rate_pct==null?'—':fmt(v,0)+'%'},'cy');
+  animK('kDD',d.max_drawdown_pct||0,function(v){return '-'+fmt(v,2)+'%'},'down');
   el('modeTag').textContent=d.mode||'—';
   el('sigMkt').textContent=(d.market==='etf'?'ETF':'股票');
   el('foot').textContent='CRAYXUS AI Quant v1 · '+(d.mode||'')+' · 数据'+(d.source||'')+' · 更新 '+(d.updated||'')+' · 8秒自动刷新 · 模拟盘';
@@ -229,7 +334,7 @@ function render(d){
   // ticker
   var tkt='';
   if(sg){ tkt='◆ AI 引擎在线　◆ 首选 <b>'+sg.name+'</b> 评分 <b>'+Math.round(sg.score||0)+'</b>　◆ 现价 '
-      +fmt(sg.price,dec(sg.price))+' <span class="'+(sg.chg>=0?'r':'g')+'">'+sign(sg.chg,2)+'%</span>　'
+      +fmt(sg.price,dec(sg.price))+' <span class="'+(sg.chg>=0?'r':'g')+'">'+(sg.chg>=0?'▲':'▼')+sign(sg.chg,2)+'%</span>　'
       +'◆ 止盈 <span class="r">'+fmt(sg.tp,dec(sg.tp))+'</span>　◆ 止损 <span class="g">'+fmt(sg.sl,dec(sg.sl))+'</span>　'
       +'◆ 策略 尾盘买·次日止盈止损　◆ 胜率 '+(d.win_rate_pct==null?'—':d.win_rate_pct+'%')+'　◆ 累计 '+sign(d.total_return_pct,2)+'%　'; }
   else tkt='◆ AI 引擎在线　◆ 等待开盘自动建仓　◆ 策略 尾盘买入·次日止盈止损　';
@@ -238,6 +343,7 @@ function render(d){
   // signal card
   if(sg){
     el('kTitle').textContent=sg.code+' '+sg.name;
+    el('kConf').textContent='AI 置信度 '+Math.round(sg.score||0)+'% · 日线 D';
     var c=cls(sg.chg);
     el('sigBox').innerHTML=
       '<div class="sigName">'+sg.name+'<span class="c mono">'+sg.code+'</span>'
@@ -290,6 +396,17 @@ function render(d){
 }
 
 function setK(id,txt,c){var e=el(id);e.textContent=txt;e.className='v mono'+(c?(' '+c):'');}
+/* KPI 数字 counting 动画（纯展示，数据不变） */
+var _kpi={};
+function animK(id,val,fmtFn,c){
+  var e=el(id); if(!e)return; e.className='v mono'+(c?(' '+c):'');
+  var from=(id in _kpi)?_kpi[id]:0; _kpi[id]=val;
+  if(typeof requestAnimationFrame!=='function'||!isFinite(val)||from===val){e.textContent=fmtFn(val);return;}
+  var t0=null,dur=650;
+  function step(ts){ if(t0===null)t0=ts; var p=Math.min(1,(ts-t0)/dur),k=0.5-Math.cos(p*Math.PI)/2;
+    e.textContent=fmtFn(from+(val-from)*k); if(p<1)requestAnimationFrame(step); }
+  requestAnimationFrame(step);
+}
 
 function renderLadder(L,held){
   if(!L){ el('ladder').innerHTML=''; return; }
