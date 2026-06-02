@@ -388,8 +388,25 @@ async function run(){
     renderCards(top);
     setStatus('完成 ✔ 数据时间：'+new Date().toLocaleString('zh-CN')+'（以交易软件为准）');
   }catch(e){
-    setStatus('❌ 取数失败：'+e.message+'。可能是网络/代理拦截了东方财富接口。请关掉代理或换网络重试；本工具不会编造数据。');
+    await loadFallback(e.message);
   }finally{ btn.disabled=false; }
+}
+
+/* 实时接口连不上时，读取同源 picks.json（后台 Python 生成，浏览器一定读得到 crayxus 自己的文件）*/
+async function loadFallback(why){
+  setStatus('实时接口连不上（'+(why||'')+'），改读后台清单 picks.json …');
+  try{
+    var r=await fetch('picks.json?_='+Date.now());
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    var d=await r.json();
+    var key = TAB==='etf' ? (ETF_T0ONLY?'etf_t0':'etf_all') : (STYLE==='aggr'?'stock_aggr':'stock_steady');
+    var list=((d.lists||{})[key])||[];
+    if(!list.length) throw new Error('该清单为空');
+    renderCards(list);
+    setStatus('⚠️ 实时接口连不上（多半是你的网络/代理到不了东方财富）。已显示后台 '+(d.updated||'')+' 生成的清单。在能直连行情的网络/服务器上点“开始选股”可得实时结果。');
+  }catch(e2){
+    setStatus('❌ 实时接口与后台清单都取不到（'+e2.message+'）。请在能访问东方财富的网络/服务器上使用；或运行 selector.py emit 生成 picks.json 再推送。本工具不编造数据。');
+  }
 }
 
 function tag(ok,txtOk,txtBad,neu){
