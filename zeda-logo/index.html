@@ -1,28 +1,56 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8"><meta name="robots" content="noindex">
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>择大 CRAYXUS · Logo 预览</title>
+<meta name="description" content="择大 CRAYXUS 品牌标识 · 择智能大师 Choose AI. Master It.">
+<!-- 微信 / OG 分享卡片 -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="择大 CRAYXUS · 品牌标识">
+<meta property="og:description" content="择智能大师 · Choose AI. Master It. — 智能赛道砖 + 正确之选 + AI 节点">
+<meta property="og:image" content="https://crayxus.com.au/zeda-logo/og-zeda.png">
+<meta property="og:image:width" content="600">
+<meta property="og:image:height" content="600">
+<meta property="og:url" content="https://crayxus.com.au/zeda-logo/">
+<meta property="og:site_name" content="Crayxus AI">
+<meta itemprop="name" content="择大 CRAYXUS · 品牌标识">
+<meta itemprop="description" content="择智能大师 · Choose AI. Master It.">
+<meta itemprop="image" content="https://crayxus.com.au/zeda-logo/og-zeda.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://crayxus.com.au/zeda-logo/og-zeda.png">
+<link rel="icon" type="image/svg+xml" href="zeda-emblem.svg">
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:'Microsoft YaHei','PingFang SC','Source Han Sans SC',sans-serif;background:#eef1f5;color:#0B1220;-webkit-font-smoothing:antialiased}
-  .wrap{max-width:1080px;margin:0 auto;padding:48px 24px 80px}
-  .top{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+  .wrap{max-width:1080px;margin:0 auto;padding:44px 24px 80px}
+  .top{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:4px}
   h1{font-size:26px;font-weight:800;letter-spacing:1px}
   .sub{color:#5A6573;font-size:14px}
-  h2{font-size:13px;font-weight:700;letter-spacing:3px;color:#1E63FF;text-transform:uppercase;margin:40px 0 14px}
-  .card{border-radius:20px;padding:40px;display:flex;align-items:center;justify-content:center;min-height:200px;box-shadow:0 6px 30px rgba(11,18,32,.08)}
+  h2{font-size:13px;font-weight:700;letter-spacing:3px;color:#1E63FF;text-transform:uppercase;margin:38px 0 14px}
+  .card{border-radius:20px;padding:40px;display:flex;align-items:center;justify-content:center;min-height:180px;box-shadow:0 6px 30px rgba(11,18,32,.08)}
   .light{background:#ffffff}
   .dark{background:#0B1220}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
-  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .em-svg{width:100%;max-width:440px;height:auto}
+  /* 配色实验室 */
+  #stage{--c1:#3FC9FF;--c2:#1E63FF;--ac:#FF7A18;flex-direction:column}
+  #stage .g1{stop-color:var(--c1)} #stage .g2{stop-color:var(--c2)}
+  #stage .ac{fill:var(--ac)} #stage .cr{fill:var(--c1)}
+  .themebar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:26px}
+  .tbtn{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05);color:#cbd5e1;border-radius:999px;padding:8px 15px;font-size:13px;cursor:pointer;font-family:inherit;transition:.15s}
+  .tbtn i{width:14px;height:14px;border-radius:50%;display:inline-block}
+  .tbtn.on{border-color:var(--c1);color:#fff;background:rgba(255,255,255,.12)}
+  .themegrid{display:flex;flex-wrap:wrap;gap:28px;justify-content:center}
+  .themegrid figure{display:flex;flex-direction:column;align-items:center;gap:8px}
+  .themegrid figcaption{font-size:12px;color:#5A6573}
   .emblem-row{display:flex;align-items:flex-end;gap:40px;flex-wrap:wrap;justify-content:center}
   .emblem-row figure{display:flex;flex-direction:column;align-items:center;gap:10px}
   .emblem-row figcaption{font-size:12px;color:#5A6573}
-  .pal{display:flex;gap:16px;flex-wrap:wrap}
-  .sw{flex:1;min-width:150px;border-radius:14px;overflow:hidden;box-shadow:0 4px 18px rgba(11,18,32,.08)}
-  .sw .chip{height:80px}
+  .pal{display:flex;gap:14px;flex-wrap:wrap}
+  .sw{flex:1;min-width:140px;border-radius:14px;overflow:hidden;box-shadow:0 4px 18px rgba(11,18,32,.08)}
+  .sw .chip{height:76px}
   .sw .meta{padding:10px 14px;background:#fff;font-size:12px}
   .sw .meta b{display:block;font-size:13px;margin-bottom:2px}
   table.slogan{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 4px 18px rgba(11,18,32,.08)}
@@ -31,21 +59,54 @@
   table.slogan .en{font-weight:700}
   table.slogan .star{color:#FF7A18;font-weight:800}
   .note{margin-top:14px;color:#5A6573;font-size:13px;line-height:1.7}
-  .full{grid-column:1/-1}
+  /* 手机端 */
+  @media(max-width:720px){
+    .wrap{padding:26px 14px 60px}
+    h1{font-size:20px} .sub{font-size:12px} h2{margin:30px 0 12px}
+    .card{padding:22px;border-radius:16px}
+    .grid2{grid-template-columns:1fr;gap:16px}
+    .themebar{gap:8px;margin-top:20px} .tbtn{padding:7px 12px;font-size:12px}
+    .themegrid{gap:18px} .emblem-row{gap:24px}
+    .sw{min-width:calc(50% - 7px)} .sw .chip{height:60px}
+    table.slogan td{font-size:12.5px;padding:11px 12px}
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="top">
     <h1>择大 CRAYXUS · Logo 预览</h1>
-    <span class="sub">智能赛道砖 + 正确之选 ✓ + AI 节点 · 电光蓝 / 橙</span>
+    <span class="sub">智能赛道砖 + 正确之选 ✓ + AI 节点</span>
   </div>
 
-  <!-- 主标识 浅 / 深 -->
-  <h2>主标识 Primary</h2>
+  <!-- 配色实验室(可切换) -->
+  <h2>配色实验室 · 点击切换主题</h2>
+  <div class="card dark" id="stage">
+    <svg class="em-svg" style="max-width:460px" viewBox="0 0 880 260">
+      <defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" class="g1"/><stop offset="1" class="g2"/></linearGradient></defs>
+      <g transform="translate(40,50)">
+        <rect width="160" height="160" rx="34" fill="#0B1220"/>
+        <rect x="8" y="8" width="144" height="144" rx="27" fill="none" stroke="url(#sg)" stroke-width="2.5" opacity=".6"/>
+        <path d="M40 94 L72 126 L138 42" fill="none" stroke="url(#sg)" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle class="ac" cx="138" cy="42" r="11"/>
+      </g>
+      <rect x="232" y="64" width="2.5" height="132" rx="1.25" fill="#fff" opacity=".14"/>
+      <text x="262" y="150" font-family="'Microsoft YaHei','PingFang SC',sans-serif" font-size="98" font-weight="800" fill="#fff" letter-spacing="4">择大</text>
+      <text class="cr" x="266" y="190" font-family="Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="7">CRAYXUS</text>
+      <text x="266" y="226" font-family="'Microsoft YaHei',sans-serif" font-size="22" font-weight="500" fill="#9AA7B8">择智能大师 · Choose AI. Master It.</text>
+    </svg>
+    <div class="themebar" id="themebar"></div>
+  </div>
+
+  <!-- 配色方案一览 -->
+  <h2>配色方案一览 Emblem</h2>
+  <div class="card light"><div class="themegrid" id="themegrid"></div></div>
+
+  <!-- 主标识 浅 / 深(默认电光蓝) -->
+  <h2>主标识 Primary · 浅 / 深底</h2>
   <div class="grid2">
     <div class="card light">
-      <svg viewBox="0 0 880 260" width="100%" style="max-width:440px">
+      <svg class="em-svg" viewBox="0 0 880 260">
         <defs><linearGradient id="bA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3FC9FF"/><stop offset="1" stop-color="#1E63FF"/></linearGradient></defs>
         <g transform="translate(40,50)">
           <rect width="160" height="160" rx="34" fill="#0B1220"/>
@@ -60,7 +121,7 @@
       </svg>
     </div>
     <div class="card dark">
-      <svg viewBox="0 0 880 260" width="100%" style="max-width:440px">
+      <svg class="em-svg" viewBox="0 0 880 260">
         <defs>
           <linearGradient id="bB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5BD4FF"/><stop offset="1" stop-color="#2C77FF"/></linearGradient>
           <filter id="glB" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
@@ -79,18 +140,8 @@
     </div>
   </div>
 
-  <!-- 徽标多尺寸 -->
-  <h2>徽标 Emblem · 头像 / favicon 缩放测试</h2>
-  <div class="card light">
-    <div class="emblem-row">
-      <figure><svg viewBox="0 0 240 240" width="128" height="128"><defs><linearGradient id="bC1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3FC9FF"/><stop offset="1" stop-color="#1E63FF"/></linearGradient></defs><rect x="30" y="30" width="180" height="180" rx="40" fill="#0B1220"/><rect x="40" y="40" width="160" height="160" rx="31" fill="none" stroke="url(#bC1)" stroke-width="3" opacity=".6"/><path d="M70 122 L104 156 L172 64" fill="none" stroke="url(#bC1)" stroke-width="21" stroke-linecap="round" stroke-linejoin="round"/><circle cx="172" cy="64" r="13" fill="#FF7A18"/></svg><figcaption>128 px</figcaption></figure>
-      <figure><svg viewBox="0 0 240 240" width="56" height="56"><defs><linearGradient id="bC2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3FC9FF"/><stop offset="1" stop-color="#1E63FF"/></linearGradient></defs><rect x="30" y="30" width="180" height="180" rx="40" fill="#0B1220"/><rect x="40" y="40" width="160" height="160" rx="31" fill="none" stroke="url(#bC2)" stroke-width="3" opacity=".6"/><path d="M70 122 L104 156 L172 64" fill="none" stroke="url(#bC2)" stroke-width="21" stroke-linecap="round" stroke-linejoin="round"/><circle cx="172" cy="64" r="13" fill="#FF7A18"/></svg><figcaption>56 px</figcaption></figure>
-      <figure><svg viewBox="0 0 240 240" width="28" height="28"><defs><linearGradient id="bC3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3FC9FF"/><stop offset="1" stop-color="#1E63FF"/></linearGradient></defs><rect x="30" y="30" width="180" height="180" rx="40" fill="#0B1220"/><rect x="40" y="40" width="160" height="160" rx="31" fill="none" stroke="url(#bC3)" stroke-width="3" opacity=".6"/><path d="M70 122 L104 156 L172 64" fill="none" stroke="url(#bC3)" stroke-width="21" stroke-linecap="round" stroke-linejoin="round"/><circle cx="172" cy="64" r="13" fill="#FF7A18"/></svg><figcaption>28 px</figcaption></figure>
-    </div>
-  </div>
-
   <!-- 单色 -->
-  <h2>单色版 Monochrome · 盖章 / 传真 / 单色印刷</h2>
+  <h2>单色版 Monochrome · 盖章 / 单色印刷</h2>
   <div class="grid2">
     <div class="card light">
       <svg viewBox="0 0 240 240" width="120" height="120">
@@ -108,26 +159,48 @@
     </div>
   </div>
 
-  <!-- 配色 -->
-  <h2>品牌色 Palette</h2>
-  <div class="pal">
-    <div class="sw"><div class="chip" style="background:linear-gradient(135deg,#3FC9FF,#1E63FF)"></div><div class="meta"><b>电光蓝 Electric Blue</b>#3FC9FF → #1E63FF</div></div>
-    <div class="sw"><div class="chip" style="background:#FF7A18"></div><div class="meta"><b>AI 橙 Accent Orange</b>#FF7A18</div></div>
-    <div class="sw"><div class="chip" style="background:#0B1220"></div><div class="meta"><b>深空墨 Ink</b>#0B1220</div></div>
-    <div class="sw"><div class="chip" style="background:#eef1f5;border-bottom:1px solid #e0e4ea"></div><div class="meta"><b>浅底 Light</b>#EEF1F5 / #FFFFFF</div></div>
-  </div>
-
   <!-- slogan -->
   <h2>英文 Slogan 备选</h2>
   <table class="slogan">
     <tr><td class="en"><span class="star">★</span> Choose AI. Master It.</td><td>推荐主用 · 安全独特,逐字对「择 · 智能 · 大师」</td></tr>
     <tr><td class="en">Master the Intelligent Choice</td><td>⚠️ 撞 New Balance「The Intelligent Choice」,慎用</td></tr>
     <tr><td class="en">The Art of Intelligent Choice</td><td>高级 · 咨询气质</td></tr>
-    <tr><td class="en">Where Smart Choices Begin</td><td>教育机构调性</td></tr>
     <tr><td class="en">Masters of the AI Choice</td><td>强调「大师」</td></tr>
   </table>
 
-  <p class="note">含义:外框圆角方块 = 智能赛道砖;对勾→上扬箭头 = 「择」(正确之选)+ 加速前进;橙色节点 = AI 火花/路径点。<br>文件:<code>zeda-logo-light.svg</code> / <code>zeda-logo-dark.svg</code> / <code>zeda-emblem.svg</code>(本页 SVG 全内嵌,矢量可无限放大)。</p>
+  <p class="note">含义:外框圆角方块 = 智能赛道砖;对勾→上扬箭头 = 「择」(正确之选)+ 加速前进;橙色节点 = AI 火花 / 路径点。<br>源文件:<code>zeda-logo-light.svg</code> / <code>zeda-logo-dark.svg</code> / <code>zeda-emblem.svg</code> · 分享图 <code>og-zeda.png</code>。本页 SVG 全内嵌,矢量可无限放大。</p>
 </div>
+
+<script>
+  var THEMES=[
+    {key:'blue',  name:'电光蓝', c1:'#3FC9FF', c2:'#1E63FF', ac:'#FF7A18'},
+    {key:'purple',name:'赛博紫', c1:'#C77DFF', c2:'#6D28D9', ac:'#38E8FF'},
+    {key:'cyan',  name:'科技青', c1:'#5BE9D6', c2:'#11A8C9', ac:'#FF7A18'},
+    {key:'red',   name:'竞速红', c1:'#FF9A6B', c2:'#E11D48', ac:'#FFC53D'},
+    {key:'green', name:'翡翠绿', c1:'#6EE7B7', c2:'#059669', ac:'#F59E0B'},
+    {key:'gold',  name:'黑金',   c1:'#F6D88A', c2:'#C9A227', ac:'#FFFFFF'}
+  ];
+  var stage=document.getElementById('stage');
+  var bar=document.getElementById('themebar');
+  var grid=document.getElementById('themegrid');
+  function applyTheme(t){
+    stage.style.setProperty('--c1',t.c1);
+    stage.style.setProperty('--c2',t.c2);
+    stage.style.setProperty('--ac',t.ac);
+    var bs=bar.querySelectorAll('.tbtn');
+    for(var i=0;i<bs.length;i++){bs[i].classList.toggle('on',bs[i].dataset.k===t.key);}
+  }
+  THEMES.forEach(function(t,i){
+    var b=document.createElement('button');
+    b.className='tbtn'+(i===0?' on':'');
+    b.dataset.k=t.key;
+    b.innerHTML='<i style="background:linear-gradient(135deg,'+t.c1+','+t.c2+')"></i>'+t.name;
+    b.onclick=function(){applyTheme(t);};
+    bar.appendChild(b);
+    grid.insertAdjacentHTML('beforeend',
+      '<figure><svg viewBox="0 0 240 240" width="92" height="92"><defs><linearGradient id="tg'+i+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+t.c1+'"/><stop offset="1" stop-color="'+t.c2+'"/></linearGradient></defs><rect x="30" y="30" width="180" height="180" rx="40" fill="#0B1220"/><rect x="40" y="40" width="160" height="160" rx="31" fill="none" stroke="url(#tg'+i+')" stroke-width="3" opacity=".65"/><path d="M70 122 L104 156 L172 64" fill="none" stroke="url(#tg'+i+')" stroke-width="21" stroke-linecap="round" stroke-linejoin="round"/><circle cx="172" cy="64" r="13" fill="'+t.ac+'"/></svg><figcaption>'+t.name+'</figcaption></figure>');
+  });
+  applyTheme(THEMES[0]);
+</script>
 </body>
 </html>
