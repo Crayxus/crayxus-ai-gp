@@ -252,6 +252,34 @@ body::before{/* 远处光晕 + 更深的黑蓝渐变 */
 
 /* 宽屏适配 */
 @media(min-width:1700px){.wrap{max-width:1820px}.kpi .v{font-size:26px}}
+
+/* ====== 唯一首选=主角 · 数字精修 · 选股特色 ====== */
+.mono{font-family:ui-monospace,"Cascadia Mono",Consolas,"SF Mono","Roboto Mono",Menlo,monospace;font-feature-settings:"tnum" 1;letter-spacing:.3px}
+.kpi .v{font-weight:800;letter-spacing:.5px}
+.navnow .big{letter-spacing:.5px}
+@media(min-width:1181px){.c-sig{grid-column:span 4}.c-kline{grid-column:span 5}}
+.c-sig{position:relative}
+.c-sig::after{content:"";position:absolute;inset:-1px;border-radius:16px;padding:1.4px;pointer-events:none;z-index:1;
+  background:linear-gradient(135deg,var(--c),transparent 30%,transparent 70%,var(--gold));opacity:.5;
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:heroGlow 4.5s ease-in-out infinite}
+@keyframes heroGlow{50%{opacity:1}}
+.heroLabel{display:inline-block;font-size:10.5px;letter-spacing:2.5px;font-weight:800;color:#04060d;
+  background:linear-gradient(90deg,var(--gold),#ffd87a);padding:4px 11px;border-radius:7px;margin-bottom:12px;box-shadow:0 0 18px -4px rgba(245,196,81,.9)}
+.c-sig .sigName{font-size:24px;line-height:1.45}
+.c-sig .sigName .c{font-size:13px}
+.c-sig .sigPx{margin:8px 0 11px;align-items:baseline}
+.c-sig .sigPx .p{font-size:38px;letter-spacing:.5px;line-height:1.02}
+.c-sig .sigPx .ch{font-size:16px;font-weight:800}
+.distinct{font-size:12px;color:var(--mut);background:rgba(39,224,230,.05);border:1px solid var(--line);
+  border-radius:9px;padding:8px 11px;margin-bottom:10px;line-height:1.5}
+.distinct b{color:var(--txt);font-weight:800} .distinct b.cy{color:var(--cyan)}
+.facbadges{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:11px}
+.fb{font-size:11.5px;color:#9fb3d8;border:1px solid var(--line);border-radius:7px;padding:4px 9px;background:rgba(20,28,48,.5)}
+.fb b{color:var(--cyan);font-weight:800;margin-left:2px}
+.fb.top{border-color:rgba(245,196,81,.55);background:rgba(245,196,81,.1);color:var(--gold);box-shadow:0 0 12px -5px rgba(245,196,81,.8)}
+.fb.top b{color:var(--gold)}
+.ringRow{margin:4px 0 8px}
+
 @media(prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
 </head>
@@ -352,13 +380,19 @@ function render(d){
     el('kTitle').textContent=sg.code+' '+sg.name;
     el('kConf').textContent='AI 置信度 '+Math.round(sg.score||0)+'% · 日线 D';
     var c=cls(sg.chg);
+    var fac=sg.factors||{}, fkeys=Object.keys(fac).sort(function(a,b){return fac[b]-fac[a];});
+    var fbad=fkeys.slice(0,3).map(function(k,i){return '<span class="fb'+(i===0?' top':'')+'">'+k+' <b>'+fac[k]+'</b></span>';}).join('');
+    var stg=(sg.score>=85?'极强':(sg.score>=72?'强':'中性')), pool=sg.pool||'全市场';
     el('sigBox').innerHTML=
-      '<div class="sigName">'+sg.name+'<span class="c mono">'+sg.code+'</span>'
-        +'<span class="pill '+(sg.held?'hold':'watch')+'">'+(sg.held?'持有中':'监控')+'</span></div>'
+      '<div class="heroLabel">★ 今日 AI 唯一首选 · TODAY&rsquo;S PICK</div>'
+      +'<div class="sigName">'+sg.name+'<span class="c mono">'+sg.code+'</span>'
+        +'<span class="pill '+(sg.held?'hold':'watch')+'">'+(sg.held?'持有中':'AI 选中')+'</span></div>'
       +'<div class="sigPx"><span class="p mono '+c+'">'+fmt(sg.price,dec(sg.price))+'</span>'
-        +'<span class="ch mono '+c+'">'+sign(sg.chg,2)+'%</span></div>'
-      +'<div class="ringRow"><svg id="ringSvg" viewBox="0 0 112 112" style="width:118px;height:118px"></svg></div>'
-      +'<div class="radarWrap"><svg id="rSvg" viewBox="0 0 180 172" style="width:100%;max-width:230px;height:150px"></svg></div>';
+        +'<span class="ch mono '+c+'">'+(sg.chg>=0?'▲':'▼')+sign(sg.chg,2)+'%</span></div>'
+      +'<div class="distinct">全市场 <b>'+pool+'</b> 选 <b>1</b>　·　综合 <b>第 1</b>　·　信号强度 <b class="cy">'+stg+'</b></div>'
+      +'<div class="facbadges">'+fbad+'<span class="fb">综合 <b>'+Math.round(sg.score||0)+'</b></span></div>'
+      +'<div class="ringRow"><svg id="ringSvg" viewBox="0 0 112 112" style="width:152px;height:152px"></svg></div>'
+      +'<div class="radarWrap"><svg id="rSvg" viewBox="0 0 180 172" style="width:100%;max-width:250px;height:158px"></svg></div>';
     drawRing(sg.score); drawRadar(sg.factors||{});
     var Lp=sg.ladder;
     var chBuy=sg.buy, chTp=(Lp?Lp.tp_price:sg.tp), chSl=(Lp?Lp.hard_price:sg.sl);
