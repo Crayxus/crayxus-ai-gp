@@ -188,6 +188,12 @@ body::before{/* 远处光晕 + 更深的黑蓝渐变 */
 .live{box-shadow:inset 0 0 14px -6px rgba(39,224,230,.7)}
 .live .dot{animation:breathe 1.6s ease-in-out infinite}
 @keyframes breathe{0%,100%{opacity:1;box-shadow:0 0 12px var(--c)}50%{opacity:.35;box-shadow:0 0 4px var(--c)}}
+/* 每日入场倒计时 */
+.cd{display:flex;flex-direction:column;align-items:flex-end;border:1px solid rgba(245,196,81,.32);border-radius:12px;
+  padding:6px 13px;background:rgba(245,196,81,.06);box-shadow:inset 0 0 16px -7px rgba(245,196,81,.8)}
+.cd .cdk{font-size:9.5px;color:var(--mut);letter-spacing:1px;margin-bottom:1px}
+.cd .cdv{font-size:20px;font-weight:800;color:var(--gold);letter-spacing:1px;text-shadow:0 0 14px rgba(245,196,81,.55)}
+.empty.lockpos{color:var(--v);letter-spacing:1px;text-shadow:0 0 12px rgba(124,92,255,.5)}
 
 /* ticker：发光行情带 */
 .ticker{box-shadow:0 0 24px -12px rgba(39,224,230,.6)}
@@ -264,6 +270,7 @@ body::before{/* 远处光晕 + 更深的黑蓝渐变 */
       <div class="kpi"><div class="k">最大回撤</div><div class="v mono" id="kDD">—</div></div>
     </div>
     <div class="live"><span class="dot"></span><span id="liveTxt">LIVE</span></div>
+    <div class="cd"><span class="cdk">下次自动建仓 · 14:45 尾盘</span><span class="cdv mono" id="cd">--:--:--</span></div>
   </div>
 
   <div class="ticker"><div class="tag">AI ENGINE</div><div class="tk mono" id="tk">引擎初始化…</div></div>
@@ -371,22 +378,26 @@ function render(d){
   var tr=(d.trades||[]).slice().reverse(); el('tradeCnt').textContent=(d.trades||[]).length+' 笔';
   var lh=''; if(!tr.length)lh='<div class="empty">等待开盘自动建仓…</div>';
   tr.forEach(function(t){ var isBuy=t.side==='BUY';
-    var pl=(t.pnl==null)?'':'<span class="'+cls(t.pnl)+'">'+sign(t.pnl,0)+'<br><small>'+sign(t.pnl_pct,2)+'%</small></span>';
+    var qtyTxt=(t.qty==null?'***':t.qty+'股');
+    var pl='';
+    if(t.pnl_pct!=null){ pl='<span class="'+cls(t.pnl_pct)+'">'+(t.pnl!=null?sign(t.pnl,0)+'<br>':'')+'<small>'+sign(t.pnl_pct,2)+'%</small></span>'; }
     lh+='<div class="row"><span class="tm mono">'+(t.day||'').slice(5)+'<br>'+(t.time||'')+'</span>'
       +'<span class="op '+(isBuy?'b':'s')+'">'+(isBuy?'买入':'卖出')+'</span>'
       +'<span class="nm2">'+t.name+' <small class="mono">'+t.code+'</small>'+(t.reason?'<br><small>'+t.reason+'</small>':'')+'</span>'
-      +'<span class="qp mono">'+t.qty+'股<br>'+fmt(t.price,dec(t.price))+'</span>'
+      +'<span class="qp mono">'+qtyTxt+'<br>'+fmt(t.price,dec(t.price))+'</span>'
       +'<span class="pl mono">'+pl+'</span></div>'; });
   el('log').innerHTML=lh;
 
   // holdings
-  var hd=d.holdings||[]; el('holdCnt').textContent=hd.length;
-  if(hd.length){ var hh=''; hd.forEach(function(h){
-    hh+='<div class="hold"><span>'+h.name+' <small class="mono" style="color:var(--mut)">'+h.code+'</small><br>'
-      +'<small style="color:var(--mut)">'+h.qty+'股 @'+fmt(h.avg,dec(h.avg))+'</small></span>'
-      +'<span class="pl mono '+cls(h.pnl)+'">'+sign(h.pnl,0)+'<br><small>'+sign(h.pnl_pct,2)+'%</small></span></div>'; });
-    el('holds').innerHTML=hh;
-  }else el('holds').innerHTML='<div class="empty">空仓 · 待开盘建仓</div>';
+  var hd=d.holdings||[];
+  if(d.hidden_positions){ el('holdCnt').textContent='🔒'; el('holds').innerHTML='<div class="empty lockpos">🔒 仓位已隐藏</div>'; }
+  else { el('holdCnt').textContent=hd.length;
+    if(hd.length){ var hh=''; hd.forEach(function(h){
+      hh+='<div class="hold"><span>'+h.name+' <small class="mono" style="color:var(--mut)">'+h.code+'</small><br>'
+        +'<small style="color:var(--mut)">'+h.qty+'股 @'+fmt(h.avg,dec(h.avg))+'</small></span>'
+        +'<span class="pl mono '+cls(h.pnl)+'">'+sign(h.pnl,0)+'<br><small>'+sign(h.pnl_pct,2)+'%</small></span></div>'; });
+      el('holds').innerHTML=hh;
+    }else el('holds').innerHTML='<div class="empty">空仓 · 待开盘建仓</div>'; }
 
   // locked #2/#3
   var lk=''; (d.top3||[]).forEach(function(t,i){ if(i<REVEAL)return;
@@ -484,6 +495,22 @@ function drawNav(hist,init){
     +'<circle cx="'+X(n-1).toFixed(1)+'" cy="'+Y(pts[n-1]).toFixed(1)+'" r="3.4" fill="#fff"/>';
 }
 tick(); setInterval(tick,8000);
+/* 每日入场倒计时（到下一个交易日 14:45 尾盘建仓；仅周一~周五，未含法定节假日） */
+function pad(n){return (n<10?'0':'')+n;}
+function nextEntry(){
+  var now=new Date();
+  var t=new Date(now.getFullYear(),now.getMonth(),now.getDate(),14,45,0,0);
+  if(t<=now) t.setDate(t.getDate()+1);
+  while(t.getDay()===0||t.getDay()===6) t.setDate(t.getDate()+1);
+  return t;
+}
+function tickCD(){
+  var ms=nextEntry()-new Date(); if(ms<0)ms=0;
+  var s=Math.floor(ms/1000),dd=Math.floor(s/86400);s-=dd*86400;
+  var hh=Math.floor(s/3600);s-=hh*3600;var mm=Math.floor(s/60),ss=s-mm*60;
+  var e=el('cd'); if(e)e.textContent=(dd>0?dd+'天 ':'')+pad(hh)+':'+pad(mm)+':'+pad(ss);
+}
+setInterval(tickCD,1000); tickCD();
 </script>
 </body>
 </html>
