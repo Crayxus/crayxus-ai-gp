@@ -5,11 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>CRAYXUS AI · 量化自动交易终端</title>
 <meta name="description" content="Crayxus AI 量化自动交易终端 · AI首选信号 · 实时日线 · 止盈止损 · 自动下单 · 每日盈亏">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CRAYXUS AI">
 <meta property="og:title" content="CRAYXUS AI · 量化自动交易终端">
 <meta property="og:description" content="AI 首选信号 · 实时日线 · 自动下单 · 每日盈亏">
-<meta property="og:image" content="https://crayxus.com.au/og-research.jpg">
+<meta property="og:image" content="https://crayxus.com.au/og-auto.jpg">
+<meta property="og:image:width" content="640">
+<meta property="og:image:height" content="640">
 <meta property="og:url" content="https://crayxus.com.au/auto.html">
-<link rel="icon" href="https://crayxus.com.au/favicon.ico">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="CRAYXUS AI · 量化自动交易终端">
+<meta name="twitter:description" content="AI 首选信号 · 实时日线 · 自动下单 · 每日盈亏">
+<meta name="twitter:image" content="https://crayxus.com.au/og-auto.jpg">
+<meta itemprop="image" content="https://crayxus.com.au/og-auto.jpg">
+<meta name="image" content="https://crayxus.com.au/og-auto.jpg">
+<link rel="icon" type="image/x-icon" href="https://crayxus.com.au/favicon.ico">
+<link rel="apple-touch-icon" href="https://crayxus.com.au/apple-touch-icon.png">
 <style>
 :root{
   --bg:#05080f;--txt:#dbe7ff;--mut:#6f82ad;--cyan:#27e0e6;--vio:#7c5cff;--gold:#f5c451;
@@ -280,10 +291,52 @@ body::before{/* 远处光晕 + 更深的黑蓝渐变 */
 .fb.top b{color:var(--gold)}
 .ringRow{margin:4px 0 8px}
 
+/* ====== 手机优化 ====== */
+@media(max-width:680px){
+  .wrap{padding:9px}
+  .bar{padding:11px 12px;gap:9px}
+  .brand b{font-size:15px}.brand .sub{font-size:8.5px;letter-spacing:2px}
+  .logo{width:34px;height:34px;font-size:17px}
+  .kpis{gap:7px;width:100%;order:3;flex-wrap:wrap}
+  .kpi{flex:1 1 30%;min-width:0;padding:6px 9px}
+  .kpi .k{font-size:9px}.kpi .v{font-size:18px}
+  .live{order:2;padding:4px 9px}.cd{order:2;padding:5px 11px}
+  .cd .cdk{font-size:9px}.cd .cdv{font-size:17px}
+  .ticker{height:30px}.ticker .tag{padding:8px 9px;font-size:9px}.tk{font-size:11.5px}
+  .deck{gap:11px}
+  .card{padding:13px}
+  .h{margin-bottom:10px}.h .t{font-size:11px;letter-spacing:1px}
+  .hud{font-size:8.5px;letter-spacing:1.2px;padding:2px 6px;margin-right:6px}
+  .heroLabel{font-size:9.5px;letter-spacing:1.5px;padding:4px 9px;margin-bottom:10px}
+  .c-sig .sigName{font-size:21px}.c-sig .sigName .c{font-size:12px}
+  .c-sig .sigPx .p{font-size:31px}.c-sig .sigPx .ch{font-size:15px}
+  .distinct{font-size:11.5px;padding:7px 9px}
+  .facbadges{gap:6px}.fb{font-size:11px;padding:3px 8px}
+  .ringRow svg{width:128px!important;height:128px!important}
+  .radarWrap svg{height:140px!important}
+  #kSvg{height:228px!important}
+  .legend{gap:13px;font-size:12px}
+  .lsteps{gap:6px}.lstep{flex:1 1 30%;min-width:0;padding:7px 5px}
+  .lstep b{font-size:12px}.lstep span{font-size:9.5px}.lstep i{font-size:11.5px}
+  .navwrap{height:120px}.navwrap svg{height:120px!important}
+  .navnow .big{font-size:17px}
+  .log{max-height:240px}
+  .row{grid-template-columns:50px 40px 1fr 50px 54px;gap:5px;font-size:11.5px;padding:8px 2px}
+  .row .tm{font-size:10px}.op{font-size:10px}
+  .foot{font-size:9.5px}
+}
+@media(max-width:420px){
+  .kpi{flex:1 1 30%}.kpi .v{font-size:16px}
+  .c-sig .sigPx .p{font-size:28px}
+  .lstep{flex:1 1 46%}
+  .row{grid-template-columns:46px 38px 1fr 46px 50px}
+}
+
 @media(prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
 </head>
 <body>
+<img src="https://crayxus.com.au/og-auto.jpg" alt="CRAYXUS AI 量化自动交易终端" width="640" height="640" style="position:absolute;left:-9999px;top:0;width:1px;height:1px;opacity:0;pointer-events:none">
 <div class="scan"></div>
 <div class="fx"></div>
 <div class="wrap">
