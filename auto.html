@@ -205,6 +205,11 @@ body::before{/* 远处光晕 + 更深的黑蓝渐变 */
 .cd .cdk{font-size:9.5px;color:var(--mut);letter-spacing:1px;margin-bottom:1px}
 .cd .cdv{font-size:20px;font-weight:800;color:var(--gold);letter-spacing:1px;text-shadow:0 0 14px rgba(245,196,81,.55)}
 .empty.lockpos{color:var(--v);letter-spacing:1px;text-shadow:0 0 12px rgba(124,92,255,.5)}
+.lockbox{text-align:center;padding:24px 10px;border:1px dashed rgba(124,92,255,.32);border-radius:12px;
+  background:linear-gradient(120deg,rgba(40,30,70,.35),rgba(14,18,34,.25))}
+.lk-ico{font-size:30px;filter:drop-shadow(0 0 14px rgba(124,92,255,.75));margin-bottom:8px}
+.lk-t{font-size:15px;font-weight:800;color:#b3a4ff;letter-spacing:3px}
+.lk-s{font-size:11px;color:var(--mut);margin-top:7px;line-height:1.55}
 
 /* ticker：发光行情带 */
 .ticker{box-shadow:0 0 24px -12px rgba(39,224,230,.6)}
@@ -454,7 +459,7 @@ function render(d){
       '<span class="lvBuy">● '+(sg.held?'持仓均价':'参考买入')+' <b class="mono">'+fmt(chBuy,dec(chBuy))+'</b></span>'
       +'<span class="lvTp">● 止盈 <b class="mono">'+fmt(chTp,dec(chTp))+'</b></span>'
       +'<span class="lvSl">● 硬止损 <b class="mono">'+fmt(chSl,dec(chSl))+'</b></span>';
-    renderLadder(Lp, sg.held);
+    if(Lp) renderLadder(Lp, sg.held); else renderStrategy(sg, chTp, chSl);
   }else{ el('sigBox').innerHTML='<div class="empty">等待 AI 选股…</div>'; el('kSvg').innerHTML=''; el('kLegend').innerHTML=''; el('ladder').innerHTML=''; }
 
   // nav
@@ -477,7 +482,7 @@ function render(d){
 
   // holdings
   var hd=d.holdings||[];
-  if(d.hidden_positions){ el('holdCnt').textContent='🔒'; el('holds').innerHTML='<div class="empty lockpos">🔒 仓位已隐藏</div>'; }
+  if(d.hidden_positions){ el('holdCnt').textContent='🔒 私密'; el('holds').innerHTML='<div class="lockbox"><div class="lk-ico">🔒</div><div class="lk-t">仓位已隐藏</div><div class="lk-s">策略持仓保密 · 仅对外展示净值与信号</div></div>'; }
   else { el('holdCnt').textContent=hd.length;
     if(hd.length){ var hh=''; hd.forEach(function(h){
       hh+='<div class="hold"><span>'+h.name+' <small class="mono" style="color:var(--mut)">'+h.code+'</small><br>'
@@ -514,6 +519,17 @@ function renderLadder(L,held){
   s+='<div class="lstep tp"><span>止盈·清仓</span><b>均价+1%</b><i class="mono">'+fmt(L.tp_price,dec(L.tp_price))+'</i></div>';
   s+='<div class="lstep stop"><span>硬止损·清仓</span><b>首仓-4%</b><i class="mono">'+fmt(L.hard_price,dec(L.hard_price))+'</i></div>';
   el('ladder').innerHTML=s+'</div>';
+}
+/* 隐私模式下，LIVE CHART 下方用"操作策略·当日点位"信息条填充（不泄露仓位） */
+function renderStrategy(sg,tp,sl){
+  var stg=(sg.score>=85?'极强':(sg.score>=72?'强':'中性'));
+  el('ladder').innerHTML='<div class="lhead">操作策略 · 当日点位 <span class="g">AI 自动执行</span></div><div class="lsteps">'
+    +'<div class="lstep"><span>周期</span><b>日线 D</b><i>趋势跟随</i></div>'
+    +'<div class="lstep"><span>买入</span><b>14:55</b><i>市价</i></div>'
+    +'<div class="lstep tp"><span>次日止盈</span><b>+1%</b><i class="mono">'+fmt(tp,dec(tp))+'</i></div>'
+    +'<div class="lstep stop"><span>次日止损</span><b>清仓</b><i class="mono">'+fmt(sl,dec(sl))+'</i></div>'
+    +'<div class="lstep"><span>信号强度</span><b class="cy">'+stg+'</b><i>'+Math.round(sg.score||0)+'/100</i></div>'
+    +'</div>';
 }
 
 /* ---- AI 评分环 ---- */
