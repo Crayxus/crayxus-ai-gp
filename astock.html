@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Crayxus 尾盘选股 · A股强势多因子 | 次日止盈止损</title>
+<meta name="description" content="实时多因子选股：量价齐升 + 均线多头 + 换手健康 + 资金活跃，尾盘买入次日止盈止损，符合 A股 T+1。每次给 Top3-5，含 ETF（T+0）与加仓计划器。">
+<link rel="icon" href="https://crayxus.com.au/favicon.ico">
+<meta property="og:title" content="Crayxus 尾盘选股 · A股强势多因子">
+<meta property="og:description" content="尾盘买入·次日止盈止损 | 实时多因子打分 Top3-5 | 含 ETF(T+0) 与加仓计划器">
+<meta property="og:image" content="https://crayxus.com.au/og-research.jpg">
+<meta property="og:url" content="https://crayxus.com.au/astock.html">
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --panel2:#1c2230; --line:#262d3a;
+    --txt:#e6edf3; --mut:#8b97a7; --acc:#f0b232; --acc2:#3b82f6;
+    --up:#ef4444; --down:#22c55e; /* 中国习惯：红涨绿跌 */
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Segoe UI,Roboto,sans-serif;
+    line-height:1.5;font-size:15px;padding-bottom:60px}
+  .wrap{max-width:760px;margin:0 auto;padding:16px}
+  h1{font-size:20px;margin:6px 0 2px}
+  .sub{color:var(--mut);font-size:12.5px;margin-bottom:12px}
+  .warn{background:#2a1d12;border:1px solid #5a3a14;color:#f4c98a;border-radius:10px;
+    padding:10px 12px;font-size:12.5px;margin:10px 0;line-height:1.55}
+  .warn b{color:#ffd58a}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0}
+  .tabs{display:flex;gap:8px;margin:8px 0}
+  .tab{flex:1;text-align:center;padding:10px;border-radius:10px;background:var(--panel2);
+    border:1px solid var(--line);color:var(--mut);font-weight:600;cursor:pointer;user-select:none}
+  .tab.on{background:linear-gradient(180deg,#2a3550,#1c2942);color:#cfe0ff;border-color:#37507e}
+  .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+  label{font-size:12.5px;color:var(--mut)}
+  input,select{background:#0b0f16;border:1px solid var(--line);color:var(--txt);
+    border-radius:8px;padding:8px 10px;font-size:14px;outline:none}
+  input[type=number]{width:96px}
+  .chip{padding:7px 12px;border-radius:999px;background:var(--panel2);border:1px solid var(--line);
+    color:var(--mut);font-size:13px;cursor:pointer;user-select:none}
+  .chip.on{background:#15311f;border-color:#2c6b3f;color:#7ee0a0}
+  .seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .seg div{padding:7px 12px;font-size:13px;color:var(--mut);cursor:pointer;background:#0b0f16}
+  .seg div.on{background:#23314e;color:#cfe0ff}
+  button.go{background:linear-gradient(180deg,#f0b232,#d89a1c);color:#1a1304;border:none;
+    border-radius:10px;padding:12px 18px;font-weight:800;font-size:15px;cursor:pointer;width:100%;margin-top:4px}
+  button.go:active{transform:translateY(1px)}
+  button.go:disabled{opacity:.55;cursor:default}
+  .status{font-size:12.5px;color:var(--mut);margin:8px 2px;min-height:18px}
+  .card{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--acc);
+    border-radius:12px;padding:13px;margin:10px 0}
+  .card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+  .rank{font-size:12px;color:#1a1304;background:var(--acc);border-radius:6px;padding:1px 7px;font-weight:800}
+  .nm{font-weight:700;font-size:16px}
+  .code{color:var(--mut);font-size:12px;margin-left:6px}
+  .px{font-size:20px;font-weight:800;text-align:right}
+  .pct{font-size:13px;text-align:right}
+  .up{color:var(--up)} .down{color:var(--down)}
+  .score{font-size:12px;color:var(--mut)}
+  .scbar{height:6px;border-radius:4px;background:#0b0f16;overflow:hidden;margin:6px 0 8px}
+  .scbar i{display:block;height:100%;background:linear-gradient(90deg,#d89a1c,#f0b232)}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+  .t{font-size:11.5px;padding:3px 8px;border-radius:6px;background:#13251a;color:#7ee0a0;border:1px solid #235}
+  .t.bad{background:#2a1414;color:#f29a9a;border-color:#5a2424}
+  .t.neu{background:#1a2030;color:#9fb3d0;border-color:#2c3a52}
+  .lv{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px}
+  .lv div{background:#0b0f16;border:1px solid var(--line);border-radius:8px;padding:7px 8px;text-align:center}
+  .lv .k{font-size:11px;color:var(--mut)}
+  .lv .v{font-size:15px;font-weight:700;margin-top:2px}
+  .logic{font-size:12.5px;color:#b9c4d2;margin-top:8px;background:#0b0f16;border-radius:8px;padding:8px 10px}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px}
+  th,td{border:1px solid var(--line);padding:6px 5px;text-align:center}
+  th{background:#0b0f16;color:var(--mut);font-weight:600}
+  details{margin:12px 0}
+  summary{cursor:pointer;font-weight:700;padding:6px 0}
+  .small{font-size:12px;color:var(--mut)}
+  a{color:var(--acc2)}
+  .footer{font-size:11.5px;color:var(--mut);margin-top:18px;line-height:1.7;border-top:1px solid var(--line);padding-top:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>📈 Crayxus 尾盘选股 <span class="small">· A股多因子强势模型</span></h1>
+  <div class="sub">尾盘买入 · 次日止盈止损 · 实时数据(东方财富) · 每次给 Top 3–5</div>
+
+  <div class="warn">
+    <b>先把话说明白：</b>这是<b>决策辅助</b>工具，不是保证盈利的系统。它做的是把“量价齐升+均线多头+换手健康+资金活跃”这套<b>透明打分</b>跑在实时数据上，给你一份强势候选清单。
+    追强势股是<b>高波动、会回撤</b>的打法，单日也可能亏。<b>请用闲钱、严格止损、自负盈亏。</b>
+  </div>
+
+  <div class="tabs">
+    <div class="tab on" data-tab="stock" onclick="switchTab('stock')">股票（T+1）</div>
+    <div class="tab" data-tab="etf" onclick="switchTab('etf')">ETF（T+0）</div>
+  </div>
+
+  <div class="panel">
+    <div class="row">
+      <label>风格</label>
+      <div class="seg" id="styleSeg">
+        <div class="on" data-v="steady" onclick="pickStyle(this)">稳健趋势</div>
+        <div data-v="aggr" onclick="pickStyle(this)">激进强势</div>
+      </div>
+      <label style="margin-left:8px">本金</label>
+      <input type="number" id="capital" value="50000" step="10000"> <span class="small">元</span>
+    </div>
+    <div class="row" id="boardRow">
+      <label>板块</label>
+      <span class="chip on" data-b="main" onclick="toggleChip(this)">主板</span>
+      <span class="chip on" data-b="cyb" onclick="toggleChip(this)">创业板</span>
+      <span class="chip" data-b="kcb" onclick="toggleChip(this)">科创板</span>
+      <span class="small">（创业/科创涨跌幅±20%，波动更大）</span>
+    </div>
+    <div class="row" id="etfRow" style="display:none">
+      <label>ETF</label>
+      <span class="chip" data-e="t0only" onclick="toggleEtf(this)">只看可 T+0（跨境/债/金/货币）</span>
+      <span class="small">普通宽基/行业 ETF 是 T+1，每张卡片会逐只标注</span>
+    </div>
+    <button class="go" id="goBtn" onclick="run()">⚡ 开始选股</button>
+    <div class="status" id="status">就绪。建议下午 14:40 后（尾盘）运行，按收盘价附近的强势股选。</div>
+  </div>
+
+  <div class="small" style="margin:4px 2px 0">
+    <b>玩法</b>：尾盘（约14:50）按现价附近买入下方 Top 标的 → <b>次日</b>到达<b>止盈位</b>卖出，未到则<b>跌破止损位</b>止损。股票当天买当天<b>不能</b>卖（T+1）；ETF 看品种——跨境/债/金/货币 ETF 是 <b>T+0</b>（当天可卖），普通股票型 ETF 仍是 <b>T+1</b>。
+  </div>
+
+  <div id="results"></div>
+
+  <!-- 加仓 / 马丁 计划器 -->
+  <details id="martDetails">
+    <summary>🧮 加仓 / 马丁 计划器（T+1 排程）</summary>
+    <div class="panel">
+      <div class="warn"><b>马丁风险：</b>“越跌越加倍摊低成本”能连赢很多次，但<b>一次单边下跌就把前面的盈利全部吐回去甚至爆仓</b>。本工具<b>默认推荐顺势加仓</b>（涨了才加、带硬止损）。逆势马丁请<b>限 2–3 次、设死止损</b>。</div>
+      <div class="row">
+        <label>模式</label>
+        <div class="seg" id="martMode">
+          <div class="on" data-v="trend" onclick="pickMart(this)">顺势加仓(推荐)</div>
+          <div data-v="rev" onclick="pickMart(this)">逆势马丁</div>
+        </div>
+      </div>
+      <div class="row">
+        <label>现价</label><input type="number" id="mPrice" value="10.00" step="0.01">
+        <label>首仓(股)</label><input type="number" id="mBase" value="100" step="100">
+        <label>触发幅度</label><input type="number" id="mTrig" value="3" step="0.5"><span class="small">%</span>
+      </div>
+      <div class="row">
+        <label>递增方式</label>
+        <select id="mGrow">
+          <option value="add">楼梯加仓 (100→150→200→250，推荐)</option>
+          <option value="double">倍投马丁 (100→200→400，激进·有爆仓尾风险)</option>
+          <option value="flat">等量 (100→100→100)</option>
+        </select>
+        <label>加仓次数</label><input type="number" id="mTimes" value="3" step="1">
+      </div>
+      <div class="row">
+        <label>标的类型</label>
+        <div class="seg" id="mType">
+          <div class="on" data-v="t1" onclick="pickMType(this)">股票 T+1</div>
+          <div data-v="t0" onclick="pickMType(this)">ETF（跨境/债/金/货币·T+0）</div>
+        </div>
+        <button class="go" style="width:auto;padding:9px 16px" onclick="calcMart()">计算排程</button>
+      </div>
+      <div id="martOut"></div>
+    </div>
+  </details>
+
+  <details>
+    <summary>📐 选股逻辑（完全透明，无黑箱）</summary>
+    <div class="panel small" style="line-height:1.75">
+      数据：东方财富实时行情（沪深A股按成交额取最活跃约1000只为票池）。<br>
+      <b>第一层 快照打分（0–100）</b>：<br>
+      • <b>动量</b>(今日涨幅)：偏好温和上涨 1%–6%，惩罚下跌与≥9%的追高；<br>
+      • <b>放量</b>(量比)：偏好 1–2.5 的健康放量，惩罚缩量与异常巨量；<br>
+      • <b>换手健康</b>：偏好 3%–12%，惩罚过冷(<1.5%)与过热(>25%)；<br>
+      • <b>资金活跃</b>(成交额)：越活跃越好(对数计分)；<br>
+      • <b>估值理性</b>(市盈率)：剔除亏损股，偏好合理区间。<br>
+      <b>第二层 趋势确认（取快照前列拉日K）</b>：<br>
+      • <b>均线多头</b> MA5&gt;MA10&gt;MA20；• 收盘&gt;MA20；• 20日动量为正且不过度乖离。<br>
+      <b>过滤</b>：剔除 ST/退市、市值&lt;20亿或&gt;3000亿、成交额&lt;5000万、已涨停（买不进/追高）。<br>
+      综合分 = 0.55×快照 + 0.45×趋势 → 排序取 Top 5。<br>
+      <span style="color:var(--mut)">注：打分是“今日市场内的相对强弱排名”，<b>不是</b>对明天涨跌的预测。</span>
+    </div>
+  </details>
+
+  <details>
+    <summary>⚖️ T+1 / T+0 规则速记</summary>
+    <div class="panel small" style="line-height:1.8">
+      • <b>股票</b>：T日买入，<b>当天不能卖</b>，最早 T+1（次日）卖 → 适合“尾盘买、次日止盈止损”。<br>
+      • 当天<b>卖出</b>股票拿到的钱，<b>可当天再买</b>别的票（资金 T+0，券 T+1）。<br>
+      • <b>哪些 ETF 是 T+0</b>（当天可买可卖）：跨境 ETF（纳指/标普/恒生/港股等）、黄金/商品 ETF、债券 ETF、货币 ETF、可转债 → 适合日内马丁/网格。<br>
+      • <b>普通股票型 ETF</b>（沪深300/创业板/科创50/行业如半导体、证券）：<b>T+1</b>，和股票一样尾盘买次日卖。<br>
+      • 涨跌停：主板 ±10%，创业板/科创板 ±20%，ST ±5%。<br>
+      • 一手 = 100 股，买入按 100 股整数倍；卖出可不足 100 股一次性卖完。
+    </div>
+  </details>
+
+  <div class="footer">
+    <b>免责声明</b>：本页仅为技术演示与投资决策<b>辅助</b>，所有打分基于公开历史/实时行情，<b>不构成任何投资建议</b>，不保证收益。股市有风险，入市需谨慎，盈亏自负。数据来源东方财富，可能延迟或出错，下单前请以交易软件为准。<br>
+    © Crayxus · <span id="ver"></span>
+  </div>
+</div>
+
+<script>
+/* ============ 配置 ============ */
+var TAB = 'stock';
+var STYLE = 'steady';
+var BOARDS = {main:true, cyb:true, kcb:false};
+var MART_MODE='trend', MART_TYPE='t1';
+/* ============ JSONP（绕过跨域） ============ */
+function jsonp(url){
+  return new Promise(function(resolve,reject){
+    var cb='jp'+Math.floor(Math.random()*1e9);
+    var full=url + (url.indexOf('?')>=0?'&':'?') + 'cb='+cb;
+    var s=document.createElement('script');
+    var done=false;
+    function clean(){ if(done)return; done=true; try{delete window[cb]}catch(e){window[cb]=undefined}
+      if(s.parentNode)s.parentNode.removeChild(s); clearTimeout(tm); }
+    var tm=setTimeout(function(){clean();reject(new Error('timeout'))},16000);
+    window[cb]=function(d){ resolve(d); clean(); };
+    s.onerror=function(){ clean(); reject(new Error('neterr')); };
+    s.src=full;
+    document.body.appendChild(s);
+  });
+}
+
+/* ============ 票池过滤器 ============ */
+function boardFs(){
+  var p=[];
+  if(BOARDS.main){ p.push('m:1+t:2'); p.push('m:0+t:6'); } // 沪深主板
+  if(BOARDS.cyb){ p.push('m:0+t:80'); }                    // 创业板
+  if(BOARDS.kcb){ p.push('m:1+t:23'); }                    // 科创板
+  if(!p.length){ p.push('m:1+t:2'); p.push('m:0+t:6'); }
+  return p.join(',');
+}
+var ETF_FS='b:MK0021,b:MK0022,b:MK0023,b:MK0024,b:MK0827';
+var ETF_T0ONLY=false;
+/* 按名称判别 ETF 是否 T+0（跨境/债/金/货币/商品）。启发式，下单前以券商为准 */
+function etfT0(name){
+  name=name||'';
+  if(/纳指|纳斯达克|标普|道琼斯|恒生|港股|H股|日经|日本|德国|法国|英国|亚太|东南亚|越南|印度|韩国|海外|全球|国际|中概|美国|沙特|新兴市场|发达/.test(name)) return true; // 跨境
+  if(/债|国债|政金|信用|城投|短融|融资|地方债/.test(name)) return true;   // 债券
+  if(/货币|添益|日利|现金|快线|日添利|理财/.test(name)) return true;       // 货币
+  if(/(黄金|豆粕|原油|能化|有色金属|商品|白银)/.test(name) && !/股/.test(name)) return true; // 商品（排除“黄金股”等股票型）
+  return false; // 其余股票型 ETF → T+1
+}
+
+/* 拉取票池快照（分页） */
+async function fetchUniverse(){
+  var fs = TAB==='etf' ? ETF_FS : boardFs();
+  var fields='f2,f3,f5,f6,f8,f9,f10,f12,f13,f14,f20,f22,f23';
+  var pages = TAB==='etf' ? 3 : 5;   // ETF~600, 股票~1000
+  var out=[];
+  for(var pn=1; pn<=pages; pn++){
+    setStatus('拉取实时行情… 第 '+pn+'/'+pages+' 页（共 '+out.length+' 只）');
+    var url='https://push2.eastmoney.com/api/qt/clist/get?pn='+pn+'&pz=200&po=1&np=1&fltt=2&invt=2&fid=f6&fs='+fs+'&fields='+fields;
+    try{
+      var d=await jsonp(url, pn);
+      if(d && d.data && d.data.diff){
+        var arr = Array.isArray(d.data.diff)? d.data.diff : Object.values(d.data.diff);
+        out=out.concat(arr);
+        if(arr.length<200) break;
+      } else break;
+    }catch(e){ if(pn===1) throw e; else break; }
+  }
+  return out;
+}
+
+/* ============ 快照打分 ============ */
+function scoreSnapStock(s){
+  var chg=+s.f3, vr=+s.f10, turn=+s.f8, amtYi=(+s.f6)/1e8, pe=+s.f9, capYi=(+s.f20)/1e8;
+  // 动量
+  var mom;
+  if(chg<=-4) mom=18; else if(chg<0) mom=35+ (chg+4)/4*15; // -4..0 →18..50 (approx)
+  else if(chg<=3) mom=60+chg/3*30;        // 0..3 →60..90
+  else if(chg<=6) mom=90-(chg-3)/3*8;     // 3..6 →90..82
+  else if(chg<=9) mom=82-(chg-6)/3*30;    // 6..9 →82..52
+  else mom=30;                            // 涨停附近
+  // 放量(量比)
+  var vol;
+  if(!vr||vr<=0) vol=50; else if(vr<0.7) vol=35; else if(vr<1) vol=55+(vr-0.7)/0.3*15;
+  else if(vr<=2.5) vol=85; else if(vr<=4) vol=85-(vr-2.5)/1.5*30; else vol=45;
+  // 换手
+  var tn;
+  if(turn<1.5) tn=42; else if(turn<3) tn=55+(turn-1.5)/1.5*25; else if(turn<=12) tn=85;
+  else if(turn<=25) tn=85-(turn-12)/13*40; else tn=38;
+  // 资金活跃（成交额，对数）
+  var lq=50+Math.max(-0.3,Math.min(2, Math.log(Math.max(amtYi,0.1))/Math.LN10))*20;
+  // 估值
+  var val;
+  if(pe<0) val=38; else if(pe<=15) val=80; else if(pe<=40) val=72; else if(pe<=80) val=55; else val=42;
+  var total = mom*0.30 + vol*0.20 + tn*0.15 + lq*0.20 + val*0.15;
+  return {total:total, mom:mom, vol:vol, tn:tn, lq:lq, val:val, chg:chg, vr:vr, turn:turn, amtYi:amtYi, capYi:capYi, pe:pe};
+}
+function scoreSnapEtf(s){
+  var chg=+s.f3, vr=+s.f10, turn=+s.f8, amtYi=(+s.f6)/1e8;
+  var mom;
+  if(chg<=-3) mom=22; else if(chg<0) mom=40+(chg+3)/3*15; else if(chg<=2.5) mom=62+chg/2.5*28;
+  else if(chg<=5) mom=90-(chg-2.5)/2.5*15; else mom=55;
+  var vol; if(!vr||vr<=0) vol=55; else if(vr<0.8) vol=45; else if(vr<=2.5) vol=85; else if(vr<=4) vol=72; else vol=55;
+  var lq=50+Math.max(-0.3,Math.min(2, Math.log(Math.max(amtYi,0.1))/Math.LN10))*22;
+  var tn=turn>0?70:60;
+  var total=mom*0.42+vol*0.25+lq*0.25+tn*0.08;
+  return {total:total, mom:mom, vol:vol, tn:tn, lq:lq, val:0, chg:chg, vr:vr, turn:turn, amtYi:amtYi, capYi:0, pe:0};
+}
+
+function limitOf(code, isST){
+  if(isST) return 5;
+  if(/^(30|68)/.test(code)) return 20;
+  return 10;
+}
+function preFilter(s){
+  if(TAB==='etf'){
+    if((+s.f6)/1e8 < 0.5) return false;            // ETF：成交额≥5000万
+    if(ETF_T0ONLY && !etfT0(s.f14||'')) return false;
+    return true;
+  }
+  var nm=s.f14||'';
+  if(/ST|退|\*/i.test(nm)) return false;
+  var capYi=(+s.f20)/1e8;
+  if(capYi<20 || capYi>3000) return false;
+  if((+s.f6)/1e8 < 0.5) return false;
+  return true;
+}
+
+/* ============ 日K趋势确认 ============ */
+async function fetchKline(secid, idx){
+  var url='https://push2his.eastmoney.com/api/qt/stock/kline/get?secid='+secid+
+          '&fields1=f1,f2&fields2=f51,f53&klt=101&fqt=1&beg=0&end=20500101&lmt=70';
+  try{
+    var d=await jsonp(url, idx);
+    if(!d||!d.data||!d.data.klines) return null;
+    return d.data.klines.map(function(k){var p=k.split(','); return +p[1];}); // 收盘价数组
+  }catch(e){ return null; }
+}
+function ma(arr,n){ if(arr.length<n) return null; var s=0; for(var i=arr.length-n;i<arr.length;i++)s+=arr[i]; return s/n; }
+function scoreTrend(closes){
+  if(!closes||closes.length<25) return {total:50, bull:false, aboveMa20:false, mom20:0, ext:1};
+  var c=closes[closes.length-1], m5=ma(closes,5), m10=ma(closes,10), m20=ma(closes,20);
+  var bull = m5>m10 && m10>m20;
+  var aboveMa20 = c>m20;
+  var c20 = closes[closes.length-21] || closes[0];
+  var mom20 = (c-c20)/c20;
+  var ext = c/m20;
+  var sc=40;
+  if(bull) sc+=25; else if(m5>m20) sc+=10;
+  if(aboveMa20) sc+=12;
+  if(mom20>0 && mom20<=0.25) sc+=15; else if(mom20>0.25 && mom20<=0.4) sc+=6; else if(mom20<0) sc-=10;
+  if(ext>1.18) sc-=14; else if(ext>1.10) sc-=5;
+  sc=Math.max(5,Math.min(98,sc));
+  return {total:sc, bull:bull, aboveMa20:aboveMa20, mom20:mom20, ext:ext, ma20:m20};
+}
+
+/* ============ 主流程 ============ */
+async function run(){
+  var btn=document.getElementById('goBtn'); btn.disabled=true;
+  document.getElementById('results').innerHTML='';
+  try{
+    var raw=await fetchUniverse();
+    if(!raw.length) throw new Error('票池为空');
+    setStatus('票池 '+raw.length+' 只，打分中…');
+    var scored=[];
+    raw.forEach(function(s){
+      if(!preFilter(s)) return;
+      var code=s.f12+''; var nm=s.f14||'';
+      var lim=limitOf(code, /ST/i.test(nm));
+      var nearLimit = (+s.f3) >= lim-0.6;       // 已涨停/接近：买不进、追高
+      var sc = TAB==='etf'? scoreSnapEtf(s) : scoreSnapStock(s);
+      scored.push({code:code, name:nm, market:+s.f13, price:+s.f2, chg:+s.f3,
+        snap:sc, nearLimit:nearLimit, lim:lim, sumScore:sc.total - (nearLimit?18:0)});
+    });
+    scored.sort(function(a,b){return b.sumScore-a.sumScore;});
+    var cand=scored.slice(0,18);
+
+    // 趋势确认（并发4）
+    setStatus('对 '+cand.length+' 只候选拉日K确认趋势…');
+    var i=0;
+    async function worker(wi){
+      while(i<cand.length){
+        var k=i++; var c=cand[k];
+        var secid=c.market+'.'+c.code;
+        var closes=await fetchKline(secid, wi+k);
+        c.trend = scoreTrend(closes);
+        c.final = c.snap.total*0.55 + c.trend.total*0.45 - (c.nearLimit?16:0);
+      }
+    }
+    await Promise.all([worker(0),worker(1),worker(2),worker(3)]);
+    cand.sort(function(a,b){return b.final-a.final;});
+    var top=cand.slice(0,5);
+    renderCards(top);
+    setStatus('完成 ✔ 数据时间：'+new Date().toLocaleString('zh-CN')+'（以交易软件为准）');
+  }catch(e){
+    setStatus('❌ 取数失败：'+e.message+'。可能是网络/代理拦截了东方财富接口。请关掉代理或换网络重试；本工具不会编造数据。');
+  }finally{ btn.disabled=false; }
+}
+
+function tag(ok,txtOk,txtBad,neu){
+  if(neu) return '<span class="t neu">'+txtOk+'</span>';
+  return '<span class="t '+(ok?'':'bad')+'">'+(ok?txtOk:txtBad)+'</span>';
+}
+function renderCards(list){
+  var cap=+document.getElementById('capital').value||50000;
+  var tp = STYLE==='aggr'?0.05:0.03;   // 次日止盈
+  var sl = STYLE==='aggr'?0.05:0.035;  // 次日止损
+  var box=document.getElementById('results');
+  if(!list.length){ box.innerHTML='<div class="panel">没有符合条件的标的（可能板块全关或数据异常）。</div>'; return; }
+  var html='';
+  list.forEach(function(c,idx){
+    var t=c.trend||{}; var s=c.snap;
+    var px=c.price;
+    var ma20=t.ma20||px;
+    var tpPx=(px*(1+tp));
+    var slPx=Math.max(px*(1-sl), ma20*0.995);  // 止损取 -X% 与 跌破MA20 的较高者
+    if(slPx>=px) slPx=px*(1-sl);
+    var rr=((tpPx-px)/(px-slPx));
+    var shares=Math.max(100, Math.floor(cap*0.2/px/100)*100); // 单只≤20%本金
+    var upcls=c.chg>=0?'up':'down';
+    html+='<div class="card">'
+      +'<div class="top"><div><span class="rank">No.'+(idx+1)+'</span> '
+        +'<span class="nm">'+c.name+'</span><span class="code">'+c.code+'</span>'
+        +(c.nearLimit?' <span class="t bad" style="vertical-align:middle">已涨停·谨慎</span>':'')+'</div>'
+        +'<div><div class="px '+upcls+'">'+px.toFixed(2)+'</div>'
+        +'<div class="pct '+upcls+'">'+(c.chg>=0?'+':'')+c.chg.toFixed(2)+'%</div></div></div>'
+      +'<div class="score">综合评分 '+Math.round(c.final)+'/100（快照'+Math.round(s.total)+' · 趋势'+Math.round((t.total||50))+'）</div>'
+      +'<div class="scbar"><i style="width:'+Math.round(c.final)+'%"></i></div>'
+      +'<div class="tags">'
+        + tag(t.bull,'均线多头','均线纠缠')
+        + tag(t.aboveMa20,'站上20日线','跌破20日线')
+        + tag(s.vol>=70,'健康放量','量能一般')
+        + tag(s.tn>=70,'换手健康','换手偏冷/热')
+        + tag(s.lq>=70,'资金活跃','资金一般')
+        + (TAB==='etf'? (etfT0(c.name)?'<span class="t">ETF · T+0 可日内</span>':'<span class="t neu">ETF · T+1 次日卖</span>'):'')
+      +'</div>'
+      +'<div class="lv">'
+        +'<div><div class="k">尾盘参考买入</div><div class="v">'+px.toFixed(2)+'</div></div>'
+        +'<div><div class="k">次日止盈 (+'+(tp*100)+'%)</div><div class="v up">'+tpPx.toFixed(2)+'</div></div>'
+        +'<div><div class="k">次日止损</div><div class="v down">'+slPx.toFixed(2)+'</div></div>'
+      +'</div>'
+      +'<div class="logic">📌 逻辑：'+oneLiner(c)+'<br>建议仓位：约 <b>'+shares+'</b> 股（≈本金20%，'+(px*shares/10000).toFixed(2)+'万）'
+        +' · 盈亏比≈ <b>'+(isFinite(rr)?rr.toFixed(2):'-')+'</b>'
+        +' · '+(TAB==='etf'? (etfT0(c.name)?'T+0：当天可买可卖，可日内马丁':'T+1：今日买，次日到价卖') : 'T+1：今日买，明日到价卖')+'</div>'
+      +'</div>';
+  });
+  box.innerHTML=html;
+  // 把第一只价格塞进马丁计算器
+  if(list[0]){ document.getElementById('mPrice').value=list[0].price.toFixed(2); }
+}
+function oneLiner(c){
+  var s=c.snap, t=c.trend||{}, parts=[];
+  if(t.bull) parts.push('均线多头排列');
+  else if(t.aboveMa20) parts.push('站稳20日线');
+  if(s.vol>=70) parts.push('放量');
+  if(s.tn>=70) parts.push('换手健康');
+  if(c.chg>0 && c.chg<7) parts.push('温和上攻');
+  if(s.lq>=70) parts.push('资金活跃');
+  if(!parts.length) parts.push('相对强势');
+  return parts.join('、')+'，今日市场强弱排名居前。';
+}
+
+/* ============ 加仓 / 马丁 ============ */
+function calcMart(){
+  var p0=+document.getElementById('mPrice').value, base=+document.getElementById('mBase').value;
+  var trig=(+document.getElementById('mTrig').value)/100, times=+document.getElementById('mTimes').value;
+  var grow=document.getElementById('mGrow').value;
+  var rev = MART_MODE==='rev';
+  var t0 = MART_TYPE==='t0';
+  var rows=[], cumSh=0, cumCost=0, day=1;
+  for(var n=0;n<=times;n++){
+    var price = n===0? p0 : p0*Math.pow(1+(rev?-trig:trig), n);
+    var sh;
+    if(n===0) sh=base;
+    else if(grow==='double') sh=base*Math.pow(2,n);
+    else if(grow==='flat') sh=base;
+    else sh=base*(1+0.5*n); // 等额递增
+    sh=Math.round(sh/100)*100;
+    cumSh+=sh; cumCost+=sh*price;
+    var avg=cumCost/cumSh;
+    var cond = n===0?'首仓（尾盘买）':(rev?('跌'+(trig*100*n).toFixed(0)+'%'):('涨'+(trig*100*n).toFixed(0)+'%'));
+    rows.push({n:n,cond:cond,price:price,sh:sh,amt:sh*price,cumSh:cumSh,avg:avg,day:t0?'当日(T+0)':('第'+(n+1)+'交易日')});
+  }
+  var maxCost=cumCost;
+  var html='<table><tr><th>笔</th><th>触发</th><th>价格</th><th>股数</th><th>金额</th><th>累计股</th><th>摊薄均价</th><th>可卖</th></tr>';
+  rows.forEach(function(r){
+    html+='<tr><td>'+(r.n)+'</td><td>'+r.cond+'</td><td>'+r.price.toFixed(2)+'</td><td>'+r.sh+'</td><td>'+r.amt.toFixed(0)+'</td><td>'+r.cumSh+'</td><td><b>'+r.avg.toFixed(2)+'</b></td><td>'+r.day+'</td></tr>';
+  });
+  html+='</table>';
+  html+='<div class="small" style="margin-top:8px">满仓总投入 <b>¥'+maxCost.toFixed(0)+'</b>，满仓后均价 <b>'+rows[rows.length-1].avg.toFixed(2)+'</b>。';
+  if(rev){
+    var dd=times*trig*100;
+    html+=' <span style="color:var(--up)">逆势马丁：到最后一笔时标的已较首仓跌约 '+dd.toFixed(0)+'%，你却把仓位加到最大——若继续下跌，亏损按满仓算。务必设死止损（如跌破均价再 -'+(trig*100).toFixed(0)+'% 全平）。</span>';
+  }else{
+    html+=' 顺势加仓：只在上涨/突破时加，亏损时<b>不加</b>，跌破首仓 -'+(STYLE==='aggr'?'5':'3.5')+'% 直接止损。';
+  }
+  if(!t0) html+=' <b>股票T+1</b>：每笔买入当天不能卖，最早次日卖；上表“可卖”列为最早可卖交易日。';
+  else html+=' <b>ETF T+0</b>（仅跨境/债/金/货币等品种）：当天即可买卖，适合日内网格/马丁；普通股票型 ETF 是 T+1，不能日内。';
+  html+='</div>';
+  document.getElementById('martOut').innerHTML=html;
+}
+
+/* ============ UI ============ */
+function switchTab(t){
+  TAB=t;
+  document.querySelectorAll('.tab').forEach(function(el){el.classList.toggle('on', el.dataset.tab===t);});
+  document.getElementById('boardRow').style.display = (t==='etf')?'none':'flex';
+  document.getElementById('etfRow').style.display = (t==='etf')?'flex':'none';
+  document.getElementById('results').innerHTML='';
+  setStatus(t==='etf'?'ETF 模式：跨境/债/金/货币 ETF 是 T+0（可日内马丁），股票型 ETF 是 T+1。每张卡片会标明。点开始选股。':'股票模式（T+1，尾盘买次日卖）。点开始选股。');
+}
+function toggleEtf(el){ ETF_T0ONLY=!ETF_T0ONLY; el.classList.toggle('on',ETF_T0ONLY); }
+function pickStyle(el){ STYLE=el.dataset.v; el.parentNode.querySelectorAll('div').forEach(function(d){d.classList.toggle('on',d===el);}); }
+function pickMart(el){ MART_MODE=el.dataset.v; el.parentNode.querySelectorAll('div').forEach(function(d){d.classList.toggle('on',d===el);}); }
+function pickMType(el){ MART_TYPE=el.dataset.v; el.parentNode.querySelectorAll('div').forEach(function(d){d.classList.toggle('on',d===el);}); }
+function toggleChip(el){ var b=el.dataset.b; BOARDS[b]=!BOARDS[b]; el.classList.toggle('on',BOARDS[b]); }
+function setStatus(t){ document.getElementById('status').textContent=t; }
+document.getElementById('ver').textContent='实时数据演示版 · '+new Date().toLocaleDateString('zh-CN');
+</script>
+</body>
+</html>
