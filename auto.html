@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CRAYXUS AI · 自动交易终端</title>
+<meta name="description" content="Crayxus AI 量化自动交易终端 · 实时行情 · 自动下单 · 每日盈亏记录">
+<meta property="og:title" content="CRAYXUS AI · 自动交易终端">
+<meta property="og:description" content="AI 量化自动交易 · 实时行情 · 自动下单 · 每日盈亏">
+<meta property="og:image" content="https://crayxus.com.au/og-research.jpg">
+<meta property="og:url" content="https://crayxus.com.au/auto.html">
+<link rel="icon" href="https://crayxus.com.au/favicon.ico">
+<style>
+:root{
+  --bg:#060a12; --bg2:#0a1120; --panel:rgba(16,24,40,.72); --line:rgba(86,124,205,.18);
+  --txt:#dce7ff; --mut:#7689b3; --cyan:#27e0e6; --gold:#f5c451;
+  --up:#ff4d57; --down:#19d07a; --vio:#7c5cff;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  background:var(--bg); color:var(--txt); overflow-x:hidden;
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Segoe UI,Roboto,sans-serif;
+  background-image:
+    radial-gradient(1200px 600px at 80% -10%, rgba(39,224,230,.10), transparent 60%),
+    radial-gradient(900px 500px at -10% 110%, rgba(124,92,255,.12), transparent 55%),
+    linear-gradient(0deg, rgba(86,124,205,.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(86,124,205,.05) 1px, transparent 1px);
+  background-size:auto,auto,46px 46px,46px 46px;
+  animation:drift 40s linear infinite;
+}
+@keyframes drift{to{background-position:0 0,0 0,46px 46px,46px 46px}}
+.mono{font-variant-numeric:tabular-nums;font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+.wrap{max-width:1180px;margin:0 auto;padding:14px}
+/* ---- header ---- */
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  padding:12px 16px;border:1px solid var(--line);border-radius:14px;
+  background:linear-gradient(180deg,rgba(20,30,52,.8),rgba(10,16,30,.7));backdrop-filter:blur(8px)}
+.brand{display:flex;align-items:center;gap:11px}
+.logo{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;font-size:18px;
+  background:linear-gradient(135deg,#1b2b4d,#0d1830);border:1px solid rgba(39,224,230,.45);
+  box-shadow:0 0 18px rgba(39,224,230,.35);color:var(--cyan)}
+.brand b{font-size:16px;letter-spacing:.5px}
+.brand .sub{font-size:10.5px;color:var(--mut);letter-spacing:2px}
+.live{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--cyan);letter-spacing:1px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan);
+  animation:blink 1.3s ease-in-out infinite}
+@keyframes blink{50%{opacity:.25}}
+.kpis{display:flex;gap:18px;flex-wrap:wrap}
+.kpi{min-width:92px}
+.kpi .k{font-size:10.5px;color:var(--mut);letter-spacing:1px}
+.kpi .v{font-size:22px;font-weight:800;margin-top:2px;text-shadow:0 0 16px rgba(39,224,230,.25)}
+.up{color:var(--up)} .down{color:var(--down)} .cy{color:var(--cyan)} .gd{color:var(--gold)}
+/* ---- grid ---- */
+.grid{display:grid;grid-template-columns:minmax(0,0.92fr) minmax(0,1.25fr);gap:14px;margin-top:14px}
+@media(max-width:820px){.grid{grid-template-columns:1fr}}
+.card{border:1px solid var(--line);border-radius:14px;background:var(--panel);backdrop-filter:blur(8px);
+  padding:13px 14px;position:relative;overflow:hidden}
+.card::before{content:"";position:absolute;inset:0 0 auto 0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(39,224,230,.55),transparent)}
+.h{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.h .t{font-size:12.5px;letter-spacing:2px;color:var(--mut);font-weight:700}
+.h .t b{color:var(--cyan)}
+.tag{font-size:10px;padding:2px 8px;border-radius:6px;border:1px solid var(--line);color:var(--mut)}
+/* ---- top3 ---- */
+.q{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;margin-bottom:9px;
+  background:linear-gradient(120deg,rgba(20,30,54,.6),rgba(12,18,34,.4));border:1px solid var(--line);
+  position:relative;transition:.2s}
+.q:hover{transform:translateX(2px);border-color:rgba(39,224,230,.4)}
+.rank{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-weight:800;font-size:14px;
+  background:linear-gradient(135deg,#243a66,#16243f);color:var(--gold);border:1px solid rgba(245,196,81,.35)}
+.q .nm{flex:1;min-width:0}
+.q .nm b{font-size:15px}
+.q .nm .c{font-size:11px;color:var(--mut);margin-left:5px}
+.q .nm .st{font-size:10px;padding:1px 7px;border-radius:5px;margin-left:6px;vertical-align:middle}
+.st.hold{background:rgba(255,77,87,.14);color:var(--up);border:1px solid rgba(255,77,87,.3)}
+.st.watch{background:rgba(39,224,230,.12);color:var(--cyan);border:1px solid rgba(39,224,230,.3)}
+.q .px{text-align:right}
+.q .px .p{font-size:19px;font-weight:800}
+.q .px .ch{font-size:12px;font-weight:700}
+/* ---- chart ---- */
+.navwrap{position:relative;height:150px}
+svg{width:100%;height:100%;display:block}
+.navnow{position:absolute;right:8px;top:4px;text-align:right}
+.navnow .big{font-size:20px;font-weight:800}
+.navnow .sm{font-size:11px;color:var(--mut)}
+/* ---- trades ---- */
+.log{max-height:300px;overflow:auto}
+.row{display:grid;grid-template-columns:64px 50px 1fr 58px 66px;gap:6px;align-items:center;
+  padding:8px 4px;border-bottom:1px solid rgba(86,124,205,.1);font-size:12.5px;animation:fin .4s ease}
+@keyframes fin{from{opacity:0;transform:translateY(-4px)}}
+.row .tm{color:var(--mut);font-size:11px}
+.op{font-size:11px;font-weight:800;padding:2px 0;text-align:center;border-radius:5px}
+.op.b{background:rgba(245,196,81,.14);color:var(--gold)}
+.op.s{background:rgba(124,92,255,.16);color:#b3a4ff}
+.row .nm2{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .nm2 small{color:var(--mut);font-size:10px}
+.row .qp{text-align:right;color:var(--mut);font-size:11.5px}
+.row .pl{text-align:right;font-weight:800}
+.empty{color:var(--mut);font-size:12.5px;text-align:center;padding:26px 0}
+.hold{display:flex;justify-content:space-between;padding:7px 4px;font-size:12.5px;border-bottom:1px solid rgba(86,124,205,.1)}
+.hold .pl{font-weight:800}
+.foot{margin-top:12px;font-size:10.5px;color:var(--mut);text-align:center;letter-spacing:.5px}
+.scan{position:fixed;left:0;right:0;height:2px;pointer-events:none;z-index:5;
+  background:linear-gradient(90deg,transparent,rgba(39,224,230,.5),transparent);
+  animation:scan 6s linear infinite;opacity:.5}
+@keyframes scan{0%{top:-2px}100%{top:100%}}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:rgba(86,124,205,.3);border-radius:3px}
+</style>
+</head>
+<body>
+<div class="scan"></div>
+<div class="wrap">
+  <div class="bar">
+    <div class="brand">
+      <div class="logo">⬡</div>
+      <div><b>CRAYXUS&nbsp;AI</b><div class="sub">QUANT&nbsp;·&nbsp;自动交易终端</div></div>
+    </div>
+    <div class="kpis" id="kpis">
+      <div class="kpi"><div class="k">总资产</div><div class="v mono" id="kNav">—</div></div>
+      <div class="kpi"><div class="k">累计收益</div><div class="v mono" id="kRet">—</div></div>
+      <div class="kpi"><div class="k">今日盈亏</div><div class="v mono" id="kToday">—</div></div>
+      <div class="kpi"><div class="k">胜率</div><div class="v mono" id="kWin">—</div></div>
+      <div class="kpi"><div class="k">最大回撤</div><div class="v mono" id="kDD">—</div></div>
+    </div>
+    <div class="live"><span class="dot"></span><span id="liveTxt">LIVE</span></div>
+  </div>
+
+  <div class="grid">
+    <!-- 左：TOP3 实时行情 -->
+    <div class="card">
+      <div class="h"><div class="t">TOP&nbsp;3&nbsp;·&nbsp;<b>实时行情</b></div><div class="tag" id="mktTag">ETF</div></div>
+      <div id="top3"><div class="empty">加载行情中…</div></div>
+    </div>
+
+    <!-- 右：净值 + 交易记录 + 持仓 -->
+    <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+      <div class="card">
+        <div class="h"><div class="t">净值&nbsp;<b>曲线</b></div><div class="tag" id="modeTag">—</div></div>
+        <div class="navwrap">
+          <svg id="navSvg" viewBox="0 0 600 150" preserveAspectRatio="none"></svg>
+          <div class="navnow"><div class="big mono" id="navBig">—</div><div class="sm" id="navSm"></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="h"><div class="t">自动交易&nbsp;·&nbsp;<b>每日记录</b></div><div class="tag" id="tradeCnt">0 笔</div></div>
+        <div class="log" id="log"><div class="empty">等待开盘自动建仓…</div></div>
+      </div>
+      <div class="card" id="holdCard" style="display:none">
+        <div class="h"><div class="t">当前&nbsp;<b>持仓</b></div><div class="tag" id="holdCnt"></div></div>
+        <div id="holds"></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot" id="foot">CRAYXUS AI Quant · 自动刷新中</div>
+</div>
+
+<script>
+var RED='var(--up)', GRN='var(--down)';
+function fmt(n,d){ if(n===null||n===undefined||isNaN(n)) return '—'; return Number(n).toLocaleString('zh-CN',{minimumFractionDigits:d||0,maximumFractionDigits:d||0}); }
+function cls(n){ return n>0?'up':(n<0?'down':''); }
+function sign(n,d){ return (n>0?'+':'')+fmt(n,d); }
+
+async function tick(){
+  try{
+    var r=await fetch('track.json?_='+Date.now());
+    if(!r.ok) throw new Error(r.status);
+    render(await r.json());
+    document.getElementById('liveTxt').textContent='LIVE';
+  }catch(e){
+    document.getElementById('liveTxt').textContent='连接引擎…';
+  }
+}
+
+function render(d){
+  // KPI
+  set('kNav','¥'+fmt(d.nav,0), '');
+  set('kRet', sign(d.total_return_pct,2)+'%', cls(d.total_return_pct));
+  set('kToday', (d.today_pnl?sign(d.today_pnl,0):'0'), cls(d.today_pnl||0));
+  set('kWin', d.win_rate_pct==null?'—':d.win_rate_pct+'%', 'cy');
+  set('kDD', '-'+fmt(d.max_drawdown_pct||0,2)+'%', 'down');
+  document.getElementById('modeTag').textContent=d.mode||'—';
+  document.getElementById('mktTag').textContent=(d.market==='etf'?'ETF · T+1次日':'股票');
+  document.getElementById('foot').textContent=
+    'CRAYXUS AI Quant v1 · '+(d.mode||'')+' · 数据'+(d.source||'')+' · 更新 '+(d.updated||'')+' · 8秒自动刷新';
+
+  // TOP3
+  var t3=d.top3||[]; var th='';
+  if(!t3.length) th='<div class="empty">暂无监控标的</div>';
+  t3.forEach(function(q,i){
+    var c=cls(q.chg);
+    th+='<div class="q"><div class="rank">'+(i+1)+'</div>'
+      +'<div class="nm"><b>'+q.name+'</b><span class="c mono">'+q.code+'</span>'
+      +'<span class="st '+(q.status==='持有'?'hold':'watch')+'">'+q.status+'</span></div>'
+      +'<div class="px"><div class="p mono '+c+'">'+fmt(q.price,(q.price<10?3:2))+'</div>'
+      +'<div class="ch mono '+c+'">'+sign(q.chg,2)+'%</div></div></div>';
+  });
+  document.getElementById('top3').innerHTML=th;
+
+  // 净值曲线
+  drawNav(d.nav_history||[], d.init_cash||100000);
+  document.getElementById('navBig').textContent='¥'+fmt(d.nav,0);
+  document.getElementById('navSm').textContent='本金 ¥'+fmt(d.init_cash,0);
+
+  // 交易记录（新→旧）
+  var tr=(d.trades||[]).slice().reverse();
+  document.getElementById('tradeCnt').textContent=(d.trades||[]).length+' 笔';
+  var lh='';
+  if(!tr.length) lh='<div class="empty">等待开盘自动建仓…</div>';
+  tr.forEach(function(t){
+    var isBuy=t.side==='BUY';
+    var pl = (t.pnl==null)?'' : '<span class="'+cls(t.pnl)+'">'+sign(t.pnl,0)+'<br><small>'+sign(t.pnl_pct,2)+'%</small></span>';
+    lh+='<div class="row"><span class="tm mono">'+(t.day||'').slice(5)+'<br>'+(t.time||'')+'</span>'
+      +'<span class="op '+(isBuy?'b':'s')+'">'+(isBuy?'买入':'卖出')+'</span>'
+      +'<span class="nm2">'+t.name+' <small class="mono">'+t.code+'</small>'
+        +(t.reason?'<br><small>'+t.reason+'</small>':'')+'</span>'
+      +'<span class="qp mono">'+t.qty+'股<br>'+fmt(t.price,(t.price<10?3:2))+'</span>'
+      +'<span class="pl mono">'+pl+'</span></div>';
+  });
+  document.getElementById('log').innerHTML=lh;
+
+  // 持仓
+  var hd=d.holdings||[];
+  if(hd.length){
+    document.getElementById('holdCard').style.display='';
+    document.getElementById('holdCnt').textContent=hd.length+' 只';
+    var hh='';
+    hd.forEach(function(h){
+      hh+='<div class="hold"><span>'+h.name+' <small class="mono" style="color:var(--mut)">'+h.code+'</small> '
+        +'<small style="color:var(--mut)">'+h.qty+'股@'+fmt(h.avg,(h.avg<10?3:2))+'</small></span>'
+        +'<span class="pl mono '+cls(h.pnl)+'">'+sign(h.pnl,0)+' ('+sign(h.pnl_pct,2)+'%)</span></div>';
+    });
+    document.getElementById('holds').innerHTML=hh;
+  }else{ document.getElementById('holdCard').style.display='none'; }
+}
+
+function set(id,txt,c){ var e=document.getElementById(id); e.textContent=txt; e.className='v mono'+(c?(' '+c):''); }
+
+function drawNav(hist, init){
+  var svg=document.getElementById('navSvg'); var W=600,H=150,pad=8;
+  var pts=hist.map(function(h){return h.nav;});
+  if(pts.length<2){ pts=[init, (pts[0]||init)]; }
+  var mn=Math.min.apply(null,pts.concat([init])), mx=Math.max.apply(null,pts.concat([init]));
+  if(mx===mn){ mx=mn+1; }
+  var n=pts.length;
+  function X(i){ return pad + i*(W-2*pad)/(n-1); }
+  function Y(v){ return H-pad - (v-mn)/(mx-mn)*(H-2*pad); }
+  var line='', area='M'+X(0)+' '+Y(pts[0]);
+  pts.forEach(function(v,i){ var x=X(i).toFixed(1), y=Y(v).toFixed(1); line+=(i?'L':'M')+x+' '+y+' '; area+=' L'+x+' '+y; });
+  area+=' L'+X(n-1)+' '+H+' L'+X(0)+' '+H+' Z';
+  var up = pts[n-1]>=init; var col = up?'#ff4d57':'#19d07a';
+  var base=Y(init).toFixed(1);
+  svg.innerHTML=
+    '<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">'
+    +'<stop offset="0" stop-color="'+col+'" stop-opacity=".34"/><stop offset="1" stop-color="'+col+'" stop-opacity="0"/></linearGradient>'
+    +'<filter id="gl"><feGaussianBlur stdDeviation="2.4"/></filter></defs>'
+    +'<line x1="0" y1="'+base+'" x2="600" y2="'+base+'" stroke="rgba(124,141,179,.35)" stroke-dasharray="4 5" stroke-width="1"/>'
+    +'<path d="'+area+'" fill="url(#g)"/>'
+    +'<path d="'+line+'" fill="none" stroke="'+col+'" stroke-width="2.2" filter="url(#gl)" opacity=".7"/>'
+    +'<path d="'+line+'" fill="none" stroke="'+col+'" stroke-width="1.8"/>'
+    +'<circle cx="'+X(n-1).toFixed(1)+'" cy="'+Y(pts[n-1]).toFixed(1)+'" r="3.4" fill="#fff"/>'
+    +'<circle cx="'+X(n-1).toFixed(1)+'" cy="'+Y(pts[n-1]).toFixed(1)+'" r="6" fill="'+col+'" opacity=".4"/>';
+}
+
+tick(); setInterval(tick, 8000);
+</script>
+</body>
+</html>

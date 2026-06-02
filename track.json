@@ -1,0 +1,124 @@
+{
+  "updated": "2026-06-02 23:10:16",
+  "mode": "模拟盘 · 实时",
+  "engine": "Crayxus AI Quant v1",
+  "market": "etf",
+  "source": "腾讯/东方财富",
+  "init_cash": 100000.0,
+  "nav": 100000.0,
+  "total_return_pct": 0.0,
+  "today_pnl": 0,
+  "cash": 10767.7,
+  "market_value": 89232.3,
+  "closed_trades": 0,
+  "win_rate_pct": null,
+  "max_drawdown_pct": 0.0,
+  "top3": [
+    {
+      "code": "159915",
+      "name": "创业板ETF易方达",
+      "market": 0,
+      "price": 4.071,
+      "chg": 2.7,
+      "status": "持有"
+    },
+    {
+      "code": "159949",
+      "name": "创业板50ETF华安",
+      "market": 0,
+      "price": 1.98,
+      "chg": 3.23,
+      "status": "持有"
+    },
+    {
+      "code": "510300",
+      "name": "沪深300ETF华泰柏瑞",
+      "market": 1,
+      "price": 4.936,
+      "chg": 1.4,
+      "status": "持有"
+    }
+  ],
+  "holdings": [
+    {
+      "code": "159915",
+      "name": "创业板ETF易方达",
+      "qty": 7300,
+      "avail": 0,
+      "avg": 4.071,
+      "last": 4.071,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "tp": 4.112,
+      "sl": 3.99
+    },
+    {
+      "code": "159949",
+      "name": "创业板50ETF华安",
+      "qty": 15100,
+      "avail": 0,
+      "avg": 1.98,
+      "last": 1.98,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "tp": 2.0,
+      "sl": 1.94
+    },
+    {
+      "code": "510300",
+      "name": "沪深300ETF华泰柏瑞",
+      "qty": 6000,
+      "avail": 0,
+      "avg": 4.936,
+      "last": 4.936,
+      "pnl": 0.0,
+      "pnl_pct": 0.0,
+      "tp": 4.985,
+      "sl": 4.837
+    }
+  ],
+  "trades": [
+    {
+      "day": "2026-06-02",
+      "time": "23:10:14",
+      "side": "BUY",
+      "code": "159915",
+      "name": "创业板ETF易方达",
+      "qty": 7300,
+      "price": 4.071,
+      "pnl": null,
+      "pnl_pct": null,
+      "reason": ""
+    },
+    {
+      "day": "2026-06-02",
+      "time": "23:10:14",
+      "side": "BUY",
+      "code": "159949",
+      "name": "创业板50ETF华安",
+      "qty": 15100,
+      "price": 1.98,
+      "pnl": null,
+      "pnl_pct": null,
+      "reason": ""
+    },
+    {
+      "day": "2026-06-02",
+      "time": "23:10:14",
+      "side": "BUY",
+      "code": "510300",
+      "name": "沪深300ETF华泰柏瑞",
+      "qty": 6000,
+      "price": 4.936,
+      "pnl": null,
+      "pnl_pct": null,
+      "reason": ""
+    }
+  ],
+  "nav_history": [
+    {
+      "day": "2026-06-02",
+      "nav": 100000.0
+    }
+  ]
+}
