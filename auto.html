@@ -298,7 +298,7 @@ body::before{/* 远处光晕 + 更深的黑蓝渐变 */
       <div class="kpi"><div class="k">最大回撤</div><div class="v mono" id="kDD">—</div></div>
     </div>
     <div class="live"><span class="dot"></span><span id="liveTxt">LIVE</span></div>
-    <div class="cd"><span class="cdk">下次自动建仓 · 14:45 尾盘</span><span class="cdv mono" id="cd">--:--:--</span></div>
+    <div class="cd"><span class="cdk">下次自动建仓 · 14:55 市价</span><span class="cdv mono" id="cd">--:--:--</span></div>
   </div>
 
   <div class="ticker"><div class="tag">AI ENGINE</div><div class="tk mono" id="tk">引擎初始化…</div></div>
@@ -533,7 +533,7 @@ tick(); setInterval(tick,8000);
 function pad(n){return (n<10?'0':'')+n;}
 function nextEntry(){
   var now=new Date();
-  var t=new Date(now.getFullYear(),now.getMonth(),now.getDate(),14,45,0,0);
+  var t=new Date(now.getFullYear(),now.getMonth(),now.getDate(),14,55,0,0);
   if(t<=now) t.setDate(t.getDate()+1);
   while(t.getDay()===0||t.getDay()===6) t.setDate(t.getDate()+1);
   return t;
