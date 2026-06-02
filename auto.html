@@ -90,9 +90,33 @@ body{
 .radarWrap{display:flex;align-items:center;justify-content:center;margin-top:4px}
 /* kline */
 .kl{position:relative}
-.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;margin-top:8px}
-.legend span b{font-weight:800}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:12.5px;margin-top:11px}
+.legend span b{font-weight:800;margin-left:3px}
 .lvBuy{color:var(--cyan)}.lvTp{color:var(--up)}.lvSl{color:var(--down)}
+/* 楼梯加仓计划 */
+.ladder:empty{display:none}
+.ladder{margin-top:13px;border-top:1px solid var(--line);padding-top:12px}
+.lhead{font-size:11px;color:var(--mut);letter-spacing:1px;margin-bottom:10px}
+.lhead .g{color:var(--gold);margin-left:8px}
+.lsteps{display:flex;gap:8px;flex-wrap:wrap}
+.lstep{flex:1;min-width:84px;border:1px solid var(--line);border-radius:11px;padding:9px 6px;background:rgba(20,28,48,.5);text-align:center;line-height:1.5}
+.lstep span{display:block;font-size:10px;color:var(--mut)}
+.lstep b{display:block;font-size:13px;margin:3px 0;font-weight:800}
+.lstep i{font-size:12.5px;color:var(--cyan);font-style:normal}
+.lstep.done{border-color:rgba(245,196,81,.5);background:rgba(245,196,81,.1);box-shadow:0 0 12px rgba(245,196,81,.13)}
+.lstep.done b{color:var(--gold)}
+.lstep.tp{border-color:rgba(255,77,87,.45)}.lstep.tp i{color:var(--up)}
+.lstep.stop{border-color:rgba(25,208,122,.45)}.lstep.stop i{color:var(--down)}
+/* 排版优化：留白与字号 */
+.card{padding:16px 17px}
+.h{margin-bottom:13px}
+.kpi{min-width:84px}
+.kpi .k{margin-bottom:3px}
+.sigPx{margin:6px 0 13px}
+.sigName{line-height:1.5}
+.row{padding:9px 4px}
+.hold{padding:10px 4px;line-height:1.55}
+.q{padding:13px 12px}
 /* nav */
 .navwrap{position:relative;height:142px}
 .navnow{position:absolute;right:6px;top:2px;text-align:right}
@@ -150,6 +174,7 @@ svg{display:block;width:100%}
       <div class="h"><div class="t">日线&nbsp;<b id="kTitle">K线</b></div><div class="tag2">当日止盈/止损位</div></div>
       <div class="kl"><svg id="kSvg" viewBox="0 0 800 320" preserveAspectRatio="none" style="height:300px"></svg></div>
       <div class="legend" id="kLegend"></div>
+      <div class="ladder" id="ladder"></div>
     </div>
     <!-- 净值 -->
     <div class="card c-nav"><span class="cor tl"></span><span class="cor br"></span>
@@ -222,12 +247,15 @@ function render(d){
       +'<div class="ringRow"><svg id="ringSvg" viewBox="0 0 112 112" style="width:118px;height:118px"></svg></div>'
       +'<div class="radarWrap"><svg id="rSvg" viewBox="0 0 180 172" style="width:100%;max-width:230px;height:150px"></svg></div>';
     drawRing(sg.score); drawRadar(sg.factors||{});
-    drawKline(sg.bars||[], sg.buy, sg.tp, sg.sl);
+    var Lp=sg.ladder;
+    var chBuy=sg.buy, chTp=(Lp?Lp.tp_price:sg.tp), chSl=(Lp?Lp.hard_price:sg.sl);
+    drawLine(sg.bars||[], chBuy, chTp, chSl);
     el('kLegend').innerHTML=
-      '<span class="lvBuy">● 买入 <b class="mono">'+fmt(sg.buy,dec(sg.buy))+'</b></span>'
-      +'<span class="lvTp">● 止盈 <b class="mono">'+fmt(sg.tp,dec(sg.tp))+'</b> (+1%)</span>'
-      +'<span class="lvSl">● 止损 <b class="mono">'+fmt(sg.sl,dec(sg.sl))+'</b> (-2%)</span>';
-  }else{ el('sigBox').innerHTML='<div class="empty">等待 AI 选股…</div>'; el('kSvg').innerHTML=''; el('kLegend').innerHTML=''; }
+      '<span class="lvBuy">● '+(sg.held?'持仓均价':'参考买入')+' <b class="mono">'+fmt(chBuy,dec(chBuy))+'</b></span>'
+      +'<span class="lvTp">● 止盈 <b class="mono">'+fmt(chTp,dec(chTp))+'</b></span>'
+      +'<span class="lvSl">● 硬止损 <b class="mono">'+fmt(chSl,dec(chSl))+'</b></span>';
+    renderLadder(Lp, sg.held);
+  }else{ el('sigBox').innerHTML='<div class="empty">等待 AI 选股…</div>'; el('kSvg').innerHTML=''; el('kLegend').innerHTML=''; el('ladder').innerHTML=''; }
 
   // nav
   drawNav(d.nav_history||[], d.init_cash||100000);
@@ -263,6 +291,16 @@ function render(d){
 
 function setK(id,txt,c){var e=el(id);e.textContent=txt;e.className='v mono'+(c?(' '+c):'');}
 
+function renderLadder(L,held){
+  if(!L){ el('ladder').innerHTML=''; return; }
+  var s='<div class="lhead">楼梯加仓计划（每跌1%加一档，止盈清仓）<span class="g">已加仓 '+L.adds+'/'+(L.plan.length-1)+'</span></div><div class="lsteps">';
+  L.plan.forEach(function(p){ var done=held&&p.n<=L.adds;
+    s+='<div class="lstep'+(done?' done':'')+'"><span>'+p.label+'</span><b>'+p.qty+'股</b><i class="mono">'+fmt(p.price,dec(p.price))+'</i></div>'; });
+  s+='<div class="lstep tp"><span>止盈·清仓</span><b>均价+1%</b><i class="mono">'+fmt(L.tp_price,dec(L.tp_price))+'</i></div>';
+  s+='<div class="lstep stop"><span>硬止损·清仓</span><b>首仓-4%</b><i class="mono">'+fmt(L.hard_price,dec(L.hard_price))+'</i></div>';
+  el('ladder').innerHTML=s+'</div>';
+}
+
 /* ---- AI 评分环 ---- */
 function drawRing(score){
   var s=Math.max(0,Math.min(100,score||0)),R=44,cx=56,cy=56,C=2*Math.PI*R,off=C*(1-s/100);
@@ -285,26 +323,32 @@ function drawRadar(f){
   el('rSvg').innerHTML=g+ax
     +'<polygon points="'+poly+'" fill="rgba(39,224,230,.2)" stroke="#27e0e6" stroke-width="1.7" style="filter:drop-shadow(0 0 5px rgba(39,224,230,.6))"/>'+lb;
 }
-/* ---- 日线蜡烛 + 止盈止损线 ---- */
-function drawKline(bars,buy,tp,sl){
+/* ---- 日线折线图（同花顺日线感）+ 止盈/止损/买入位 ---- */
+function drawLine(bars,buy,tp,sl){
   var svg=el('kSvg'); if(!bars||!bars.length){svg.innerHTML='';return;}
-  var W=800,H=320,pL=4,pR=58,pT=10,pB=16;
-  var lo=Math.min.apply(null,bars.map(function(b){return b.l})),hi=Math.max.apply(null,bars.map(function(b){return b.h}));
+  var W=800,H=320,pL=6,pR=62,pT=14,pB=20;
+  var cl=bars.map(function(b){return b.c;});
+  var lo=Math.min.apply(null,cl),hi=Math.max.apply(null,cl);
   [buy,tp,sl].forEach(function(v){if(v){lo=Math.min(lo,v);hi=Math.max(hi,v);}});
-  var pad=(hi-lo)*0.08||0.1;lo-=pad;hi+=pad;
-  var n=bars.length,cw=(W-pL-pR)/n;
-  function X(i){return pL+i*cw+cw/2;}
+  var pad=(hi-lo)*0.10||0.1;lo-=pad;hi+=pad;
+  var n=cl.length;
+  function X(i){return pL+i*(W-pL-pR)/(n-1);}
   function Y(v){return pT+(hi-v)/(hi-lo)*(H-pT-pB);}
-  var s='';
-  bars.forEach(function(b,i){var x=X(i),up=b.c>=b.o,col=up?'#ff4d57':'#19d07a',bw=Math.max(1.3,cw*0.62);
-    s+='<line x1="'+x.toFixed(1)+'" y1="'+Y(b.h).toFixed(1)+'" x2="'+x.toFixed(1)+'" y2="'+Y(b.l).toFixed(1)+'" stroke="'+col+'" stroke-width="1"/>';
-    var y1=Y(Math.max(b.o,b.c)),hh=Math.max(1,Y(Math.min(b.o,b.c))-y1);
-    s+='<rect x="'+(x-bw/2).toFixed(1)+'" y="'+y1.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+hh.toFixed(1)+'" fill="'+col+'" opacity=".92"/>';});
-  function hl(v,col,t){if(v==null)return '';var y=Y(v).toFixed(1);
-    return '<line x1="'+pL+'" y1="'+y+'" x2="'+(W-pR)+'" y2="'+y+'" stroke="'+col+'" stroke-width="1.1" stroke-dasharray="6 4" opacity=".95"/>'
-      +'<rect x="'+(W-pR)+'" y="'+(y-8)+'" width="'+pR+'" height="16" fill="'+col+'" opacity=".16"/>'
-      +'<text x="'+(W-pR+4)+'" y="'+(parseFloat(y)+4)+'" fill="'+col+'" font-size="12" font-family="monospace">'+v.toFixed(dec(v))+'</text>';}
-  svg.innerHTML=s+hl(buy,'#27e0e6')+hl(tp,'#ff4d57')+hl(sl,'#19d07a');
+  var last=cl[n-1],col=last>=cl[0]?'#ff4d57':'#19d07a';
+  var line='',area='M'+X(0).toFixed(1)+' '+Y(cl[0]).toFixed(1);
+  cl.forEach(function(v,i){var x=X(i).toFixed(1),y=Y(v).toFixed(1);line+=(i?'L':'M')+x+' '+y+' ';area+=' L'+x+' '+y;});
+  area+=' L'+X(n-1).toFixed(1)+' '+(H-pB)+' L'+X(0).toFixed(1)+' '+(H-pB)+' Z';
+  function hl(v,c){if(v==null)return '';var y=Y(v).toFixed(1);
+    return '<line x1="'+pL+'" y1="'+y+'" x2="'+(W-pR)+'" y2="'+y+'" stroke="'+c+'" stroke-width="1.1" stroke-dasharray="6 4" opacity=".9"/>'
+      +'<rect x="'+(W-pR)+'" y="'+(parseFloat(y)-9)+'" width="'+pR+'" height="18" fill="'+c+'" opacity=".15"/>'
+      +'<text x="'+(W-pR+5)+'" y="'+(parseFloat(y)+4.5)+'" fill="'+c+'" font-size="13" font-family="monospace">'+v.toFixed(dec(v))+'</text>';}
+  svg.innerHTML='<defs><linearGradient id="kg" x1="0" y1="0" x2="0" y2="1">'
+    +'<stop offset="0" stop-color="'+col+'" stop-opacity=".30"/><stop offset="1" stop-color="'+col+'" stop-opacity="0"/></linearGradient></defs>'
+    +'<path d="'+area+'" fill="url(#kg)"/>'
+    +hl(buy,'#27e0e6')+hl(tp,'#ff4d57')+hl(sl,'#19d07a')
+    +'<path d="'+line+'" fill="none" stroke="'+col+'" stroke-width="2.3" style="filter:drop-shadow(0 0 5px '+col+')"/>'
+    +'<circle cx="'+X(n-1).toFixed(1)+'" cy="'+Y(last).toFixed(1)+'" r="3.6" fill="#fff"/>'
+    +'<circle cx="'+X(n-1).toFixed(1)+'" cy="'+Y(last).toFixed(1)+'" r="7" fill="'+col+'" opacity=".35"/>';
 }
 /* ---- 净值曲线 ---- */
 function drawNav(hist,init){
