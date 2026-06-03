@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-03 11:50:47",
+  "updated": "2026-06-03 13:00:29",
   "mode": "模拟盘 · 实时",
   "engine": "Crayxus AI Quant v1",
   "market": "etf",
@@ -18,8 +18,8 @@
     "code": "159915",
     "name": "创业板ETF易方达",
     "market": 0,
-    "price": 4.226,
-    "chg": 3.81,
+    "price": 4.225,
+    "chg": 3.78,
     "held": false,
     "preview": true,
     "score": 87,
@@ -31,7 +31,7 @@
       "资金": 87,
       "估值": 60
     },
-    "pool": 24,
+    "pool": 98,
     "buy": null,
     "tp": null,
     "sl": null,
@@ -520,6 +520,14 @@
       {
         "t": "1130",
         "p": 4.226
+      },
+      {
+        "t": "1300",
+        "p": 4.226
+      },
+      {
+        "t": "1301",
+        "p": 4.225
       }
     ],
     "prev_close": 4.071
@@ -529,15 +537,15 @@
       "code": "159915",
       "name": "创业板ETF易方达",
       "market": 0,
-      "price": 4.226,
-      "chg": 3.81,
+      "price": 4.225,
+      "chg": 3.78,
       "locked": false,
       "status": "监控"
     },
     {
       "code": "***",
       "name": "***",
-      "market": 1,
+      "market": 0,
       "price": null,
       "chg": null,
       "status": "锁定",
@@ -546,7 +554,7 @@
     {
       "code": "***",
       "name": "***",
-      "market": 0,
+      "market": 1,
       "price": null,
       "chg": null,
       "status": "锁定",
