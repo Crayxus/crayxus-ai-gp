@@ -337,6 +337,26 @@ body::before{/* 远处光晕 + 更深的黑蓝渐变 */
   .row{grid-template-columns:46px 38px 1fr 46px 50px}
 }
 
+/* ====== AI 选股历史·战绩 ====== */
+.c-hist{grid-column:span 12}
+.deck>.card:nth-child(7){animation-delay:.42s}
+.histwrap{overflow-x:auto}
+.histtable{width:100%;border-collapse:collapse;font-size:12.5px}
+.histtable th{text-align:left;color:var(--mut);font-size:10px;letter-spacing:1.5px;font-weight:700;padding:5px 10px;border-bottom:1px solid var(--line)}
+.histtable td{padding:9px 10px;border-bottom:1px solid rgba(96,132,210,.1)}
+.histtable tr:hover td{background:rgba(39,224,230,.05)}
+.histtable .hn small{color:var(--mut);font-size:10px;margin-left:5px}
+.histtable .hd{color:var(--mut)}
+.hempty{text-align:center;color:var(--mut);padding:24px 0!important}
+.scorechip{display:inline-block;min-width:32px;text-align:center;font-weight:800;color:var(--gold);
+  border:1px solid rgba(245,196,81,.4);border-radius:6px;padding:2px 8px;background:rgba(245,196,81,.08);
+  box-shadow:0 0 10px -4px rgba(245,196,81,.7)}
+.ststat{font-size:11px;font-weight:800;padding:2px 10px;border-radius:6px;letter-spacing:.5px}
+.ststat.up{background:rgba(255,77,87,.15);color:var(--up)}
+.ststat.down{background:rgba(25,208,122,.15);color:var(--down)}
+.ststat.cy{background:rgba(39,224,230,.12);color:var(--cyan)}
+@media(max-width:680px){.histtable{font-size:11.5px}.histtable th,.histtable td{padding:7px 6px}}
+
 @media(prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
 </head>
@@ -356,7 +376,7 @@ body::before{/* 远处光晕 + 更深的黑蓝渐变 */
       <div class="kpi"><div class="k">最大回撤</div><div class="v mono" id="kDD">—</div></div>
     </div>
     <div class="live"><span class="dot"></span><span id="liveTxt">LIVE</span></div>
-    <div class="cd"><span class="cdk">下次自动建仓 · 14:55 市价</span><span class="cdv mono" id="cd">--:--:--</span></div>
+    <div class="cd"><span class="cdk">下次 AI 选股刷新 · 14:55 建仓</span><span class="cdv mono" id="cd">--:--:--</span></div>
   </div>
 
   <div class="ticker"><div class="tag">AI ENGINE</div><div class="tk mono" id="tk">引擎初始化…</div></div>
@@ -379,6 +399,11 @@ body::before{/* 远处光晕 + 更深的黑蓝渐变 */
       <div class="h"><div class="t"><span class="hud">EQUITY</span>净值&nbsp;<b>曲线</b></div><div class="tag2" id="modeTag">—</div></div>
       <div class="navwrap"><svg id="navSvg" viewBox="0 0 600 142" preserveAspectRatio="none" style="height:142px"></svg>
         <div class="navnow"><div class="big mono" id="navBig">—</div><div class="sm" id="navSm"></div></div></div>
+    </div>
+    <!-- AI 选股历史·战绩 -->
+    <div class="card c-hist"><span class="cor tl"></span><span class="cor br"></span>
+      <div class="h"><div class="t"><span class="hud">TRACK RECORD</span>AI 选股&nbsp;<b>历史战绩</b></div><div class="tag2" id="histCnt">—</div></div>
+      <div class="histwrap"><table class="histtable" id="histTable"></table></div>
     </div>
     <!-- 自动交易记录 -->
     <div class="card c-trades"><span class="cor tl"></span><span class="cor br"></span>
@@ -490,6 +515,22 @@ function render(d){
         +'<span class="pl mono '+cls(h.pnl)+'">'+sign(h.pnl,0)+'<br><small>'+sign(h.pnl_pct,2)+'%</small></span></div>'; });
       el('holds').innerHTML=hh;
     }else el('holds').innerHTML='<div class="empty">空仓 · 待开盘建仓</div>'; }
+
+  // AI 选股历史 · 战绩
+  var ph=(d.pick_history||[]).slice().reverse();
+  el('histCnt').textContent=ph.length+' 次';
+  var ht='<tr><th>日期</th><th>AI 首选标的</th><th>评分</th><th>结果</th><th>收益</th></tr>';
+  if(!ph.length) ht+='<tr><td colspan="5" class="hempty">暂无选股记录 · 开盘后每日生成</td></tr>';
+  ph.forEach(function(p){
+    var st=p.status||'持有中', stc=(st==='止盈'?'up':(st==='止损'?'down':'cy'));
+    var ret=(p.ret_pct==null?'—':sign(p.ret_pct,2)+'%');
+    ht+='<tr><td class="mono hd">'+(p.day||'').slice(5)+'</td>'
+      +'<td class="hn">'+p.name+' <small class="mono">'+p.code+'</small></td>'
+      +'<td><span class="scorechip">'+Math.round(p.score||0)+'</span></td>'
+      +'<td><span class="ststat '+stc+'">'+st+'</span></td>'
+      +'<td class="mono '+cls(p.ret_pct)+'">'+ret+'</td></tr>';
+  });
+  el('histTable').innerHTML=ht;
 
   // locked #2/#3
   var lk=''; (d.top3||[]).forEach(function(t,i){ if(i<REVEAL)return;
