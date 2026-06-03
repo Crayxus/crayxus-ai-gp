@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-03 11:39:56",
+  "updated": "2026-06-03 11:50:40",
   "mode": "模拟盘 · 实时",
   "engine": "Crayxus AI Quant v1",
   "market": "etf",
@@ -35,6 +35,7 @@
     "buy": null,
     "tp": null,
     "sl": null,
+    "entry_time": "14:55",
     "minute": [
       {
         "t": "0930",
