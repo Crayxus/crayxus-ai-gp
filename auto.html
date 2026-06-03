@@ -509,13 +509,20 @@ function render(d){
       +'<div class="radarWrap"><svg id="rSvg" viewBox="0 0 180 172" style="width:100%;max-width:250px;height:158px"></svg></div>';
     drawRing(sg.score); drawRadar(sg.factors||{});
     var Lp=sg.ladder;
-    var chBuy=sg.buy, chTp=(Lp?Lp.tp_price:sg.tp), chSl=(Lp?Lp.hard_price:sg.sl);
-    drawMinute(sg.minute||[], sg.prev_close, (sg.held?chBuy:null), chTp, chSl);
-    el('kLegend').innerHTML=
-      '<span style="color:#9aa7c4">● 昨收 <b class="mono">'+fmt(sg.prev_close,dec(sg.prev_close))+'</b></span>'
-      +(sg.held?'<span class="lvBuy">● 持仓均价 <b class="mono">'+fmt(chBuy,dec(chBuy))+'</b></span>':'')
-      +'<span class="lvTp">● 次日止盈 <b class="mono">'+fmt(chTp,dec(chTp))+'</b></span>'
-      +'<span class="lvSl">● 次日止损 <b class="mono">'+fmt(chSl,dec(chSl))+'</b></span>';
+    var chTp=(Lp?Lp.tp_price:sg.tp), chSl=(Lp?Lp.hard_price:sg.sl);
+    drawMinute(sg.minute||[], sg.prev_close, sg.buy, chTp, chSl);
+    if(sg.held){
+      el('kLegend').innerHTML=
+        '<span style="color:#9aa7c4">● 昨收 <b class="mono">'+fmt(sg.prev_close,dec(sg.prev_close))+'</b></span>'
+        +'<span class="lvBuy">● 持仓均价 <b class="mono">'+fmt(sg.buy,dec(sg.buy))+'</b></span>'
+        +'<span class="lvTp">● 止盈 <b class="mono">'+fmt(chTp,dec(chTp))+'</b></span>'
+        +'<span class="lvSl">● 止损 <b class="mono">'+fmt(chSl,dec(chSl))+'</b></span>';
+    }else{
+      el('kLegend').innerHTML=
+        '<span style="color:#9aa7c4">● 昨收 <b class="mono">'+fmt(sg.prev_close,dec(sg.prev_close))+'</b></span>'
+        +'<span class="lvBuy">● 现价 <b class="mono">'+fmt(sg.price,dec(sg.price))+'</b></span>'
+        +'<span style="color:var(--mut)">○ 待 14:55 市价建仓，成交后 <b style="color:var(--up)">+1% 止盈</b> / <b style="color:var(--down)">-2% 止损</b></span>';
+    }
     if(Lp) renderLadder(Lp, sg.held); else renderStrategy(sg, chTp, chSl);
   }else{ el('sigBox').innerHTML='<div class="empty">等待 AI 选股…</div>'; el('kSvg').innerHTML=''; el('kLegend').innerHTML=''; el('ladder').innerHTML=''; }
 
@@ -599,8 +606,8 @@ function renderStrategy(sg,tp,sl){
   el('ladder').innerHTML='<div class="lhead">操作策略 · 当日点位 <span class="g">AI 自动执行</span></div><div class="lsteps">'
     +'<div class="lstep"><span>周期</span><b>日线 D</b><i>趋势跟随</i></div>'
     +'<div class="lstep"><span>买入</span><b>14:55</b><i>市价</i></div>'
-    +'<div class="lstep tp"><span>次日止盈</span><b>+1%</b><i class="mono">'+fmt(tp,dec(tp))+'</i></div>'
-    +'<div class="lstep stop"><span>次日止损</span><b>清仓</b><i class="mono">'+fmt(sl,dec(sl))+'</i></div>'
+    +'<div class="lstep tp"><span>次日止盈</span><b>+1%</b><i class="mono">'+(sg.held?fmt(tp,dec(tp)):'待成交')+'</i></div>'
+    +'<div class="lstep stop"><span>次日止损</span><b>-2%</b><i class="mono">'+(sg.held?fmt(sl,dec(sl)):'待成交')+'</i></div>'
     +'<div class="lstep"><span>信号强度</span><b class="cy">'+stg+'</b><i>'+Math.round(sg.score||0)+'/100</i></div>'
     +'</div>';
 }
