@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-03 11:31:54",
+  "updated": "2026-06-03 11:39:49",
   "mode": "模拟盘 · 实时",
   "engine": "Crayxus AI Quant v1",
   "market": "etf",
@@ -32,9 +32,9 @@
       "估值": 60
     },
     "pool": 24,
-    "buy": 4.071,
-    "tp": 4.112,
-    "sl": 3.99,
+    "buy": null,
+    "tp": null,
+    "sl": null,
     "minute": [
       {
         "t": "0930",
