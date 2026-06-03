@@ -461,7 +461,7 @@ function render(d){
   // signal card
   if(sg){
     el('kTitle').textContent=sg.code+' '+sg.name;
-    el('kConf').textContent='AI 置信度 '+Math.round(sg.score||0)+'% · 日线 D';
+    el('kConf').textContent='今日分时 · AI 置信度 '+Math.round(sg.score||0)+'%';
     var c=cls(sg.chg);
     var fac=sg.factors||{}, fkeys=Object.keys(fac).sort(function(a,b){return fac[b]-fac[a];});
     var fbad=fkeys.slice(0,3).map(function(k,i){return '<span class="fb'+(i===0?' top':'')+'">'+k+' <b>'+fac[k]+'</b></span>';}).join('');
@@ -469,7 +469,7 @@ function render(d){
     el('sigBox').innerHTML=
       '<div class="heroLabel">★ 今日 AI 唯一首选 · TODAY&rsquo;S PICK</div>'
       +'<div class="sigName">'+sg.name+'<span class="c mono">'+sg.code+'</span>'
-        +'<span class="pill '+(sg.held?'hold':'watch')+'">'+(sg.held?'持有中':'AI 选中')+'</span></div>'
+        +'<span class="pill '+(sg.held?'hold':'watch')+'">'+(sg.held?'持有中':'盘中候选 · 14:55 建仓')+'</span></div>'
       +'<div class="sigPx"><span class="p mono '+c+'">'+fmt(sg.price,dec(sg.price))+'</span>'
         +'<span class="ch mono '+c+'">'+(sg.chg>=0?'▲':'▼')+sign(sg.chg,2)+'%</span></div>'
       +'<div class="distinct">全市场 <b>'+pool+'</b> 选 <b>1</b>　·　综合 <b>第 1</b>　·　信号强度 <b class="cy">'+stg+'</b></div>'
@@ -479,11 +479,12 @@ function render(d){
     drawRing(sg.score); drawRadar(sg.factors||{});
     var Lp=sg.ladder;
     var chBuy=sg.buy, chTp=(Lp?Lp.tp_price:sg.tp), chSl=(Lp?Lp.hard_price:sg.sl);
-    drawLine(sg.bars||[], chBuy, chTp, chSl);
+    drawMinute(sg.minute||[], sg.prev_close, (sg.held?chBuy:null), chTp, chSl);
     el('kLegend').innerHTML=
-      '<span class="lvBuy">● '+(sg.held?'持仓均价':'参考买入')+' <b class="mono">'+fmt(chBuy,dec(chBuy))+'</b></span>'
-      +'<span class="lvTp">● 止盈 <b class="mono">'+fmt(chTp,dec(chTp))+'</b></span>'
-      +'<span class="lvSl">● 硬止损 <b class="mono">'+fmt(chSl,dec(chSl))+'</b></span>';
+      '<span style="color:#9aa7c4">● 昨收 <b class="mono">'+fmt(sg.prev_close,dec(sg.prev_close))+'</b></span>'
+      +(sg.held?'<span class="lvBuy">● 持仓均价 <b class="mono">'+fmt(chBuy,dec(chBuy))+'</b></span>':'')
+      +'<span class="lvTp">● 次日止盈 <b class="mono">'+fmt(chTp,dec(chTp))+'</b></span>'
+      +'<span class="lvSl">● 次日止损 <b class="mono">'+fmt(chSl,dec(chSl))+'</b></span>';
     if(Lp) renderLadder(Lp, sg.held); else renderStrategy(sg, chTp, chSl);
   }else{ el('sigBox').innerHTML='<div class="empty">等待 AI 选股…</div>'; el('kSvg').innerHTML=''; el('kLegend').innerHTML=''; el('ladder').innerHTML=''; }
 
@@ -595,32 +596,33 @@ function drawRadar(f){
   el('rSvg').innerHTML=g+ax
     +'<polygon points="'+poly+'" fill="rgba(39,224,230,.2)" stroke="#27e0e6" stroke-width="1.7" style="filter:drop-shadow(0 0 5px rgba(39,224,230,.6))"/>'+lb;
 }
-/* ---- 日线折线图（同花顺日线感）+ 止盈/止损/买入位 ---- */
-function drawLine(bars,buy,tp,sl){
-  var svg=el('kSvg'); if(!bars||!bars.length){svg.innerHTML='';return;}
-  var W=800,H=320,pL=6,pR=62,pT=14,pB=20;
-  var cl=bars.map(function(b){return b.c;});
-  var lo=Math.min.apply(null,cl),hi=Math.max.apply(null,cl);
-  [buy,tp,sl].forEach(function(v){if(v){lo=Math.min(lo,v);hi=Math.max(hi,v);}});
-  var pad=(hi-lo)*0.10||0.1;lo-=pad;hi+=pad;
-  var n=cl.length;
-  function X(i){return pL+i*(W-pL-pR)/(n-1);}
+/* ---- 今日分时图（同花顺分时）：昨收线 + 全天宽度，刚开盘只占左边一小段 ---- */
+function drawMinute(pts,prev,buy,tp,sl){
+  var svg=el('kSvg');
+  if(!pts||!pts.length){ svg.innerHTML='<text x="400" y="158" fill="#6f82ad" font-size="15" text-anchor="middle">等待开盘 · 暂无分时</text>'; return; }
+  var W=800,H=320,pL=6,pR=64,pT=14,pB=18,N=242;   // 全天约242分钟，x轴定宽
+  var prices=pts.map(function(p){return p.p;});
+  var base=prev||prices[0], dev=0;
+  prices.concat([tp,sl,buy].filter(function(v){return v;})).forEach(function(v){dev=Math.max(dev,Math.abs(v-base));});
+  dev=(dev*1.15)||(base*0.01); var hi=base+dev, lo=base-dev;
+  function X(i){return pL+i*(W-pL-pR)/(N-1);}
   function Y(v){return pT+(hi-v)/(hi-lo)*(H-pT-pB);}
-  var last=cl[n-1],col=last>=cl[0]?'#ff4d57':'#19d07a';
-  var line='',area='M'+X(0).toFixed(1)+' '+Y(cl[0]).toFixed(1);
-  cl.forEach(function(v,i){var x=X(i).toFixed(1),y=Y(v).toFixed(1);line+=(i?'L':'M')+x+' '+y+' ';area+=' L'+x+' '+y;});
-  area+=' L'+X(n-1).toFixed(1)+' '+(H-pB)+' L'+X(0).toFixed(1)+' '+(H-pB)+' Z';
-  function hl(v,c){if(v==null)return '';var y=Y(v).toFixed(1);
-    return '<line x1="'+pL+'" y1="'+y+'" x2="'+(W-pR)+'" y2="'+y+'" stroke="'+c+'" stroke-width="1.1" stroke-dasharray="6 4" opacity=".9"/>'
+  var last=prices[prices.length-1], col=last>=base?'#ff4d57':'#19d07a';
+  var line='';
+  pts.forEach(function(p,i){line+=(i?'L':'M')+X(i).toFixed(1)+' '+Y(p.p).toFixed(1)+' ';});
+  var lastX=X(pts.length-1).toFixed(1);
+  var area='M'+X(0).toFixed(1)+' '+Y(base).toFixed(1)+' '+line.replace(/^M/,'L')+' L'+lastX+' '+Y(base).toFixed(1)+' Z';
+  function hl(v,c,dash){if(v==null)return '';var y=Y(v).toFixed(1);
+    return '<line x1="'+pL+'" y1="'+y+'" x2="'+(W-pR)+'" y2="'+y+'" stroke="'+c+'" stroke-width="1.1" stroke-dasharray="'+(dash||'6 4')+'" opacity=".9"/>'
       +'<rect x="'+(W-pR)+'" y="'+(parseFloat(y)-9)+'" width="'+pR+'" height="18" fill="'+c+'" opacity=".15"/>'
-      +'<text x="'+(W-pR+5)+'" y="'+(parseFloat(y)+4.5)+'" fill="'+c+'" font-size="13" font-family="monospace">'+v.toFixed(dec(v))+'</text>';}
+      +'<text x="'+(W-pR+5)+'" y="'+(parseFloat(y)+4.5)+'" fill="'+c+'" font-size="12.5" font-family="monospace">'+v.toFixed(dec(v))+'</text>';}
   svg.innerHTML='<defs><linearGradient id="kg" x1="0" y1="0" x2="0" y2="1">'
-    +'<stop offset="0" stop-color="'+col+'" stop-opacity=".30"/><stop offset="1" stop-color="'+col+'" stop-opacity="0"/></linearGradient></defs>'
+    +'<stop offset="0" stop-color="'+col+'" stop-opacity=".26"/><stop offset="1" stop-color="'+col+'" stop-opacity="0"/></linearGradient></defs>'
     +'<path d="'+area+'" fill="url(#kg)"/>'
-    +hl(buy,'#27e0e6')+hl(tp,'#ff4d57')+hl(sl,'#19d07a')
-    +'<path d="'+line+'" fill="none" stroke="'+col+'" stroke-width="2.3" style="filter:drop-shadow(0 0 5px '+col+')"/>'
-    +'<circle cx="'+X(n-1).toFixed(1)+'" cy="'+Y(last).toFixed(1)+'" r="3.6" fill="#fff"/>'
-    +'<circle cx="'+X(n-1).toFixed(1)+'" cy="'+Y(last).toFixed(1)+'" r="7" fill="'+col+'" opacity=".35"/>';
+    +hl(base,'#9aa7c4','3 4')+hl(tp,'#ff4d57')+hl(sl,'#19d07a')+(buy?hl(buy,'#27e0e6'):'')
+    +'<path d="'+line+'" fill="none" stroke="'+col+'" stroke-width="2" style="filter:drop-shadow(0 0 4px '+col+')"/>'
+    +'<circle cx="'+lastX+'" cy="'+Y(last).toFixed(1)+'" r="3.4" fill="#fff"/>'
+    +'<circle cx="'+lastX+'" cy="'+Y(last).toFixed(1)+'" r="6.5" fill="'+col+'" opacity=".35"/>';
 }
 /* ---- 净值曲线 ---- */
 function drawNav(hist,init){
