@@ -492,7 +492,7 @@ function render(d){
   // signal card
   if(sg){
     el('kTitle').textContent=sg.code+' '+sg.name;
-    el('kConf').textContent='今日分时 · AI 置信度 '+Math.round(sg.score||0)+'%';
+    el('kConf').textContent='今日分时 · 每日 '+(sg.entry_time||'14:55')+' 选股建仓(一天一次) · 置信度 '+Math.round(sg.score||0)+'%';
     var c=cls(sg.chg);
     var fac=sg.factors||{}, fkeys=Object.keys(fac).sort(function(a,b){return fac[b]-fac[a];});
     var fbad=fkeys.slice(0,3).map(function(k,i){return '<span class="fb'+(i===0?' top':'')+'">'+k+' <b>'+fac[k]+'</b></span>';}).join('');
@@ -510,7 +510,7 @@ function render(d){
     drawRing(sg.score); drawRadar(sg.factors||{});
     var Lp=sg.ladder;
     var chTp=(Lp?Lp.tp_price:sg.tp), chSl=(Lp?Lp.hard_price:sg.sl);
-    drawMinute(sg.minute||[], sg.prev_close, sg.buy, chTp, chSl);
+    drawMinute(sg.minute||[], sg.prev_close, sg.buy, chTp, chSl, sg.entry_time||'14:55', sg.held);
     if(sg.held){
       el('kLegend').innerHTML=
         '<span style="color:#9aa7c4">● 昨收 <b class="mono">'+fmt(sg.prev_close,dec(sg.prev_close))+'</b></span>'
@@ -635,7 +635,7 @@ function drawRadar(f){
     +'<polygon points="'+poly+'" fill="rgba(39,224,230,.2)" stroke="#27e0e6" stroke-width="1.7" style="filter:drop-shadow(0 0 5px rgba(39,224,230,.6))"/>'+lb;
 }
 /* ---- 今日分时图（同花顺分时）：昨收线 + 全天宽度，刚开盘只占左边一小段 ---- */
-function drawMinute(pts,prev,buy,tp,sl){
+function drawMinute(pts,prev,buy,tp,sl,entryTime,held){
   var svg=el('kSvg');
   if(!pts||!pts.length){ svg.innerHTML='<text x="400" y="158" fill="#6f82ad" font-size="15" text-anchor="middle">等待开盘 · 暂无分时</text>'; return; }
   var W=800,H=320,pL=6,pR=64,pT=14,pB=18,N=242;   // 全天约242分钟，x轴定宽
@@ -654,10 +654,22 @@ function drawMinute(pts,prev,buy,tp,sl){
     return '<line x1="'+pL+'" y1="'+y+'" x2="'+(W-pR)+'" y2="'+y+'" stroke="'+c+'" stroke-width="1.1" stroke-dasharray="'+(dash||'6 4')+'" opacity=".9"/>'
       +'<rect x="'+(W-pR)+'" y="'+(parseFloat(y)-9)+'" width="'+pR+'" height="18" fill="'+c+'" opacity=".15"/>'
       +'<text x="'+(W-pR+5)+'" y="'+(parseFloat(y)+4.5)+'" fill="'+c+'" font-size="12.5" font-family="monospace">'+v.toFixed(dec(v))+'</text>';}
+  // 14:55 入场竖线(确保在这个时点建仓)
+  var entrySvg='';
+  if(entryTime){
+    var em=(+entryTime.slice(0,2))*60+(+entryTime.slice(3));
+    var ei=(em<=11*60+30)?(em-(9*60+30)):(120+(em-13*60));
+    var ex=X(ei).toFixed(1);
+    entrySvg='<line x1="'+ex+'" y1="'+pT+'" x2="'+ex+'" y2="'+(H-pB)+'" stroke="#f5c451" stroke-width="1.3" stroke-dasharray="5 3" opacity=".9"/>'
+      +'<rect x="'+(parseFloat(ex)-31)+'" y="'+(pT-2)+'" width="62" height="17" rx="4" fill="#f5c451" opacity=".16"/>'
+      +'<text x="'+ex+'" y="'+(pT+10.5)+'" fill="#f5c451" font-size="11.5" text-anchor="middle" font-weight="700">'+entryTime+(held?' 入场':' 建仓')+'</text>';
+    if(held&&buy){ entrySvg+='<circle cx="'+ex+'" cy="'+Y(buy).toFixed(1)+'" r="4.5" fill="#27e0e6" stroke="#fff" stroke-width="1.5"/>'; }
+  }
   svg.innerHTML='<defs><linearGradient id="kg" x1="0" y1="0" x2="0" y2="1">'
     +'<stop offset="0" stop-color="'+col+'" stop-opacity=".26"/><stop offset="1" stop-color="'+col+'" stop-opacity="0"/></linearGradient></defs>'
     +'<path d="'+area+'" fill="url(#kg)"/>'
     +hl(base,'#9aa7c4','3 4')+hl(tp,'#ff4d57')+hl(sl,'#19d07a')+(buy?hl(buy,'#27e0e6'):'')
+    +entrySvg
     +'<path d="'+line+'" fill="none" stroke="'+col+'" stroke-width="2" style="filter:drop-shadow(0 0 4px '+col+')"/>'
     +'<circle cx="'+lastX+'" cy="'+Y(last).toFixed(1)+'" r="3.4" fill="#fff"/>'
     +'<circle cx="'+lastX+'" cy="'+Y(last).toFixed(1)+'" r="6.5" fill="'+col+'" opacity=".35"/>';
