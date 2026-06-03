@@ -1,11 +1,11 @@
 {
-  "updated": "2026-06-03 09:26:00",
+  "updated": "2026-06-03 09:42:28",
   "mode": "模拟盘 · 实时",
   "engine": "Crayxus AI Quant v1",
   "market": "etf",
   "source": "腾讯/东方财富",
   "init_cash": 100000.0,
-  "nav": 100000.0,
+  "nav": 100000.8,
   "total_return_pct": 0.0,
   "today_pnl": 0,
   "cash": null,
@@ -18,8 +18,8 @@
     "code": "159949",
     "name": "创业板50ETF华安",
     "market": 0,
-    "price": 1.995,
-    "chg": 0.76,
+    "price": 2.003,
+    "chg": 1.16,
     "held": false,
     "score": 74,
     "factors": {
@@ -31,7 +31,7 @@
       "估值": 60
     },
     "pool": 7,
-    "buy": 1.995,
+    "buy": 2.003,
     "tp": 2.015,
     "sl": 1.955,
     "bars": [
@@ -349,6 +349,13 @@
         "c": 1.98,
         "h": 1.991,
         "l": 1.919
+      },
+      {
+        "d": "06-03",
+        "o": 1.995,
+        "c": 2.003,
+        "h": 2.009,
+        "l": 1.991
       }
     ]
   },
@@ -357,8 +364,8 @@
       "code": "159949",
       "name": "创业板50ETF华安",
       "market": 0,
-      "price": 1.995,
-      "chg": 0.76,
+      "price": 2.003,
+      "chg": 1.16,
       "locked": false,
       "status": "监控"
     },
@@ -403,14 +410,14 @@
       "name": "创业板50ETF华安",
       "score": 74,
       "status": "持有中",
-      "ret_pct": 0.0,
+      "ret_pct": 0.4,
       "close": null
     }
   ],
   "nav_history": [
     {
       "day": "2026-06-03",
-      "nav": 100000.0
+      "nav": 100000.8
     }
   ]
 }
