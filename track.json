@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-05 17:37:03",
+  "updated": "2026-06-05 17:50:22",
   "mode": "模拟盘 · 实时",
   "engine": "Crayxus AI Quant v1",
   "market": "etf",
@@ -1083,9 +1083,9 @@
       "code": "159915",
       "name": "创业板ETF易方达",
       "score": 87,
-      "status": "持有中",
-      "ret_pct": -1.86,
-      "close": null
+      "status": "止损",
+      "ret_pct": -2.05,
+      "close": "2026-06-05"
     },
     {
       "day": "2026-06-05",
