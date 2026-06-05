@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Crayxus AI·GP · Beta 实验室预算计算器</title>
+<link rel="icon" type="image/png" href="favicon-32.png">
+<meta property="og:title" content="Crayxus AI·GP · Beta 实验室预算">
+<meta property="og:description" content="交互式预算:智能赛道/AI赛车/展示直播/人手一台电脑,实时算总价。">
+<meta property="og:image" content="https://crayxus.com.au/og-x01.jpg">
+<style>
+  :root{
+    --bg:#050810; --card:#0e1a2e; --line:#1a3050; --line-soft:#243759;
+    --txt:#e7eef8; --gray:#8da2bd; --mute:#5a6e8e;
+    --blue:#00b8ff; --orange:#ff8800; --green:#00ff9c; --yellow:#ffd000; --purple:#b388ff;
+    --fd:'Inter',-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    --ft:'JetBrains Mono','SF Mono',Consolas,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--txt);font-family:var(--fd);font-weight:300;line-height:1.5;-webkit-font-smoothing:antialiased;}
+  body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(0,184,255,.08),transparent 60%);}
+  body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(0,184,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,184,255,.03) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse at 50% 15%,black 10%,transparent 75%);}
+  .wrap{position:relative;z-index:1;max-width:1040px;margin:0 auto;padding:40px 24px 80px;}
+
+  .kicker{font-family:var(--ft);font-size:11px;letter-spacing:.3em;color:var(--blue);text-transform:uppercase;text-shadow:0 0 14px rgba(0,184,255,.5);margin-bottom:12px;}
+  h1{font-size:clamp(28px,5vw,48px);font-weight:800;line-height:1.05;letter-spacing:-.02em;margin-bottom:10px;}
+  h1 .g{background:linear-gradient(135deg,var(--blue),var(--orange));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .sub{color:var(--gray);font-size:15px;margin-bottom:26px;max-width:760px;}
+  .sub b{color:var(--txt);}
+
+  /* presets */
+  .presets{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;}
+  .pbtn{font-family:var(--ft);font-size:12px;letter-spacing:.08em;color:var(--gray);background:transparent;border:1px solid var(--line);padding:10px 16px;border-radius:4px;cursor:pointer;transition:all .2s;}
+  .pbtn:hover{color:var(--blue);border-color:var(--line-soft);background:rgba(0,184,255,.06);}
+  .pbtn.on{color:var(--bg);background:var(--blue);border-color:var(--blue);font-weight:700;}
+
+  /* controls */
+  .ctrls{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:22px;}
+  .ctrl{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--blue);padding:12px 14px;border-radius:6px;}
+  .ctrl label{display:block;font-family:var(--ft);font-size:10px;letter-spacing:.14em;color:var(--mute);text-transform:uppercase;margin-bottom:7px;}
+  .ctrl input,.ctrl select{width:100%;background:#08101f;border:1px solid var(--line-soft);color:var(--txt);font-family:var(--ft);font-size:16px;font-weight:700;padding:8px 10px;border-radius:4px;}
+  .ctrl input:focus,.ctrl select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 2px rgba(0,184,255,.18);}
+
+  /* table */
+  table{width:100%;border-collapse:collapse;margin-bottom:6px;font-size:14px;}
+  th{font-family:var(--ft);font-size:10px;letter-spacing:.2em;color:var(--blue);text-transform:uppercase;text-align:left;padding:10px 10px;border-bottom:2px solid var(--blue);}
+  th.r,td.r{text-align:right;}
+  td{padding:8px 10px;border-bottom:1px solid var(--line);color:var(--gray);vertical-align:middle;}
+  tr.catrow td{background:rgba(0,184,255,.05);color:var(--txt);font-weight:700;font-family:var(--ft);font-size:12px;letter-spacing:.12em;border-bottom:1px solid var(--line-soft);}
+  td.nm{color:var(--txt);}
+  td.nm label{display:flex;align-items:center;gap:9px;cursor:pointer;}
+  td.nm input[type=checkbox]{width:15px;height:15px;accent-color:var(--blue);flex:none;cursor:pointer;}
+  .num{width:84px;background:#08101f;border:1px solid var(--line-soft);color:var(--txt);font-family:var(--ft);font-size:13px;padding:6px 8px;border-radius:4px;text-align:right;}
+  .num:focus{outline:none;border-color:var(--blue);}
+  td.rsub{font-family:var(--ft);color:var(--txt);font-weight:600;white-space:nowrap;}
+  td.catsub{font-family:var(--ft);color:var(--blue);font-weight:800;text-align:right;white-space:nowrap;}
+  tr.off td.nm{color:var(--mute);text-decoration:line-through;}
+  tr.off .rsub{color:var(--mute);}
+
+  /* breakdown bar */
+  .bar{display:flex;height:14px;border-radius:7px;overflow:hidden;margin:18px 0 8px;border:1px solid var(--line);}
+  .bar .seg{height:100%;}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-family:var(--ft);font-size:11px;color:var(--gray);margin-bottom:24px;}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:middle;}
+
+  /* totals */
+  .totals{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px;}
+  .tbox{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:18px 20px;}
+  .tbox .l{font-family:var(--ft);font-size:11px;letter-spacing:.16em;color:var(--mute);text-transform:uppercase;margin-bottom:8px;}
+  .tbox .v{font-family:var(--fd);font-weight:800;font-size:22px;color:var(--txt);}
+  .tbox.grand{grid-column:1/-1;border-color:var(--blue);background:rgba(0,184,255,.07);box-shadow:0 0 30px rgba(0,184,255,.12);}
+  .tbox.grand .v{font-size:clamp(30px,7vw,52px);color:var(--blue);text-shadow:0 0 22px rgba(0,184,255,.4);}
+  .tbox.grand .hint{font-family:var(--ft);font-size:11px;color:var(--gray);margin-top:8px;letter-spacing:.06em;}
+
+  .note{margin-top:22px;font-size:13px;color:var(--mute);line-height:1.7;border-top:1px dashed var(--line-soft);padding-top:16px;}
+  .note b{color:var(--gray);}
+  .foot{margin-top:30px;font-family:var(--ft);font-size:11px;letter-spacing:.12em;color:var(--mute);}
+  .foot a{color:var(--mute);text-decoration:none;}
+  @media(max-width:640px){ .num{width:64px;} th,td{padding:7px 6px;} .totals{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="kicker">CRAYXUS AI·GP · BETA LAB BUDGET</div>
+  <h1>Beta 实验室 <span class="g">预算计算器</span></h1>
+  <p class="sub">改人数、砖数、直播档位、单价 —— 总价<b>实时计算</b>。先点一档预设,再按需微调。所有单价可直接改成你拿到的真实报价。</p>
+
+  <div class="presets">
+    <button class="pbtn" id="pb-p0"   onclick="preset('p0')">Phase 0 · 机理验证</button>
+    <button class="pbtn" id="pb-lean" onclick="preset('lean')">精简 Beta</button>
+    <button class="pbtn" id="pb-show" onclick="preset('show')">展示型 Beta</button>
+  </div>
+
+  <div class="ctrls">
+    <div class="ctrl"><label>学生人数</label><input type="number" id="stud" min="0" value="3" oninput="syncStudents()"></div>
+    <div class="ctrl"><label>智能砖 数量</label><input type="number" id="tiles" min="0" value="12" oninput="syncTiles()"></div>
+    <div class="ctrl"><label>直播档位</label><select id="strm" onchange="syncStream()"><option value="none">不上直播</option><option value="lean" selected>精简(手机+OBS)</option><option value="pro">专业(多机位+切换台)</option></select></div>
+    <div class="ctrl"><label>不可预见费 %</label><input type="number" id="cont" min="0" max="50" value="15" oninput="recompute()"></div>
+  </div>
+
+  <table>
+    <thead><tr><th>项目</th><th class="r">数量</th><th class="r">单价 ¥</th><th class="r">小计 ¥</th></tr></thead>
+    <tbody id="tb"></tbody>
+  </table>
+
+  <div class="bar" id="bar"></div>
+  <div class="legend" id="legend"></div>
+
+  <div class="totals">
+    <div class="tbox"><div class="l">硬件小计</div><div class="v" id="hw">¥0</div></div>
+    <div class="tbox"><div class="l">不可预见费</div><div class="v" id="contv">¥0</div></div>
+    <div class="tbox grand"><div class="l">合计 TOTAL</div><div class="v" id="total">¥0</div><div class="hint" id="thint"></div></div>
+  </div>
+
+  <div class="note">
+    <b>复用(¥0):</b> 现有 RTX 5070 Ti 主机(重 ML 训练) · ROS2/OpenCV/ESP-IDF 等开源软件<br>
+    <b>不含:</b> 场地租金(杭州 ~¥2,000–5,000/月) · 人力 · 运费税费 · 后续迭代料件<br>
+    <b>说明:</b> 单价为国内 1688/淘宝/嘉立创口径的中位估算,可直接覆盖为真实报价。无 UWB —— 定位用头顶相机 + fiducial + 落槽 slot-ID。
+  </div>
+
+  <div class="foot"><a href="aigp-syllabus.html">← 课程体系</a> &nbsp;·&nbsp; <a href="aigp-curriculum.html">产品手册</a> &nbsp;·&nbsp; CRAYXUS AI · 2026</div>
+</div>
+
+<script>
+  const FX='¥';
+  const catColors={'A · 核心硬件':'#00b8ff','B · 制造/开发':'#ff8800','C · 展示 + 直播':'#00ff9c','D · 学生工位 + 场地':'#ffd000','E · 电脑':'#b388ff'};
+  // qty/price = 中位估算(¥). inc=是否计入.
+  const items=[
+    {id:'tile', cat:'A · 核心硬件', name:'智能砖 Smart Tile (50cm 轻量化)', qty:12, price:700, inc:true},
+    {id:'base', cat:'A · 核心硬件', name:'槽位基板 (倒角/磁吸自落座 + pogo + slot-ID)', qty:1, price:4000, inc:true},
+    {id:'car1', cat:'A · 核心硬件', name:'AI 赛车 LV.1 · 1:18 (ESP32+IMU)', qty:2, price:450, inc:true},
+    {id:'car2', cat:'A · 核心硬件', name:'AI 赛车 LV.2/3 · 1:10 (视觉→树莓派+激光雷达)', qty:1, price:2100, inc:true},
+    {id:'cam',  cat:'A · 核心硬件', name:'头顶相机定位 (相机+支架+AprilTag)', qty:1, price:1300, inc:true},
+
+    {id:'printer', cat:'B · 制造/开发', name:'3D 打印机 Bambu Lab A1', qty:1, price:3000, inc:true},
+    {id:'bench',   cat:'B · 制造/开发', name:'焊台/万用表/工具/可调电源/耗材', qty:1, price:1500, inc:true},
+    {id:'laser',   cat:'B · 制造/开发', name:'亚克力激光切割 (外包)', qty:1, price:1200, inc:true},
+
+    {id:'light',  cat:'C · 展示 + 直播', name:'灯光 (视觉均匀光 + TRON 氛围)', qty:1, price:2200, inc:true},
+    {id:'screen', cat:'C · 展示 + 直播', name:'大屏 65–75" + 支架', qty:1, price:4000, inc:true},
+    {id:'live',   cat:'C · 展示 + 直播', name:'直播套件', qty:1, price:2000, inc:true},
+
+    {id:'desk',   cat:'D · 学生工位 + 场地', name:'工作台 + 凳 (3–5 人)', qty:1, price:1500, inc:true},
+    {id:'tools',  cat:'D · 学生工位 + 场地', name:'额外工具组 (并行装配)', qty:2, price:600, inc:true},
+    {id:'safety', cat:'D · 学生工位 + 场地', name:'排烟扇 + 护目镜 (多人焊接安全)', qty:1, price:500, inc:true},
+    {id:'floor',  cat:'D · 学生工位 + 场地', name:'地面/线槽/标定杂项', qty:1, price:800, inc:true},
+
+    {id:'pc',     cat:'E · 电脑', name:'学生/主控电脑 (16G/512G · 人手一台 + 主控)', qty:4, price:4800, inc:true},
+  ];
+  const cats=[...new Set(items.map(i=>i.cat))];
+  const fmt=n=>FX+Math.round(n).toLocaleString('en-US');
+  const byId=id=>items.find(i=>i.id===id);
+  const $=id=>document.getElementById(id);
+
+  function render(){
+    let h='';
+    cats.forEach((cat,ci)=>{
+      h+=`<tr class="catrow"><td colspan="3">${cat}</td><td class="catsub r" id="sub-${ci}"></td></tr>`;
+      items.forEach((it,ii)=>{ if(it.cat!==cat) return;
+        h+=`<tr id="row-${ii}" class="${it.inc?'':'off'}">
+          <td class="nm"><label><input type="checkbox" ${it.inc?'checked':''} onchange="setInc(${ii},this.checked)"> ${it.name}</label></td>
+          <td class="r"><input class="num" type="number" min="0" value="${it.qty}" oninput="setQty(${ii},this.value)"></td>
+          <td class="r"><input class="num" type="number" min="0" step="50" value="${it.price}" oninput="setPrice(${ii},this.value)"></td>
+          <td class="r rsub" id="rs-${ii}"></td>
+        </tr>`;
+      });
+    });
+    $('tb').innerHTML=h;
+  }
+
+  function recompute(){
+    let grand=0; const ct={};
+    items.forEach((it,ii)=>{
+      const s = it.inc ? (Number(it.qty)||0)*(Number(it.price)||0) : 0;
+      const rs=$('rs-'+ii); if(rs) rs.textContent = it.inc ? fmt(s) : '—';
+      const row=$('row-'+ii); if(row) row.className = it.inc?'':'off';
+      ct[it.cat]=(ct[it.cat]||0)+s; grand+=s;
+    });
+    cats.forEach((cat,ci)=>{ const e=$('sub-'+ci); if(e) e.textContent=fmt(ct[cat]||0); });
+    const cont=Number($('cont').value)||0;
+    const cAmt=grand*cont/100, total=grand+cAmt;
+    $('hw').textContent=fmt(grand);
+    $('contv').textContent=fmt(cAmt);
+    $('total').textContent=fmt(total);
+    const stud=Number($('stud').value)||0, tiles=Number(byId('tile').qty)||0, pcs=Number(byId('pc').qty)||0;
+    $('thint').textContent=`学生 ${stud} 人 · 电脑 ${pcs} 台 · 智能砖 ${tiles} 块 · 含 ${cont}% 不可预见费`;
+    // breakdown bar
+    const bar=$('bar'), lg=$('legend'); bar.innerHTML=''; lg.innerHTML='';
+    cats.forEach(cat=>{ const v=ct[cat]||0; if(grand>0&&v>0){
+      const seg=document.createElement('div'); seg.className='seg'; seg.style.width=(v/grand*100)+'%'; seg.style.background=catColors[cat]||'#888'; seg.title=cat+' '+fmt(v); bar.appendChild(seg);
+      const li=document.createElement('span'); li.innerHTML=`<i style="background:${catColors[cat]||'#888'}"></i>${cat.replace(/^[A-E] · /,'')} ${Math.round(v/grand*100)}%`; lg.appendChild(li);
+    }});
+  }
+
+  function setQty(i,v){ items[i].qty=v===''?0:Number(v); recompute(); }
+  function setPrice(i,v){ items[i].price=v===''?0:Number(v); recompute(); }
+  function setInc(i,c){ items[i].inc=c; recompute(); }
+
+  function syncStudents(){ byId('pc').qty=(Number($('stud').value)||0)+1; render(); recompute(); }
+  function syncTiles(){ byId('tile').qty=Number($('tiles').value)||0; render(); recompute(); }
+  function syncStream(){ const v=$('strm').value; const l=byId('live');
+    if(v==='none'){ l.inc=false; } else { l.inc=true; l.price = v==='pro'?5500:2000; }
+    render(); recompute(); }
+
+  function preset(p){
+    document.querySelectorAll('.pbtn').forEach(b=>b.classList.remove('on'));
+    $('pb-'+p).classList.add('on');
+    if(p==='p0'){
+      $('stud').value=1; $('tiles').value=4; $('strm').value='none';
+      const keep=['tile','car1','cam','printer','bench','safety','floor','pc'];
+      items.forEach(it=>it.inc=keep.includes(it.id));
+    } else if(p==='lean'){
+      $('stud').value=3; $('tiles').value=12; $('strm').value='lean';
+      items.forEach(it=>it.inc=true);
+    } else if(p==='show'){
+      $('stud').value=5; $('tiles').value=12; $('strm').value='pro';
+      items.forEach(it=>it.inc=true);
+    }
+    byId('pc').qty=(Number($('stud').value)||0)+1;
+    byId('tile').qty=Number($('tiles').value)||0;
+    const v=$('strm').value, l=byId('live');
+    if(v==='none'){ l.inc=false; } else { l.inc=true; l.price=v==='pro'?5500:2000; }
+    render(); recompute();
+  }
+
+  preset('lean');
+</script>
+</body>
+</html>
