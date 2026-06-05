@@ -407,7 +407,7 @@ body::before{/* 远处光晕 + 更深的黑蓝渐变 */
       <div class="kpi"><div class="k">最大回撤</div><div class="v mono" id="kDD">—</div></div>
     </div>
     <div class="live"><span class="dot"></span><span id="liveTxt">LIVE</span></div>
-    <div class="cd"><span class="cdk">下次 AI 选股刷新 · 14:55 建仓</span><span class="cdv mono" id="cd">--:--:--</span></div>
+    <div class="cd"><span class="cdk" id="cdk">下次 AI 选股 · 14:50</span><span class="cdv mono" id="cd">--:--:--</span></div>
   </div>
 
   <div class="ticker"><div class="tag">AI ENGINE</div><div class="tk mono" id="tk">引擎初始化…</div></div>
@@ -492,7 +492,7 @@ function render(d){
   // signal card
   if(sg){
     el('kTitle').textContent=sg.code+' '+sg.name;
-    el('kConf').textContent='今日分时 · 每日 '+(sg.entry_time||'14:55')+' 选股建仓(一天一次) · 置信度 '+Math.round(sg.score||0)+'%';
+    el('kConf').textContent='今日分时 · 14:50 AI 选股 → 14:55 建仓(一天一次) · 置信度 '+Math.round(sg.score||0)+'%';
     var c=cls(sg.chg);
     var fac=sg.factors||{}, fkeys=Object.keys(fac).sort(function(a,b){return fac[b]-fac[a];});
     var fbad=fkeys.slice(0,3).map(function(k,i){return '<span class="fb'+(i===0?' top':'')+'">'+k+' <b>'+fac[k]+'</b></span>';}).join('');
@@ -500,7 +500,7 @@ function render(d){
     el('sigBox').innerHTML=
       '<div class="heroLabel">★ 今日 AI 唯一首选 · TODAY&rsquo;S PICK</div>'
       +'<div class="sigName">'+sg.name+'<span class="c mono">'+sg.code+'</span>'
-        +'<span class="pill '+(sg.held?'hold':'watch')+'">'+(sg.held?'持有中':'盘中候选 · 14:55 建仓')+'</span></div>'
+        +'<span class="pill '+(sg.held?'hold':'watch')+'">'+(sg.held?'持有中':'已锁定 · 14:55 建仓')+'</span></div>'
       +'<div class="sigPx"><span class="p mono '+c+'">'+fmt(sg.price,dec(sg.price))+'</span>'
         +'<span class="ch mono '+c+'">'+(sg.chg>=0?'▲':'▼')+sign(sg.chg,2)+'%</span></div>'
       +'<div class="distinct">全市场 <b>'+pool+'</b> 选 <b>1</b>　·　综合 <b>第 1</b>　·　信号强度 <b class="cy">'+stg+'</b></div>'
@@ -557,9 +557,9 @@ function render(d){
 
   // AI 选股历史 · 战绩
   var ph=(d.pick_history||[]).slice().reverse();
-  el('histCnt').textContent='每日 14:55 评分 · '+ph.length+' 次';
-  var ht='<tr><th>评分时间</th><th>AI 首选标的</th><th>评分</th><th>结果</th><th>收益</th></tr>';
-  if(!ph.length) ht+='<tr><td colspan="5" class="hempty">暂无选股记录 · 每日 14:55 自动生成</td></tr>';
+  el('histCnt').textContent='每日 14:50 选股 · '+ph.length+' 次';
+  var ht='<tr><th>选股时间</th><th>AI 首选标的</th><th>评分</th><th>结果</th><th>收益</th></tr>';
+  if(!ph.length) ht+='<tr><td colspan="5" class="hempty">暂无选股记录 · 每日 14:50 自动生成</td></tr>';
   ph.forEach(function(p){
     var st=p.status||'持有中', stc=(st==='止盈'?'up':(st==='止损'?'down':'cy'));
     var ret=(p.ret_pct==null?'—':sign(p.ret_pct,2)+'%');
@@ -691,20 +691,25 @@ function drawNav(hist,init){
     +'<circle cx="'+X(n-1).toFixed(1)+'" cy="'+Y(pts[n-1]).toFixed(1)+'" r="3.4" fill="#fff"/>';
 }
 tick(); setInterval(tick,8000);
-/* 每日入场倒计时（到下一个交易日 14:45 尾盘建仓；仅周一~周五，未含法定节假日） */
+/* 每日两段倒计时：先到 14:50「AI 选股·锁定首选」，再到 14:55「建仓执行」；
+   过了 14:55 则数到下一个交易日 14:50(仅周一~周五，未含法定节假日)。北京时段以浏览器本地时间为准。 */
 function pad(n){return (n<10?'0':'')+n;}
-function nextEntry(){
-  var now=new Date();
-  var t=new Date(now.getFullYear(),now.getMonth(),now.getDate(),14,55,0,0);
-  if(t<=now) t.setDate(t.getDate()+1);
+function nextEvent(){
+  var now=new Date(), dow=now.getDay(), wd=(dow>=1&&dow<=5);
+  var sel=new Date(now.getFullYear(),now.getMonth(),now.getDate(),14,50,0,0);
+  var buy=new Date(now.getFullYear(),now.getMonth(),now.getDate(),14,55,0,0);
+  if(wd&&now<sel) return {t:sel,label:'下次 AI 选股 · 14:50'};
+  if(wd&&now<buy) return {t:buy,label:'AI 已选 · 14:55 建仓执行'};
+  var t=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1,14,50,0,0);
   while(t.getDay()===0||t.getDay()===6) t.setDate(t.getDate()+1);
-  return t;
+  return {t:t,label:'下次 AI 选股 · 14:50'};
 }
 function tickCD(){
-  var ms=nextEntry()-new Date(); if(ms<0)ms=0;
+  var ev=nextEvent(); var ms=ev.t-new Date(); if(ms<0)ms=0;
   var s=Math.floor(ms/1000),dd=Math.floor(s/86400);s-=dd*86400;
   var hh=Math.floor(s/3600);s-=hh*3600;var mm=Math.floor(s/60),ss=s-mm*60;
   var e=el('cd'); if(e)e.textContent=(dd>0?dd+'天 ':'')+pad(hh)+':'+pad(mm)+':'+pad(ss);
+  var k=el('cdk'); if(k)k.textContent=ev.label;
 }
 setInterval(tickCD,1000); tickCD();
 </script>
