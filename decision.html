@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#16233a">
+<title>Crayxus AI · 工业决策智能体 · 智能排产优化 Demo</title>
+<meta name="description" content="把 AlphaDan/扑克 AI 的决策引擎搬进工厂车间 —— 多机台生产排产实时优化:总完工↓、换型↓、准时交付↑。浏览器里真跑算法。">
+
+<!-- Favicons -->
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="shortcut icon" type="image/png" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
+<!-- Open Graph · 微信分享卡片 (500x500 正方形最稳) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Crayxus AI">
+<meta property="og:title" content="Crayxus AI · 工业决策智能体 · 智能排产优化">
+<meta property="og:description" content="把 AlphaDan/扑克 AI 的决策引擎搬进工厂车间 —— 多机台排产实时优化:总完工↓、换型↓、准时交付↑。浏览器里真跑算法。">
+<meta property="og:image" content="https://crayxus.com.au/share-thumb.jpg">
+<meta property="og:image:secure_url" content="https://crayxus.com.au/share-thumb.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="500">
+<meta property="og:image:height" content="500">
+<meta property="og:image:alt" content="Crayxus AI">
+<meta property="og:url" content="https://crayxus.com.au/decision.html">
+<meta property="og:locale" content="zh_CN">
+
+<!-- 微信内置浏览器 / 老版本兜底 -->
+<meta itemprop="image" content="https://crayxus.com.au/share-thumb.jpg">
+<meta name="image" content="https://crayxus.com.au/share-thumb.jpg">
+<link rel="image_src" href="https://crayxus.com.au/share-thumb.jpg">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Crayxus AI · 工业决策智能体 · 智能排产优化">
+<meta name="twitter:description" content="把决策 AI 搬进工厂车间,多机台排产实时优化。">
+<meta name="twitter:image" content="https://crayxus.com.au/share-thumb.jpg">
+<style>
+  :root{
+    --ink:#1a1f2b; --soft:#414a5c; --muted:#6b7585;
+    --line:#e4e8ef; --bg:#f5f6f8; --card:#fff; --accent:#1f5fae; --accent-soft:#eef4fb;
+    --ok:#1f7a4d; --ok-soft:#eaf5ef; --warn:#b4452a; --warn-soft:#fbeeea;
+    /* family colors */
+    --fa:#3b6fb0; --fb:#1f7a4d; --fc:#b07d1f; --fd:#7a3b8f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+       background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 20px 80px;}
+  header{background:linear-gradient(135deg,#16233a 0%,#1f3a63 100%);color:#fff;padding:34px 20px 28px;}
+  header .inner{max-width:1000px;margin:0 auto;}
+  .kicker{font-size:12px;letter-spacing:3px;color:#9fc0e8;text-transform:uppercase;}
+  header h1{font-size:24px;margin-top:8px;font-weight:700;}
+  header p{margin-top:8px;color:#c5d4e8;font-size:14px;max-width:760px;}
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-top:20px;box-shadow:0 1px 3px rgba(20,30,50,.04);}
+  .panel h2{font-size:16px;margin-bottom:6px;}
+  .panel .desc{font-size:13px;color:var(--muted);}
+
+  .controls{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-top:14px;}
+  .ctl{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);}
+  select{padding:7px 10px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff;color:var(--ink);}
+  button{padding:9px 18px;border:none;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;transition:.15s;}
+  .btn-ghost{background:#fff;border:1px solid var(--line);color:var(--soft);}
+  .btn-ghost:hover{border-color:var(--accent);color:var(--accent);}
+  .btn-go{background:var(--accent);color:#fff;}
+  .btn-go:hover{background:#184f96;}
+  .btn-go:disabled{background:#9bb4d4;cursor:default;}
+
+  .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;font-size:12.5px;color:var(--soft);}
+  .legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;}
+
+  /* KPI */
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:6px;}
+  .kpi{border:1px solid var(--line);border-radius:11px;padding:14px;background:#fff;}
+  .kpi .name{font-size:12px;color:var(--muted);}
+  .kpi .row{display:flex;align-items:baseline;gap:8px;margin-top:6px;}
+  .kpi .base{font-size:14px;color:var(--muted);text-decoration:line-through;}
+  .kpi .opt{font-size:22px;font-weight:700;color:var(--ink);}
+  .kpi .delta{font-size:12.5px;font-weight:700;padding:1px 7px;border-radius:10px;}
+  .kpi .delta.good{background:var(--ok-soft);color:var(--ok);}
+  .kpi .delta.flat{background:#eef0f3;color:var(--muted);}
+  .kpi .pending{font-size:13px;color:var(--muted);}
+
+  /* Gantt */
+  .gantt-block{margin-top:16px;}
+  .gantt-title{font-size:13.5px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+  .tag{font-size:11px;font-weight:700;padding:2px 9px;border-radius:10px;}
+  .tag.base{background:#eef0f3;color:var(--muted);}
+  .tag.opt{background:var(--ok-soft);color:var(--ok);}
+  .mrow{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+  .mlabel{width:54px;font-size:12px;color:var(--muted);text-align:right;flex:none;}
+  .track{position:relative;flex:1;height:34px;background:#f0f2f5;border-radius:6px;overflow:hidden;}
+  .blk{position:absolute;top:0;height:100%;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:600;overflow:hidden;border-right:1px solid rgba(255,255,255,.35);transition:left .5s ease,width .5s ease;}
+  .setup{position:absolute;top:0;height:100%;background:repeating-linear-gradient(45deg,#cdd3db,#cdd3db 4px,#dde1e7 4px,#dde1e7 8px);transition:left .5s ease,width .5s ease;}
+  .blk.tardy{box-shadow:inset 0 0 0 2px var(--warn);}
+  .blk .late{position:absolute;top:1px;right:2px;font-size:9px;background:var(--warn);color:#fff;border-radius:3px;padding:0 3px;}
+  .axis{margin-left:64px;display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);margin-top:2px;}
+
+  /* decision log */
+  .log{margin-top:6px;}
+  .logitem{display:flex;gap:10px;padding:10px 0;border-bottom:1px dashed var(--line);font-size:13.5px;color:var(--soft);}
+  .logitem:last-child{border-bottom:none;}
+  .logitem .ic{flex:none;width:22px;height:22px;border-radius:6px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
+  .logitem b{color:var(--ink);}
+
+  .note{font-size:12.5px;color:var(--muted);margin-top:14px;padding-top:14px;border-top:1px solid var(--line);}
+  .hl{background:#fff3cf;padding:1px 5px;border-radius:4px;}
+  @media(max-width:620px){.kpis{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header>
+  <div class="inner">
+    <div class="kicker">公司三 · INDUSTRIAL DECISION AGENT</div>
+    <h1>工业决策智能体 · 智能排产 / 调度优化 Demo</h1>
+    <p>同一套"不确定性下的决策引擎"(就是 AlphaDan 掼蛋 / 扑克 MTT 背后的自博弈优化),迁移到工厂车间:把一批订单在多台机器上"排得最优"。下面是<b>真在浏览器里跑的优化</b>——左看基线乱排,右看智能体优化,并解释每一步为什么这么改。</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="panel">
+    <h2>① 车间场景</h2>
+    <div class="desc">N 个订单要在 M 台同型机器上加工。每个订单有<b>工时</b>和<b>交期</b>;切换不同<b>产品族</b>要花<b>换型时间</b>(20 分钟)。目标:总完工(makespan)↓、延误 ↓、换型 ↓。</div>
+    <div class="controls">
+      <div class="ctl">机器台数
+        <select id="mSel"><option>2</option><option selected>3</option><option>4</option></select>
+      </div>
+      <div class="ctl">订单数
+        <select id="nSel"><option>10</option><option selected>14</option><option>18</option><option>22</option></select>
+      </div>
+      <button class="btn-ghost" id="regen">🔄 换一批订单</button>
+      <button class="btn-go" id="run">⚙️ 运行 AI 优化</button>
+    </div>
+    <div class="legend" id="legend"></div>
+  </div>
+
+  <div class="panel">
+    <h2>② 关键指标对比</h2>
+    <div class="desc">基线 = 最朴素的"谁空给谁、按单号顺排"(不管产品族、不管交期)。优化 = 智能体重排后。</div>
+    <div class="kpis" id="kpis"></div>
+  </div>
+
+  <div class="panel">
+    <h2>③ 排产甘特图</h2>
+    <div class="gantt-block">
+      <div class="gantt-title"><span class="tag base">基线 · 乱排</span><span id="baseMk"></span></div>
+      <div id="ganttBase"></div>
+    </div>
+    <div class="gantt-block">
+      <div class="gantt-title"><span class="tag opt">AI 优化</span><span id="optMk"></span></div>
+      <div id="ganttOpt"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>④ 智能体的优化决策(它到底改了什么、为什么)</h2>
+    <div class="desc">下面每条都是对比基线 → 优化后自动生成的、人能看懂的"决策理由"。</div>
+    <div class="log" id="log"><div style="font-size:13px;color:var(--muted);padding:12px 0;">点击「⚙️ 运行 AI 优化」后显示。</div></div>
+    <div class="note">
+      引擎原理:把"订单分到哪台机、按什么顺序"看成一个巨大的决策空间,用<b>模拟退火 / 自博弈搜索</b>在里面找代价最低的方案,代价 = makespan + 1.2×总延误 + 换型时间。这与掼蛋/扑克里"在海量出牌组合中找最优决策"是<span class="hl">同一类算法</span> —— 这就是公司三的技术内核,也是 AlphaDan/MTT 工作的正经产业归宿。
+    </div>
+  </div>
+
+</div>
+
+<script>
+const FAMS = [
+  {k:'A',c:'var(--fa)'},{k:'B',c:'var(--fb)'},{k:'C',c:'var(--fc)'},{k:'D',c:'var(--fd)'}
+];
+const S = 20;            // 换型时间(分钟)
+const W_TARD = 1.2, W_SETUP = 1.0;
+let M = 3, N = 14;
+let JOBS = [];
+let baseMachines = null, optMachines = null;
+
+function ri(n){ return Math.floor(Math.random()*n); }
+
+function genJobs(){
+  JOBS = [];
+  let total = 0;
+  for(let i=0;i<N;i++){
+    const fam = FAMS[ri(FAMS.length)].k;
+    const p = 15 + ri(9)*5;          // 15..55, 步长5
+    JOBS.push({id:i, family:fam, p, due:0});
+    total += p;
+  }
+  const perM = total / M;
+  // 交期:有松有紧,造出基线延误空间
+  for(const j of JOBS){
+    j.due = Math.round((0.45 + Math.random()*0.95) * perM);
+  }
+}
+
+// 基线:谁先空给谁(按单号),不管族、不管交期
+function baselineSchedule(){
+  const machines = Array.from({length:M},()=>[]);
+  const ends = Array(M).fill(0);
+  for(let id=0;id<JOBS.length;id++){
+    let mi=0; for(let k=1;k<M;k++) if(ends[k]<ends[mi]) mi=k;
+    machines[mi].push(id);
+    ends[mi]+=JOBS[id].p;
+  }
+  return machines;
+}
+
+function evaluate(machines){
+  let makespan=0,setupTime=0,setupCount=0,tardTotal=0,tardCount=0,proc=0;
+  const detail = machines.map(()=>[]);
+  machines.forEach((m,mi)=>{
+    let t=0, prev=null;
+    m.forEach(id=>{
+      const job=JOBS[id];
+      let setup=0;
+      if(prev!==null && prev!==job.family){ setup=S; setupTime+=S; setupCount++; }
+      const start=t+setup, end=start+job.p;
+      const tardy = end>job.due;
+      detail[mi].push({id,family:job.family,start,end,setup,due:job.due,tardy});
+      proc+=job.p;
+      if(tardy){ tardTotal += end-job.due; tardCount++; }
+      t=end; prev=job.family;
+    });
+    makespan=Math.max(makespan,t);
+  });
+  const util = makespan>0 ? proc/(machines.length*makespan) : 0;
+  return {makespan,setupTime,setupCount,tardTotal,tardCount,util,detail};
+}
+
+function cost(machines){
+  const e = evaluate(machines);
+  return e.makespan + W_TARD*e.tardTotal + W_SETUP*e.setupTime;
+}
+
+function clone(s){ return s.map(m=>m.slice()); }
+
+function neighbor(sol){
+  const s = clone(sol);
+  const pos=[];
+  s.forEach((m,mi)=>m.forEach((_,ji)=>pos.push([mi,ji])));
+  if(pos.length<2) return s;
+  if(Math.random()<0.55){
+    const [mi,ji]=pos[ri(pos.length)];
+    const job=s[mi].splice(ji,1)[0];
+    const tm=ri(s.length);
+    const at=ri(s[tm].length+1);
+    s[tm].splice(at,0,job);
+  } else {
+    const [a,b]=pos[ri(pos.length)], [c,d]=pos[ri(pos.length)];
+    const tmp=s[a][b]; s[a][b]=s[c][d]; s[c][d]=tmp;
+  }
+  return s;
+}
+
+function optimize(init){
+  let cur=clone(init), curC=cost(cur);
+  let best=clone(cur), bestC=curC;
+  let T=120; const cooling=0.9994, ITERS=9000;
+  for(let i=0;i<ITERS;i++){
+    const cand=neighbor(cur), cc=cost(cand);
+    if(cc<curC || Math.random()<Math.exp((curC-cc)/T)){
+      cur=cand; curC=cc;
+      if(cc<bestC){ bestC=cc; best=clone(cand); }
+    }
+    T*=cooling;
+  }
+  return best;
+}
+
+/* ---------- 渲染 ---------- */
+function famColor(k){ return FAMS.find(f=>f.k===k).c; }
+
+function renderLegend(){
+  document.getElementById('legend').innerHTML =
+    FAMS.map(f=>`<span><i style="background:${f.c}"></i>${f.k} 族</span>`).join('') +
+    `<span><i style="background:repeating-linear-gradient(45deg,#cdd3db,#cdd3db 3px,#dde1e7 3px,#dde1e7 6px)"></i>换型</span>` +
+    `<span><i style="box-shadow:inset 0 0 0 2px var(--warn);background:#fff"></i>延误</span>`;
+}
+
+function renderGantt(elId, machines, timeMax){
+  const e = evaluate(machines);
+  const el = document.getElementById(elId);
+  let html='';
+  e.detail.forEach((row,mi)=>{
+    let blocks='';
+    row.forEach(b=>{
+      if(b.setup>0){
+        const l=(b.start-b.setup)/timeMax*100, w=b.setup/timeMax*100;
+        blocks += `<div class="setup" style="left:${l}%;width:${w}%" title="换型 ${b.setup}min"></div>`;
+      }
+      const l=b.start/timeMax*100, w=(b.end-b.start)/timeMax*100;
+      const lab = w>4 ? `#${b.id}` : '';
+      blocks += `<div class="blk ${b.tardy?'tardy':''}" style="left:${l}%;width:${w}%;background:${famColor(b.family)}" title="订单#${b.id} ${b.family}族 工时${JOBS[b.id].p} 交期${b.due} 完工${b.end}${b.tardy?' [延误]':''}">${lab}${b.tardy?'<span class="late">迟</span>':''}</div>`;
+    });
+    html += `<div class="mrow"><div class="mlabel">机台 ${mi+1}</div><div class="track">${blocks}</div></div>`;
+  });
+  const ticks=4; let axis='';
+  for(let i=0;i<=ticks;i++) axis+=`<span>${Math.round(timeMax*i/ticks)}</span>`;
+  html += `<div class="axis">${axis}<span style="position:relative;left:6px;">分钟</span></div>`;
+  el.innerHTML = html;
+}
+
+function pct(base,opt){ if(base===0) return 0; return Math.round((base-opt)/base*100); }
+
+function kpiCard(name,base,opt,unit,better){
+  const improved = better==='down' ? opt<base : opt>base;
+  const d = better==='down' ? pct(base,opt) : pct(opt,base)*-1;
+  let deltaTxt, cls;
+  if(opt===base){ deltaTxt='持平'; cls='flat'; }
+  else if(better==='down'){ deltaTxt=(opt<base?'↓ ':'↑ ')+Math.abs(pct(base,opt))+'%'; cls=opt<base?'good':'flat'; }
+  else { deltaTxt=(opt>base?'↑ ':'↓ ')+Math.abs(pct(base,opt))+'%'; cls=opt>base?'good':'flat'; }
+  return `<div class="kpi"><div class="name">${name}</div>
+    <div class="row"><span class="base">${base}${unit}</span><span class="opt">${opt}${unit}</span>
+    <span class="delta ${cls}">${deltaTxt}</span></div></div>`;
+}
+
+function renderKPIs(showOpt){
+  const b=evaluate(baseMachines);
+  const el=document.getElementById('kpis');
+  if(!showOpt){
+    el.innerHTML =
+      `<div class="kpi"><div class="name">总完工 makespan</div><div class="row"><span class="opt">${b.makespan}</span><span class="pending">分钟 · 待优化</span></div></div>`+
+      `<div class="kpi"><div class="name">延误订单</div><div class="row"><span class="opt">${b.tardCount}</span><span class="pending">单 · 待优化</span></div></div>`+
+      `<div class="kpi"><div class="name">换型次数</div><div class="row"><span class="opt">${b.setupCount}</span><span class="pending">次 · 待优化</span></div></div>`;
+    return;
+  }
+  const o=evaluate(optMachines);
+  el.innerHTML =
+    kpiCard('总完工 makespan', b.makespan, o.makespan, '′','down')+
+    kpiCard('延误订单数', b.tardCount, o.tardCount, '单','down')+
+    kpiCard('总延误时长', b.tardTotal, o.tardTotal, '′','down')+
+    kpiCard('换型次数', b.setupCount, o.setupCount, '次','down')+
+    kpiCard('换型总时长', b.setupTime, o.setupTime, '′','down')+
+    kpiCard('设备利用率', Math.round(b.util*100), Math.round(o.util*100), '%','up');
+}
+
+function buildInsights(){
+  const b=evaluate(baseMachines), o=evaluate(optMachines);
+  const items=[];
+  if(o.makespan<b.makespan)
+    items.push(['⏱','负载更均衡','把机台之间的活儿重新分摊,总完工 <b>'+b.makespan+'′ → '+o.makespan+'′</b>(↓'+pct(b.makespan,o.makespan)+'%),没有哪台机器空等。']);
+  if(o.setupTime<b.setupTime)
+    items.push(['🔧','同族聚拢、减少换型','把同一产品族的订单连排,换型从 <b>'+b.setupCount+' 次('+b.setupTime+'′)→ '+o.setupCount+' 次('+o.setupTime+'′)</b>,省下的全是纯产能。']);
+  // 找一个由延误→准时的订单
+  const baseEnd={}, optEnd={};
+  b.detail.forEach(r=>r.forEach(x=>baseEnd[x.id]=x.end));
+  o.detail.forEach(r=>r.forEach(x=>optEnd[x.id]=x.end));
+  let flip=null;
+  for(const j of JOBS){ if(baseEnd[j.id]>j.due && optEnd[j.id]<=j.due){ flip=j; break; } }
+  if(flip) items.push(['📦','优先保交期','订单 <b>#'+flip.id+'（'+flip.family+'族, 交期'+flip.due+'′）</b>原本延误,被提前插队后 <b>'+optEnd[flip.id]+'′ 准时交付</b>。']);
+  if(o.tardCount<b.tardCount)
+    items.push(['✅','整体准时率提升','延误订单 <b>'+b.tardCount+' → '+o.tardCount+' 单</b>,总延误 <b>'+b.tardTotal+'′ → '+o.tardTotal+'′</b>。']);
+  // 找一段同族连排
+  let runEx=null;
+  o.detail.forEach((r,mi)=>{
+    let i=0;
+    while(i<r.length){ let j=i; while(j+1<r.length && r[j+1].family===r[i].family) j++;
+      if(j-i+1>=3 && !runEx){ runEx={mi,fam:r[i].family,len:j-i+1}; } i=j+1; }
+  });
+  if(runEx) items.push(['🧩','成组生产','机台 <b>'+(runEx.mi+1)+'</b> 上把 <b>'+runEx.len+' 个 '+runEx.fam+'族</b>订单连排,只换型 1 次就跑完整批。']);
+
+  const el=document.getElementById('log');
+  if(items.length===0){ el.innerHTML='<div style="font-size:13px;color:var(--muted);padding:12px 0;">本批订单基线已较优,优化空间有限——换一批再试。</div>'; return; }
+  el.innerHTML = items.map(([ic,t,d])=>`<div class="logitem"><div class="ic">${ic}</div><div><b>${t}</b> —— ${d}</div></div>`).join('');
+}
+
+/* ---------- 流程 ---------- */
+function reset(){
+  M = parseInt(document.getElementById('mSel').value);
+  N = parseInt(document.getElementById('nSel').value);
+  genJobs();
+  baseMachines = baselineSchedule();
+  optMachines = null;
+  const b=evaluate(baseMachines);
+  const tm = b.makespan*1.02;
+  renderGantt('ganttBase', baseMachines, tm);
+  document.getElementById('ganttOpt').innerHTML='<div style="font-size:13px;color:var(--muted);padding:14px 0;">— 点击「运行 AI 优化」生成 —</div>';
+  document.getElementById('baseMk').textContent = 'makespan '+b.makespan+'′';
+  document.getElementById('optMk').textContent='';
+  renderKPIs(false);
+  document.getElementById('log').innerHTML='<div style="font-size:13px;color:var(--muted);padding:12px 0;">点击「⚙️ 运行 AI 优化」后显示。</div>';
+}
+
+function run(){
+  const btn=document.getElementById('run');
+  btn.disabled=true; btn.textContent='🧠 智能体决策中…';
+  setTimeout(()=>{
+    optMachines = optimize(baseMachines);
+    const b=evaluate(baseMachines), o=evaluate(optMachines);
+    const tm = Math.max(b.makespan,o.makespan)*1.02;
+    renderGantt('ganttBase', baseMachines, tm);   // 用统一时间轴重绘
+    renderGantt('ganttOpt', optMachines, tm);
+    document.getElementById('optMk').textContent='makespan '+o.makespan+'′';
+    renderKPIs(true);
+    buildInsights();
+    btn.disabled=false; btn.textContent='⚙️ 再优化一次';
+  }, 500);
+}
+
+document.getElementById('regen').onclick=reset;
+document.getElementById('mSel').onchange=reset;
+document.getElementById('nSel').onchange=reset;
+document.getElementById('run').onclick=run;
+
+renderLegend();
+reset();
+</script>
+</body>
+</html>
