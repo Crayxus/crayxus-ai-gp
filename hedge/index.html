@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<!-- 微信/移动端：声明主题色，避免地址栏与分享卡片出现白底 -->
+<meta name="theme-color" content="#0b0f16">
+<meta name="format-detection" content="telephone=no,email=no,address=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="description" content="中国竞彩 SP 与 bet365 盘口对冲监测台 — 实时计算套利空间与对冲下注方案">
+<title>足彩 × bet365 对冲监测台</title>
+<style>
+  /* ===== 微信分享右下角/底部变白修复 =====
+     原因：微信(X5)内核会把 html/body 未覆盖的视口区域、回弹(overscroll)
+     区域填成白色。解决：html 与 body 都铺纯深色底，min-height 占满视口，
+     禁止回弹白边，背景挂在 html 上确保全屏覆盖。 */
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    background-color: #0b0f16;            /* 纯色兜底，任何露白处都用它 */
+    color: #e6edf6;
+    -webkit-text-size-adjust: 100%;
+    overscroll-behavior: none;            /* 禁止下拉/侧拉回弹露白 */
+  }
+  html {
+    background: #0b0f16 fixed;            /* 固定底色，覆盖整屏含安全区 */
+  }
+  body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(34,110,90,.18), transparent 60%),
+      radial-gradient(900px 500px at -10% 10%, rgba(40,90,150,.16), transparent 55%),
+      #0b0f16;                            /* 渐变之下仍是纯深色，杜绝露白 */
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 0 0 calc(40px + env(safe-area-inset-bottom));  /* 底部安全区也是深色 */
+  }
+  * { box-sizing: border-box; }
+  .mono { font-family: "SF Mono", "JetBrains Mono", "Roboto Mono", Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; }
+
+  /* ===== 顶部栏 ===== */
+  .topbar {
+    position: sticky; top: 0; z-index: 20;
+    background: rgba(11,15,22,.82);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,.07);
+    padding: 14px 16px calc(12px + env(safe-area-inset-top));
+    padding-top: max(14px, env(safe-area-inset-top));
+  }
+  .brand { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .brand h1 { font-size: 16px; margin:0; font-weight:700; letter-spacing:.5px; }
+  .brand .tag { font-size:11px; color:#7f8da0; border:1px solid rgba(255,255,255,.12); padding:2px 7px; border-radius:20px; }
+  .brand .live { font-size:11px; color:#28c08a; display:flex; align-items:center; gap:5px; }
+  .brand .live i { width:7px; height:7px; border-radius:50%; background:#28c08a; box-shadow:0 0 0 0 rgba(40,192,138,.6); animation:pulse 1.8s infinite; }
+  @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(40,192,138,.5)} 70%{box-shadow:0 0 0 8px rgba(40,192,138,0)} 100%{box-shadow:0 0 0 0 rgba(40,192,138,0)} }
+
+  .controls { display:flex; gap:18px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  .ctrl { display:flex; flex-direction:column; gap:3px; }
+  .ctrl label { font-size:11px; color:#7f8da0; }
+  .ctrl .val { font-size:20px; font-weight:700; }
+  .ctrl .val.green { color:#28c08a; }
+  .ctrl .val.gray { color:#8b97a8; }
+  .bankroll input {
+    width:130px; background:#11161f; border:1px solid rgba(255,255,255,.14); color:#e6edf6;
+    font-size:18px; font-weight:700; padding:6px 10px; border-radius:8px; outline:none;
+  }
+  .bankroll input:focus { border-color:#28c08a; }
+
+  /* ===== 容器 ===== */
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 16px; }
+  .legend { display:flex; gap:16px; flex-wrap:wrap; font-size:12px; color:#8b97a8; margin: 4px 2px 18px; align-items:center; }
+  .legend .dot { display:inline-block; width:10px; height:10px; border-radius:3px; vertical-align:-1px; margin-right:5px; }
+  .legend .dot.best { background:#28c08a; }
+  .legend .dot.jc { background:#e0a23c; }
+  .legend .dot.b3 { background:#4a90d9; }
+
+  .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap:16px; }
+
+  /* ===== 比赛卡片 ===== */
+  .card {
+    background: linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,0));
+    border:1px solid rgba(255,255,255,.08); border-radius:14px; overflow:hidden;
+    display:flex; flex-direction:column;
+  }
+  .card.arb { border-color: rgba(40,192,138,.45); box-shadow: 0 0 0 1px rgba(40,192,138,.12), 0 8px 30px -12px rgba(40,192,138,.25); }
+  .card-h { padding:13px 14px 11px; border-bottom:1px solid rgba(255,255,255,.06); }
+  .card-h .meta { display:flex; justify-content:space-between; align-items:center; font-size:11px; color:#7f8da0; margin-bottom:7px; }
+  .card-h .teams { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .card-h .teams .t { font-size:15px; font-weight:600; }
+  .card-h .teams .vs { font-size:11px; color:#6b7787; }
+  .badge { font-size:11px; font-weight:700; padding:3px 9px; border-radius:20px; white-space:nowrap; }
+  .badge.yes { background:rgba(40,192,138,.16); color:#3ddca0; border:1px solid rgba(40,192,138,.4); }
+  .badge.no { background:rgba(255,255,255,.05); color:#8b97a8; border:1px solid rgba(255,255,255,.1); }
+
+  /* 赔率表 */
+  table.odds { width:100%; border-collapse:collapse; }
+  table.odds th { font-size:10.5px; color:#6b7787; font-weight:500; text-align:right; padding:9px 10px 5px; text-transform:uppercase; letter-spacing:.5px; }
+  table.odds th.lbl { text-align:left; }
+  table.odds td { padding:5px 6px; text-align:right; }
+  table.odds td.lbl { text-align:left; font-size:12.5px; color:#c3cdda; padding-left:10px; }
+  table.odds td.lbl small { color:#6b7787; }
+  .oc { position:relative; }
+  .oc input {
+    width:62px; text-align:right; background:#10151d; border:1px solid rgba(255,255,255,.1);
+    color:#dbe4ef; font-size:14px; font-weight:600; padding:5px 8px; border-radius:7px; outline:none;
+  }
+  .oc input:focus { border-color:#4a90d9; background:#121922; }
+  .oc.best input { border-color:rgba(40,192,138,.6); background:rgba(40,192,138,.1); color:#7ff0c2; box-shadow:0 0 0 1px rgba(40,192,138,.25) inset; }
+  .oc .pick { position:absolute; top:-6px; right:4px; font-size:8.5px; color:#0b0f16; background:#28c08a; padding:1px 4px; border-radius:6px; font-weight:800; }
+  td.pad { padding-right:10px; }
+
+  /* 对冲方案 */
+  .plan { padding:11px 14px 13px; background:rgba(255,255,255,.018); border-top:1px solid rgba(255,255,255,.06); }
+  .plan.dim { opacity:.62; }
+  .plan-row { display:flex; justify-content:space-between; align-items:center; font-size:12px; padding:3px 0; }
+  .plan-row .k { color:#8b97a8; }
+  .plan-row .stake { color:#dbe4ef; font-weight:600; }
+  .plan-row .stake b { color:#fff; }
+  .chip { font-size:9.5px; padding:1px 5px; border-radius:5px; margin-left:6px; font-weight:700; vertical-align:1px; }
+  .chip.jc { background:rgba(224,162,60,.16); color:#e7b964; }
+  .chip.b3 { background:rgba(74,144,217,.16); color:#79b3ec; }
+  .plan-sum { display:flex; justify-content:space-between; align-items:baseline; margin-top:9px; padding-top:9px; border-top:1px dashed rgba(255,255,255,.1); }
+  .plan-sum .lab { font-size:11px; color:#7f8da0; }
+  .plan-sum .big { font-size:18px; font-weight:800; }
+  .plan-sum .big.green { color:#3ddca0; }
+  .plan-sum .big.red { color:#e06a6a; }
+  .plan-sum .pct { font-size:12px; margin-left:5px; opacity:.85; }
+  .booklines { display:flex; gap:14px; margin-top:9px; font-size:10.5px; color:#6b7787; }
+  .booklines span b { color:#9aa6b6; font-weight:600; }
+
+  /* 底部 */
+  .foot { max-width:1180px; margin:26px auto 0; padding:0 16px; font-size:11.5px; color:#5f6b7a; line-height:1.7; }
+  .foot .addbtn { display:inline-block; margin-bottom:14px; background:#11161f; border:1px dashed rgba(255,255,255,.18); color:#9aa6b6; font-size:13px; padding:9px 16px; border-radius:9px; cursor:pointer; }
+  .foot .addbtn:active { background:#161c26; }
+  .foot strong { color:#8b97a8; }
+  .brandfoot { margin-top:18px; color:#465160; font-size:11px; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">
+      <h1>足彩 × bet365 对冲监测台</h1>
+      <span class="tag">竞彩 SP · bet365 盘口</span>
+      <span class="live"><i></i>实时对冲计算</span>
+    </div>
+    <div class="controls">
+      <div class="ctrl bankroll">
+        <label>每场对冲本金 (¥)</label>
+        <input id="bankroll" type="number" inputmode="decimal" value="10000" min="0" step="100">
+      </div>
+      <div class="ctrl">
+        <label>套利机会</label>
+        <div class="val green" id="sumOpp">0 / 0</div>
+      </div>
+      <div class="ctrl">
+        <label>最佳锁定收益率</label>
+        <div class="val green" id="sumBest">—</div>
+      </div>
+      <div class="ctrl">
+        <label>合计锁定盈亏 (仅机会场)</label>
+        <div class="val gray" id="sumProfit">¥0</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="legend">
+      <span><span class="dot best"></span>当前最优赔率（对冲下注口）</span>
+      <span><span class="dot jc"></span>中国竞彩 SP</span>
+      <span><span class="dot b3"></span>bet365</span>
+      <span style="color:#5f6b7a">赔率可直接点改 → 自动重算对冲方案</span>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <div class="foot">
+    <button class="addbtn" id="addBtn">＋ 临时添加一场比赛（现场录入盘口）</button>
+    <div>
+      <strong>对冲/套利原理：</strong>同一场比赛，竞彩与 bet365 对 主胜 / 平局 / 客胜 各给一组赔率。
+      对每个结果取两家中的<strong>较高赔率</strong>分别下注，当 (1/最优主胜 + 1/最优平 + 1/最优客胜) &lt; 1 时，
+      无论结果如何都能锁定正收益（即<strong>套利 / 无风险对冲</strong>）。本金按各口赔率反比分配，使三种结果回收金额相等。
+    </div>
+    <div style="margin-top:8px">
+      <strong>实盘提示：</strong>需考虑竞彩单关/串关限额与可投比例、bet365 账户额度与汇率、两边到账与封盘时差、滑点。本页为<strong>演示示例数据</strong>，赔率请以盘口实时为准（可现场手改）。
+    </div>
+    <div class="brandfoot">Crayxus · 对冲演示 Demo · crayxus.com.au/hedge</div>
+  </div>
+
+<script>
+(function(){
+  // ===== 演示数据（2026 世界杯示例；赔率为示意，可现场手改）=====
+  var matches = [
+    { league:"世界杯·小组赛", time:"06-07 23:00", home:"阿根廷", away:"克罗地亚",
+      jc:{h:2.05, d:3.50, a:4.10}, b3:{h:1.95, d:3.65, a:4.50} },
+    { league:"世界杯·小组赛", time:"06-08 03:00", home:"法国", away:"摩洛哥",
+      jc:{h:1.62, d:3.80, a:5.50}, b3:{h:1.70, d:3.90, a:5.80} },
+    { league:"世界杯·小组赛", time:"06-08 23:00", home:"巴西", away:"葡萄牙",
+      jc:{h:2.55, d:3.30, a:2.95}, b3:{h:2.40, d:3.45, a:3.30} },
+    { league:"世界杯·小组赛", time:"06-09 03:00", home:"英格兰", away:"荷兰",
+      jc:{h:2.10, d:3.25, a:3.45}, b3:{h:2.05, d:3.40, a:3.55} },
+    { league:"世界杯·小组赛", time:"06-09 23:00", home:"西班牙", away:"德国",
+      jc:{h:2.45, d:3.30, a:3.10}, b3:{h:2.30, d:3.45, a:3.55} }
+  ];
+
+  var grid = document.getElementById('grid');
+  var bankrollEl = document.getElementById('bankroll');
+
+  function fmt(n){ return n.toLocaleString('zh-CN',{maximumFractionDigits:0}); }
+  function fmt2(n){ return n.toLocaleString('zh-CN',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+  function bookMargin(b){ // 返还率 = 1 / (Σ1/odds)
+    var inv = 1/b.h + 1/b.d + 1/b.a;
+    return { inv:inv, payout: 100/inv };
+  }
+
+  function analyse(m){
+    var keys=['h','d','a'];
+    var best={}, book={};
+    keys.forEach(function(k){
+      if(m.b3[k] >= m.jc[k]){ best[k]=m.b3[k]; book[k]='b3'; }
+      else { best[k]=m.jc[k]; book[k]='jc'; }
+    });
+    var inv = 1/best.h + 1/best.d + 1/best.a;
+    var payout = 1/inv;                 // >1 即套利
+    var profitPct = (payout - 1) * 100;
+    return { best:best, book:book, inv:inv, payout:payout, profitPct:profitPct, isArb: inv < 1 };
+  }
+
+  function render(){
+    // 重渲染前记下正在编辑的输入框，渲染后还原焦点与光标，保证连续录入
+    var act = document.activeElement;
+    var fk = (act && act.tagName==='INPUT' && act.dataset.k!==undefined)
+      ? { i:act.dataset.i, b:act.dataset.b, k:act.dataset.k, pos:(act.selectionStart) } : null;
+
+    var B = parseFloat(bankrollEl.value) || 0;
+    grid.innerHTML = '';
+    var oppCount=0, bestPct=-Infinity, totalProfit=0;
+
+    matches.forEach(function(m, idx){
+      var a = analyse(m);
+      if(a.isArb){ oppCount++; bestPct=Math.max(bestPct, a.profitPct); totalProfit += B*(a.payout-1); }
+
+      var card = document.createElement('div');
+      card.className = 'card' + (a.isArb ? ' arb' : '');
+
+      var rowLbl = { h: m.home+' 胜', d:'平局', a: m.away+' 胜' };
+      var keys = ['h','d','a'];
+
+      // 赔率表
+      var rows = keys.map(function(k){
+        var jcBest = a.book[k]==='jc', b3Best = a.book[k]==='b3';
+        return ''
+          + '<tr>'
+          + '<td class="lbl">'+rowLbl[k]+'</td>'
+          + '<td class="oc'+(jcBest?' best':'')+'">'
+          +   (jcBest?'<span class="pick">下注</span>':'')
+          +   '<input class="mono" type="text" inputmode="decimal" data-i="'+idx+'" data-b="jc" data-k="'+k+'" value="'+m.jc[k].toFixed(2)+'">'
+          + '</td>'
+          + '<td class="oc pad'+(b3Best?' best':'')+'">'
+          +   (b3Best?'<span class="pick">下注</span>':'')
+          +   '<input class="mono" type="text" inputmode="decimal" data-i="'+idx+'" data-b="b3" data-k="'+k+'" value="'+m.b3[k].toFixed(2)+'">'
+          + '</td>'
+          + '</tr>';
+      }).join('');
+
+      // 对冲方案
+      var planRows = keys.map(function(k){
+        var stake = a.isArb ? B*(1/a.best[k])/a.inv : B*(1/a.best[k])/a.inv;
+        var chip = a.book[k]==='jc' ? '<span class="chip jc">竞彩</span>' : '<span class="chip b3">bet365</span>';
+        return '<div class="plan-row"><span class="k">'+rowLbl[k]+' @'+a.best[k].toFixed(2)+chip+'</span>'
+             + '<span class="stake">投 <b>¥'+fmt(stake)+'</b></span></div>';
+      }).join('');
+
+      var ret = B * a.payout;
+      var prof = ret - B;
+      var jm = bookMargin(m.jc), bm = bookMargin(m.b3);
+
+      card.innerHTML = ''
+        + '<div class="card-h">'
+        +   '<div class="meta"><span>'+m.league+'</span><span>'+m.time+'</span></div>'
+        +   '<div class="teams">'
+        +     '<span class="t">'+m.home+'</span><span class="vs">VS</span><span class="t">'+m.away+'</span>'
+        +   '</div>'
+        + '</div>'
+        + '<table class="odds">'
+        +   '<thead><tr><th class="lbl">结果</th><th>竞彩 SP</th><th class="pad">bet365</th></tr></thead>'
+        +   '<tbody>'+rows+'</tbody>'
+        + '</table>'
+        + '<div class="plan'+(a.isArb?'':' dim')+'">'
+        +   '<div class="meta" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'
+        +     '<span style="font-size:11px;color:#7f8da0">对冲下注方案（本金 ¥'+fmt(B)+'）</span>'
+        +     '<span class="badge '+(a.isArb?'yes':'no')+'">'+(a.isArb?'套利机会 +'+a.profitPct.toFixed(2)+'%':'无套利 '+a.profitPct.toFixed(2)+'%')+'</span>'
+        +   '</div>'
+        +   planRows
+        +   '<div class="plan-sum">'
+        +     '<span class="lab">任意结果保底回收 ¥'+fmt(ret)+' · 锁定盈亏</span>'
+        +     '<span class="big '+(a.isArb?'green':'red')+'">'+(prof>=0?'+':'−')+'¥'+fmt(Math.abs(prof))+'<span class="pct">'+(a.profitPct>=0?'+':'')+a.profitPct.toFixed(2)+'%</span></span>'
+        +   '</div>'
+        +   '<div class="booklines">'
+        +     '<span>竞彩返还 <b>'+jm.payout.toFixed(1)+'%</b></span>'
+        +     '<span>bet365返还 <b>'+bm.payout.toFixed(1)+'%</b></span>'
+        +     '<span>对冲返还 <b style="color:'+(a.isArb?'#3ddca0':'#9aa6b6')+'">'+(a.payout*100).toFixed(1)+'%</b></span>'
+        +   '</div>'
+        + '</div>';
+
+      grid.appendChild(card);
+    });
+
+    document.getElementById('sumOpp').textContent = oppCount + ' / ' + matches.length;
+    document.getElementById('sumOpp').className = 'val ' + (oppCount>0?'green':'gray');
+    document.getElementById('sumBest').textContent = oppCount>0 ? ('+'+bestPct.toFixed(2)+'%') : '—';
+    document.getElementById('sumBest').className = 'val ' + (oppCount>0?'green':'gray');
+    document.getElementById('sumProfit').textContent = (totalProfit>=0?'+¥':'−¥') + fmt(Math.abs(totalProfit));
+    document.getElementById('sumProfit').className = 'val ' + (totalProfit>0?'green':'gray');
+
+    if(fk){
+      var sel = grid.querySelector('input[data-i="'+fk.i+'"][data-b="'+fk.b+'"][data-k="'+fk.k+'"]');
+      if(sel){ sel.focus(); if(fk.pos!=null){ try{ sel.setSelectionRange(fk.pos, fk.pos); }catch(e){} } }
+    }
+  }
+
+  // 赔率编辑 → 实时重算（用事件委托，避免重渲染丢焦点时频繁重建）
+  grid.addEventListener('input', function(e){
+    var t = e.target;
+    if(t.tagName!=='INPUT' || t.dataset.k===undefined) return;
+    var v = parseFloat(t.value);
+    if(isNaN(v) || v<=0) return;
+    matches[+t.dataset.i][t.dataset.b][t.dataset.k] = v;
+    render();
+  });
+  bankrollEl.addEventListener('input', render);
+
+  document.getElementById('addBtn').addEventListener('click', function(){
+    matches.push({ league:"手动录入", time:"—", home:"主队", away:"客队",
+      jc:{h:2.00,d:3.30,a:3.50}, b3:{h:2.00,d:3.30,a:3.50} });
+    render();
+    window.scrollTo({ top: document.body.scrollHeight, behavior:'smooth' });
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
