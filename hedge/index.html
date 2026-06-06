@@ -8,19 +8,19 @@
 <meta name="format-detection" content="telephone=no,email=no,address=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="description" content="中国竞彩6×SP 与 bet365 亚盘对冲监测台 — 自动枚举互补套利组合">
+<meta name="description" content="竞彩 × bet365 实时盘口监测台 · Crayxus">
 <!-- 微信/社交分享缩略图：页面须有同源图片，否则分享卡片右侧缩略图会是白图 -->
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="image_src" href="https://crayxus.com.au/share-thumb.jpg?v=hedge1">
-<meta itemprop="image" content="https://crayxus.com.au/share-thumb.jpg?v=hedge1">
+<link rel="image_src" href="https://crayxus.com.au/share-thumb.jpg?v=hedge2">
+<meta itemprop="image" content="https://crayxus.com.au/share-thumb.jpg?v=hedge2">
 <meta property="og:type" content="website">
 <meta property="og:title" content="竞彩 × bet365 亚盘对冲监测台">
-<meta property="og:description" content="实时盘口 · 自动枚举竞彩6×SP 与 bet365 亚盘的互补套利组合">
-<meta property="og:image" content="https://crayxus.com.au/share-thumb.jpg?v=hedge1">
+<meta property="og:description" content="竞彩 × bet365 实时盘口监测台">
+<meta property="og:image" content="https://crayxus.com.au/share-thumb.jpg?v=hedge2">
 <meta property="og:url" content="https://crayxus.com.au/hedge/">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://crayxus.com.au/share-thumb.jpg?v=hedge1">
+<meta name="twitter:image" content="https://crayxus.com.au/share-thumb.jpg?v=hedge2">
 <title>竞彩 × bet365 亚盘对冲监测台</title>
 <style>
   /* ===== 微信分享右下角/底部变白修复：html+body 双层纯深色底、禁止回弹露白 ===== */
@@ -55,6 +55,10 @@
     box-shadow:0 6px 20px -8px rgba(0,0,0,.6); text-decoration:none; }
   .cornerlogo img { width:24px; height:24px; border-radius:50%; object-fit:cover; display:block; }
   .cornerlogo span { font-size:11.5px; font-weight:700; color:#dbe4ef; letter-spacing:.3px; }
+  /* 品牌封面图（同时作为微信分享缩略图来源，须 ≥200px 微信才会采用） */
+  .cover { text-align:center; margin:4px 0 18px; }
+  .cover img { width:212px; height:212px; max-width:62%; border-radius:18px; object-fit:cover;
+    border:1px solid rgba(255,255,255,.08); box-shadow:0 12px 34px -14px rgba(0,0,0,.65); }
   @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(40,192,138,.5)} 70%{box-shadow:0 0 0 8px rgba(40,192,138,0)} 100%{box-shadow:0 0 0 0 rgba(40,192,138,0)} }
   .controls { display:flex; gap:16px; align-items:flex-end; margin-top:12px; flex-wrap:wrap; padding-bottom:12px; }
   .ctrl { display:flex; flex-direction:column; gap:3px; }
@@ -146,7 +150,7 @@
 <body>
   <div class="topbar">
     <div class="brand">
-      <img class="logo" src="https://crayxus.com.au/share-thumb.jpg?v=hedge1" alt="Crayxus">
+      <img class="logo" src="https://crayxus.com.au/share-thumb.jpg?v=hedge2" alt="Crayxus">
       <h1>竞彩 × bet365 亚盘对冲监测台</h1>
       <span class="tag">6×SP · 亚盘 · 自动套利</span>
       <span class="live"><i></i>实时</span>
@@ -166,30 +170,17 @@
   </div>
 
   <div class="wrap">
-    <div class="srcnote">
-      <b>数据口径：</b>赛程 · 开赛时间 · <b>bet365 欧赔(1×2)</b> = <b>2026-06-06 实时真实抓取</b>（ESPN/DraftKings 盘口）。
-      <b>亚盘梯子</b>与<b>竞彩 6×SP</b> = 按真实盘口用泊松模型还原（竞彩 SP / bet365 亚盘均无公开 API，无法逐口直采）——
-      <b>每个赔率都可点改为实盘数字</b>，引擎实时重算。每 30 秒模拟一次盘口跳动。
-    </div>
-    <div class="legend">
-      <span><span class="dot jc"></span>竞彩 6 赔率（不让球 胜平负 + 让球 让胜平负）</span>
-      <span><span class="dot b3"></span>bet365 欧赔 + 亚盘</span>
-      <span><span class="dot arb"></span>互补对冲套利（返还&gt;100%）</span>
-    </div>
+    <div class="cover"><img src="https://crayxus.com.au/share-thumb.jpg?v=hedge2" alt="Crayxus"></div>
     <div class="grid" id="grid"></div>
   </div>
 
   <div class="foot">
-    <div><strong>对冲原理：</strong>把比赛结果看成净胜球差 d（主−客）。竞彩每个结果（如主胜=d≥1、让负(主−1)=d≤0）都是 d 的一段区间；
-    在 bet365 亚盘里找到<strong>恰好互补</strong>的那条线（如客+0.5=d≤0、主−0.5=d≥1），两条腿不重不漏覆盖所有比分，
-    若 (1/竞彩赔率 + 1/亚盘赔率) &lt; 1 即<strong>无风险套利</strong>。本金按赔率反比拆分，任意比分回收相等。平局类用 3 条腿覆盖。</div>
-    <div style="margin-top:8px"><strong>实盘提示：</strong>竞彩单关/串关限额与可投比例、bet365 账户额度与汇率、两边封盘时差与滑点都会吃掉利润；亚盘半球盘无和局退款。演示数据，赔率以实盘为准。</div>
-    <div class="brandfoot">Crayxus · 对冲演示 Demo · crayxus.com.au/hedge</div>
+    <div class="brandfoot">Crayxus · crayxus.com.au</div>
   </div>
 
   <!-- 右下角固定品牌图标 -->
   <a class="cornerlogo" href="https://crayxus.com.au" target="_blank" rel="noopener">
-    <img src="https://crayxus.com.au/share-thumb.jpg?v=hedge1" alt="Crayxus"><span>Crayxus</span>
+    <img src="https://crayxus.com.au/share-thumb.jpg?v=hedge2" alt="Crayxus"><span>Crayxus</span>
   </a>
 
 <script>
@@ -306,7 +297,7 @@ var MATCHES = [{"league":"国际友谊赛","time":"06-06 21:00","home":"比利�
         + '<div class="mkt"><div class="mkt-h"><span class="bk b3">bet365</span><span>欧赔 + 亚盘梯子</span></div>'
         +   '<div class="x2">欧赔 <b>主 '+m.b3.x2.h.toFixed(2)+'</b> · <b>平 '+m.b3.x2.d.toFixed(2)+'</b> · <b>客 '+m.b3.x2.a.toFixed(2)+'</b><em>实时</em></div>'
         +   ahTbl+'</div>'
-        + '<div class="hedges"><div class="hh"><span>对冲组合（自动枚举互补腿）</span><span>本金 ¥'+fmt(B)+'/场</span></div>'+hgHtml+'</div>';
+        + '<div class="hedges"><div class="hh"><span>对冲组合</span><span>本金 ¥'+fmt(B)+'/场</span></div>'+hgHtml+'</div>';
 
       grid.appendChild(card);
     });
