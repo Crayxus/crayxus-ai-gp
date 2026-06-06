@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#16233a">
+<title>Crayxus AI · AI 农业智能体 · 陆园智慧农场 Demo</title>
+<meta name="description" content="AI 农业智能体:读墒情/苗情/天气,自动决定每块地浇多少水、施多少肥。对比传统定时定量灌溉——省水、省肥、增产。陆园 150 亩落地,浏览器里真跑多日仿真。">
+
+<!-- Favicons -->
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="shortcut icon" type="image/png" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
+<!-- Open Graph · 微信分享卡片 -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Crayxus AI">
+<meta property="og:title" content="Crayxus AI · AI 农业智能体 · 陆园智慧农场">
+<meta property="og:description" content="读墒情/天气自动决策灌溉施肥 vs 传统定时定量——省水、省肥、增产。陆园 150 亩落地,浏览器里真跑仿真。">
+<meta property="og:image" content="https://crayxus.com.au/share-thumb.jpg">
+<meta property="og:image:secure_url" content="https://crayxus.com.au/share-thumb.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="500">
+<meta property="og:image:height" content="500">
+<meta property="og:image:alt" content="Crayxus AI">
+<meta property="og:url" content="https://crayxus.com.au/farm.html">
+<meta property="og:locale" content="zh_CN">
+
+<!-- 微信内置浏览器 / 老版本兜底 -->
+<meta itemprop="image" content="https://crayxus.com.au/share-thumb.jpg">
+<meta name="image" content="https://crayxus.com.au/share-thumb.jpg">
+<link rel="image_src" href="https://crayxus.com.au/share-thumb.jpg">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Crayxus AI · AI 农业智能体 · 陆园智慧农场">
+<meta name="twitter:description" content="读墒情/天气自动决策灌溉施肥,省水省肥增产。">
+<meta name="twitter:image" content="https://crayxus.com.au/share-thumb.jpg">
+<style>
+  :root{
+    --ink:#1a1f2b; --soft:#414a5c; --muted:#6b7585;
+    --line:#e4e8ef; --bg:#f5f6f8; --card:#fff; --accent:#1f5fae; --accent-soft:#eef4fb;
+    --ok:#1f7a4d; --ok-soft:#eaf5ef; --warn:#b4452a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+       background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 20px 80px;}
+  header{background:linear-gradient(135deg,#163a2a 0%,#1f5f43 100%);color:#fff;padding:34px 20px 28px;}
+  header .inner{max-width:1040px;margin:0 auto;}
+  .kicker{font-size:12px;letter-spacing:3px;color:#a7e0c4;text-transform:uppercase;}
+  header h1{font-size:24px;margin-top:8px;font-weight:700;}
+  header p{margin-top:8px;color:#cfe8da;font-size:14px;max-width:780px;}
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-top:20px;box-shadow:0 1px 3px rgba(20,30,50,.04);}
+  .panel h2{font-size:16px;}
+  .panel .desc{font-size:13px;color:var(--muted);margin-top:4px;}
+  .phead{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
+  .status{font-size:12px;font-weight:600;color:var(--muted);background:#eef0f3;padding:4px 11px;border-radius:20px;}
+  .status.live{background:var(--accent-soft);color:var(--accent);}
+  .status.done{background:var(--ok-soft);color:var(--ok);}
+
+  .controls{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-top:14px;}
+  .ctl{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);}
+  select{padding:7px 10px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff;color:var(--ink);}
+  button{padding:9px 18px;border:none;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;transition:.15s;}
+  .btn-ghost{background:#fff;border:1px solid var(--line);color:var(--soft);}
+  .btn-ghost:hover{border-color:var(--accent);color:var(--accent);}
+  .btn-go{background:var(--ok);color:#fff;}
+  .btn-go:hover{background:#18603b;}
+  .btn-go:disabled{background:#9cc7b1;cursor:default;}
+
+  .weather{display:flex;gap:5px;margin-top:14px;flex-wrap:wrap;}
+  .wd{flex:1;min-width:42px;text-align:center;border:1px solid var(--line);border-radius:8px;padding:6px 2px;font-size:10.5px;color:var(--soft);background:#fff;}
+  .wd.cur{border-color:var(--ok);background:var(--ok-soft);box-shadow:0 0 0 1px var(--ok);}
+  .wd .ic{font-size:15px;display:block;}
+
+  .tiles{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:14px;}
+  .tile{border:1px solid var(--line);border-radius:12px;padding:14px 14px 12px;background:linear-gradient(180deg,#fff,#fbfcfe);}
+  .tile .tn{font-size:11.5px;color:var(--muted);}
+  .tile .tv{font-size:22px;font-weight:800;margin-top:4px;line-height:1.1;}
+  .tile .tu{font-size:12px;font-weight:600;color:var(--muted);}
+  .tile .sub{font-size:11px;color:var(--muted);margin-top:5px;}
+  .tile .dl{font-weight:700;color:var(--ok);}
+  .tile.gain{background:linear-gradient(180deg,#eafaf1,#e3f6ec);border-color:#bfe3cf;}
+  .tile.gain .tv{color:var(--ok);}
+  @media(max-width:860px){.tiles{grid-template-columns:repeat(3,1fr);}}
+  @media(max-width:520px){.tiles{grid-template-columns:repeat(2,1fr);}}
+
+  .field{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px;}
+  @media(max-width:680px){.field{grid-template-columns:repeat(2,1fr);}}
+  .plot{border:1px solid var(--line);border-radius:10px;padding:10px 11px;background:#fff;}
+  .plot .ph{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;}
+  .plot .pn{font-weight:700;}
+  .plot .crop{color:var(--muted);font-size:11px;}
+  .plot .mbar{height:14px;background:#eef0f3;border-radius:4px;margin:8px 0 5px;overflow:hidden;}
+  .plot .mfill{height:100%;width:0;transition:width .4s,background .4s;}
+  .plot .pf{display:flex;justify-content:space-between;font-size:11px;}
+  .plot .st{color:var(--muted);}
+  .plot .act{font-weight:600;color:var(--accent);}
+
+  .log{margin-top:6px;max-height:280px;overflow:auto;}
+  .logitem{display:flex;gap:10px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:13px;color:var(--soft);}
+  .logitem:last-child{border-bottom:none;}
+  .logitem .ic{flex:none;width:20px;text-align:center;}
+  .logitem b{color:var(--ink);}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;font-size:12.5px;color:var(--soft);}
+  .legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;}
+  .note{font-size:12.5px;color:var(--muted);margin-top:14px;padding-top:14px;border-top:1px solid var(--line);}
+  .hl{background:#fff3cf;padding:1px 5px;border-radius:4px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="inner">
+    <div class="kicker">公司三 · AI AGRONOMY AGENT · 陆园</div>
+    <h1>AI 农业智能体 · 陆园智慧农场 Demo</h1>
+    <p>一个会"<b>感知 — 决策 — 动手</b>"的农业管家:每天读各地块墒情/苗情 + 天气预报,自己算出"哪块地浇多少水、施不施肥",直接驱动灌溉施肥。下面对比<b>传统定时定量</b> vs <b>AI 智能体按需精准</b>,<b>真在浏览器里跑多日仿真</b>。</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="panel">
+    <h2>① 农场场景 & 控制台</h2>
+    <div class="desc">陆园部分地块(叶菜 / 果蔬 / 苗木 / 花卉),不同作物适宜墒情区间不同。智能体看 IoT 土壤墒情 + 未来天气,逐日决策。</div>
+    <div class="controls">
+      <div class="ctl">地块数<select id="pSel"><option>6</option><option selected>8</option><option>12</option></select></div>
+      <div class="ctl">仿真天数<select id="dSel"><option>7</option><option selected>10</option><option>14</option></select></div>
+      <button class="btn-ghost" id="regen">🔄 换一段天气</button>
+      <button class="btn-go" id="run">🌱 启动智能体</button>
+    </div>
+    <div class="legend">
+      <span><i style="background:#3a9b63"></i>最佳墒情</span>
+      <span><i style="background:#e08a2e"></i>偏干</span>
+      <span><i style="background:#c0392b"></i>旱害</span>
+      <span><i style="background:#2a6fb0"></i>偏湿/涝</span>
+    </div>
+    <div class="weather" id="weather"></div>
+  </div>
+
+  <div class="panel">
+    <div class="phead"><h2>② 实时农情看板</h2><span class="status" id="engineStatus">— 待启动</span></div>
+    <div class="tiles" id="tiles"></div>
+  </div>
+
+  <div class="panel">
+    <h2>③ 地块状态(智能体管理中)</h2>
+    <div class="field" id="field"></div>
+  </div>
+
+  <div class="panel">
+    <h2>④ 智能体决策流(它每天怎么想、怎么做)</h2>
+    <div class="log" id="log"><div style="font-size:13px;color:var(--muted);padding:12px 0;">点击「🌱 启动智能体」后显示。</div></div>
+    <div class="note">
+      引擎原理:<b>感知</b>(IoT 墒情 + 苗情视觉 + 天气预报)→ <b>决策</b>(作物-环境模型 + 灌溉施肥优化引擎,定每块地的水/肥量)→ <b>执行</b>(驱动阀门/泵/无人机)→ <b>对话</b>(农户大白话可问可改)。决策内核与掼蛋/扑克 MTT 同源(<span class="hl">自研,非套壳;跑端侧/国产算力</span>),首发落地<b>陆园 150 亩</b>,再标准化输出给浙江数字农场。
+    </div>
+  </div>
+
+</div>
+
+<script>
+const CROPS=[
+  {k:'leaf',name:'叶菜',band:[55,75],crit:42,et:7.0,nT:60},
+  {k:'fruit',name:'果蔬',band:[45,65],crit:33,et:6.0,nT:55},
+  {k:'tree',name:'苗木',band:[35,55],crit:26,et:4.5,nT:45},
+  {k:'flower',name:'花卉',band:[50,68],crit:38,et:6.5,nT:58},
+];
+const NAMES=['A1','A2','A3','A4','B1','B2','B3','B4','C1','C2','C3','C4'];
+const WATER_Y=0.6, FERT_Y=3.5; // ¥/m³, ¥/kg
+let P=8, D=10, plots=[], weather=[];
+const ri=n=>Math.floor(Math.random()*n);
+const rnd=(a,b)=>a+Math.random()*(b-a);
+
+function genScenario(){
+  plots=[];
+  for(let i=0;i<P;i++){
+    const cp=CROPS[i%CROPS.length];
+    plots.push({name:NAMES[i],crop:cp,area:Math.round(rnd(8,22)),m0:Math.round(rnd(30,58)),n0:Math.round(rnd(35,62))});
+  }
+  weather=[];
+  for(let d=0;d<D;d++){
+    const r=Math.random();
+    let rain=0,type='☀',temp=Math.round(rnd(24,35));
+    if(r>0.78){rain=Math.round(rnd(10,24));type='🌧';temp=Math.round(rnd(21,28));}
+    else if(r>0.55){rain=Math.round(rnd(2,8));type='⛅';temp=Math.round(rnd(23,31));}
+    weather.push({rain,type,temp});
+  }
+}
+
+function simulate(policy){
+  const m=plots.map(p=>p.m0), n=plots.map(p=>p.n0);
+  let water=0,fert=0,optimal=0,dry=0,wet=0;
+  const hist=[], acts=[], events=[];
+  for(let d=0;d<D;d++){
+    const w=weather[d], rainM=Math.min(28,w.rain*1.4), da=[];
+    let savedHint=0, fedCount=0, driest=null;
+    for(let i=0;i<P;i++){
+      const cp=plots[i].crop;
+      const et=Math.max(2, cp.et+(w.temp-25)*0.3-(w.rain>0?1.2:0));
+      let irrMM=0,fdose=0;
+      if(policy==='base'){
+        irrMM=7; if(d%3===0) fdose=8;             // 定时定量 + 定期施肥
+        savedHint+=7*0.667*plots[i].area;
+      }else{
+        const predicted=m[i]+rainM-et, mid=(cp.band[0]+cp.band[1])/2;
+        irrMM=Math.max(0,(mid-predicted)/1.5);
+        const cap=Math.max(0,(cp.band[1]-predicted)/1.5);
+        irrMM=Math.min(irrMM,cap);
+        if(n[i]<cp.nT-8){fdose=Math.min(10,(cp.nT-n[i])/3); fedCount++;}
+        if(!driest||irrMM>driest.irrMM) driest={i,irrMM};
+      }
+      m[i]=Math.max(0,Math.min(100,m[i]+rainM+irrMM*1.5-et));
+      n[i]=Math.max(0,Math.min(100,n[i]-3+fdose*2.2));
+      water+=irrMM*0.667*plots[i].area;
+      fert+=fdose*plots[i].area*0.08;
+      if(m[i]>=cp.band[0]&&m[i]<=cp.band[1]) optimal++;
+      if(m[i]<cp.crit) dry++;
+      if(m[i]>88) wet++;
+      da.push({irrMM,fdose,m:m[i],vol:irrMM*0.667*plots[i].area});
+    }
+    hist.push(m.slice()); acts.push(da);
+    if(policy==='ai'){
+      const ev=[];
+      if(w.rain>=10) ev.push(['🌧',`Day ${d+1} · 预报 ${w.rain}mm 降雨 → 全场暂停/减灌,省水约 ${Math.round(savedHint)} m³`]);
+      else if(driest&&driest.irrMM>3){const pi=driest.i; ev.push(['💧',`Day ${d+1} · ${w.type}${w.temp}℃ → <b>${plots[pi].name}(${plots[pi].crop.name})</b> 墒情偏低,精准灌溉 ${Math.round(da[pi].vol)} m³`]);}
+      else ev.push(['✅',`Day ${d+1} · ${w.type}${w.temp}℃ → 各地块墒情达标,仅微调`]);
+      if(fedCount>0) ev.push(['🌿',`按需施肥 ${fedCount} 块,其余氮充足停肥防徒长`]);
+      events.push(ev);
+    }
+  }
+  return {water:Math.round(water),fert:Math.round(fert),optimal,dry,wet,hist,acts,events};
+}
+
+/* 渲染 */
+function mColor(m,cp){ if(m<cp.crit)return '#c0392b'; if(m<cp.band[0])return '#e08a2e'; if(m>88)return '#2a6fb0'; return '#3a9b63'; }
+function mStatus(m,cp){ if(m<cp.crit)return '旱害'; if(m<cp.band[0])return '偏干'; if(m>88)return '涝'; if(m>cp.band[1])return '偏湿'; return '最佳'; }
+
+function renderWeather(cur){
+  document.getElementById('weather').innerHTML=weather.map((w,i)=>
+    `<div class="wd ${i===cur?'cur':''}"><span class="ic">${w.type}</span>D${i+1}<br>${w.temp}℃${w.rain?'<br>'+w.rain+'mm':''}</div>`).join('');
+}
+function renderField(moist,actsDay){
+  document.getElementById('field').innerHTML=plots.map((p,i)=>{
+    const m=moist?moist[i]:p.m0;
+    const a=actsDay?actsDay[i]:null;
+    let act='待机';
+    if(a){ if(a.vol>=1) act='💧 '+Math.round(a.vol)+'m³'; else act='—'; if(a.fdose>0) act+=(a.vol>=1?' ':'')+'🌿施肥'; }
+    return `<div class="plot"><div class="ph"><span class="pn">${p.name}</span><span class="crop">${p.crop.name} · ${p.area}亩</span></div>
+      <div class="mbar"><div class="mfill" style="width:${Math.round(m)}%;background:${mColor(m,p.crop)}"></div></div>
+      <div class="pf"><span class="st">墒情 ${Math.round(m)}% · ${mStatus(m,p.crop)}</span><span class="act">${act}</span></div></div>`;
+  }).join('');
+}
+function tile(n,v,u,sub,gain){return `<div class="tile${gain?' gain':''}"><div class="tn">${n}</div><div class="tv">${v}<span class="tu">${u}</span></div><div class="sub">${sub}</div></div>`;}
+function pctDown(b,o){return b===0?0:Math.round((b-o)/b*100);}
+
+let base=null, ai=null;
+function reset(){
+  P=parseInt(document.getElementById('pSel').value); D=parseInt(document.getElementById('dSel').value);
+  genScenario(); base=null; ai=null;
+  renderWeather(-1); renderField(null,null);
+  document.getElementById('engineStatus').textContent='— 待启动'; document.getElementById('engineStatus').className='status';
+  document.getElementById('tiles').innerHTML='<div style="grid-column:1/-1;font-size:13px;color:var(--muted)">点击「启动智能体」生成对比。</div>';
+  document.getElementById('log').innerHTML='<div style="font-size:13px;color:var(--muted);padding:12px 0;">点击「🌱 启动智能体」后显示。</div>';
+}
+function finish(){
+  const tot=P*D;
+  const oOpt=Math.round(ai.optimal/tot*100), bOpt=Math.round(base.optimal/tot*100);
+  const yB=0.7+0.3*(base.optimal/tot), yA=0.7+0.3*(ai.optimal/tot);
+  const yieldUp=Math.round((yA-yB)/yB*100);
+  const save=Math.round((base.water-ai.water)*WATER_Y+(base.fert-ai.fert)*FERT_Y);
+  const perYear=Math.round(save/D*300/1000);
+  document.getElementById('tiles').innerHTML=
+    tile('灌溉用水',ai.water,'m³',`传统 ${base.water} · <span class="dl">↓${pctDown(base.water,ai.water)}%</span>`)+
+    tile('化肥用量',ai.fert,'kg',`传统 ${base.fert} · <span class="dl">↓${pctDown(base.fert,ai.fert)}%</span>`)+
+    tile('最佳墒情占比',oOpt,'%',`传统 ${bOpt}% · <span class="dl">↑</span>`)+
+    tile('旱害地块·天',ai.dry,'',`传统 ${base.dry} · <span class="dl">↓</span>`)+
+    tile('预计增产',yieldUp>0?'+'+yieldUp:yieldUp,'%','源于墒情更稳',true)+
+    tile('节省成本','¥'+save,'/期',`全年 ≈ <b>¥${perYear}k</b>`,true);
+  document.getElementById('engineStatus').textContent='● 已完成 '+D+' 天调度'; document.getElementById('engineStatus').className='status done';
+  document.getElementById('run').disabled=false; document.getElementById('run').textContent='🌱 再跑一次';
+}
+function run(){
+  const btn=document.getElementById('run'),st=document.getElementById('engineStatus');
+  btn.disabled=true; btn.textContent='🧠 决策中…'; st.textContent='● 智能体运行中…'; st.className='status live';
+  setTimeout(()=>{
+    base=simulate('base'); ai=simulate('ai');
+    document.getElementById('log').innerHTML='';
+    let d=0;
+    const timer=setInterval(()=>{
+      renderWeather(d); renderField(ai.hist[d], ai.acts[d]);
+      const logEl=document.getElementById('log');
+      ai.events[d].forEach(([ic,txt])=>{const div=document.createElement('div');div.className='logitem';div.innerHTML=`<div class="ic">${ic}</div><div>${txt}</div>`;logEl.appendChild(div);});
+      logEl.scrollTop=logEl.scrollHeight;
+      d++;
+      if(d>=D){ clearInterval(timer); finish(); }
+    }, 620);
+  },400);
+}
+document.getElementById('regen').onclick=reset;
+document.getElementById('pSel').onchange=reset;
+document.getElementById('dSel').onchange=reset;
+document.getElementById('run').onclick=run;
+reset();
+</script>
+</body>
+</html>
