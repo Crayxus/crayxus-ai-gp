@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#16233a">
+<meta name="theme-color" content="#050d0a">
 <title>Crayxus AI · AI 农业智能体 · 陆园智慧农场 Demo</title>
 <meta name="description" content="AI 农业智能体:读墒情/苗情/天气,自动决定每块地浇多少水、施多少肥。对比传统定时定量灌溉——省水、省肥、增产。陆园 150 亩落地,浏览器里真跑多日仿真。">
 
@@ -37,78 +37,96 @@
 <meta name="twitter:title" content="Crayxus AI · AI 农业智能体 · 陆园智慧农场">
 <meta name="twitter:description" content="读墒情/天气自动决策灌溉施肥,省水省肥增产。">
 <meta name="twitter:image" content="https://crayxus.com.au/share-thumb.jpg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#1a1f2b; --soft:#414a5c; --muted:#6b7585;
-    --line:#e4e8ef; --bg:#f5f6f8; --card:#fff; --accent:#1f5fae; --accent-soft:#eef4fb;
-    --ok:#1f7a4d; --ok-soft:#eaf5ef; --warn:#b4452a;
+    --bg:#060f0c; --card:rgba(10,26,20,.72); --line:rgba(0,255,157,.18); --line2:rgba(0,255,157,.10);
+    --gr:#00ff9d; --cy:#00d4ff; --amber:#ffb13c; --warn:#ff4d6d;
+    --txt:#e7fbf1; --dim:#9ec4b4; --mute:#5e8174;
+    --disp:'Orbitron',ui-sans-serif,system-ui,sans-serif;
+    --tech:'Rajdhani',ui-sans-serif,system-ui,"Microsoft YaHei",sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
-  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
-       background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;}
-  .wrap{max-width:1040px;margin:0 auto;padding:0 20px 80px;}
-  header{background:linear-gradient(135deg,#163a2a 0%,#1f5f43 100%);color:#fff;padding:34px 20px 28px;}
-  header .inner{max-width:1040px;margin:0 auto;}
-  .kicker{font-size:12px;letter-spacing:3px;color:#a7e0c4;text-transform:uppercase;}
-  header h1{font-size:24px;margin-top:8px;font-weight:700;}
-  header p{margin-top:8px;color:#cfe8da;font-size:14px;max-width:780px;}
+  html,body{background:var(--bg);color:var(--txt);font-family:var(--tech);line-height:1.55;-webkit-font-smoothing:antialiased;}
+  body{background-image:
+      radial-gradient(1100px 500px at 80% -10%,rgba(0,255,157,.10),transparent 60%),
+      radial-gradient(900px 500px at 0% 0%,rgba(0,212,255,.05),transparent 55%),
+      linear-gradient(rgba(0,255,157,.04) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(0,255,157,.04) 1px,transparent 1px);
+    background-size:auto,auto,42px 42px,42px 42px;background-attachment:fixed;min-height:100vh;}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 20px 90px;}
+  header{position:relative;overflow:hidden;border-bottom:1px solid var(--line);
+    background:linear-gradient(135deg,#06120d,#0a2418 60%,#08170f);padding:40px 20px 30px;}
+  header::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,255,157,.05) 0 1px,transparent 1px 3px);opacity:.5;pointer-events:none;}
+  header .inner{max-width:1040px;margin:0 auto;position:relative;}
+  .kicker{font-family:var(--mono);font-size:11.5px;letter-spacing:4px;color:var(--gr);text-transform:uppercase;text-shadow:0 0 12px rgba(0,255,157,.5);}
+  header h1{font-family:var(--disp);font-size:25px;margin-top:10px;font-weight:900;letter-spacing:1px;
+    background:linear-gradient(90deg,#fff,#9fffd6 55%,#00ff9d);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 40px rgba(0,255,157,.25);}
+  header p{margin-top:10px;color:var(--dim);font-size:14px;max-width:800px;}
 
-  .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-top:20px;box-shadow:0 1px 3px rgba(20,30,50,.04);}
-  .panel h2{font-size:16px;}
-  .panel .desc{font-size:13px;color:var(--muted);margin-top:4px;}
+  .panel{position:relative;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-top:20px;backdrop-filter:blur(8px);box-shadow:0 18px 50px -30px rgba(0,255,157,.35);}
+  .panel::before{content:"";position:absolute;top:-1px;left:18px;width:46px;height:2px;background:var(--gr);box-shadow:0 0 12px var(--gr);border-radius:2px;}
+  .panel h2{font-family:var(--disp);font-size:15px;font-weight:700;letter-spacing:.5px;color:#dfffe f;color:#e3fff2;}
+  .panel .desc{font-size:13px;color:var(--mute);margin-top:5px;}
   .phead{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
-  .status{font-size:12px;font-weight:600;color:var(--muted);background:#eef0f3;padding:4px 11px;border-radius:20px;}
-  .status.live{background:var(--accent-soft);color:var(--accent);}
-  .status.done{background:var(--ok-soft);color:var(--ok);}
+  .status{font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--mute);border:1px solid var(--line);padding:4px 12px;border-radius:20px;}
+  .status.live{color:var(--gr);border-color:rgba(0,255,157,.5);box-shadow:0 0 14px rgba(0,255,157,.25);animation:pulse 1.1s infinite;}
+  .status.done{color:var(--gr);border-color:rgba(0,255,157,.5);box-shadow:0 0 14px rgba(0,255,157,.2);}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
 
   .controls{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-top:14px;}
-  .ctl{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);}
-  select{padding:7px 10px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#fff;color:var(--ink);}
-  button{padding:9px 18px;border:none;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;transition:.15s;}
-  .btn-ghost{background:#fff;border:1px solid var(--line);color:var(--soft);}
-  .btn-ghost:hover{border-color:var(--accent);color:var(--accent);}
-  .btn-go{background:var(--ok);color:#fff;}
-  .btn-go:hover{background:#18603b;}
-  .btn-go:disabled{background:#9cc7b1;cursor:default;}
+  .ctl{display:flex;flex-direction:column;gap:5px;font-family:var(--mono);font-size:11px;color:var(--mute);letter-spacing:.5px;}
+  select{padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#0a1a14;color:var(--txt);font-family:var(--tech);}
+  button{padding:9px 20px;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;transition:.15s;font-family:var(--tech);letter-spacing:.5px;}
+  .btn-ghost{background:rgba(0,255,157,.06);border:1px solid var(--line);color:var(--dim);}
+  .btn-ghost:hover{border-color:var(--gr);color:var(--gr);box-shadow:0 0 14px rgba(0,255,157,.2);}
+  .btn-go{background:linear-gradient(135deg,#00ff9d,#00d4ff);color:#04130d;box-shadow:0 0 22px rgba(0,255,157,.45);}
+  .btn-go:hover{filter:brightness(1.1);}
+  .btn-go:disabled{background:#163328;color:#5e8174;box-shadow:none;cursor:default;}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;font-size:12.5px;color:var(--dim);}
+  .legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;box-shadow:0 0 8px currentColor;}
 
   .weather{display:flex;gap:5px;margin-top:14px;flex-wrap:wrap;}
-  .wd{flex:1;min-width:42px;text-align:center;border:1px solid var(--line);border-radius:8px;padding:6px 2px;font-size:10.5px;color:var(--soft);background:#fff;}
-  .wd.cur{border-color:var(--ok);background:var(--ok-soft);box-shadow:0 0 0 1px var(--ok);}
+  .wd{flex:1;min-width:42px;text-align:center;border:1px solid var(--line2);border-radius:8px;padding:6px 2px;font-family:var(--mono);font-size:10px;color:var(--dim);background:rgba(10,26,20,.5);}
+  .wd.cur{border-color:var(--gr);background:rgba(0,255,157,.12);box-shadow:0 0 12px rgba(0,255,157,.3);}
   .wd .ic{font-size:15px;display:block;}
 
   .tiles{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:14px;}
-  .tile{border:1px solid var(--line);border-radius:12px;padding:14px 14px 12px;background:linear-gradient(180deg,#fff,#fbfcfe);}
-  .tile .tn{font-size:11.5px;color:var(--muted);}
-  .tile .tv{font-size:22px;font-weight:800;margin-top:4px;line-height:1.1;}
-  .tile .tu{font-size:12px;font-weight:600;color:var(--muted);}
-  .tile .sub{font-size:11px;color:var(--muted);margin-top:5px;}
-  .tile .dl{font-weight:700;color:var(--ok);}
-  .tile.gain{background:linear-gradient(180deg,#eafaf1,#e3f6ec);border-color:#bfe3cf;}
-  .tile.gain .tv{color:var(--ok);}
+  .tile{position:relative;border:1px solid var(--line);border-radius:12px;padding:14px 14px 12px;background:linear-gradient(180deg,rgba(0,255,157,.05),rgba(10,26,20,.4));overflow:hidden;}
+  .tile::after{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gr),transparent);opacity:.5;}
+  .tile .tn{font-family:var(--mono);font-size:10.5px;color:var(--mute);text-transform:uppercase;}
+  .tile .tv{font-family:var(--disp);font-size:22px;font-weight:800;margin-top:6px;line-height:1.05;color:#eafff5;text-shadow:0 0 16px rgba(0,255,157,.3);}
+  .tile .tu{font-family:var(--tech);font-size:12px;font-weight:600;color:var(--mute);text-shadow:none;}
+  .tile .sub{font-family:var(--mono);font-size:10.5px;color:var(--mute);margin-top:6px;}
+  .tile .dl{font-weight:700;color:var(--gr);text-shadow:0 0 10px rgba(0,255,157,.5);}
+  .tile.gain{background:linear-gradient(180deg,rgba(0,255,157,.12),rgba(10,26,20,.4));border-color:rgba(0,255,157,.4);}
+  .tile.gain .tv{color:var(--gr);text-shadow:0 0 18px rgba(0,255,157,.5);}
   @media(max-width:860px){.tiles{grid-template-columns:repeat(3,1fr);}}
   @media(max-width:520px){.tiles{grid-template-columns:repeat(2,1fr);}}
 
   .field{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px;}
   @media(max-width:680px){.field{grid-template-columns:repeat(2,1fr);}}
-  .plot{border:1px solid var(--line);border-radius:10px;padding:10px 11px;background:#fff;}
+  .plot{border:1px solid var(--line2);border-radius:10px;padding:10px 11px;background:rgba(10,26,20,.5);}
   .plot .ph{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;}
-  .plot .pn{font-weight:700;}
-  .plot .crop{color:var(--muted);font-size:11px;}
-  .plot .mbar{height:14px;background:#eef0f3;border-radius:4px;margin:8px 0 5px;overflow:hidden;}
+  .plot .pn{font-family:var(--mono);font-weight:700;color:#e3fff2;}
+  .plot .crop{color:var(--mute);font-size:11px;}
+  .plot .mbar{height:14px;background:#0a1a14;border:1px solid var(--line2);border-radius:4px;margin:8px 0 5px;overflow:hidden;}
   .plot .mfill{height:100%;width:0;transition:width .4s,background .4s;}
-  .plot .pf{display:flex;justify-content:space-between;font-size:11px;}
-  .plot .st{color:var(--muted);}
-  .plot .act{font-weight:600;color:var(--accent);}
+  .plot .pf{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10.5px;}
+  .plot .st{color:var(--mute);}
+  .plot .act{font-weight:600;color:var(--cy);}
 
-  .log{margin-top:6px;max-height:280px;overflow:auto;}
-  .logitem{display:flex;gap:10px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:13px;color:var(--soft);}
+  .log{margin-top:6px;max-height:300px;overflow:auto;}
+  .logitem{display:flex;gap:11px;padding:9px 0;border-bottom:1px solid var(--line2);font-size:13px;color:var(--dim);}
   .logitem:last-child{border-bottom:none;}
-  .logitem .ic{flex:none;width:20px;text-align:center;}
-  .logitem b{color:var(--ink);}
-  .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;font-size:12.5px;color:var(--soft);}
-  .legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;}
-  .note{font-size:12.5px;color:var(--muted);margin-top:14px;padding-top:14px;border-top:1px solid var(--line);}
-  .hl{background:#fff3cf;padding:1px 5px;border-radius:4px;}
+  .logitem .ic{flex:none;width:22px;text-align:center;}
+  .logitem b{color:#e3fff2;}
+  .note{font-size:12.5px;color:var(--mute);margin-top:14px;padding-top:14px;border-top:1px solid var(--line2);}
+  .hl{color:var(--gr);background:rgba(0,255,157,.08);padding:1px 5px;border-radius:4px;}
 </style>
 </head>
 <body>
@@ -116,7 +134,7 @@
   <div class="inner">
     <div class="kicker">公司三 · AI AGRONOMY AGENT · 陆园</div>
     <h1>AI 农业智能体 · 陆园智慧农场 Demo</h1>
-    <p>一个会"<b>感知 — 决策 — 动手</b>"的农业管家:每天读各地块墒情/苗情 + 天气预报,自己算出"哪块地浇多少水、施不施肥",直接驱动灌溉施肥。下面对比<b>传统定时定量</b> vs <b>AI 智能体按需精准</b>,<b>真在浏览器里跑多日仿真</b>。</p>
+    <p>一个会"<b style="color:var(--gr)">感知 — 决策 — 动手</b>"的农业管家:每天读各地块墒情/苗情 + 天气预报,自己算出"哪块地浇多少水、施不施肥",直接驱动灌溉施肥。下面对比<b>传统定时定量</b> vs <b style="color:var(--gr)">AI 智能体按需精准</b>,<b>真在浏览器里跑多日仿真</b>。</p>
   </div>
 </header>
 
@@ -128,20 +146,20 @@
     <div class="controls">
       <div class="ctl">地块数<select id="pSel"><option>6</option><option selected>8</option><option>12</option></select></div>
       <div class="ctl">仿真天数<select id="dSel"><option>7</option><option selected>10</option><option>14</option></select></div>
-      <button class="btn-ghost" id="regen">🔄 换一段天气</button>
-      <button class="btn-go" id="run">🌱 启动智能体</button>
+      <button class="btn-ghost" id="regen">⟳ 换一段天气</button>
+      <button class="btn-go" id="run">▶ 启动智能体</button>
     </div>
     <div class="legend">
-      <span><i style="background:#3a9b63"></i>最佳墒情</span>
-      <span><i style="background:#e08a2e"></i>偏干</span>
-      <span><i style="background:#c0392b"></i>旱害</span>
-      <span><i style="background:#2a6fb0"></i>偏湿/涝</span>
+      <span><i style="background:#00ff9d;color:#00ff9d"></i>最佳墒情</span>
+      <span><i style="background:#ffb13c;color:#ffb13c"></i>偏干</span>
+      <span><i style="background:#ff4d6d;color:#ff4d6d"></i>旱害</span>
+      <span><i style="background:#00d4ff;color:#00d4ff"></i>偏湿/涝</span>
     </div>
     <div class="weather" id="weather"></div>
   </div>
 
   <div class="panel">
-    <div class="phead"><h2>② 实时农情看板</h2><span class="status" id="engineStatus">— 待启动</span></div>
+    <div class="phead"><h2>② 实时农情看板</h2><span class="status" id="engineStatus">◇ 待启动</span></div>
     <div class="tiles" id="tiles"></div>
   </div>
 
@@ -152,9 +170,9 @@
 
   <div class="panel">
     <h2>④ 智能体决策流(它每天怎么想、怎么做)</h2>
-    <div class="log" id="log"><div style="font-size:13px;color:var(--muted);padding:12px 0;">点击「🌱 启动智能体」后显示。</div></div>
+    <div class="log" id="log"><div style="font-size:13px;color:var(--mute);padding:12px 0;">点击「▶ 启动智能体」后显示。</div></div>
     <div class="note">
-      引擎原理:<b>感知</b>(IoT 墒情 + 苗情视觉 + 天气预报)→ <b>决策</b>(作物-环境模型 + 灌溉施肥优化引擎,定每块地的水/肥量)→ <b>执行</b>(驱动阀门/泵/无人机)→ <b>对话</b>(农户大白话可问可改)。决策内核与掼蛋/扑克 MTT 同源(<span class="hl">自研,非套壳;跑端侧/国产算力</span>),首发落地<b>陆园 150 亩</b>,再标准化输出给浙江数字农场。
+      引擎原理:<b style="color:var(--gr)">感知</b>(IoT 墒情 + 苗情视觉 + 天气预报)→ <b style="color:var(--gr)">决策</b>(作物-环境模型 + 灌溉施肥优化引擎)→ <b style="color:var(--gr)">执行</b>(驱动阀门/泵/无人机)→ <b style="color:var(--gr)">对话</b>(农户大白话可问可改)。核心决策引擎与<b>掼蛋 AlphaDan / 扑克 MTT 同源</b>(<span class="hl">自研,非套壳;跑端侧/国产算力,守住自主可控</span>),首发落地<b>陆园 150 亩</b>,再标准化输出给浙江数字农场。
     </div>
   </div>
 
@@ -168,9 +186,8 @@ const CROPS=[
   {k:'flower',name:'花卉',band:[50,68],crit:38,et:6.5,nT:58},
 ];
 const NAMES=['A1','A2','A3','A4','B1','B2','B3','B4','C1','C2','C3','C4'];
-const WATER_Y=0.6, FERT_Y=3.5; // ¥/m³, ¥/kg
+const WATER_Y=0.6, FERT_Y=3.5;
 let P=8, D=10, plots=[], weather=[];
-const ri=n=>Math.floor(Math.random()*n);
 const rnd=(a,b)=>a+Math.random()*(b-a);
 
 function genScenario(){
@@ -188,7 +205,6 @@ function genScenario(){
     weather.push({rain,type,temp});
   }
 }
-
 function simulate(policy){
   const m=plots.map(p=>p.m0), n=plots.map(p=>p.n0);
   let water=0,fert=0,optimal=0,dry=0,wet=0;
@@ -201,7 +217,7 @@ function simulate(policy){
       const et=Math.max(2, cp.et+(w.temp-25)*0.3-(w.rain>0?1.2:0));
       let irrMM=0,fdose=0;
       if(policy==='base'){
-        irrMM=7; if(d%3===0) fdose=8;             // 定时定量 + 定期施肥
+        irrMM=7; if(d%3===0) fdose=8;
         savedHint+=7*0.667*plots[i].area;
       }else{
         const predicted=m[i]+rainM-et, mid=(cp.band[0]+cp.band[1])/2;
@@ -233,8 +249,7 @@ function simulate(policy){
   return {water:Math.round(water),fert:Math.round(fert),optimal,dry,wet,hist,acts,events};
 }
 
-/* 渲染 */
-function mColor(m,cp){ if(m<cp.crit)return '#c0392b'; if(m<cp.band[0])return '#e08a2e'; if(m>88)return '#2a6fb0'; return '#3a9b63'; }
+function mColor(m,cp){ if(m<cp.crit)return '#ff4d6d'; if(m<cp.band[0])return '#ffb13c'; if(m>88)return '#00d4ff'; return '#00ff9d'; }
 function mStatus(m,cp){ if(m<cp.crit)return '旱害'; if(m<cp.band[0])return '偏干'; if(m>88)return '涝'; if(m>cp.band[1])return '偏湿'; return '最佳'; }
 
 function renderWeather(cur){
@@ -246,9 +261,10 @@ function renderField(moist,actsDay){
     const m=moist?moist[i]:p.m0;
     const a=actsDay?actsDay[i]:null;
     let act='待机';
-    if(a){ if(a.vol>=1) act='💧 '+Math.round(a.vol)+'m³'; else act='—'; if(a.fdose>0) act+=(a.vol>=1?' ':'')+'🌿施肥'; }
+    if(a){ if(a.vol>=1) act='💧 '+Math.round(a.vol)+'m³'; else act='—'; if(a.fdose>0) act+=(a.vol>=1?' ':'')+'🌿肥'; }
+    const col=mColor(m,p.crop);
     return `<div class="plot"><div class="ph"><span class="pn">${p.name}</span><span class="crop">${p.crop.name} · ${p.area}亩</span></div>
-      <div class="mbar"><div class="mfill" style="width:${Math.round(m)}%;background:${mColor(m,p.crop)}"></div></div>
+      <div class="mbar"><div class="mfill" style="width:${Math.round(m)}%;background:${col};box-shadow:0 0 8px ${col}"></div></div>
       <div class="pf"><span class="st">墒情 ${Math.round(m)}% · ${mStatus(m,p.crop)}</span><span class="act">${act}</span></div></div>`;
   }).join('');
 }
@@ -260,9 +276,9 @@ function reset(){
   P=parseInt(document.getElementById('pSel').value); D=parseInt(document.getElementById('dSel').value);
   genScenario(); base=null; ai=null;
   renderWeather(-1); renderField(null,null);
-  document.getElementById('engineStatus').textContent='— 待启动'; document.getElementById('engineStatus').className='status';
-  document.getElementById('tiles').innerHTML='<div style="grid-column:1/-1;font-size:13px;color:var(--muted)">点击「启动智能体」生成对比。</div>';
-  document.getElementById('log').innerHTML='<div style="font-size:13px;color:var(--muted);padding:12px 0;">点击「🌱 启动智能体」后显示。</div>';
+  document.getElementById('engineStatus').textContent='◇ 待启动'; document.getElementById('engineStatus').className='status';
+  document.getElementById('tiles').innerHTML='<div style="grid-column:1/-1;font-size:13px;color:var(--mute)">点击「启动智能体」生成对比。</div>';
+  document.getElementById('log').innerHTML='<div style="font-size:13px;color:var(--mute);padding:12px 0;">点击「▶ 启动智能体」后显示。</div>';
 }
 function finish(){
   const tot=P*D;
@@ -277,13 +293,13 @@ function finish(){
     tile('最佳墒情占比',oOpt,'%',`传统 ${bOpt}% · <span class="dl">↑</span>`)+
     tile('旱害地块·天',ai.dry,'',`传统 ${base.dry} · <span class="dl">↓</span>`)+
     tile('预计增产',yieldUp>0?'+'+yieldUp:yieldUp,'%','源于墒情更稳',true)+
-    tile('节省成本','¥'+save,'/期',`全年 ≈ <b>¥${perYear}k</b>`,true);
+    tile('节省成本','¥'+save,'/期',`全年 ≈ <b style="color:var(--gr)">¥${perYear}k</b>`,true);
   document.getElementById('engineStatus').textContent='● 已完成 '+D+' 天调度'; document.getElementById('engineStatus').className='status done';
-  document.getElementById('run').disabled=false; document.getElementById('run').textContent='🌱 再跑一次';
+  document.getElementById('run').disabled=false; document.getElementById('run').textContent='▶ 再跑一次';
 }
 function run(){
   const btn=document.getElementById('run'),st=document.getElementById('engineStatus');
-  btn.disabled=true; btn.textContent='🧠 决策中…'; st.textContent='● 智能体运行中…'; st.className='status live';
+  btn.disabled=true; btn.textContent='◆ 决策中…'; st.textContent='● 智能体运行中…'; st.className='status live';
   setTimeout(()=>{
     base=simulate('base'); ai=simulate('ai');
     document.getElementById('log').innerHTML='';
