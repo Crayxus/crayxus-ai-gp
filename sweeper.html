@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#16233a">
-<title>Crayxus AI · AI 扫地机 · 具身清扫规划 Demo</title>
-<meta name="description" content="机器人 + AI 模型 = 具身清扫。SLAM 建图 + 覆盖路径规划,对比随机碰撞式老扫地机:覆盖率 100%、零漏扫、少重复。浏览器里真跑算法。">
+<title>X-01 AETHER · 自主清扫路径规划 Demo | Crayxus AI</title>
+<meta name="description" content="X-01 AETHER 商用清洁机器人的 AI 内核:激光雷达 SLAM 建图 + 覆盖路径规划,对比传统随机碰撞式清扫——覆盖率 100%、零漏扫、少重复。浏览器里真跑算法。">
 
 <!-- Favicons -->
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
@@ -16,10 +16,10 @@
 <!-- Open Graph · 微信分享卡片 (500x500 正方形最稳) -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Crayxus AI">
-<meta property="og:title" content="Crayxus AI · AI 扫地机 · 具身清扫规划">
-<meta property="og:description" content="机器人 + AI 模型 = 具身清扫。SLAM 建图 + 覆盖路径规划 vs 随机碰撞式:覆盖率 100%、零漏扫、少重复。浏览器里真跑算法。">
-<meta property="og:image" content="https://crayxus.com.au/share-thumb.jpg">
-<meta property="og:image:secure_url" content="https://crayxus.com.au/share-thumb.jpg">
+<meta property="og:title" content="X-01 AETHER · 自主清扫路径规划 Demo">
+<meta property="og:description" content="X-01 AETHER 的 AI 内核:激光雷达 SLAM + 覆盖路径规划 vs 传统随机碰撞式——覆盖率 100%、零漏扫、少重复。浏览器里真跑算法。">
+<meta property="og:image" content="https://crayxus.com.au/og-x01.jpg">
+<meta property="og:image:secure_url" content="https://crayxus.com.au/og-x01.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="500">
 <meta property="og:image:height" content="500">
@@ -28,15 +28,15 @@
 <meta property="og:locale" content="zh_CN">
 
 <!-- 微信内置浏览器 / 老版本兜底 -->
-<meta itemprop="image" content="https://crayxus.com.au/share-thumb.jpg">
-<meta name="image" content="https://crayxus.com.au/share-thumb.jpg">
-<link rel="image_src" href="https://crayxus.com.au/share-thumb.jpg">
+<meta itemprop="image" content="https://crayxus.com.au/og-x01.jpg">
+<meta name="image" content="https://crayxus.com.au/og-x01.jpg">
+<link rel="image_src" href="https://crayxus.com.au/og-x01.jpg">
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Crayxus AI · AI 扫地机 · 具身清扫规划">
 <meta name="twitter:description" content="SLAM + 覆盖路径规划 vs 随机碰撞式扫地机。">
-<meta name="twitter:image" content="https://crayxus.com.au/share-thumb.jpg">
+<meta name="twitter:image" content="https://crayxus.com.au/og-x01.jpg">
 <style>
   :root{
     --ink:#1a1f2b; --soft:#414a5c; --muted:#6b7585;
@@ -99,19 +99,19 @@
 <body>
 <header>
   <div class="inner">
-    <div class="kicker">公司二 · EMBODIED CLEANING ROBOT</div>
-    <h1>AI 扫地机 · 具身清扫规划 Demo</h1>
-    <p>"机器人 + AI 模型 = 具身智能"。左边是<b>随机碰撞式老扫地机</b>(瞎撞瞎扫),右边是<b>SLAM 建图 + AI 覆盖路径规划</b>(先认房间再系统清扫)。同样的电量/路程,看谁扫得干净。<b>真在浏览器里跑路径算法。</b></p>
+    <div class="kicker">公司二 · X-01 AETHER · 商用清洁机器人</div>
+    <h1>X-01 AETHER · 自主清扫路径规划 Demo</h1>
+    <p>这是 <b>X-01 AETHER</b> 的 AI 内核演示。左边是<b>传统随机碰撞式清扫</b>(瞎撞瞎扫),右边是 <b>X-01 的激光雷达 SLAM 建图 + AI 覆盖路径规划</b>(先认空间再系统清扫)。同样的电量/里程,看谁扫得干净。<b>真在浏览器里跑路径算法。</b> <a href="x01.html" style="color:#9fc0e8;border-bottom:1px solid #9fc0e8;">→ X-01 产品页</a></p>
   </div>
 </header>
 
 <div class="wrap">
 
   <div class="panel">
-    <h2>① 房间场景</h2>
-    <div class="desc">深色 = 墙体/家具(障碍),浅色 = 待清扫地面。橙点 = 扫地机。颜色越深 = 该格被<b>重复清扫</b>越多次(=浪费电量/时间)。</div>
+    <h2>① 场地场景</h2>
+    <div class="desc">场景 = 商用大空间(机场航站楼 / 智能工厂 / 商业综合体)。深色 = 墙体/设备(障碍),浅色 = 待清扫地面。橙点 = X-01。颜色越深 = 该格被<b>重复清扫</b>越多次(=浪费电量/时间)。</div>
     <div class="controls">
-      <button class="btn-ghost" id="regen">🔄 换个房间</button>
+      <button class="btn-ghost" id="regen">🔄 换个场地</button>
       <button class="btn-go" id="run">🤖 开始清扫</button>
     </div>
     <div class="legend">
