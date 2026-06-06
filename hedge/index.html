@@ -9,6 +9,18 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="description" content="中国竞彩6×SP 与 bet365 亚盘对冲监测台 — 自动枚举互补套利组合">
+<!-- 微信/社交分享缩略图：页面须有同源图片，否则分享卡片右侧缩略图会是白图 -->
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="image_src" href="https://crayxus.com.au/share-thumb.jpg?v=hedge1">
+<meta itemprop="image" content="https://crayxus.com.au/share-thumb.jpg?v=hedge1">
+<meta property="og:type" content="website">
+<meta property="og:title" content="竞彩 × bet365 亚盘对冲监测台">
+<meta property="og:description" content="实时盘口 · 自动枚举竞彩6×SP 与 bet365 亚盘的互补套利组合">
+<meta property="og:image" content="https://crayxus.com.au/share-thumb.jpg?v=hedge1">
+<meta property="og:url" content="https://crayxus.com.au/hedge/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://crayxus.com.au/share-thumb.jpg?v=hedge1">
 <title>竞彩 × bet365 亚盘对冲监测台</title>
 <style>
   /* ===== 微信分享右下角/底部变白修复：html+body 双层纯深色底、禁止回弹露白 ===== */
@@ -35,6 +47,14 @@
   .brand .tag { font-size:11px; color:#7f8da0; border:1px solid rgba(255,255,255,.12); padding:2px 7px; border-radius:20px; }
   .brand .live { font-size:11px; color:#28c08a; display:flex; align-items:center; gap:5px; }
   .brand .live i { width:7px; height:7px; border-radius:50%; background:#28c08a; animation:pulse 1.8s infinite; }
+  .brand .logo { width:26px; height:26px; border-radius:7px; object-fit:cover; display:block; }
+  /* 右下角固定品牌图标（分享后页面内也带 Crayxus 标识） */
+  .cornerlogo { position:fixed; right:12px; bottom:calc(12px + env(safe-area-inset-bottom)); z-index:30;
+    display:flex; align-items:center; gap:6px; padding:5px 11px 5px 5px; border-radius:30px;
+    background:rgba(17,22,31,.85); border:1px solid rgba(255,255,255,.13); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+    box-shadow:0 6px 20px -8px rgba(0,0,0,.6); text-decoration:none; }
+  .cornerlogo img { width:24px; height:24px; border-radius:50%; object-fit:cover; display:block; }
+  .cornerlogo span { font-size:11.5px; font-weight:700; color:#dbe4ef; letter-spacing:.3px; }
   @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(40,192,138,.5)} 70%{box-shadow:0 0 0 8px rgba(40,192,138,0)} 100%{box-shadow:0 0 0 0 rgba(40,192,138,0)} }
   .controls { display:flex; gap:16px; align-items:flex-end; margin-top:12px; flex-wrap:wrap; padding-bottom:12px; }
   .ctrl { display:flex; flex-direction:column; gap:3px; }
@@ -126,6 +146,7 @@
 <body>
   <div class="topbar">
     <div class="brand">
+      <img class="logo" src="https://crayxus.com.au/share-thumb.jpg?v=hedge1" alt="Crayxus">
       <h1>竞彩 × bet365 亚盘对冲监测台</h1>
       <span class="tag">6×SP · 亚盘 · 自动套利</span>
       <span class="live"><i></i>实时</span>
@@ -165,6 +186,11 @@
     <div style="margin-top:8px"><strong>实盘提示：</strong>竞彩单关/串关限额与可投比例、bet365 账户额度与汇率、两边封盘时差与滑点都会吃掉利润；亚盘半球盘无和局退款。演示数据，赔率以实盘为准。</div>
     <div class="brandfoot">Crayxus · 对冲演示 Demo · crayxus.com.au/hedge</div>
   </div>
+
+  <!-- 右下角固定品牌图标 -->
+  <a class="cornerlogo" href="https://crayxus.com.au" target="_blank" rel="noopener">
+    <img src="https://crayxus.com.au/share-thumb.jpg?v=hedge1" alt="Crayxus"><span>Crayxus</span>
+  </a>
 
 <script>
 var MATCHES = [{"league":"国际友谊赛","time":"06-06 21:00","home":"比利时","away":"突尼斯","jc":{"spf":{"w":1.4,"d":5.52,"l":10.94},"hcp":{"line":-1,"w":1.94,"d":3.53,"l":3.38}},"b3":{"x2":{"h":1.34,"d":5,"a":8.5},"ah":[{"T":2,"line":-1.5,"home":2.04,"away":1.81},{"T":1,"line":-0.5,"home":1.31,"away":3.56}]}},{"league":"国际友谊赛","time":"06-07 00:00","home":"亚美尼亚","away":"哈萨克斯坦","jc":{"spf":{"w":1.85,"d":3.5,"l":5.1},"hcp":{"line":-1,"w":3.89,"d":3.76,"l":1.78}},"b3":{"x2":{"h":2.1,"d":3.3,"a":3.55},"ah":[{"T":2,"line":-1.5,"home":3.89,"away":1.27},{"T":1,"line":-0.5,"home":1.96,"away":1.87},{"T":0,"line":0.5,"home":1.28,"away":3.79}]}},{"league":"国际友谊赛","time":"06-07 01:45","home":"葡萄牙","away":"智利","jc":{"spf":{"w":1.28,"d":5.35,"l":7},"hcp":{"line":-1,"w":1.91,"d":4.18,"l":3.03}},"b3":{"x2":{"h":1.21,"d":7,"a":12},"ah":[{"T":2,"line":-1.5,"home":1.99,"away":1.85},{"T":1,"line":-0.5,"home":1.37,"away":3.19},{"T":0,"line":0.5,"home":1.1,"away":7.29}]}},{"league":"国际友谊赛","time":"06-07 01:45","home":"罗马尼亚","away":"威尔士","jc":{"spf":{"w":1.87,"d":3.53,"l":3.61},"hcp":{"line":-1,"w":3.6,"d":3.69,"l":1.76}},"b3":{"x2":{"h":2.65,"d":3,"a":2.85},"ah":[{"T":2,"line":-1.5,"home":3.89,"away":1.27},{"T":1,"line":-0.5,"home":1.96,"away":1.87},{"T":0,"line":0.5,"home":1.28,"away":3.79}]}},{"league":"国际友谊赛","time":"06-07 02:30","home":"美国","away":"德国","jc":{"spf":{"w":3.16,"d":4.64,"l":1.82},"hcp":{"line":1,"w":1.92,"d":4.66,"l":3.12}},"b3":{"x2":{"h":4.8,"d":4.3,"a":1.63},"ah":[{"T":2,"line":-1.5,"home":7.19,"away":1.1},{"T":1,"line":-0.5,"home":3.3,"away":1.35},{"T":0,"line":0.5,"home":1.89,"away":1.94},{"T":-1,"line":1.5,"home":1.34,"away":3.37}]}},{"league":"国际友谊赛","time":"06-07 03:00","home":"瑞士","away":"澳大利亚","jc":{"spf":{"w":1.87,"d":3.45,"l":3.54},"hcp":{"line":-1,"w":3.75,"d":3.74,"l":1.75}},"b3":{"x2":{"h":1.65,"d":4,"a":5},"ah":[{"T":2,"line":-1.5,"home":3.89,"away":1.27},{"T":1,"line":-0.5,"home":1.96,"away":1.87},{"T":0,"line":0.5,"home":1.28,"away":3.79}]}},{"league":"国际友谊赛","time":"06-07 03:00","home":"巴拿马","away":"波黑","jc":{"spf":{"w":3.66,"d":3.5,"l":1.89},"hcp":{"line":1,"w":1.87,"d":4.16,"l":5.22}},"b3":{"x2":{"h":3.4,"d":3.2,"a":2.2},"ah":[{"T":1,"line":-0.5,"home":3.79,"away":1.28},{"T":0,"line":0.5,"home":1.87,"away":1.96},{"T":-1,"line":1.5,"home":1.27,"away":3.89}]}},{"league":"国际友谊赛","time":"06-07 04:00","home":"玻利维亚","away":"苏格兰","jc":{"spf":{"w":11.81,"d":4.81,"l":1.22},"hcp":{"line":1,"w":3.37,"d":3.46,"l":2.38}},"b3":{"x2":{"h":6.5,"d":4.6,"a":1.44},"ah":[{"T":0,"line":0.5,"home":3.56,"away":1.31},{"T":-1,"line":1.5,"home":1.81,"away":2.04}]}},{"league":"国际友谊赛","time":"06-07 06:00","home":"巴西","away":"埃及","jc":{"spf":{"w":1.24,"d":4.86,"l":10.9},"hcp":{"line":-1,"w":1.93,"d":3.75,"l":4.92}},"b3":{"x2":{"h":1.34,"d":5.25,"a":8},"ah":[{"T":2,"line":-1.5,"home":2.04,"away":1.81},{"T":1,"line":-0.5,"home":1.31,"away":3.56}]}}];
