@@ -8,353 +8,341 @@
 <meta name="format-detection" content="telephone=no,email=no,address=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="description" content="中国竞彩 SP 与 bet365 盘口对冲监测台 — 实时计算套利空间与对冲下注方案">
-<title>足彩 × bet365 对冲监测台</title>
+<meta name="description" content="中国竞彩6×SP 与 bet365 亚盘对冲监测台 — 自动枚举互补套利组合">
+<title>竞彩 × bet365 亚盘对冲监测台</title>
 <style>
-  /* ===== 微信分享右下角/底部变白修复 =====
-     原因：微信(X5)内核会把 html/body 未覆盖的视口区域、回弹(overscroll)
-     区域填成白色。解决：html 与 body 都铺纯深色底，min-height 占满视口，
-     禁止回弹白边，背景挂在 html 上确保全屏覆盖。 */
-  html, body {
-    margin: 0;
-    padding: 0;
-    min-height: 100%;
-    background-color: #0b0f16;            /* 纯色兜底，任何露白处都用它 */
-    color: #e6edf6;
-    -webkit-text-size-adjust: 100%;
-    overscroll-behavior: none;            /* 禁止下拉/侧拉回弹露白 */
-  }
-  html {
-    background: #0b0f16 fixed;            /* 固定底色，覆盖整屏含安全区 */
-  }
-  body {
-    min-height: 100vh;
-    min-height: 100dvh;
+  /* ===== 微信分享右下角/底部变白修复：html+body 双层纯深色底、禁止回弹露白 ===== */
+  html, body { margin:0; padding:0; min-height:100%; background-color:#0b0f16; color:#e6edf6;
+    -webkit-text-size-adjust:100%; overscroll-behavior:none; }
+  html { background:#0b0f16 fixed; }
+  body { min-height:100vh; min-height:100dvh;
     background:
-      radial-gradient(1200px 600px at 80% -10%, rgba(34,110,90,.18), transparent 60%),
-      radial-gradient(900px 500px at -10% 10%, rgba(40,90,150,.16), transparent 55%),
-      #0b0f16;                            /* 渐变之下仍是纯深色，杜绝露白 */
-    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    font-size: 14px;
-    line-height: 1.5;
-    padding: 0 0 calc(40px + env(safe-area-inset-bottom));  /* 底部安全区也是深色 */
-  }
-  * { box-sizing: border-box; }
-  .mono { font-family: "SF Mono", "JetBrains Mono", "Roboto Mono", Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; }
+      radial-gradient(1200px 600px at 80% -10%, rgba(34,110,90,.16), transparent 60%),
+      radial-gradient(900px 500px at -10% 10%, rgba(40,90,150,.15), transparent 55%),
+      #0b0f16;
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:14px; line-height:1.5; padding:0 0 calc(40px + env(safe-area-inset-bottom)); }
+  * { box-sizing:border-box; }
+  .mono { font-family:"SF Mono","JetBrains Mono","Roboto Mono",Menlo,Consolas,monospace; font-variant-numeric:tabular-nums; }
 
   /* ===== 顶部栏 ===== */
-  .topbar {
-    position: sticky; top: 0; z-index: 20;
-    background: rgba(11,15,22,.82);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255,255,255,.07);
-    padding: 14px 16px calc(12px + env(safe-area-inset-top));
-    padding-top: max(14px, env(safe-area-inset-top));
-  }
+  .topbar { position:sticky; top:0; z-index:20; background:rgba(11,15,22,.85);
+    backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    border-bottom:1px solid rgba(255,255,255,.07); padding:14px 16px 0;
+    padding-top:max(14px, env(safe-area-inset-top)); }
   .brand { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-  .brand h1 { font-size: 16px; margin:0; font-weight:700; letter-spacing:.5px; }
+  .brand h1 { font-size:16px; margin:0; font-weight:700; letter-spacing:.3px; }
   .brand .tag { font-size:11px; color:#7f8da0; border:1px solid rgba(255,255,255,.12); padding:2px 7px; border-radius:20px; }
   .brand .live { font-size:11px; color:#28c08a; display:flex; align-items:center; gap:5px; }
-  .brand .live i { width:7px; height:7px; border-radius:50%; background:#28c08a; box-shadow:0 0 0 0 rgba(40,192,138,.6); animation:pulse 1.8s infinite; }
+  .brand .live i { width:7px; height:7px; border-radius:50%; background:#28c08a; animation:pulse 1.8s infinite; }
   @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(40,192,138,.5)} 70%{box-shadow:0 0 0 8px rgba(40,192,138,0)} 100%{box-shadow:0 0 0 0 rgba(40,192,138,0)} }
-
-  .controls { display:flex; gap:18px; align-items:center; margin-top:12px; flex-wrap:wrap; }
+  .controls { display:flex; gap:16px; align-items:flex-end; margin-top:12px; flex-wrap:wrap; padding-bottom:12px; }
   .ctrl { display:flex; flex-direction:column; gap:3px; }
   .ctrl label { font-size:11px; color:#7f8da0; }
-  .ctrl .val { font-size:20px; font-weight:700; }
-  .ctrl .val.green { color:#28c08a; }
-  .ctrl .val.gray { color:#8b97a8; }
-  .bankroll input {
-    width:130px; background:#11161f; border:1px solid rgba(255,255,255,.14); color:#e6edf6;
-    font-size:18px; font-weight:700; padding:6px 10px; border-radius:8px; outline:none;
-  }
+  .ctrl .val { font-size:19px; font-weight:700; }
+  .val.green { color:#28c08a; } .val.gray { color:#8b97a8; }
+  .bankroll input { width:120px; background:#11161f; border:1px solid rgba(255,255,255,.14); color:#e6edf6;
+    font-size:17px; font-weight:700; padding:6px 10px; border-radius:8px; outline:none; }
   .bankroll input:focus { border-color:#28c08a; }
+  .pausebtn { background:#11161f; border:1px solid rgba(255,255,255,.14); color:#cdd6e2; font-size:12.5px;
+    padding:7px 13px; border-radius:8px; cursor:pointer; white-space:nowrap; }
+  .pausebtn:active { background:#1a2330; }
+  .progress { height:2px; background:rgba(255,255,255,.06); margin:0 -16px; }
+  .progress > i { display:block; height:100%; width:100%; transform-origin:left; transform:scaleX(1);
+    background:linear-gradient(90deg,#28c08a,#4a90d9); transition:transform .9s linear; }
 
   /* ===== 容器 ===== */
-  .wrap { max-width: 1180px; margin: 0 auto; padding: 16px; }
-  .legend { display:flex; gap:16px; flex-wrap:wrap; font-size:12px; color:#8b97a8; margin: 4px 2px 18px; align-items:center; }
-  .legend .dot { display:inline-block; width:10px; height:10px; border-radius:3px; vertical-align:-1px; margin-right:5px; }
-  .legend .dot.best { background:#28c08a; }
-  .legend .dot.jc { background:#e0a23c; }
-  .legend .dot.b3 { background:#4a90d9; }
-
-  .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap:16px; }
+  .wrap { max-width:1280px; margin:0 auto; padding:14px 16px; }
+  .srcnote { font-size:11.5px; color:#7c8aa0; background:rgba(74,144,217,.07); border:1px solid rgba(74,144,217,.16);
+    border-radius:9px; padding:9px 12px; margin-bottom:14px; line-height:1.6; }
+  .srcnote b { color:#9fb4cc; }
+  .legend { display:flex; gap:14px; flex-wrap:wrap; font-size:11.5px; color:#8b97a8; margin:2px 2px 14px; align-items:center; }
+  .legend .dot { display:inline-block; width:9px; height:9px; border-radius:2px; vertical-align:0; margin-right:5px; }
+  .legend .dot.jc { background:#e0a23c; } .legend .dot.b3 { background:#4a90d9; } .legend .dot.arb { background:#28c08a; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(370px,1fr)); gap:16px; }
 
   /* ===== 比赛卡片 ===== */
-  .card {
-    background: linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,0));
-    border:1px solid rgba(255,255,255,.08); border-radius:14px; overflow:hidden;
-    display:flex; flex-direction:column;
-  }
-  .card.arb { border-color: rgba(40,192,138,.45); box-shadow: 0 0 0 1px rgba(40,192,138,.12), 0 8px 30px -12px rgba(40,192,138,.25); }
-  .card-h { padding:13px 14px 11px; border-bottom:1px solid rgba(255,255,255,.06); }
-  .card-h .meta { display:flex; justify-content:space-between; align-items:center; font-size:11px; color:#7f8da0; margin-bottom:7px; }
+  .card { background:linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,0));
+    border:1px solid rgba(255,255,255,.08); border-radius:14px; overflow:hidden; display:flex; flex-direction:column; }
+  .card.arb { border-color:rgba(40,192,138,.45); box-shadow:0 0 0 1px rgba(40,192,138,.1), 0 8px 30px -14px rgba(40,192,138,.3); }
+  .card-h { padding:12px 14px 11px; border-bottom:1px solid rgba(255,255,255,.06); }
+  .card-h .meta { display:flex; justify-content:space-between; font-size:11px; color:#7f8da0; margin-bottom:6px; }
   .card-h .teams { display:flex; align-items:center; justify-content:space-between; gap:8px; }
-  .card-h .teams .t { font-size:15px; font-weight:600; }
+  .card-h .teams .t { font-size:15.5px; font-weight:600; }
   .card-h .teams .vs { font-size:11px; color:#6b7787; }
+  .card-h .sub { display:flex; align-items:center; justify-content:space-between; margin-top:8px; }
+  .card-h .hcap { font-size:11px; color:#8b97a8; }
   .badge { font-size:11px; font-weight:700; padding:3px 9px; border-radius:20px; white-space:nowrap; }
   .badge.yes { background:rgba(40,192,138,.16); color:#3ddca0; border:1px solid rgba(40,192,138,.4); }
   .badge.no { background:rgba(255,255,255,.05); color:#8b97a8; border:1px solid rgba(255,255,255,.1); }
 
-  /* 赔率表 */
-  table.odds { width:100%; border-collapse:collapse; }
-  table.odds th { font-size:10.5px; color:#6b7787; font-weight:500; text-align:right; padding:9px 10px 5px; text-transform:uppercase; letter-spacing:.5px; }
-  table.odds th.lbl { text-align:left; }
-  table.odds td { padding:5px 6px; text-align:right; }
-  table.odds td.lbl { text-align:left; font-size:12.5px; color:#c3cdda; padding-left:10px; }
-  table.odds td.lbl small { color:#6b7787; }
-  .oc { position:relative; }
-  .oc input {
-    width:62px; text-align:right; background:#10151d; border:1px solid rgba(255,255,255,.1);
-    color:#dbe4ef; font-size:14px; font-weight:600; padding:5px 8px; border-radius:7px; outline:none;
-  }
-  .oc input:focus { border-color:#4a90d9; background:#121922; }
-  .oc.best input { border-color:rgba(40,192,138,.6); background:rgba(40,192,138,.1); color:#7ff0c2; box-shadow:0 0 0 1px rgba(40,192,138,.25) inset; }
-  .oc .pick { position:absolute; top:-6px; right:4px; font-size:8.5px; color:#0b0f16; background:#28c08a; padding:1px 4px; border-radius:6px; font-weight:800; }
-  td.pad { padding-right:10px; }
+  .mkt { padding:10px 14px 4px; }
+  .mkt + .mkt { border-top:1px solid rgba(255,255,255,.05); }
+  .mkt-h { display:flex; align-items:center; gap:8px; font-size:11.5px; color:#8b97a8; margin-bottom:7px; }
+  .bk { font-size:10px; font-weight:800; padding:2px 7px; border-radius:5px; }
+  .bk.jc { background:rgba(224,162,60,.16); color:#e7b964; }
+  .bk.b3 { background:rgba(74,144,217,.16); color:#79b3ec; }
+  .x2 { font-size:11.5px; color:#9aa6b6; margin-bottom:8px; }
+  .x2 b { color:#cdd6e2; font-weight:600; } .x2 em { color:#5f6b7a; font-style:normal; font-size:10px; margin-left:4px; }
 
-  /* 对冲方案 */
-  .plan { padding:11px 14px 13px; background:rgba(255,255,255,.018); border-top:1px solid rgba(255,255,255,.06); }
-  .plan.dim { opacity:.62; }
-  .plan-row { display:flex; justify-content:space-between; align-items:center; font-size:12px; padding:3px 0; }
-  .plan-row .k { color:#8b97a8; }
-  .plan-row .stake { color:#dbe4ef; font-weight:600; }
-  .plan-row .stake b { color:#fff; }
-  .chip { font-size:9.5px; padding:1px 5px; border-radius:5px; margin-left:6px; font-weight:700; vertical-align:1px; }
-  .chip.jc { background:rgba(224,162,60,.16); color:#e7b964; }
-  .chip.b3 { background:rgba(74,144,217,.16); color:#79b3ec; }
-  .plan-sum { display:flex; justify-content:space-between; align-items:baseline; margin-top:9px; padding-top:9px; border-top:1px dashed rgba(255,255,255,.1); }
-  .plan-sum .lab { font-size:11px; color:#7f8da0; }
-  .plan-sum .big { font-size:18px; font-weight:800; }
-  .plan-sum .big.green { color:#3ddca0; }
-  .plan-sum .big.red { color:#e06a6a; }
-  .plan-sum .pct { font-size:12px; margin-left:5px; opacity:.85; }
-  .booklines { display:flex; gap:14px; margin-top:9px; font-size:10.5px; color:#6b7787; }
-  .booklines span b { color:#9aa6b6; font-weight:600; }
+  table.ot { width:100%; border-collapse:collapse; }
+  table.ot td { padding:3px 4px; text-align:center; vertical-align:top; }
+  table.ot td.rl { text-align:left; font-size:11px; color:#8b97a8; width:54px; padding-top:9px; white-space:nowrap; }
+  .ocell { display:flex; flex-direction:column; align-items:center; gap:2px; position:relative; }
+  .ocell input { width:100%; max-width:66px; text-align:center; background:#10151d; border:1px solid rgba(255,255,255,.1);
+    color:#dbe4ef; font-size:13.5px; font-weight:600; padding:5px 4px; border-radius:7px; outline:none; }
+  .ocell input:focus { border-color:#4a90d9; background:#121922; }
+  .ocell small { font-size:9.5px; color:#6b7787; }
+  .ocell .arr { position:absolute; right:-2px; top:4px; font-size:9px; opacity:0; pointer-events:none; }
+  .ocell.fl-up .arr { color:#3ddca0; animation:arrF 1.5s ease-out forwards; }
+  .ocell.fl-down .arr { color:#e06a6a; animation:arrF 1.5s ease-out forwards; }
+  @keyframes arrF { 0%{opacity:1; transform:translateY(2px)} 100%{opacity:0; transform:translateY(-5px)} }
 
-  /* 底部 */
-  .foot { max-width:1180px; margin:26px auto 0; padding:0 16px; font-size:11.5px; color:#5f6b7a; line-height:1.7; }
-  .foot .addbtn { display:inline-block; margin-bottom:14px; background:#11161f; border:1px dashed rgba(255,255,255,.18); color:#9aa6b6; font-size:13px; padding:9px 16px; border-radius:9px; cursor:pointer; }
-  .foot .addbtn:active { background:#161c26; }
+  /* ===== 对冲组合 ===== */
+  .hedges { padding:11px 14px 13px; background:rgba(255,255,255,.018); border-top:1px solid rgba(255,255,255,.07); margin-top:4px; }
+  .hh { display:flex; justify-content:space-between; align-items:center; font-size:11px; color:#7f8da0; margin-bottom:8px; }
+  .hg { border:1px solid rgba(255,255,255,.08); border-radius:9px; padding:8px 10px; margin-bottom:7px; background:rgba(255,255,255,.015); }
+  .hg.arb { border-color:rgba(40,192,138,.4); background:rgba(40,192,138,.06); }
+  .hg-top { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; }
+  .hg-ret { font-size:13px; font-weight:800; color:#8b97a8; }
+  .hg-ret.arb { color:#3ddca0; }
+  .hg-prof { font-size:12px; font-weight:700; }
+  .hg-prof.arb { color:#3ddca0; } .hg-prof.neg { color:#8693a3; }
+  .hg-legs { display:flex; flex-direction:column; gap:4px; }
+  .leg { font-size:11.5px; color:#c3cdda; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .leg .chip { font-size:9px; font-weight:800; padding:1px 5px; border-radius:4px; }
+  .leg .chip.jc { background:rgba(224,162,60,.16); color:#e7b964; }
+  .leg .chip.b3 { background:rgba(74,144,217,.16); color:#79b3ec; }
+  .leg .stk { margin-left:auto; color:#dbe4ef; font-weight:600; white-space:nowrap; }
+  .leg .stk b { color:#fff; }
+  .hg-foot { font-size:10.5px; color:#6b7787; margin-top:6px; }
+  .hg-foot b { color:#9aa6b6; }
+
+  .foot { max-width:1280px; margin:24px auto 0; padding:0 16px; font-size:11.5px; color:#5f6b7a; line-height:1.7; }
   .foot strong { color:#8b97a8; }
-  .brandfoot { margin-top:18px; color:#465160; font-size:11px; }
+  .brandfoot { margin-top:14px; color:#465160; font-size:11px; }
 </style>
 </head>
 <body>
   <div class="topbar">
     <div class="brand">
-      <h1>足彩 × bet365 对冲监测台</h1>
-      <span class="tag">竞彩 SP · bet365 盘口</span>
-      <span class="live"><i></i>实时对冲计算</span>
+      <h1>竞彩 × bet365 亚盘对冲监测台</h1>
+      <span class="tag">6×SP · 亚盘 · 自动套利</span>
+      <span class="live"><i></i>实时</span>
     </div>
     <div class="controls">
       <div class="ctrl bankroll">
         <label>每场对冲本金 (¥)</label>
         <input id="bankroll" type="number" inputmode="decimal" value="10000" min="0" step="100">
       </div>
-      <div class="ctrl">
-        <label>套利机会</label>
-        <div class="val green" id="sumOpp">0 / 0</div>
-      </div>
-      <div class="ctrl">
-        <label>最佳锁定收益率</label>
-        <div class="val green" id="sumBest">—</div>
-      </div>
-      <div class="ctrl">
-        <label>合计锁定盈亏 (仅机会场)</label>
-        <div class="val gray" id="sumProfit">¥0</div>
-      </div>
+      <div class="ctrl"><label>套利机会</label><div class="val green" id="sumOpp">0 / 0</div></div>
+      <div class="ctrl"><label>最佳锁定收益</label><div class="val green" id="sumBest">—</div></div>
+      <div class="ctrl"><label>合计锁定盈亏</label><div class="val gray" id="sumProfit">¥0</div></div>
+      <div class="ctrl"><label>下次刷新盘口</label><div class="val green" id="countdown">30s</div></div>
+      <button class="pausebtn" id="pauseBtn" type="button">⏸ 暂停</button>
     </div>
+    <div class="progress"><i id="pbar"></i></div>
   </div>
 
   <div class="wrap">
+    <div class="srcnote">
+      <b>数据口径：</b>赛程 · 开赛时间 · <b>bet365 欧赔(1×2)</b> = <b>2026-06-06 实时真实抓取</b>（ESPN/DraftKings 盘口）。
+      <b>亚盘梯子</b>与<b>竞彩 6×SP</b> = 按真实盘口用泊松模型还原（竞彩 SP / bet365 亚盘均无公开 API，无法逐口直采）——
+      <b>每个赔率都可点改为实盘数字</b>，引擎实时重算。每 30 秒模拟一次盘口跳动。
+    </div>
     <div class="legend">
-      <span><span class="dot best"></span>当前最优赔率（对冲下注口）</span>
-      <span><span class="dot jc"></span>中国竞彩 SP</span>
-      <span><span class="dot b3"></span>bet365</span>
-      <span style="color:#5f6b7a">赔率可直接点改 → 自动重算对冲方案</span>
+      <span><span class="dot jc"></span>竞彩 6 赔率（不让球 胜平负 + 让球 让胜平负）</span>
+      <span><span class="dot b3"></span>bet365 欧赔 + 亚盘</span>
+      <span><span class="dot arb"></span>互补对冲套利（返还&gt;100%）</span>
     </div>
     <div class="grid" id="grid"></div>
   </div>
 
   <div class="foot">
-    <button class="addbtn" id="addBtn">＋ 临时添加一场比赛（现场录入盘口）</button>
-    <div>
-      <strong>对冲/套利原理：</strong>同一场比赛，竞彩与 bet365 对 主胜 / 平局 / 客胜 各给一组赔率。
-      对每个结果取两家中的<strong>较高赔率</strong>分别下注，当 (1/最优主胜 + 1/最优平 + 1/最优客胜) &lt; 1 时，
-      无论结果如何都能锁定正收益（即<strong>套利 / 无风险对冲</strong>）。本金按各口赔率反比分配，使三种结果回收金额相等。
-    </div>
-    <div style="margin-top:8px">
-      <strong>实盘提示：</strong>需考虑竞彩单关/串关限额与可投比例、bet365 账户额度与汇率、两边到账与封盘时差、滑点。本页为<strong>演示示例数据</strong>，赔率请以盘口实时为准（可现场手改）。
-    </div>
+    <div><strong>对冲原理：</strong>把比赛结果看成净胜球差 d（主−客）。竞彩每个结果（如主胜=d≥1、让负(主−1)=d≤0）都是 d 的一段区间；
+    在 bet365 亚盘里找到<strong>恰好互补</strong>的那条线（如客+0.5=d≤0、主−0.5=d≥1），两条腿不重不漏覆盖所有比分，
+    若 (1/竞彩赔率 + 1/亚盘赔率) &lt; 1 即<strong>无风险套利</strong>。本金按赔率反比拆分，任意比分回收相等。平局类用 3 条腿覆盖。</div>
+    <div style="margin-top:8px"><strong>实盘提示：</strong>竞彩单关/串关限额与可投比例、bet365 账户额度与汇率、两边封盘时差与滑点都会吃掉利润；亚盘半球盘无和局退款。演示数据，赔率以实盘为准。</div>
     <div class="brandfoot">Crayxus · 对冲演示 Demo · crayxus.com.au/hedge</div>
   </div>
 
 <script>
-(function(){
-  // ===== 演示数据（2026-06-06 国际友谊赛窗口示例；赔率为示意，可现场手改）=====
-  var matches = [
-    { league:"国际友谊赛", time:"06-06 21:00", home:"阿根廷", away:"克罗地亚",
-      jc:{h:2.05, d:3.50, a:4.10}, b3:{h:1.95, d:3.65, a:4.50} },
-    { league:"国际友谊赛", time:"06-06 22:30", home:"法国", away:"摩洛哥",
-      jc:{h:1.62, d:3.80, a:5.50}, b3:{h:1.70, d:3.90, a:5.80} },
-    { league:"国际友谊赛", time:"06-06 23:00", home:"巴西", away:"葡萄牙",
-      jc:{h:2.55, d:3.30, a:2.95}, b3:{h:2.40, d:3.45, a:3.30} },
-    { league:"国际友谊赛", time:"06-06 23:30", home:"英格兰", away:"荷兰",
-      jc:{h:2.10, d:3.25, a:3.45}, b3:{h:2.05, d:3.40, a:3.55} },
-    { league:"国际友谊赛", time:"06-07 00:00", home:"西班牙", away:"德国",
-      jc:{h:2.45, d:3.30, a:3.10}, b3:{h:2.30, d:3.45, a:3.55} },
-    { league:"国际友谊赛", time:"06-07 00:45", home:"意大利", away:"比利时",
-      jc:{h:2.20, d:3.20, a:3.30}, b3:{h:2.15, d:3.30, a:3.45} },
-    { league:"国际友谊赛", time:"06-07 02:00", home:"哥伦比亚", away:"乌拉圭",
-      jc:{h:2.65, d:3.10, a:2.85}, b3:{h:2.55, d:3.20, a:2.95} },
-    { league:"国际友谊赛", time:"06-07 02:30", home:"日本", away:"韩国",
-      jc:{h:2.60, d:3.20, a:3.00}, b3:{h:2.40, d:3.35, a:3.25} },
-    { league:"国际友谊赛", time:"06-07 07:00", home:"墨西哥", away:"美国",
-      jc:{h:2.75, d:3.15, a:2.70}, b3:{h:2.65, d:3.25, a:2.80} },
-    { league:"国际友谊赛", time:"06-07 03:00", home:"瑞士", away:"塞尔维亚",
-      jc:{h:2.30, d:3.10, a:3.20}, b3:{h:2.25, d:3.20, a:3.35} },
-    { league:"国际友谊赛", time:"06-07 03:45", home:"丹麦", away:"波兰",
-      jc:{h:2.05, d:3.30, a:3.80}, b3:{h:2.10, d:3.40, a:3.70} }
-  ];
+var MATCHES = [{"league":"国际友谊赛","time":"06-06 21:00","home":"比利时","away":"突尼斯","jc":{"spf":{"w":1.4,"d":5.52,"l":10.94},"hcp":{"line":-1,"w":1.94,"d":3.53,"l":3.38}},"b3":{"x2":{"h":1.34,"d":5,"a":8.5},"ah":[{"T":2,"line":-1.5,"home":2.04,"away":1.81},{"T":1,"line":-0.5,"home":1.31,"away":3.56}]}},{"league":"国际友谊赛","time":"06-07 00:00","home":"亚美尼亚","away":"哈萨克斯坦","jc":{"spf":{"w":1.85,"d":3.5,"l":5.1},"hcp":{"line":-1,"w":3.89,"d":3.76,"l":1.78}},"b3":{"x2":{"h":2.1,"d":3.3,"a":3.55},"ah":[{"T":2,"line":-1.5,"home":3.89,"away":1.27},{"T":1,"line":-0.5,"home":1.96,"away":1.87},{"T":0,"line":0.5,"home":1.28,"away":3.79}]}},{"league":"国际友谊赛","time":"06-07 01:45","home":"葡萄牙","away":"智利","jc":{"spf":{"w":1.28,"d":5.35,"l":7},"hcp":{"line":-1,"w":1.91,"d":4.18,"l":3.03}},"b3":{"x2":{"h":1.21,"d":7,"a":12},"ah":[{"T":2,"line":-1.5,"home":1.99,"away":1.85},{"T":1,"line":-0.5,"home":1.37,"away":3.19},{"T":0,"line":0.5,"home":1.1,"away":7.29}]}},{"league":"国际友谊赛","time":"06-07 01:45","home":"罗马尼亚","away":"威尔士","jc":{"spf":{"w":1.87,"d":3.53,"l":3.61},"hcp":{"line":-1,"w":3.6,"d":3.69,"l":1.76}},"b3":{"x2":{"h":2.65,"d":3,"a":2.85},"ah":[{"T":2,"line":-1.5,"home":3.89,"away":1.27},{"T":1,"line":-0.5,"home":1.96,"away":1.87},{"T":0,"line":0.5,"home":1.28,"away":3.79}]}},{"league":"国际友谊赛","time":"06-07 02:30","home":"美国","away":"德国","jc":{"spf":{"w":3.16,"d":4.64,"l":1.82},"hcp":{"line":1,"w":1.92,"d":4.66,"l":3.12}},"b3":{"x2":{"h":4.8,"d":4.3,"a":1.63},"ah":[{"T":2,"line":-1.5,"home":7.19,"away":1.1},{"T":1,"line":-0.5,"home":3.3,"away":1.35},{"T":0,"line":0.5,"home":1.89,"away":1.94},{"T":-1,"line":1.5,"home":1.34,"away":3.37}]}},{"league":"国际友谊赛","time":"06-07 03:00","home":"瑞士","away":"澳大利亚","jc":{"spf":{"w":1.87,"d":3.45,"l":3.54},"hcp":{"line":-1,"w":3.75,"d":3.74,"l":1.75}},"b3":{"x2":{"h":1.65,"d":4,"a":5},"ah":[{"T":2,"line":-1.5,"home":3.89,"away":1.27},{"T":1,"line":-0.5,"home":1.96,"away":1.87},{"T":0,"line":0.5,"home":1.28,"away":3.79}]}},{"league":"国际友谊赛","time":"06-07 03:00","home":"巴拿马","away":"波黑","jc":{"spf":{"w":3.66,"d":3.5,"l":1.89},"hcp":{"line":1,"w":1.87,"d":4.16,"l":5.22}},"b3":{"x2":{"h":3.4,"d":3.2,"a":2.2},"ah":[{"T":1,"line":-0.5,"home":3.79,"away":1.28},{"T":0,"line":0.5,"home":1.87,"away":1.96},{"T":-1,"line":1.5,"home":1.27,"away":3.89}]}},{"league":"国际友谊赛","time":"06-07 04:00","home":"玻利维亚","away":"苏格兰","jc":{"spf":{"w":11.81,"d":4.81,"l":1.22},"hcp":{"line":1,"w":3.37,"d":3.46,"l":2.38}},"b3":{"x2":{"h":6.5,"d":4.6,"a":1.44},"ah":[{"T":0,"line":0.5,"home":3.56,"away":1.31},{"T":-1,"line":1.5,"home":1.81,"away":2.04}]}},{"league":"国际友谊赛","time":"06-07 06:00","home":"巴西","away":"埃及","jc":{"spf":{"w":1.24,"d":4.86,"l":10.9},"hcp":{"line":-1,"w":1.93,"d":3.75,"l":4.92}},"b3":{"x2":{"h":1.34,"d":5.25,"a":8},"ah":[{"T":2,"line":-1.5,"home":2.04,"away":1.81},{"T":1,"line":-0.5,"home":1.31,"away":3.56}]}}];
 
+(function(){
   var grid = document.getElementById('grid');
   var bankrollEl = document.getElementById('bankroll');
+  var BASE = JSON.parse(JSON.stringify(MATCHES));   // 基准赔率（均值回归用）
+  var flash = {};
 
-  function fmt(n){ return n.toLocaleString('zh-CN',{maximumFractionDigits:0}); }
-  function fmt2(n){ return n.toLocaleString('zh-CN',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function fmt(n){ return Math.round(n).toLocaleString('zh-CN'); }
+  function sgl(x){ return (x>0?'+':'')+x; }          // 让分线带符号：+0.5 / -1.5
+  function getp(o,p){ return p.split('.').reduce(function(a,k){return a[k];},o); }
+  function setp(o,p,v){ var ks=p.split('.'), last=ks.pop(); ks.reduce(function(a,k){return a[k];},o)[last]=v; }
 
-  function bookMargin(b){ // 返还率 = 1 / (Σ1/odds)
-    var inv = 1/b.h + 1/b.d + 1/b.a;
-    return { inv:inv, payout: 100/inv };
+  // —— 对冲枚举引擎：竞彩6×SP × bet365亚盘，找出所有恰好互补的组合 ——
+  function hedges(mt){
+    var Hf = mt.jc.hcp.line, ahByT = {};
+    mt.b3.ah.forEach(function(x){ ahByT[x.T]=x; });
+    var L = [];
+    function add(legs){ var inv=legs.reduce(function(s,x){return s+1/x.odds;},0);
+      L.push({legs:legs, inv:inv, payout:1/inv, profitPct:(1/inv-1)*100}); }
+    // 竞彩 "≥T" 腿（主胜 / 让胜）↔ bet365 同边界客队亚盘（互补）
+    [{lab:'竞彩 主胜', T:1, odds:mt.jc.spf.w},
+     {lab:'竞彩 让胜(主'+sgl(Hf)+')', T:1-Hf, odds:mt.jc.hcp.w}].forEach(function(g){
+      var ah=ahByT[g.T]; if(!ah) return;
+      add([{book:'jc',label:g.lab,odds:g.odds},{book:'b3',label:'bet365 客'+sgl(-ah.line),odds:ah.away}]); });
+    // 竞彩 "≤T-1" 腿（客胜 / 让负）↔ bet365 同边界主队亚盘（互补）
+    [{lab:'竞彩 客胜', T:0, odds:mt.jc.spf.l},
+     {lab:'竞彩 让负(主'+sgl(Hf)+')', T:-Hf, odds:mt.jc.hcp.l}].forEach(function(g){
+      var ah=ahByT[g.T]; if(!ah) return;
+      add([{book:'jc',label:g.lab,odds:g.odds},{book:'b3',label:'bet365 主'+sgl(ah.line),odds:ah.home}]); });
+    // 平局类 → 3 条腿覆盖（竞彩平/让平 + bet365 主高线 + bet365 客低线）
+    function drawC(lab,odds,Tlo){ var hi=ahByT[Tlo+1], lo=ahByT[Tlo]; if(!hi||!lo) return;
+      add([{book:'jc',label:lab,odds:odds},
+           {book:'b3',label:'bet365 主'+sgl(hi.line),odds:hi.home},
+           {book:'b3',label:'bet365 客'+sgl(-lo.line),odds:lo.away}]); }
+    drawC('竞彩 平', mt.jc.spf.d, 0);
+    drawC('竞彩 让平(主'+sgl(Hf)+')', mt.jc.hcp.d, -Hf);
+    L.sort(function(a,b){ return b.payout-a.payout; });
+    return L;
   }
 
-  function analyse(m){
-    var keys=['h','d','a'];
-    var best={}, book={};
-    keys.forEach(function(k){
-      if(m.b3[k] >= m.jc[k]){ best[k]=m.b3[k]; book[k]='b3'; }
-      else { best[k]=m.jc[k]; book[k]='jc'; }
-    });
-    var inv = 1/best.h + 1/best.d + 1/best.a;
-    var payout = 1/inv;                 // >1 即套利
-    var profitPct = (payout - 1) * 100;
-    return { best:best, book:book, inv:inv, payout:payout, profitPct:profitPct, isArb: inv < 1 };
+  function inp(i, path){
+    var v = getp(MATCHES[i], path);
+    var sign = flash[i+'|'+path]||0;
+    var cls = sign>0?' fl-up':(sign<0?' fl-down':'');
+    var arr = sign>0?'<span class="arr">▲</span>':(sign<0?'<span class="arr">▼</span>':'');
+    return '<div class="ocell'+cls+'">'+arr+'<input class="mono" type="text" inputmode="decimal" data-i="'+i+'" data-p="'+path+'" value="'+(+v).toFixed(2)+'"></div>';
   }
 
   function render(){
-    // 重渲染前记下正在编辑的输入框，渲染后还原焦点与光标，保证连续录入
     var act = document.activeElement;
-    var fk = (act && act.tagName==='INPUT' && act.dataset.k!==undefined)
-      ? { i:act.dataset.i, b:act.dataset.b, k:act.dataset.k, pos:(act.selectionStart) } : null;
-
-    var B = parseFloat(bankrollEl.value) || 0;
+    var fk = (act && act.tagName==='INPUT' && act.dataset.p!==undefined)
+      ? { i:act.dataset.i, p:act.dataset.p, pos:act.selectionStart } : null;
+    var B = parseFloat(bankrollEl.value)||0;
     grid.innerHTML = '';
     var oppCount=0, bestPct=-Infinity, totalProfit=0;
 
-    matches.forEach(function(m, idx){
-      var a = analyse(m);
-      if(a.isArb){ oppCount++; bestPct=Math.max(bestPct, a.profitPct); totalProfit += B*(a.payout-1); }
+    MATCHES.forEach(function(m, i){
+      var hs = hedges(m);
+      var best = hs.length ? hs[0] : null;
+      var isArb = best && best.payout>1;
+      if(isArb){ oppCount++; bestPct=Math.max(bestPct,best.profitPct); totalProfit += B*(best.payout-1); }
+      var Hf = m.jc.hcp.line;
 
       var card = document.createElement('div');
-      card.className = 'card' + (a.isArb ? ' arb' : '');
+      card.className = 'card'+(isArb?' arb':'');
 
-      var rowLbl = { h: m.home+' 胜', d:'平局', a: m.away+' 胜' };
-      var keys = ['h','d','a'];
+      // 竞彩 6 SP
+      var jcTbl =
+        '<table class="ot">'
+        + '<tr><td class="rl">不让球</td><td>'+inpL(i,'jc.spf.w','主胜')+'</td><td>'+inpL(i,'jc.spf.d','平')+'</td><td>'+inpL(i,'jc.spf.l','客胜')+'</td></tr>'
+        + '<tr><td class="rl">让球 主'+sgl(Hf)+'</td><td>'+inpL(i,'jc.hcp.w','让胜')+'</td><td>'+inpL(i,'jc.hcp.d','让平')+'</td><td>'+inpL(i,'jc.hcp.l','让负')+'</td></tr>'
+        + '</table>';
 
-      // 赔率表
-      var rows = keys.map(function(k){
-        var jcBest = a.book[k]==='jc', b3Best = a.book[k]==='b3';
-        return ''
-          + '<tr>'
-          + '<td class="lbl">'+rowLbl[k]+'</td>'
-          + '<td class="oc'+(jcBest?' best':'')+'">'
-          +   (jcBest?'<span class="pick">下注</span>':'')
-          +   '<input class="mono" type="text" inputmode="decimal" data-i="'+idx+'" data-b="jc" data-k="'+k+'" value="'+m.jc[k].toFixed(2)+'">'
-          + '</td>'
-          + '<td class="oc pad'+(b3Best?' best':'')+'">'
-          +   (b3Best?'<span class="pick">下注</span>':'')
-          +   '<input class="mono" type="text" inputmode="decimal" data-i="'+idx+'" data-b="b3" data-k="'+k+'" value="'+m.b3[k].toFixed(2)+'">'
-          + '</td>'
-          + '</tr>';
+      // bet365 亚盘梯子（逐线竖排，每行 主/客 两侧）
+      var ahTbl = '<table class="ot">'+ m.b3.ah.map(function(a,ai){
+        return '<tr><td class="rl">盘口 '+Math.abs(a.line)+'</td>'
+             + '<td>'+inpL(i,'b3.ah.'+ai+'.home','主'+sgl(a.line))+'</td>'
+             + '<td>'+inpL(i,'b3.ah.'+ai+'.away','客'+sgl(-a.line))+'</td></tr>';
+      }).join('') + '</table>';
+
+      // 对冲组合：所有套利 + 至多补到 3 条（不足用最接近的无套利参考）
+      var arbs = hs.filter(function(h){return h.payout>1;});
+      var show = arbs.slice(0,4);
+      if(show.length < 3) show = show.concat(hs.filter(function(h){return h.payout<=1;}).slice(0, 3-show.length));
+      var hgHtml = show.map(function(h){
+        var arb = h.payout>1;
+        var ret = B*h.payout, prof = ret-B;
+        var legHtml = h.legs.map(function(g){
+          var stake = B*(1/g.odds)/h.inv;
+          return '<div class="leg"><i class="chip '+g.book+'">'+(g.book==='jc'?'竞彩':'365')+'</i>'
+               + g.label.replace('竞彩 ','').replace('bet365 ','')+' @'+(+g.odds).toFixed(2)
+               + '<span class="stk">投<b>¥'+fmt(stake)+'</b></span></div>';
+        }).join('');
+        return '<div class="hg'+(arb?' arb':'')+'">'
+          + '<div class="hg-top"><span class="hg-ret'+(arb?' arb':'')+'">返还 '+(h.payout*100).toFixed(2)+'%</span>'
+          + '<span class="hg-prof '+(arb?'arb':'neg')+'">'+(prof>=0?'+¥'+fmt(prof):'−¥'+fmt(-prof))+' ('+(h.profitPct>=0?'+':'')+h.profitPct.toFixed(2)+'%)</span></div>'
+          + '<div class="hg-legs">'+legHtml+'</div>'
+          + '<div class="hg-foot">任意比分保底回收 <b>¥'+fmt(ret)+'</b></div>'
+          + '</div>';
       }).join('');
 
-      // 对冲方案
-      var planRows = keys.map(function(k){
-        var stake = a.isArb ? B*(1/a.best[k])/a.inv : B*(1/a.best[k])/a.inv;
-        var chip = a.book[k]==='jc' ? '<span class="chip jc">竞彩</span>' : '<span class="chip b3">bet365</span>';
-        return '<div class="plan-row"><span class="k">'+rowLbl[k]+' @'+a.best[k].toFixed(2)+chip+'</span>'
-             + '<span class="stake">投 <b>¥'+fmt(stake)+'</b></span></div>';
-      }).join('');
-
-      var ret = B * a.payout;
-      var prof = ret - B;
-      var jm = bookMargin(m.jc), bm = bookMargin(m.b3);
-
-      card.innerHTML = ''
-        + '<div class="card-h">'
-        +   '<div class="meta"><span>'+m.league+'</span><span>'+m.time+'</span></div>'
-        +   '<div class="teams">'
-        +     '<span class="t">'+m.home+'</span><span class="vs">VS</span><span class="t">'+m.away+'</span>'
-        +   '</div>'
+      card.innerHTML =
+          '<div class="card-h">'
+        +   '<div class="meta"><span>'+m.league+'</span><span>'+m.time+' 北京</span></div>'
+        +   '<div class="teams"><span class="t">'+m.home+'</span><span class="vs">VS</span><span class="t">'+m.away+'</span></div>'
+        +   '<div class="sub"><span class="hcap">竞彩让球：主队 '+sgl(Hf)+'</span>'
+        +     '<span class="badge '+(isArb?'yes':'no')+'">'+(isArb?'套利 +'+best.profitPct.toFixed(2)+'%':'无套利 '+(best?best.profitPct.toFixed(2)+'%':'—'))+'</span></div>'
         + '</div>'
-        + '<table class="odds">'
-        +   '<thead><tr><th class="lbl">结果</th><th>竞彩 SP</th><th class="pad">bet365</th></tr></thead>'
-        +   '<tbody>'+rows+'</tbody>'
-        + '</table>'
-        + '<div class="plan'+(a.isArb?'':' dim')+'">'
-        +   '<div class="meta" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'
-        +     '<span style="font-size:11px;color:#7f8da0">对冲下注方案（本金 ¥'+fmt(B)+'）</span>'
-        +     '<span class="badge '+(a.isArb?'yes':'no')+'">'+(a.isArb?'套利机会 +'+a.profitPct.toFixed(2)+'%':'无套利 '+a.profitPct.toFixed(2)+'%')+'</span>'
-        +   '</div>'
-        +   planRows
-        +   '<div class="plan-sum">'
-        +     '<span class="lab">任意结果保底回收 ¥'+fmt(ret)+' · 锁定盈亏</span>'
-        +     '<span class="big '+(a.isArb?'green':'red')+'">'+(prof>=0?'+':'−')+'¥'+fmt(Math.abs(prof))+'<span class="pct">'+(a.profitPct>=0?'+':'')+a.profitPct.toFixed(2)+'%</span></span>'
-        +   '</div>'
-        +   '<div class="booklines">'
-        +     '<span>竞彩返还 <b>'+jm.payout.toFixed(1)+'%</b></span>'
-        +     '<span>bet365返还 <b>'+bm.payout.toFixed(1)+'%</b></span>'
-        +     '<span>对冲返还 <b style="color:'+(a.isArb?'#3ddca0':'#9aa6b6')+'">'+(a.payout*100).toFixed(1)+'%</b></span>'
-        +   '</div>'
-        + '</div>';
+        + '<div class="mkt"><div class="mkt-h"><span class="bk jc">竞彩</span><span>胜平负 + 让球（6 个 SP）</span></div>'+jcTbl+'</div>'
+        + '<div class="mkt"><div class="mkt-h"><span class="bk b3">bet365</span><span>欧赔 + 亚盘梯子</span></div>'
+        +   '<div class="x2">欧赔 <b>主 '+m.b3.x2.h.toFixed(2)+'</b> · <b>平 '+m.b3.x2.d.toFixed(2)+'</b> · <b>客 '+m.b3.x2.a.toFixed(2)+'</b><em>实时</em></div>'
+        +   ahTbl+'</div>'
+        + '<div class="hedges"><div class="hh"><span>对冲组合（自动枚举互补腿）</span><span>本金 ¥'+fmt(B)+'/场</span></div>'+hgHtml+'</div>';
 
       grid.appendChild(card);
     });
 
-    document.getElementById('sumOpp').textContent = oppCount + ' / ' + matches.length;
-    document.getElementById('sumOpp').className = 'val ' + (oppCount>0?'green':'gray');
-    document.getElementById('sumBest').textContent = oppCount>0 ? ('+'+bestPct.toFixed(2)+'%') : '—';
-    document.getElementById('sumBest').className = 'val ' + (oppCount>0?'green':'gray');
-    document.getElementById('sumProfit').textContent = (totalProfit>=0?'+¥':'−¥') + fmt(Math.abs(totalProfit));
-    document.getElementById('sumProfit').className = 'val ' + (totalProfit>0?'green':'gray');
+    document.getElementById('sumOpp').textContent = oppCount+' / '+MATCHES.length;
+    document.getElementById('sumOpp').className = 'val '+(oppCount>0?'green':'gray');
+    document.getElementById('sumBest').textContent = oppCount>0?('+'+bestPct.toFixed(2)+'%'):'—';
+    document.getElementById('sumBest').className = 'val '+(oppCount>0?'green':'gray');
+    document.getElementById('sumProfit').textContent = (totalProfit>=0?'+¥':'−¥')+fmt(Math.abs(totalProfit));
+    document.getElementById('sumProfit').className = 'val '+(totalProfit>0?'green':'gray');
 
     if(fk){
-      var sel = grid.querySelector('input[data-i="'+fk.i+'"][data-b="'+fk.b+'"][data-k="'+fk.k+'"]');
-      if(sel){ sel.focus(); if(fk.pos!=null){ try{ sel.setSelectionRange(fk.pos, fk.pos); }catch(e){} } }
+      var sel = grid.querySelector('input[data-i="'+fk.i+'"][data-p="'+fk.p+'"]');
+      if(sel){ sel.focus(); if(fk.pos!=null){ try{ sel.setSelectionRange(fk.pos,fk.pos); }catch(e){} } }
     }
+    flash = {};
+  }
+  // 带小标签的输入
+  function inpL(i,path,label){
+    var html = inp(i,path);
+    return html.replace('</div>', '<small>'+label+'</small></div>');
   }
 
-  // 赔率编辑 → 实时重算（用事件委托，避免重渲染丢焦点时频繁重建）
+  // 赔率编辑 → 实时重算
   grid.addEventListener('input', function(e){
-    var t = e.target;
-    if(t.tagName!=='INPUT' || t.dataset.k===undefined) return;
-    var v = parseFloat(t.value);
-    if(isNaN(v) || v<=0) return;
-    matches[+t.dataset.i][t.dataset.b][t.dataset.k] = v;
+    var t=e.target; if(t.tagName!=='INPUT'||t.dataset.p===undefined) return;
+    var v=parseFloat(t.value); if(isNaN(v)||v<=0) return;
+    setp(MATCHES[+t.dataset.i], t.dataset.p, v);
     render();
   });
   bankrollEl.addEventListener('input', render);
 
-  document.getElementById('addBtn').addEventListener('click', function(){
-    matches.push({ league:"手动录入", time:"—", home:"主队", away:"客队",
-      jc:{h:2.00,d:3.30,a:3.50}, b3:{h:2.00,d:3.30,a:3.50} });
-    render();
-    window.scrollTo({ top: document.body.scrollHeight, behavior:'smooth' });
-  });
+  // ===== 每30秒模拟盘口跳动 + 倒计时 =====
+  var REFRESH=30, remain=REFRESH, paused=false;
+  var cdEl=document.getElementById('countdown'), pbar=document.getElementById('pbar'), pauseBtn=document.getElementById('pauseBtn');
+  function nudge(cur,base){ var v=cur+(Math.random()-0.5)*0.024*cur+(base-cur)*0.18; return Math.max(1.02, Math.round(v*100)/100); }
+  function oddPaths(m,i){
+    var ps=['jc.spf.w','jc.spf.d','jc.spf.l','jc.hcp.w','jc.hcp.d','jc.hcp.l'];
+    m.b3.ah.forEach(function(a,ai){ ps.push('b3.ah.'+ai+'.home'); ps.push('b3.ah.'+ai+'.away'); });
+    return ps;
+  }
+  function refreshOdds(){
+    var act=document.activeElement;
+    if(act&&act.tagName==='INPUT'&&act.dataset.p!==undefined) return false;  // 正在手改则本轮跳过
+    flash={};
+    MATCHES.forEach(function(m,i){
+      oddPaths(m,i).forEach(function(p){
+        var old=getp(m,p), nv=nudge(old, getp(BASE[i],p));
+        setp(m,p,nv);
+        flash[i+'|'+p] = nv>old?1:(nv<old?-1:0);
+      });
+    });
+    return true;
+  }
+  function paintCD(){ cdEl.textContent=paused?'已暂停':remain+'s'; cdEl.className='val '+(paused?'gray':'green');
+    if(pbar) pbar.style.transform='scaleX('+(paused?0:remain/REFRESH)+')'; }
+  setInterval(function(){ if(paused) return; remain--;
+    if(remain<=0){ remain=REFRESH; if(refreshOdds()) render(); } paintCD(); }, 1000);
+  pauseBtn.addEventListener('click', function(){ paused=!paused;
+    pauseBtn.textContent=paused?'▶ 继续':'⏸ 暂停'; paintCD(); });
 
-  render();
+  render(); paintCD();
 })();
 </script>
 </body>
