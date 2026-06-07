@@ -153,6 +153,18 @@
   .leg .stk b { color:#fff; }
   .hg-foot { font-size:10.5px; color:#6b7787; margin-top:6px; }
   .hg-foot b { color:#9aa6b6; }
+  .hg.arb .hg-foot { color:#8aa; } .hg.arb .hg-foot b { color:#3ddca0; }
+  .hg-bet { display:flex; flex-direction:column; gap:5px; margin:3px 0 5px; }
+  .betline { font-size:12px; color:#cad4e0; display:flex; align-items:flex-start; gap:6px; line-height:1.45; }
+  .betline .step { font-weight:800; color:#7f8da0; flex:none; }
+  .betline .chip, .betline > i { flex:none; }
+  .betline b { color:#fff; }
+  .chip { font-size:9px; font-weight:800; padding:1px 5px; border-radius:4px; }
+  .chip.jc { background:rgba(224,162,60,.16); color:#e7b964; }
+  .chip.b3 { background:rgba(74,144,217,.16); color:#79b3ec; }
+  .betsub { font-size:11px; color:#9aa6b6; margin:-1px 0 2px 22px; line-height:1.6; }
+  .betsub b { color:#dbe4ef; }
+  .hg.arb .betsub b { color:#bde8d4; }
 
   .foot { max-width:1280px; margin:24px auto 0; padding:0 16px; font-size:11.5px; color:#5f6b7a; line-height:1.7; }
   .foot strong { color:#8b97a8; }
@@ -216,32 +228,29 @@
     MATCHES.forEach(function(b,j){
       if(j===idx) return;
       if(b.ts && nowMs>=b.ts) return;                 // 已开赛不能做串关搭档
-      c.push({ j:j, dan:(b.dan!==false)?1:0, margin:spfMargin(b), label:b.home+'vs'+b.away });
+      c.push({ j:j, dan:(b.dan!==false)?1:0, margin:spfMargin(b), label:b.home+' vs '+b.away, spf:b.jc.spf });
     });
     if(!c.length) return null;
     c.sort(function(a,b){ return (a.dan-b.dan) || (a.margin-b.margin); });  // 优先非单关搭档, 再低水位
     return c[0];
   }
-  function buildHedges(mt, jcDiv, partnerLabel){
+  function buildHedges(mt, jcDiv, partner){
     var Hf = mt.jc.hcp.line, ahByT = {};
     mt.b3.ah.forEach(function(x){ ahByT[x.T]=x; });
     var L = [];
-    function jcLeg(label, raw){ var o={book:'jc', label:label, odds:(jcDiv>1?Math.round(raw/jcDiv*100)/100:raw)};
-      if(jcDiv>1){ o.raw=raw; o.parlay=partnerLabel; } return o; }
+    function jcLeg(kind, raw){ var o={book:'jc', kind:kind, raw:raw, odds:(jcDiv>1?Math.round(raw/jcDiv*100)/100:raw)};
+      if(jcDiv>1){ o.parlay=true; o.partner=partner; } return o; }
+    function b3Leg(side, line, odds){ return {book:'b3', side:side, line:line, odds:odds}; }
     function add(legs){ var inv=legs.reduce(function(s,x){return s+1/x.odds;},0);
       L.push({legs:legs, inv:inv, payout:1/inv, profitPct:(1/inv-1)*100, parlay:jcDiv>1}); }
-    [{lab:'主胜', T:1, odds:mt.jc.spf.w},
-     {lab:'让胜(主'+sgl(Hf)+')', T:1-Hf, odds:mt.jc.hcp.w}].forEach(function(g){
-      var ah=ahByT[g.T]; if(!ah) return;
-      add([ jcLeg('竞彩 '+g.lab,g.odds), {book:'b3',label:'bet365 客'+sgl(-ah.line),odds:ah.away} ]); });
-    [{lab:'客胜', T:0, odds:mt.jc.spf.l},
-     {lab:'让负(主'+sgl(Hf)+')', T:-Hf, odds:mt.jc.hcp.l}].forEach(function(g){
-      var ah=ahByT[g.T]; if(!ah) return;
-      add([ jcLeg('竞彩 '+g.lab,g.odds), {book:'b3',label:'bet365 主'+sgl(ah.line),odds:ah.home} ]); });
-    function drawC(lab,odds,Tlo){ var hi=ahByT[Tlo+1], lo=ahByT[Tlo]; if(!hi||!lo) return;
-      add([ jcLeg(lab,odds), {book:'b3',label:'bet365 主'+sgl(hi.line),odds:hi.home}, {book:'b3',label:'bet365 客'+sgl(-lo.line),odds:lo.away} ]); }
-    drawC('竞彩 平', mt.jc.spf.d, 0);
-    drawC('竞彩 让平(主'+sgl(Hf)+')', mt.jc.hcp.d, -Hf);
+    if(ahByT[1])    add([ jcLeg('主胜', mt.jc.spf.w), b3Leg('away', -ahByT[1].line, ahByT[1].away) ]);
+    if(ahByT[1-Hf]) add([ jcLeg('让胜', mt.jc.hcp.w), b3Leg('away', -ahByT[1-Hf].line, ahByT[1-Hf].away) ]);
+    if(ahByT[0])    add([ jcLeg('客胜', mt.jc.spf.l), b3Leg('home', ahByT[0].line, ahByT[0].home) ]);
+    if(ahByT[-Hf])  add([ jcLeg('让负', mt.jc.hcp.l), b3Leg('home', ahByT[-Hf].line, ahByT[-Hf].home) ]);
+    function drawC(kind, odds, Tlo){ var hi=ahByT[Tlo+1], lo=ahByT[Tlo]; if(!hi||!lo) return;
+      add([ jcLeg(kind, odds), b3Leg('home', hi.line, hi.home), b3Leg('away', -lo.line, lo.away) ]); }
+    drawC('平', mt.jc.spf.d, 0);
+    drawC('让平', mt.jc.hcp.d, -Hf);
     L.sort(function(a,b){ return b.payout-a.payout; });
     return L;
   }
@@ -249,7 +258,7 @@
     if(m.dan!==false) return buildHedges(m, 1, null);   // 单关(含旧数据缺省)
     var p = bestPartner(idx, nowMs);                     // 非单关 → 串关
     if(!p) return [];
-    return buildHedges(m, p.margin, p.label);
+    return buildHedges(m, p.margin, p);
   }
 
   function inp(i, path, dis){
@@ -302,21 +311,48 @@
       } else if(m.dan===false && hs.length===0){
         hgInner = '<div class="started-note">非单关：暂无可搭档的未开赛比赛</div>';
       } else {
-        var show = hs;   // 显示全部组合（已按返还率降序，套利在前）；非单关=6种竞彩结果对应的串关组合
+        var show = hs;   // 显示全部组合（按返还率降序，套利在前）
+        function jcText(g){
+          var k=g.kind;
+          if(k==='主胜') return m.home+' 胜';
+          if(k==='客胜') return m.away+' 胜';
+          if(k==='平')   return '平局';
+          if(k==='让胜') return m.home+'(让'+sgl(Hf)+') 胜';
+          if(k==='让负') return m.home+'(让'+sgl(Hf)+') 负';
+          if(k==='让平') return m.home+'(让'+sgl(Hf)+') 平';
+          return k;
+        }
+        function b3Text(g){ return (g.side==='home'?m.home:m.away)+' '+sgl(g.line); }
         hgInner = show.map(function(h){
-          var arb = h.payout>1, ret = B*h.payout, prof = ret-B;
-          var legHtml = h.legs.map(function(g){
+          var arb = h.payout>1, ret = B*h.payout, prof = ret-B, step=0, lines='';
+          h.legs.forEach(function(g){
+            step++;
             var stake = B*(1/g.odds)/h.inv;
-            var lab = g.label.replace('竞彩 ','').replace('bet365 ','');
-            var extra = g.parlay ? ' <span class="parlaytag">2串1·搭'+g.parlay+'·原@'+(+g.raw).toFixed(2)+'</span>' : '';
-            return '<div class="leg"><i class="chip '+g.book+'">'+(g.book==='jc'?'竞彩':'365')+'</i>'+lab+' @'+(+g.odds).toFixed(2)+extra
-                 + '<span class="stk">投<b>¥'+fmt(stake)+'</b></span></div>';
-          }).join('');
+            if(g.book==='jc' && g.parlay){
+              lines += '<div class="betline"><span class="step">'+step+'</span><i class="chip jc">竞彩</i>'
+                     + '<span><b>2串1 · 复式共3注</b> · 投 <b>¥'+fmt(stake)+'</b></span></div>';
+              if(arb){
+                var mB=g.partner.margin, sp=g.partner.spf;
+                var parts=[['胜',sp.w],['平',sp.d],['负',sp.l]].map(function(pp){
+                  return pp[0]+'@'+pp[1].toFixed(2)+' <b>¥'+fmt(stake*(1/pp[1])/mB)+'</b>'; }).join('　');
+                lines += '<div class="betsub">主选 <b>'+jcText(g)+'</b> @'+(+g.raw).toFixed(2)
+                       + ' × 垫脚场 <b>'+g.partner.label+'</b>【胜/平/负 全包】<br>'+parts+'</div>';
+              } else {
+                lines += '<div class="betsub">主选 '+jcText(g)+' @'+(+g.raw).toFixed(2)+' × 垫脚 '+g.partner.label+'【全包】 · 等效@'+(+g.odds).toFixed(2)+'</div>';
+              }
+            } else if(g.book==='jc'){
+              lines += '<div class="betline"><span class="step">'+step+'</span><i class="chip jc">竞彩</i>'
+                     + '<span>'+jcText(g)+' @'+(+g.odds).toFixed(2)+' · 投 <b>¥'+fmt(stake)+'</b></span></div>';
+            } else {
+              lines += '<div class="betline"><span class="step">'+step+'</span><i class="chip b3">bet365</i>'
+                     + '<span>'+b3Text(g)+' @'+(+g.odds).toFixed(2)+' · 投 <b>¥'+fmt(stake)+'</b></span></div>';
+            }
+          });
           return '<div class="hg'+(arb?' arb':'')+'">'
             + '<div class="hg-top"><span class="hg-ret'+(arb?' arb':'')+'">返还 '+(h.payout*100).toFixed(2)+'%</span>'
             + '<span class="hg-prof '+(arb?'arb':'neg')+'">'+(prof>=0?'+¥'+fmt(prof):'−¥'+fmt(-prof))+' ('+(h.profitPct>=0?'+':'')+h.profitPct.toFixed(2)+'%)</span></div>'
-            + '<div class="hg-legs">'+legHtml+'</div>'
-            + '<div class="hg-foot">任意比分保底回收 <b>¥'+fmt(ret)+'</b></div></div>';
+            + '<div class="hg-bet">'+lines+'</div>'
+            + '<div class="hg-foot">无论比分 → 保底回收 <b>¥'+fmt(ret)+'</b>'+(arb?' · 稳赚 <b>¥'+fmt(prof)+'</b>':'')+'</div></div>';
         }).join('');
       }
       var hgTitle = started ? '已开赛' : (m.dan===false ? '对冲组合 · 2串1' : '对冲组合');
