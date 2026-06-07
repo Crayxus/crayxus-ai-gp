@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0d0810">
+<title>Crayxus AURA · AI 医美理疗机器人 · 技术演示</title>
+<meta name="description" content="AURA · AI 自适应医美理疗机器人:弹性传感 + AI 自适应理疗程序(EMS/手法),院内医美级。对比固定程序,看紧致度提升与舒适度。浏览器里真跑算法。">
+
+<!-- Favicons -->
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="shortcut icon" type="image/png" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
+<!-- Open Graph · 微信分享卡片(绝对地址 + 正方形) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Crayxus AI">
+<meta property="og:title" content="Crayxus AURA · AI 医美理疗机器人">
+<meta property="og:description" content="弹性传感 + AI 自适应理疗程序,院内医美级。对比固定程序,看紧致度提升与舒适度。浏览器里真跑算法。">
+<meta property="og:image" content="https://crayxus.com.au/share-thumb.jpg?v=aura1">
+<meta property="og:image:secure_url" content="https://crayxus.com.au/share-thumb.jpg?v=aura1">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="500">
+<meta property="og:image:height" content="500">
+<meta property="og:image:alt" content="Crayxus AI">
+<meta property="og:url" content="https://crayxus.com.au/aura.html">
+<meta property="og:locale" content="zh_CN">
+
+<!-- 微信内置浏览器 / 老版本兜底 -->
+<meta itemprop="image" content="https://crayxus.com.au/share-thumb.jpg?v=aura1">
+<meta name="image" content="https://crayxus.com.au/share-thumb.jpg?v=aura1">
+<link rel="image_src" href="https://crayxus.com.au/share-thumb.jpg?v=aura1">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Crayxus AURA · AI 医美理疗机器人">
+<meta name="twitter:description" content="AI 自适应理疗 vs 固定程序。">
+<meta name="twitter:image" content="https://crayxus.com.au/share-thumb.jpg?v=aura1">
+<style>
+  :root{
+    --bg:#0d0810; --card:rgba(30,16,28,.72); --line:rgba(255,93,143,.18); --line2:rgba(255,93,143,.10);
+    --rose:#ff5d8f; --rose2:#ff9ec0; --gold:#e0b070; --warn:#ff4d6d;
+    --txt:#fbeaf1; --dim:#c8a4b4; --mute:#8a6878;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  body{background-image:
+      radial-gradient(1100px 500px at 80% -10%,rgba(255,93,143,.12),transparent 60%),
+      radial-gradient(900px 500px at 0% 0%,rgba(224,176,112,.06),transparent 55%),
+      linear-gradient(rgba(255,93,143,.045) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(255,93,143,.045) 1px,transparent 1px);
+    background-size:auto,auto,42px 42px,42px 42px;background-attachment:fixed;min-height:100vh;}
+  .wrap{max-width:980px;margin:0 auto;padding:0 20px 90px;}
+  .share-cover{display:block;width:212px;height:212px;max-width:62%;object-fit:cover;margin:18px auto 2px;border-radius:16px;border:1px solid var(--line);box-shadow:0 0 24px rgba(255,93,143,.25);}
+
+  header{position:relative;overflow:hidden;border-bottom:1px solid var(--line);
+    background:linear-gradient(135deg,#160a12,#2a1020 60%,#1a0a14);padding:40px 20px 30px;}
+  header::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,93,143,.05) 0 1px,transparent 1px 3px);opacity:.5;pointer-events:none;}
+  header .inner{max-width:980px;margin:0 auto;position:relative;}
+  .kicker{font-size:11.5px;letter-spacing:4px;color:var(--rose);text-transform:uppercase;text-shadow:0 0 12px rgba(255,93,143,.5);}
+  header h1{font-size:25px;margin-top:10px;font-weight:800;letter-spacing:.5px;
+    background:linear-gradient(90deg,#fff,#ffc9dc 55%,#ff5d8f);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 40px rgba(255,93,143,.25);}
+  header p{margin-top:10px;color:var(--dim);font-size:14px;max-width:780px;}
+
+  .panel{position:relative;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-top:20px;backdrop-filter:blur(8px);box-shadow:0 18px 50px -30px rgba(255,93,143,.35);}
+  .panel::before{content:"";position:absolute;top:-1px;left:18px;width:46px;height:2px;background:var(--rose);box-shadow:0 0 12px var(--rose);border-radius:2px;}
+  .panel h2{font-size:15px;font-weight:700;letter-spacing:.5px;color:#ffe6ef;}
+  .panel .desc{font-size:13px;color:var(--mute);margin-top:5px;}
+  .phead{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
+  .status{font-size:11.5px;font-weight:600;color:var(--mute);border:1px solid var(--line);padding:4px 12px;border-radius:20px;}
+  .status.live{color:var(--rose);border-color:rgba(255,93,143,.5);box-shadow:0 0 14px rgba(255,93,143,.25);animation:pulse 1.1s infinite;}
+  .status.done{color:var(--rose2);border-color:rgba(255,93,143,.5);box-shadow:0 0 14px rgba(255,93,143,.2);}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+
+  .controls{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-top:14px;}
+  .ctl{display:flex;flex-direction:column;gap:5px;font-size:11px;color:var(--mute);letter-spacing:.5px;}
+  select{padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#1a0e16;color:var(--txt);}
+  button{padding:9px 20px;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;transition:.15s;letter-spacing:.5px;}
+  .btn-ghost{background:rgba(255,93,143,.06);border:1px solid var(--line);color:var(--dim);}
+  .btn-ghost:hover{border-color:var(--rose);color:var(--rose);}
+  .btn-go{background:linear-gradient(135deg,#ff5d8f,#e0b070);color:#1a0810;box-shadow:0 0 22px rgba(255,93,143,.45);}
+  .btn-go:disabled{background:#3a2430;color:#8a6878;box-shadow:none;cursor:default;}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;font-size:12.5px;color:var(--dim);}
+  .legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;box-shadow:0 0 8px currentColor;}
+
+  .tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:14px;}
+  .tile{position:relative;border:1px solid var(--line);border-radius:12px;padding:14px;background:linear-gradient(180deg,rgba(255,93,143,.05),rgba(30,16,28,.4));overflow:hidden;}
+  .tile::after{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--rose),transparent);opacity:.5;}
+  .tile .tn{font-size:10.5px;color:var(--mute);text-transform:uppercase;}
+  .tile .tv{font-size:22px;font-weight:800;margin-top:6px;color:#ffe6ef;text-shadow:0 0 16px rgba(255,93,143,.3);}
+  .tile .tu{font-size:12px;color:var(--mute);font-weight:600;text-shadow:none;}
+  .tile .sub{font-size:10.5px;color:var(--mute);margin-top:6px;}
+  .tile.gain{background:linear-gradient(180deg,rgba(255,93,143,.12),rgba(30,16,28,.4));border-color:rgba(255,93,143,.4);}
+  .tile.gain .tv{color:var(--rose);}
+  @media(max-width:780px){.tiles{grid-template-columns:repeat(3,1fr);}}
+  @media(max-width:480px){.tiles{grid-template-columns:repeat(2,1fr);}}
+
+  .dash{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px;}
+  @media(max-width:720px){.dash{grid-template-columns:1fr;}}
+  .sub-h{font-size:11px;font-weight:600;color:var(--rose);letter-spacing:.5px;margin-bottom:10px;text-transform:uppercase;}
+  .map{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+  .pt{aspect-ratio:1/1;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#1a0810;transition:background .5s;}
+  #curveCv{width:100%;height:150px;border:1px solid var(--line2);border-radius:10px;background:rgba(20,8,16,.5);}
+
+  .log{margin-top:6px;max-height:240px;overflow:auto;}
+  .logitem{display:flex;gap:11px;padding:9px 0;border-bottom:1px solid var(--line2);font-size:13.5px;color:var(--dim);}
+  .logitem:last-child{border-bottom:none;}
+  .logitem .ic{flex:none;width:22px;text-align:center;}
+  .logitem b{color:#ffe6ef;}
+  .note{font-size:12px;color:var(--mute);margin-top:14px;padding-top:14px;border-top:1px solid var(--line2);line-height:1.65;}
+  .disc{background:rgba(224,176,112,.08);border:1px solid rgba(224,176,112,.25);border-radius:12px;padding:14px 16px;margin-top:16px;font-size:12px;color:#d8b88e;line-height:1.7;}
+  .hl{color:var(--rose2);background:rgba(255,93,143,.08);padding:1px 5px;border-radius:4px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="inner">
+    <div class="kicker">公司三 · CRAYXUS AURA · AI MEDICAL-AESTHETIC THERAPY</div>
+    <h1>Crayxus AURA · AI 医美理疗机器人</h1>
+    <p>弹性传感 + <b style="color:var(--rose)">AI 自适应理疗程序</b>(EMS/手法/强度)+ 多点执行,<b>医美级 · 院内、专业人员操作</b>。下面对比<b>固定标准程序</b> vs <b style="color:var(--rose)">AI 自适应</b> 在一个理疗周期内的紧致度提升与舒适度,<b>真在浏览器里跑算法</b>。</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- 可见封面图:微信分享缩略图抓取源(绝对地址 · ≥200px) -->
+  <img class="share-cover" src="https://crayxus.com.au/share-thumb.jpg?v=aura1" alt="Crayxus AURA · 医美理疗">
+
+  <div class="panel">
+    <div class="phead"><h2>① 理疗周期 & 控制台</h2><span class="status" id="status">◇ 待启动</span></div>
+    <div class="desc">目标区域布置 12 个弹性采样点(抽象示意)。AI 看每点弹性 + 整体进展,逐次决策强度/手法/EMS/时长。</div>
+    <div class="controls">
+      <div class="ctl">疗程次数<select id="dSel"><option>6</option><option selected>8</option><option>12</option></select></div>
+      <button class="btn-ghost" id="regen">⟳ 换一位用户</button>
+      <button class="btn-go" id="run">▶ 启动 AI 理疗</button>
+    </div>
+    <div class="legend">
+      <span><i style="background:#7a4358;color:#7a4358"></i>偏松(低紧致)</span>
+      <span><i style="background:#c2607f;color:#c2607f"></i>改善中</span>
+      <span><i style="background:#ff5d8f;color:#ff5d8f"></i>紧致达标</span>
+    </div>
+  </div>
+
+  <div class="panel" id="kpiPanel" style="display:none">
+    <h2>② 周期效果对比</h2>
+    <div class="tiles" id="tiles"></div>
+  </div>
+
+  <div class="panel">
+    <h2>③ 实时理疗看板</h2>
+    <div class="dash">
+      <div><div class="sub-h">▍目标区域弹性图(12 采样点 · 紧致度)</div><div class="map" id="map"></div></div>
+      <div><div class="sub-h">▍紧致度提升曲线(AI 自适应 vs 固定)</div><canvas id="curveCv"></canvas></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>④ AI 理疗决策流</h2>
+    <div class="log" id="log"><div style="font-size:13px;color:var(--mute);padding:12px 0;">点击「启动 AI 理疗」后逐次显示。</div></div>
+    <div class="note">
+      原理:<b style="color:var(--rose)">弹性传感</b>(读各采样点紧致度)→ <b style="color:var(--rose)">AI 决策</b>(偏松点加强、近不适阈值退让、周期渐进加载)→ <b style="color:var(--rose)">多点执行</b>(EMS/手法)→ 追踪。与公司一/二的「传感—决策—执行」自适应引擎同源,换到医美理疗场景。<b>已签约医美机构</b>提供临床与落地。
+    </div>
+    <div class="disc">
+      ⚠ 合规与科学声明:本页为<b>技术原理与控制算法演示</b>,数值为<b>模型示意</b>,不代表真实疗效。设备对人体特定部位的"紧致/塑形"效果<b>需经临床验证</b>;相关功效宣传受《广告法》约束,涉及人体功效需取得<b>医疗器械注册</b>方可声称。本演示不作任何疗效承诺,定位医美级院内理疗、由专业人员操作。
+    </div>
+  </div>
+
+</div>
+
+<script>
+const POINTS=12, COMFORT=88;
+let D=8, pts=[], curveAI=[], curveFix=[];
+const rnd=(a,b)=>a+Math.random()*(b-a);
+function ptColor(v){ if(v>=78) return '#ff5d8f'; if(v>=62) return '#c2607f'; return '#7a4358'; }
+
+function gen(){ pts=[]; for(let i=0;i<POINTS;i++) pts.push(Math.round(rnd(40,60))); }
+
+function simulate(policy){
+  const f=pts.slice(); const curve=[]; let discomfort=0; const events=[];
+  for(let s=0;s<D;s++){
+    const avg=f.reduce((a,b)=>a+b,0)/POINTS; const ev=[]; const ramp=2+s*0.25;
+    for(let i=0;i<POINTS;i++){
+      let intensity;
+      if(policy==='fix'){ intensity=3.2; }
+      else { const deficit=Math.max(0,(72-f[i])/12); intensity=Math.min(4.5, ramp*0.6+deficit); if(f[i]>COMFORT-6) intensity*=0.5; }
+      const gain=Math.max(0, intensity*0.9*(1-(f[i]/100))-0.15);
+      f[i]=Math.min(100,f[i]+gain);
+      if(policy==='fix' && f[i]>COMFORT && intensity>2.5) discomfort++;
+      if(policy==='ai'  && f[i]>COMFORT && intensity>3.0) discomfort++;
+    }
+    const newAvg=f.reduce((a,b)=>a+b,0)/POINTS; curve.push(newAvg);
+    if(policy==='ai'){
+      const lagI=f.indexOf(Math.min(...f));
+      ev.push(['📈','第 '+(s+1)+' 次 · 紧致度 '+avg.toFixed(0)+' → '+newAvg.toFixed(0)+',按周期渐进加载']);
+      ev.push(['🎯','重点强化偏松点 #'+(lagI+1)+',接近舒适阈值的点自动退让防过度']);
+      events.push(ev);
+    }
+  }
+  const mean=f.reduce((a,b)=>a+b,0)/POINTS;
+  const sd=Math.sqrt(f.reduce((a,b)=>a+(b-mean)*(b-mean),0)/POINTS);
+  return { f, curve, discomfort, evenSd:sd, finalAvg:mean, events };
+}
+
+function renderMap(f){ document.getElementById('map').innerHTML=f.map(v=>`<div class="pt" style="background:${ptColor(v)}">${Math.round(v)}</div>`).join(''); }
+function drawCurve(){
+  const cv=document.getElementById('curveCv'); cv.width=cv.clientWidth||600; cv.height=150;
+  const ctx=cv.getContext('2d'),W=cv.width,H=cv.height,pad=24; ctx.clearRect(0,0,W,H);
+  const all=curveAI.concat(curveFix); if(all.length<2) return;
+  const mn=Math.min(...all)-3, mx=Math.max(...all)+3;
+  const X=i=>pad+i/(D-1)*(W-pad*2), Y=v=>H-pad-((v-mn)/((mx-mn)||1))*(H-pad*2);
+  ctx.strokeStyle='rgba(255,93,143,.10)'; ctx.lineWidth=1;
+  for(let g=0;g<=3;g++){const y=pad+g/3*(H-pad*2);ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(W-pad,y);ctx.stroke();}
+  const line=(arr,col,glow)=>{ctx.beginPath();arr.forEach((v,i)=>{i?ctx.lineTo(X(i),Y(v)):ctx.moveTo(X(i),Y(v))});if(glow){ctx.shadowColor=col;ctx.shadowBlur=8;}ctx.strokeStyle=col;ctx.lineWidth=2.5;ctx.stroke();ctx.shadowBlur=0;};
+  line(curveFix,'#8a6878',false); line(curveAI,'#ff5d8f',true);
+  ctx.fillStyle='#ff5d8f';ctx.font='11px sans-serif';ctx.fillText('AI 自适应',W-pad-72,pad+4);
+  ctx.fillStyle='#8a6878';ctx.fillText('固定程序',W-pad-72,pad+20);
+}
+
+let aiRes=null, fixRes=null;
+function reset(){
+  D=parseInt(document.getElementById('dSel').value);
+  gen(); aiRes=null; fixRes=null; curveAI=[]; curveFix=[];
+  renderMap(pts); drawCurve();
+  document.getElementById('status').textContent='◇ 待启动'; document.getElementById('status').className='status';
+  document.getElementById('kpiPanel').style.display='none';
+  document.getElementById('log').innerHTML='<div style="font-size:13px;color:var(--mute);padding:12px 0;">点击「启动 AI 理疗」后逐次显示。</div>';
+}
+function run(){
+  const btn=document.getElementById('run'), st=document.getElementById('status');
+  btn.disabled=true; btn.textContent='◆ 理疗中…'; st.textContent='● AI 理疗运行中…'; st.className='status live';
+  fixRes=simulate('fix'); aiRes=simulate('ai');
+  document.getElementById('log').innerHTML=''; let s=0;
+  const timer=setInterval(()=>{
+    curveAI=aiRes.curve.slice(0,s+1); curveFix=fixRes.curve.slice(0,s+1);
+    const frac=(s+1)/D;
+    renderMap(pts.map((v,i)=>v+(aiRes.f[i]-v)*frac));
+    drawCurve();
+    const logEl=document.getElementById('log');
+    aiRes.events[s].forEach(e=>{const div=document.createElement('div');div.className='logitem';div.innerHTML=`<div class="ic">${e[0]}</div><div>${e[1]}</div>`;logEl.appendChild(div);});
+    logEl.scrollTop=logEl.scrollHeight; s++;
+    if(s>=D){ clearInterval(timer); finish(); }
+  },620);
+}
+function finish(){
+  renderMap(aiRes.f);
+  const startAvg=pts.reduce((a,b)=>a+b,0)/POINTS;
+  const aiUp=Math.round((aiRes.finalAvg-startAvg)/startAvg*100);
+  const fixUp=Math.round((fixRes.finalAvg-startAvg)/startAvg*100);
+  const tile=(n,v,u,sub,gain)=>`<div class="tile${gain?' gain':''}"><div class="tn">${n}</div><div class="tv">${v}<span class="tu">${u}</span></div><div class="sub">${sub}</div></div>`;
+  document.getElementById('tiles').innerHTML=
+    tile('紧致度提升','+'+aiUp,'%','固定程序 +'+fixUp+'%',true)+
+    tile('周期末紧致度',Math.round(aiRes.finalAvg),'','起始 '+Math.round(startAvg))+
+    tile('区域均匀度',aiRes.evenSd.toFixed(1),'σ','固定 '+fixRes.evenSd.toFixed(1)+'σ',true)+
+    tile('过度/不适',aiRes.discomfort,'次','固定 '+fixRes.discomfort+' · 更安全',true)+
+    tile('达标采样点',aiRes.f.filter(v=>v>=78).length,'/12','固定 '+fixRes.f.filter(v=>v>=78).length+'/12');
+  document.getElementById('kpiPanel').style.display='block';
+  document.getElementById('status').textContent='● 已完成 '+D+' 次疗程'; document.getElementById('status').className='status done';
+  document.getElementById('run').disabled=false; document.getElementById('run').textContent='▶ 再跑一个周期';
+}
+document.getElementById('regen').onclick=reset;
+document.getElementById('dSel').onchange=reset;
+document.getElementById('run').onclick=run;
+window.addEventListener('resize',drawCurve);
+reset();
+</script>
+</body>
+</html>
