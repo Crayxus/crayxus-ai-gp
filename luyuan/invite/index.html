@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>陆园 · 江南水岸牡丹庄园 · 敬邀莅临</title>
+<meta name="description" content="陆园，江南水岸牡丹庄园，坐落嘉兴秀洲洪合，占地一百六十亩。江南第一牡丹园，二百余品种牡丹芍药竞相绽放——以花为本，以分享为怀，敬邀莅临。">
+
+<!-- Favicons (复用 luyuan 主站，修复右下角白图) -->
+<link rel="icon" type="image/png" sizes="32x32" href="../images/favicon.png">
+<link rel="shortcut icon" type="image/png" href="../images/favicon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png">
+<link rel="preload" as="font" type="font/woff" href="fonts/lyserif.woff?v=1" crossorigin>
+
+<!-- Open Graph · 微信分享卡片读取此组 (方图最稳) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="陆园 LUYUAN">
+<meta property="og:title" content="陆园 · 江南水岸牡丹庄园 · 敬邀莅临">
+<meta property="og:description" content="江南第一牡丹园，二百余品种牡丹芍药竞相绽放。以花为本，以分享为怀，敬邀莅临。">
+<meta property="og:image" content="https://crayxus.com.au/luyuan/invite/images/share.jpg?v=1">
+<meta property="og:image:secure_url" content="https://crayxus.com.au/luyuan/invite/images/share.jpg?v=1">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="800">
+<meta property="og:image:height" content="800">
+<meta property="og:image:alt" content="陆园 · 江南牡丹">
+<meta property="og:url" content="https://crayxus.com.au/luyuan/invite/">
+<meta property="og:locale" content="zh_CN">
+<meta itemprop="image" content="https://crayxus.com.au/luyuan/invite/images/share.jpg?v=1">
+<meta name="image" content="https://crayxus.com.au/luyuan/invite/images/share.jpg?v=1">
+<link rel="image_src" href="https://crayxus.com.au/luyuan/invite/images/share.jpg?v=1">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="陆园 · 江南水岸牡丹庄园 · 敬邀莅临">
+<meta name="twitter:image" content="https://crayxus.com.au/luyuan/invite/images/share.jpg?v=1">
+
+<style>
+  /* 自托管思源宋体子集 — 安卓/iOS 一致，无外链，国内可用 */
+  @font-face{
+    font-family:'LYSerif';
+    src:url('fonts/lyserif.woff?v=1') format('woff');
+    font-weight:300 700;font-style:normal;font-display:swap;
+  }
+  :root{
+    --bg:#f6f3ec;          /* 宣纸米 */
+    --bg2:#efebe1;
+    --ink:#24251f;         /* 墨 */
+    --muted:#736f63;
+    --line:#d8d2c4;
+    --green:#4a5a43;       /* 黛绿 */
+    --gold:#9c7c4f;        /* 古铜金 */
+    --gold-soft:#b59362;
+    --serif:"LYSerif","Songti SC","STSong","Noto Serif SC","Source Han Serif SC","SimSun","STZhongsong",serif;
+    --sans:-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Helvetica Neue",sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:var(--sans);line-height:1.85;font-weight:300;
+    -webkit-font-smoothing:antialiased;overflow-x:hidden;
+  }
+  img{display:block;width:100%;height:auto;}
+  .serif{font-family:var(--serif);}
+
+  /* ============ HERO ============ */
+  .hero{
+    position:relative;min-height:100svh;min-height:100vh;
+    display:flex;flex-direction:column;justify-content:center;align-items:center;
+    text-align:center;color:#fff;overflow:hidden;padding:0 28px;
+  }
+  .hero__bg{
+    position:absolute;inset:0;z-index:0;
+    background:url('images/hero.jpg') center/cover no-repeat;
+    transform:scale(1.08);animation:kenburns 18s ease-out forwards;
+  }
+  @keyframes kenburns{to{transform:scale(1.0);}}
+  .hero__scrim{
+    position:absolute;inset:0;z-index:1;
+    background:
+      linear-gradient(to bottom, rgba(20,24,18,.55) 0%, rgba(20,24,18,.18) 32%, rgba(20,24,18,.28) 62%, rgba(15,18,13,.72) 100%);
+  }
+  .hero__inner{position:relative;z-index:2;width:100%;max-width:680px;}
+  .seal{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:54px;height:54px;border:1px solid rgba(255,255,255,.7);
+    border-radius:3px;font-family:var(--serif);font-size:24px;letter-spacing:2px;
+    color:#fff;margin-bottom:30px;opacity:0;animation:fadeDown 1.2s .2s forwards;
+    background:rgba(156,124,79,.18);
+  }
+  .hero__title{
+    font-family:var(--serif);font-weight:500;
+    font-size:clamp(58px,20vw,104px);letter-spacing:.22em;
+    text-indent:.22em;line-height:1;margin-bottom:22px;
+    text-shadow:0 2px 30px rgba(0,0,0,.35);
+    opacity:0;animation:fadeUp 1.3s .45s forwards;
+  }
+  .hero__sub{
+    font-family:var(--serif);font-size:clamp(15px,4.4vw,20px);
+    letter-spacing:.34em;text-indent:.34em;font-weight:300;color:rgba(255,255,255,.92);
+    opacity:0;animation:fadeUp 1.3s .7s forwards;
+  }
+  .hero__rule{
+    width:46px;height:1px;background:rgba(255,255,255,.6);margin:30px auto;
+    opacity:0;animation:fadeIn 1.3s 1s forwards;
+  }
+  .hero__greet{
+    font-family:var(--serif);font-size:clamp(16px,4.6vw,21px);
+    letter-spacing:.1em;color:#fff;opacity:0;animation:fadeUp 1.3s 1.1s forwards;
+  }
+  .hero__greet b{font-weight:500;color:var(--gold-soft);padding:0 .15em;}
+  .hero__invite{
+    margin-top:10px;font-family:var(--serif);letter-spacing:.5em;text-indent:.5em;
+    font-size:clamp(14px,4vw,17px);color:rgba(255,255,255,.85);
+    opacity:0;animation:fadeUp 1.3s 1.3s forwards;
+  }
+  .scrolldown{
+    position:absolute;bottom:26px;left:50%;transform:translateX(-50%);z-index:2;
+    color:rgba(255,255,255,.8);font-size:11px;letter-spacing:.3em;text-align:center;
+    opacity:0;animation:fadeIn 1.5s 1.8s forwards;
+  }
+  .scrolldown span{display:block;font-size:18px;animation:bob 1.8s ease-in-out infinite;margin-top:4px;}
+  @keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(7px);}}
+
+  /* music btn */
+  .music{
+    position:fixed;top:16px;right:16px;z-index:50;
+    width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.4);
+    background:rgba(20,24,18,.32);backdrop-filter:blur(6px);
+    color:#fff;font-size:17px;cursor:pointer;display:none;
+    align-items:center;justify-content:center;transition:.3s;
+  }
+  .music.playing{animation:spin 6s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* ============ SECTIONS ============ */
+  section{padding:78px 26px;}
+  .wrap{max-width:720px;margin:0 auto;}
+  .eyebrow{
+    font-family:var(--serif);font-size:13px;letter-spacing:.4em;text-indent:.4em;
+    color:var(--gold);text-align:center;margin-bottom:14px;
+  }
+  .h2{
+    font-family:var(--serif);font-weight:500;text-align:center;
+    font-size:clamp(26px,7vw,38px);letter-spacing:.14em;text-indent:.14em;
+    line-height:1.35;margin-bottom:8px;
+  }
+  .h2-rule{width:38px;height:1px;background:var(--gold);margin:22px auto 34px;}
+  .lead{
+    font-family:var(--serif);text-align:center;color:var(--ink);
+    font-size:clamp(16px,4.6vw,19px);line-height:2.1;letter-spacing:.04em;
+  }
+  .body{
+    color:#46453d;font-size:15.5px;line-height:2.05;letter-spacing:.02em;
+    text-align:justify;
+  }
+  .body p+p{margin-top:18px;}
+
+  /* stats */
+  .stats{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
+    max-width:720px;margin:42px auto 0;text-align:center;
+  }
+  .stat .num{font-family:var(--serif);font-size:clamp(22px,6vw,30px);color:var(--green);letter-spacing:.02em;}
+  .stat .lab{font-size:11.5px;color:var(--muted);letter-spacing:.12em;margin-top:6px;}
+  @media(max-width:420px){.stats{gap:6px;}.stat .lab{letter-spacing:.04em;}}
+
+  /* figure */
+  figure{margin:0;}
+  .fig{
+    margin:0 -26px;overflow:hidden;
+  }
+  .fig img{transition:transform 1.4s ease;}
+  .fig.tall img{aspect-ratio:4/5;object-fit:cover;}
+  .fig.wide img{aspect-ratio:3/2;object-fit:cover;}
+  .cap{
+    text-align:center;font-family:var(--serif);font-size:13px;color:var(--muted);
+    letter-spacing:.18em;margin-top:14px;
+  }
+
+  /* 名品 list */
+  .varieties{
+    display:flex;flex-wrap:wrap;justify-content:center;gap:9px 0;margin:30px auto 6px;max-width:560px;
+  }
+  .varieties span{
+    font-family:var(--serif);font-size:14.5px;color:var(--ink);letter-spacing:.08em;
+    padding:0 16px;position:relative;
+  }
+  .varieties span:not(:last-child)::after{
+    content:"";position:absolute;right:0;top:50%;transform:translateY(-50%);
+    width:1px;height:11px;background:var(--line);
+  }
+  .vtag{display:block;text-align:center;font-size:12px;color:var(--gold);letter-spacing:.3em;text-indent:.3em;margin-bottom:4px;}
+
+  /* gallery */
+  .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:760px;margin:0 auto;}
+  .gallery img{aspect-ratio:1/1;object-fit:cover;}
+
+  /* invite / info */
+  .invite-sec{background:var(--green);color:#f2efe6;}
+  .invite-sec .eyebrow{color:var(--gold-soft);}
+  .invite-sec .h2{color:#fff;}
+  .invite-sec .h2-rule{background:var(--gold-soft);}
+  .invite-sec .lead{color:#ece8dc;}
+  .info{max-width:430px;margin:40px auto 0;}
+  .info .row{
+    display:flex;gap:16px;padding:18px 4px;border-top:1px solid rgba(255,255,255,.16);
+    align-items:flex-start;
+  }
+  .info .row:last-child{border-bottom:1px solid rgba(255,255,255,.16);}
+  .info .k{flex:0 0 64px;font-family:var(--serif);font-size:14px;letter-spacing:.2em;color:var(--gold-soft);padding-top:2px;}
+  .info .v{flex:1;font-size:14.5px;line-height:1.8;color:#f2efe6;}
+  .info .v small{color:#c9c4b4;font-size:12.5px;}
+  .actions{display:flex;gap:12px;max-width:430px;margin:30px auto 0;}
+  .btn{
+    flex:1;text-align:center;padding:15px 0;border-radius:2px;font-family:var(--serif);
+    font-size:15px;letter-spacing:.18em;text-indent:.18em;text-decoration:none;
+    transition:.25s;cursor:pointer;display:block;
+  }
+  .btn-gold{background:var(--gold-soft);color:#241b0e;}
+  .btn-gold:active{background:var(--gold);}
+  .btn-line{border:1px solid rgba(255,255,255,.45);color:#f2efe6;}
+  .btn-line:active{background:rgba(255,255,255,.1);}
+
+  /* footer */
+  .foot{text-align:center;padding:54px 26px 64px;background:var(--green);color:#cfcbbd;}
+  .foot .sign{font-family:var(--serif);font-size:clamp(20px,6vw,26px);letter-spacing:.3em;text-indent:.3em;color:#fff;margin-bottom:10px;}
+  .foot .date{font-size:12px;letter-spacing:.2em;color:#a9a596;}
+  .foot .mini{font-size:11px;letter-spacing:.15em;color:#8d8a7c;margin-top:26px;}
+
+  /* reveal */
+  .rv{opacity:0;transform:translateY(26px);transition:opacity 1.1s ease,transform 1.1s ease;}
+  .rv.in{opacity:1;transform:none;}
+  .fig.in img{transform:scale(1.0);}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:none;}}
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-16px);}to{opacity:1;transform:none;}}
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+</style>
+</head>
+<body>
+
+<!-- 背景音乐（如未放置 audio/guqin.mp3，按钮自动隐藏） -->
+<audio id="bgm" loop preload="none">
+  <source src="audio/guqin.mp3?v=1" type="audio/mpeg">
+</audio>
+<button class="music" id="musicBtn" aria-label="背景音乐">♪</button>
+
+<!-- ======= 封面 ======= -->
+<header class="hero">
+  <div class="hero__bg"></div>
+  <div class="hero__scrim"></div>
+  <div class="hero__inner">
+    <div class="seal serif">邀</div>
+    <h1 class="hero__title">陆园</h1>
+    <div class="hero__sub">江南 · 水岸牡丹庄园</div>
+    <div class="hero__rule"></div>
+    <div class="hero__greet serif">尊敬的 <b id="guestName">贵宾</b></div>
+    <div class="hero__invite serif">敬邀莅临</div>
+  </div>
+  <div class="scrolldown">轻触上滑<span>⌄</span></div>
+</header>
+
+<!-- ======= 引言 ======= -->
+<section>
+  <div class="wrap rv">
+    <p class="lead serif">
+      坐落嘉兴秀洲洪合，占地一百六十亩，<br>
+      居上海、杭州、苏州一小时经济圈。<br>
+      以花为本，以分享为怀 ——<br>
+      于此，得见江南四时之美。
+    </p>
+    <div class="stats">
+      <div class="stat"><div class="num serif">160<small style="font-size:14px">亩</small></div><div class="lab">水岸庄园</div></div>
+      <div class="stat"><div class="num serif">1000<small style="font-size:14px">+</small></div><div class="lab">植物品种</div></div>
+      <div class="stat"><div class="num serif">200<small style="font-size:14px">+</small></div><div class="lab">牡丹芍药</div></div>
+      <div class="stat"><div class="num serif">300<small style="font-size:14px">年</small></div><div class="lab">古石榴</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======= 庄园 ======= -->
+<figure class="fig wide rv"><img src="images/water.jpg" alt="陆园水景" loading="lazy"></figure>
+<section style="padding-top:54px;">
+  <div class="wrap rv">
+    <div class="eyebrow">缘 起</div>
+    <h2 class="h2 serif">一园江南</h2>
+    <div class="h2-rule"></div>
+    <div class="body">
+      <p>陆园，注册资金壹仟万元，占地一百六十亩，已陆续投入逾千万元，育有三百余年古石榴、各地名花、水生植物等一千余个品种。地处上海百公里经济圈、杭州湾经济圈与环太湖经济圈的叠加区，与沪杭甬苏共构一小时经济圈。</p>
+      <p>二〇一八年，陆园与浙江大学园林研究所携手，由浙大教授与设计专家共同规划，营造牡丹园、绣球园、梅林、香草园、果蔬采摘园 —— 凿水为镜，叠石为山，植花成境。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======= 牡丹园 ======= -->
+<figure class="fig tall rv"><img src="images/peony_a.jpg" alt="江南牡丹" loading="lazy"></figure>
+<section style="padding-top:54px;">
+  <div class="wrap rv">
+    <div class="eyebrow">主 园</div>
+    <h2 class="h2 serif">江南牡丹园</h2>
+    <div class="h2-rule"></div>
+    <div class="body">
+      <p>新建「江南牡丹园」，占地三十一亩，引种牡丹、芍药二百余个品种，与凉亭、景石、假山、水系、竹林浑然一体。花开时节，群花簇拥，雍容华贵，气势磅礴 —— 立志打造江南地区第一牡丹园。</p>
+    </div>
+    <div style="margin-top:32px;">
+      <span class="vtag">牡丹十大名品</span>
+      <div class="varieties">
+        <span>魏紫</span><span>赵粉</span><span>姚黄</span><span>二乔</span><span>洛阳红</span>
+      </div>
+      <div class="varieties" style="margin-top:0;">
+        <span>御衣黄</span><span>酒醉杨妃</span><span>青龙卧墨池</span><span>白雪塔</span><span>豆绿</span>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="wrap rv" style="max-width:760px;padding:0 26px;">
+  <div class="gallery">
+    <img src="images/peony_b.jpg" alt="" loading="lazy">
+    <img src="images/peony_c.jpg" alt="" loading="lazy">
+    <img src="images/peony_d.jpg" alt="" loading="lazy">
+    <img src="images/peony_e.jpg" alt="" loading="lazy">
+    <img src="images/peony_f.jpg" alt="" loading="lazy">
+    <img src="images/peony_a.jpg" alt="" loading="lazy">
+  </div>
+</div>
+
+<!-- ======= 樱花百合 ======= -->
+<figure class="fig wide rv" style="margin-top:54px;"><img src="images/lily_a.jpg" alt="百合" loading="lazy"></figure>
+<section style="padding-top:54px;">
+  <div class="wrap rv">
+    <div class="eyebrow">四 时</div>
+    <h2 class="h2 serif">樱云 · 百合</h2>
+    <div class="h2-rule"></div>
+    <div class="body">
+      <p>造园以花为本，引北美海棠、美国三红紫薇、北美萱草；尤以日本樱花为胜，引种十余，染井吉野、垂丝、红绯次第绽放，满树灿烂，远观似一片云霞。更有数十种百合，每至六七月间竞相开放，亭亭玉立，姿态雅致，美不胜收。</p>
+    </div>
+    <div class="gallery rv" style="margin-top:30px;">
+      <img src="images/lily_b.jpg" alt="" loading="lazy">
+      <img src="images/lily_c.jpg" alt="" loading="lazy">
+      <img src="images/rose.jpg" alt="" loading="lazy">
+      <img src="images/path1.jpg" alt="" loading="lazy">
+      <img src="images/path2.jpg" alt="" loading="lazy">
+      <img src="images/path3.jpg" alt="" loading="lazy">
+    </div>
+  </div>
+</section>
+
+<!-- ======= 邀约 ======= -->
+<section class="invite-sec">
+  <div class="wrap">
+    <div class="eyebrow rv">敬 邀</div>
+    <h2 class="h2 serif rv">共享生活 · 共享自然</h2>
+    <div class="h2-rule rv"></div>
+    <p class="lead serif rv">
+      陆园，以分享为精神，<br>期待与更多朋友，于花间相逢。
+    </p>
+    <div class="info rv">
+      <div class="row">
+        <div class="k">时间</div>
+        <div class="v">周二 至 周日<br><small>夏令时 8:00–17:30　冬令时 8:30–17:00　（周一闭园）</small></div>
+      </div>
+      <div class="row">
+        <div class="k">地址</div>
+        <div class="v">嘉兴市秀洲区洪合镇 · 陆园（西门入园）<br><small>近嘉兴高铁站 / 客运中心 / 常台高速</small></div>
+      </div>
+      <div class="row">
+        <div class="k">垂询</div>
+        <div class="v">0573 - 8809 8555</div>
+      </div>
+    </div>
+    <div class="actions rv">
+      <a class="btn btn-gold" href="tel:057388098555">电话确认莅临</a>
+      <a class="btn btn-line" id="navBtn" href="https://uri.amap.com/search?keyword=%E9%99%86%E5%9B%AD%E5%AE%B6%E5%BA%AD%E5%86%9C%E5%9C%BA%20%E5%98%89%E5%85%B4%E6%B4%AA%E5%90%88&src=luyuan&coordinate=gaode&callnative=1" target="_blank" rel="noopener">一键导航前往</a>
+    </div>
+  </div>
+</section>
+
+<!-- ======= 落款 ======= -->
+<footer class="foot">
+  <div class="sign serif">陆园 · 敬邀</div>
+  <div class="date serif" id="signDate">恭候　光临</div>
+  <div class="mini">LUYUAN · 嘉兴秀洲洪合　|　以花为本，以分享为怀</div>
+  <div class="mini" style="margin-top:10px;opacity:.45;font-size:10px;letter-spacing:.06em;">Music: Zuiyu Changwan (guqin) · CharlieHuang · CC BY-SA 3.0</div>
+</footer>
+
+<script>
+  // —— 个性化称呼：链接带 ?name=陆总 ——
+  (function(){
+    try{
+      var p = new URLSearchParams(location.search);
+      var n = p.get('name');
+      if(n){ n = n.trim().slice(0,16); if(n) document.getElementById('guestName').textContent = n; }
+      var d = p.get('date'); // 可选：?date=六月十六日
+      if(d){ document.getElementById('signDate').textContent = '恭候　' + d.trim().slice(0,20) + '　光临'; }
+      var nb = document.getElementById('navBtn');
+      if(nb){ nb.href = 'https://uri.amap.com/search?keyword=' + encodeURIComponent('陆园（西门） 嘉兴市秀洲区洪合镇') + '&src=luyuan&coordinate=gaode&callnative=1'; }
+    }catch(e){}
+  })();
+
+  // —— 滚动渐显 ——
+  var io = new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  },{threshold:0.16});
+  document.querySelectorAll('.rv,.fig').forEach(function(el){ io.observe(el); });
+
+  // —— 背景音乐（文件不存在则隐藏按钮）——
+  (function(){
+    var a = document.getElementById('bgm'), btn = document.getElementById('musicBtn');
+    var ok = true;
+    a.addEventListener('error', function(){ ok=false; btn.style.display='none'; });
+    // 探测文件是否可加载
+    a.load();
+    a.addEventListener('canplay', function(){ btn.style.display='flex'; });
+    var playing=false;
+    function toggle(){
+      if(!ok) return;
+      if(playing){ a.pause(); btn.classList.remove('playing'); playing=false; }
+      else{ a.play().then(function(){ btn.classList.add('playing'); playing=true; }).catch(function(){}); }
+    }
+    btn.addEventListener('click', toggle);
+    // 首次触摸自动起播一次（移动端需手势）
+    var started=false;
+    function firstTouch(){ if(started||!ok) return; started=true;
+      a.play().then(function(){ btn.classList.add('playing'); playing=true; }).catch(function(){});
+      document.removeEventListener('touchstart', firstTouch);
+      document.removeEventListener('click', firstTouch);
+    }
+    document.addEventListener('touchstart', firstTouch,{once:true});
+    document.addEventListener('click', firstTouch,{once:true});
+    // 微信内置浏览器自动起播
+    function wxPlay(){ if(!ok||started) return; started=true; a.play().then(function(){ btn.classList.add('playing'); playing=true; }).catch(function(){}); }
+    if(typeof WeixinJSBridge!=='undefined'){ try{ WeixinJSBridge.invoke('getNetworkType',{}, wxPlay); }catch(e){} }
+    else{ document.addEventListener('WeixinJSBridgeReady', function(){ try{ WeixinJSBridge.invoke('getNetworkType',{}, wxPlay); }catch(e){} }, false); }
+  })();
+</script>
+</body>
+</html>
