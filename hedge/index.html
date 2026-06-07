@@ -109,6 +109,8 @@
   .danchip.nodan { color:#e7b964; border-color:rgba(224,162,60,.35); background:rgba(224,162,60,.1); }
   .parlaytag { font-size:9px; color:#e0b15a; background:rgba(224,162,60,.1); padding:1px 5px; border-radius:5px; white-space:nowrap; }
   .started-note { font-size:11.5px; color:#7f8da0; padding:7px 2px; }
+  .meta .del { cursor:pointer; color:#5f6b7a; padding:0 3px; font-weight:700; }
+  .meta .del:active { color:#e06a6a; }
 
   .mkt { padding:10px 14px 4px; }
   .mkt + .mkt { border-top:1px solid rgba(255,255,255,.05); }
@@ -194,7 +196,7 @@
   </a>
 
 <script>
-/*DATA*/var MATCHES = [{"league":"国际友谊赛","time":"06-08 00:30","ts":1780849800000,"dan":false,"home":"丹麦","away":"乌克兰","jc":{"spf":{"w":1.84,"d":3.48,"l":3.63},"hcp":{"line":-1,"w":3.72,"d":3.75,"l":1.76}},"b3":{"x2":{"h":1.69,"d":3.75,"a":5},"ah":[{"T":2,"line":-1.5,"home":3.89,"away":1.27},{"T":1,"line":-0.5,"home":1.96,"away":1.87},{"T":0,"line":0.5,"home":1.28,"away":3.79}]}},{"league":"国际友谊赛","time":"06-08 02:00","ts":1780855200000,"dan":false,"home":"Kosovo","away":"Andorra","jc":{"spf":{"w":1.22,"d":4.8,"l":11.18},"hcp":{"line":-1,"w":1.95,"d":3.5,"l":3.35}},"b3":{"x2":{"h":1.18,"d":7,"a":16},"ah":[{"T":3,"line":-2.5,"home":3.93,"away":1.27},{"T":2,"line":-1.5,"home":2.04,"away":1.81},{"T":1,"line":-0.5,"home":1.31,"away":3.56}]}},{"league":"国际友谊赛","time":"06-08 02:45","ts":1780857900000,"dan":true,"home":"克罗地亚","away":"斯洛文尼亚","jc":{"spf":{"w":1.24,"d":4.75,"l":11},"hcp":{"line":-1,"w":1.91,"d":3.81,"l":3.37}},"b3":{"x2":{"h":1.42,"d":4.5,"a":7.5},"ah":[{"T":3,"line":-2.5,"home":3.93,"away":1.27},{"T":2,"line":-1.5,"home":2.04,"away":1.81},{"T":1,"line":-0.5,"home":1.31,"away":3.56}]}},{"league":"国际友谊赛","time":"06-08 03:00","ts":1780858800000,"dan":true,"home":"希腊","away":"意大利","jc":{"spf":{"w":1.83,"d":3.5,"l":3.6},"hcp":{"line":-1,"w":3.71,"d":4.03,"l":1.78}},"b3":{"x2":{"h":2.4,"d":3.25,"a":3},"ah":[{"T":2,"line":-1.5,"home":3.89,"away":1.27},{"T":1,"line":-0.5,"home":1.96,"away":1.87},{"T":0,"line":0.5,"home":1.28,"away":3.79}]}},{"league":"国际友谊赛","time":"06-08 03:00","ts":1780858800000,"dan":true,"home":"摩洛哥","away":"挪威","jc":{"spf":{"w":3.57,"d":3.79,"l":1.86},"hcp":{"line":1,"w":1.76,"d":3.7,"l":3.62}},"b3":{"x2":{"h":2.8,"d":3.35,"a":2.45},"ah":[{"T":1,"line":-0.5,"home":3.79,"away":1.28},{"T":0,"line":0.5,"home":1.87,"away":1.96},{"T":-1,"line":1.5,"home":1.27,"away":3.89}]}},{"league":"国际友谊赛","time":"06-08 04:00","ts":1780862400000,"dan":true,"home":"厄瓜多尔","away":"Guatemala","jc":{"spf":{"w":1.31,"d":4.91,"l":10.85},"hcp":{"line":-1,"w":2.36,"d":3.43,"l":3.35}},"b3":{"x2":{"h":1.17,"d":7,"a":15},"ah":[{"T":3,"line":-2.5,"home":3.93,"away":1.27},{"T":2,"line":-1.5,"home":2.04,"away":1.81},{"T":1,"line":-0.5,"home":1.31,"away":3.56}]}},{"league":"国际友谊赛","time":"06-08 07:00","ts":1780873200000,"dan":true,"home":"哥伦比亚","away":"Jordan","jc":{"spf":{"w":1.3,"d":5.3,"l":6.77},"hcp":{"line":-1,"w":1.89,"d":4.47,"l":3.01}},"b3":{"x2":{"h":1.19,"d":7,"a":13},"ah":[{"T":3,"line":-2.5,"home":3.42,"away":1.33},{"T":2,"line":-1.5,"home":1.99,"away":1.85},{"T":1,"line":-0.5,"home":1.37,"away":3.19},{"T":0,"line":0.5,"home":1.1,"away":7.29}]}}];/*ENDDATA*/
+/*DATA*/var MATCHES = [{"league":"国际友谊赛","time":"06-08 00:30","ts":1780849800000,"dan":false,"home":"丹麦","away":"乌克兰","jc":{"spf":{"w":1.83,"d":3.55,"l":3.62},"hcp":{"line":-1,"w":5.56,"d":3.69,"l":1.79}},"b3":{"x2":{"h":1.69,"d":3.75,"a":5},"ah":[{"T":2,"line":-1.5,"home":3.89,"away":1.27},{"T":1,"line":-0.5,"home":1.96,"away":1.87},{"T":0,"line":0.5,"home":1.28,"away":3.79}]}},{"league":"国际友谊赛","time":"06-08 02:00","ts":1780855200000,"dan":false,"home":"Kosovo","away":"Andorra","jc":{"spf":{"w":1.22,"d":5.43,"l":10.86},"hcp":{"line":-1,"w":1.94,"d":3.41,"l":3.4}},"b3":{"x2":{"h":1.18,"d":7,"a":16},"ah":[{"T":3,"line":-2.5,"home":3.93,"away":1.27},{"T":2,"line":-1.5,"home":2.04,"away":1.81},{"T":1,"line":-0.5,"home":1.31,"away":3.56}]}},{"league":"国际友谊赛","time":"06-08 02:45","ts":1780857900000,"dan":false,"home":"克罗地亚","away":"斯洛文尼亚","jc":{"spf":{"w":1.23,"d":4.75,"l":11.11},"hcp":{"line":-1,"w":1.91,"d":3.42,"l":3.39}},"b3":{"x2":{"h":1.42,"d":4.5,"a":7.5},"ah":[{"T":3,"line":-2.5,"home":3.93,"away":1.27},{"T":2,"line":-1.5,"home":2.04,"away":1.81},{"T":1,"line":-0.5,"home":1.31,"away":3.56}]}},{"league":"国际友谊赛","time":"06-08 03:00","ts":1780858800000,"dan":false,"home":"希腊","away":"意大利","jc":{"spf":{"w":1.85,"d":3.45,"l":3.53},"hcp":{"line":-1,"w":4.12,"d":3.73,"l":1.73}},"b3":{"x2":{"h":2.4,"d":3.25,"a":3},"ah":[{"T":2,"line":-1.5,"home":3.89,"away":1.27},{"T":1,"line":-0.5,"home":1.96,"away":1.87},{"T":0,"line":0.5,"home":1.28,"away":3.79}]}},{"league":"国际友谊赛","time":"06-08 03:00","ts":1780858800000,"dan":false,"home":"摩洛哥","away":"挪威","jc":{"spf":{"w":3.58,"d":3.84,"l":1.98},"hcp":{"line":1,"w":1.75,"d":3.79,"l":3.61}},"b3":{"x2":{"h":2.85,"d":3.4,"a":2.4},"ah":[{"T":1,"line":-0.5,"home":3.79,"away":1.28},{"T":0,"line":0.5,"home":1.87,"away":1.96},{"T":-1,"line":1.5,"home":1.27,"away":3.89}]}},{"league":"国际友谊赛","time":"06-08 04:00","ts":1780862400000,"dan":false,"home":"厄瓜多尔","away":"Guatemala","jc":{"spf":{"w":1.22,"d":4.74,"l":11.15},"hcp":{"line":-1,"w":1.89,"d":3.78,"l":3.66}},"b3":{"x2":{"h":1.17,"d":7,"a":15},"ah":[{"T":3,"line":-2.5,"home":3.93,"away":1.27},{"T":2,"line":-1.5,"home":2.04,"away":1.81},{"T":1,"line":-0.5,"home":1.31,"away":3.56}]}},{"league":"国际友谊赛","time":"06-08 07:00","ts":1780873200000,"dan":false,"home":"哥伦比亚","away":"Jordan","jc":{"spf":{"w":1.3,"d":5.31,"l":15.19},"hcp":{"line":-1,"w":1.86,"d":4.09,"l":2.99}},"b3":{"x2":{"h":1.19,"d":7,"a":13},"ah":[{"T":3,"line":-2.5,"home":3.42,"away":1.33},{"T":2,"line":-1.5,"home":1.99,"away":1.85},{"T":1,"line":-0.5,"home":1.37,"away":3.19},{"T":0,"line":0.5,"home":1.1,"away":7.29}]}}];/*ENDDATA*/
 
 (function(){
   var grid = document.getElementById('grid');
@@ -300,9 +302,7 @@
       } else if(m.dan===false && hs.length===0){
         hgInner = '<div class="started-note">非单关：暂无可搭档的未开赛比赛</div>';
       } else {
-        var arbs = hs.filter(function(h){return h.payout>1;});
-        var show = arbs.slice(0,4);
-        if(show.length<3) show = show.concat(hs.filter(function(h){return h.payout<=1;}).slice(0,3-show.length));
+        var show = hs;   // 显示全部组合（已按返还率降序，套利在前）；非单关=6种竞彩结果对应的串关组合
         hgInner = show.map(function(h){
           var arb = h.payout>1, ret = B*h.payout, prof = ret-B;
           var legHtml = h.legs.map(function(g){
@@ -327,7 +327,7 @@
 
       card.innerHTML =
           '<div class="card-h">'
-        +   '<div class="meta"><span>'+m.league+'</span><span>'+m.time+' 北京</span></div>'
+        +   '<div class="meta"><span>'+m.league+'</span><span>'+m.time+' 北京 <span class="del" data-del="'+i+'" title="从列表删除">✕</span></span></div>'
         +   '<div class="teams"><span class="t">'+m.home+'</span><span class="vs">VS</span><span class="t">'+m.away+'</span></div>'
         +   '<div class="sub"><span class="hcap">让球 主'+sgl(Hf)+'</span><span class="subr">'+danChip+rightBadge+'</span></div>'
         + '</div>'
@@ -367,11 +367,12 @@
   });
   bankrollEl.addEventListener('input', render);
 
-  // 点击"单关/非单关"徽章可切换(供现场按真实竞彩单关标记设置)
+  // 点击：✕删除该场 / 切换单关·非单关
   grid.addEventListener('click', function(e){
+    var del = e.target.closest ? e.target.closest('.del') : null;
+    if(del){ var di=+del.dataset.del; MATCHES.splice(di,1); BASE.splice(di,1); render(); return; }
     var t = e.target.closest ? e.target.closest('.danchip') : null;
-    if(!t) return;
-    var i=+t.dataset.i; MATCHES[i].dan = (MATCHES[i].dan===false); render();
+    if(t){ var i=+t.dataset.i; MATCHES[i].dan = (MATCHES[i].dan===false); render(); }
   });
 
   // ===== 每30秒模拟盘口跳动 + 倒计时；并实时检测开赛 =====

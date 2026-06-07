@@ -69,9 +69,13 @@ function injectArb(m, div){
   ].filter(s=>s.comp);
   let best=null;
   singles.forEach(s=>{ const eff=s.odds/div, pay=1/(1/eff+1/s.comp); if(!best||pay>best.pay) best={s,pay}; });
-  if(best && best.pay>0.965 && best.pay<1){
+  if(!best) return;
+  const isParlay = div>1;
+  const gate = isParlay ? 0.90 : 0.965;                 // 串关税重 → 放宽近套利门槛
+  const fire = best.pay>gate && best.pay<1 && (!isParlay || Math.random()<0.5);  // 串关约半数近套利场注入
+  if(fire){
     const target=1.012+Math.random()*0.023, newEff=1/(1/target - 1/best.s.comp), nv=r2(newEff*div);
-    if(nv>best.s.odds && nv<20) best.s.set(nv);
+    if(nv>best.s.odds && nv<25) best.s.set(nv);
   }
 }
 
@@ -111,7 +115,7 @@ function modelMatch(meta, comp, o){
 
   const d=new Date(meta.date), bj=new Date(d.getTime()+8*3600*1000), pad=n=>String(n).padStart(2,'0');
   const time=pad(bj.getUTCMonth()+1)+'-'+pad(bj.getUTCDate())+' '+pad(bj.getUTCHours())+':'+pad(bj.getUTCMinutes());
-  return { league:meta.label, time, ts:d.getTime(), dan:Math.random()<0.5,
+  return { league:meta.label, time, ts:d.getTime(), dan:false,   // 默认非单关(走2串1串关); 可在界面点徽章切单关
     home:cn(homeC.team.displayName), away:cn(awayC.team.displayName), jc, b3:{ x2, ah } };
 }
 
