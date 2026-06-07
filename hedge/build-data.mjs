@@ -58,6 +58,23 @@ const Mjc=1.105, Mb=1.045, r2=x=>Math.round(x*100)/100;
 const LADDER_T=[3,2,1,0,-1,-2];
 function jcNoise(){ let n=(Math.random()-0.5)*0.04; if(Math.random()<0.20) n+=0.05+Math.random()*0.09; return 1+n; }
 
+// 套利注入：临界场把对应竞彩热门腿轻抬至 101~103.5%。div=1 单关; div=搭档水位 时按串关(2串1)等效赔率注入
+function injectArb(m, div){
+  const ah=m.b3.ah, getAH=T=>ah.find(x=>x.T===T), Hf=m.jc.hcp.line;
+  const singles=[
+    {set:v=>m.jc.spf.w=v, odds:m.jc.spf.w, comp:(getAH(1)||{}).away},
+    {set:v=>m.jc.hcp.w=v, odds:m.jc.hcp.w, comp:(getAH(1-Hf)||{}).away},
+    {set:v=>m.jc.spf.l=v, odds:m.jc.spf.l, comp:(getAH(0)||{}).home},
+    {set:v=>m.jc.hcp.l=v, odds:m.jc.hcp.l, comp:(getAH(-Hf)||{}).home}
+  ].filter(s=>s.comp);
+  let best=null;
+  singles.forEach(s=>{ const eff=s.odds/div, pay=1/(1/eff+1/s.comp); if(!best||pay>best.pay) best={s,pay}; });
+  if(best && best.pay>0.965 && best.pay<1){
+    const target=1.012+Math.random()*0.023, newEff=1/(1/target - 1/best.s.comp), nv=r2(newEff*div);
+    if(nv>best.s.odds && nv<20) best.s.set(nv);
+  }
+}
+
 async function getJSON(url){
   try{ const r=await fetch(url,{headers:{'User-Agent':'Mozilla/5.0','Accept':'application/json'}}); if(!r.ok) return null; return await r.json(); }
   catch(e){ return null; }
@@ -92,24 +109,10 @@ function modelMatch(meta, comp, o){
     return { T, line:r2(0.5-T), home:r2(1/(ph*Mb)), away:r2(1/(pa*Mb)) };
   }).filter(x => x.home>=1.08 && x.away>=1.08 && x.home<=9 && x.away<=9);
 
-  // 套利注入：临界场次(最佳单腿对冲≥96.5%)把对应竞彩热门腿轻抬至 101~103.5%
-  const getAH=T=>ah.find(x=>x.T===T);
-  const singles=[
-    {set:v=>jc.spf.w=v, odds:jc.spf.w, comp:(getAH(1)||{}).away},
-    {set:v=>jc.hcp.w=v, odds:jc.hcp.w, comp:(getAH(1-Hf)||{}).away},
-    {set:v=>jc.spf.l=v, odds:jc.spf.l, comp:(getAH(0)||{}).home},
-    {set:v=>jc.hcp.l=v, odds:jc.hcp.l, comp:(getAH(-Hf)||{}).home}
-  ].filter(s=>s.comp);
-  let best=null;
-  singles.forEach(s=>{ const pay=1/(1/s.odds+1/s.comp); if(!best||pay>best.pay) best={s,pay}; });
-  if(best && best.pay>0.965 && best.pay<1){
-    const target=1.012+Math.random()*0.023, nv=r2(1/(1/target - 1/best.s.comp));
-    if(nv>best.s.odds && nv<15) best.s.set(nv);
-  }
-
   const d=new Date(meta.date), bj=new Date(d.getTime()+8*3600*1000), pad=n=>String(n).padStart(2,'0');
   const time=pad(bj.getUTCMonth()+1)+'-'+pad(bj.getUTCDate())+' '+pad(bj.getUTCHours())+':'+pad(bj.getUTCMinutes());
-  return { league:meta.label, time, home:cn(homeC.team.displayName), away:cn(awayC.team.displayName), jc, b3:{ x2, ah } };
+  return { league:meta.label, time, ts:d.getTime(), dan:Math.random()<0.5,
+    home:cn(homeC.team.displayName), away:cn(awayC.team.displayName), jc, b3:{ x2, ah } };
 }
 
 export async function buildMatches(){
@@ -132,6 +135,12 @@ export async function buildMatches(){
       if(mt){ picked.push(mt); seen.add(key); }
     }
   }
+  // 套利注入：单关按单场, 非单关按串关(搭档=其他场最低水位)
+  picked.forEach((m,i)=>{
+    let pm=Infinity;
+    picked.forEach((b,j)=>{ if(j===i) return; const mm=1/b.jc.spf.w+1/b.jc.spf.d+1/b.jc.spf.l; if(mm<pm) pm=mm; });
+    injectArb(m, m.dan ? 1 : (isFinite(pm)?pm:1));
+  });
   picked.sort((a,b)=>a.time<b.time?-1:1);
   return picked;
 }

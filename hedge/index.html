@@ -99,6 +99,16 @@
   .badge { font-size:11px; font-weight:700; padding:3px 9px; border-radius:20px; white-space:nowrap; }
   .badge.yes { background:rgba(40,192,138,.16); color:#3ddca0; border:1px solid rgba(40,192,138,.4); }
   .badge.no { background:rgba(255,255,255,.05); color:#8b97a8; border:1px solid rgba(255,255,255,.1); }
+  .badge.started { background:rgba(255,255,255,.06); color:#8b97a8; border:1px solid rgba(255,255,255,.12); }
+  .card.started { opacity:.42; filter:grayscale(.55); }
+  .card.started .ocell input { color:#7a8696; }
+  .ocell input:disabled { cursor:not-allowed; opacity:.7; }
+  .sub .subr { display:flex; gap:6px; align-items:center; }
+  .danchip { font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; cursor:pointer; border:1px solid; user-select:none; }
+  .danchip.dan { color:#7fd0a8; border-color:rgba(40,192,138,.35); background:rgba(40,192,138,.1); }
+  .danchip.nodan { color:#e7b964; border-color:rgba(224,162,60,.35); background:rgba(224,162,60,.1); }
+  .parlaytag { font-size:9px; color:#e0b15a; background:rgba(224,162,60,.1); padding:1px 5px; border-radius:5px; white-space:nowrap; }
+  .started-note { font-size:11.5px; color:#7f8da0; padding:7px 2px; }
 
   .mkt { padding:10px 14px 4px; }
   .mkt + .mkt { border-top:1px solid rgba(255,255,255,.05); }
@@ -184,7 +194,7 @@
   </a>
 
 <script>
-/*DATA*/var MATCHES = [{"league":"国际友谊赛","time":"06-07 21:00","home":"Kenya","away":"Lesotho","jc":{"spf":{"w":1.88,"d":3.49,"l":3.57},"hcp":{"line":-1,"w":3.69,"d":4.06,"l":2.13}},"b3":{"x2":{"h":1.77,"d":3.4,"a":5},"ah":[{"T":2,"line":-1.5,"home":3.89,"away":1.27},{"T":1,"line":-0.5,"home":1.96,"away":1.87},{"T":0,"line":0.5,"home":1.28,"away":3.79}]}},{"league":"国际友谊赛","time":"06-07 21:00","home":"Liechtenstein","away":"Cyprus","jc":{"spf":{"w":10.99,"d":4.86,"l":1.23},"hcp":{"line":1,"w":3.32,"d":3.52,"l":1.94}},"b3":{"x2":{"h":10,"d":5.5,"a":1.29},"ah":[{"T":0,"line":0.5,"home":3.56,"away":1.31},{"T":-1,"line":1.5,"home":1.81,"away":2.04},{"T":-2,"line":2.5,"home":1.27,"away":3.93}]}},{"league":"国际友谊赛","time":"06-08 00:30","home":"丹麦","away":"乌克兰","jc":{"spf":{"w":1.88,"d":3.5,"l":3.92},"hcp":{"line":-1,"w":3.65,"d":3.72,"l":1.74}},"b3":{"x2":{"h":1.71,"d":3.7,"a":4.8},"ah":[{"T":2,"line":-1.5,"home":3.89,"away":1.27},{"T":1,"line":-0.5,"home":1.96,"away":1.87},{"T":0,"line":0.5,"home":1.28,"away":3.79}]}},{"league":"国际友谊赛","time":"06-08 02:00","home":"Kosovo","away":"Andorra","jc":{"spf":{"w":1.25,"d":4.87,"l":10.93},"hcp":{"line":-1,"w":1.94,"d":3.45,"l":4.91}},"b3":{"x2":{"h":1.19,"d":6.5,"a":15},"ah":[{"T":3,"line":-2.5,"home":3.93,"away":1.27},{"T":2,"line":-1.5,"home":2.04,"away":1.81},{"T":1,"line":-0.5,"home":1.31,"away":3.56}]}},{"league":"国际友谊赛","time":"06-08 02:45","home":"克罗地亚","away":"斯洛文尼亚","jc":{"spf":{"w":1.24,"d":4.82,"l":11.9},"hcp":{"line":-1,"w":2.33,"d":3.81,"l":3.37}},"b3":{"x2":{"h":1.34,"d":4.9,"a":9.5},"ah":[{"T":3,"line":-2.5,"home":3.93,"away":1.27},{"T":2,"line":-1.5,"home":2.04,"away":1.81},{"T":1,"line":-0.5,"home":1.31,"away":3.56}]}},{"league":"国际友谊赛","time":"06-08 03:00","home":"希腊","away":"意大利","jc":{"spf":{"w":1.83,"d":3.5,"l":3.52},"hcp":{"line":-1,"w":4,"d":3.74,"l":1.76}},"b3":{"x2":{"h":2.15,"d":3.45,"a":3.3},"ah":[{"T":2,"line":-1.5,"home":3.89,"away":1.27},{"T":1,"line":-0.5,"home":1.96,"away":1.87},{"T":0,"line":0.5,"home":1.28,"away":3.79}]}},{"league":"国际友谊赛","time":"06-08 03:00","home":"摩洛哥","away":"挪威","jc":{"spf":{"w":3.76,"d":3.84,"l":1.88},"hcp":{"line":1,"w":1.74,"d":3.78,"l":3.7}},"b3":{"x2":{"h":3.05,"d":3.5,"a":2.25},"ah":[{"T":1,"line":-0.5,"home":3.79,"away":1.28},{"T":0,"line":0.5,"home":1.87,"away":1.96},{"T":-1,"line":1.5,"home":1.27,"away":3.89}]}},{"league":"国际友谊赛","time":"06-08 04:00","home":"厄瓜多尔","away":"Guatemala","jc":{"spf":{"w":1.22,"d":5.48,"l":12.25},"hcp":{"line":-1,"w":1.96,"d":3.41,"l":3.36}},"b3":{"x2":{"h":1.19,"d":6.5,"a":14},"ah":[{"T":3,"line":-2.5,"home":3.93,"away":1.27},{"T":2,"line":-1.5,"home":2.04,"away":1.81},{"T":1,"line":-0.5,"home":1.31,"away":3.56}]}}];/*ENDDATA*/
+/*DATA*/var MATCHES = [{"league":"国际友谊赛","time":"06-08 00:30","ts":1780849800000,"dan":true,"home":"丹麦","away":"乌克兰","jc":{"spf":{"w":1.82,"d":3.55,"l":3.53},"hcp":{"line":-1,"w":3.66,"d":3.72,"l":1.74}},"b3":{"x2":{"h":1.69,"d":3.75,"a":5},"ah":[{"T":2,"line":-1.5,"home":3.89,"away":1.27},{"T":1,"line":-0.5,"home":1.96,"away":1.87},{"T":0,"line":0.5,"home":1.28,"away":3.79}]}},{"league":"国际友谊赛","time":"06-08 02:00","ts":1780855200000,"dan":false,"home":"Kosovo","away":"Andorra","jc":{"spf":{"w":1.25,"d":4.91,"l":11.79},"hcp":{"line":-1,"w":1.93,"d":3.52,"l":3.36}},"b3":{"x2":{"h":1.18,"d":7,"a":16},"ah":[{"T":3,"line":-2.5,"home":3.93,"away":1.27},{"T":2,"line":-1.5,"home":2.04,"away":1.81},{"T":1,"line":-0.5,"home":1.31,"away":3.56}]}},{"league":"国际友谊赛","time":"06-08 02:45","ts":1780857900000,"dan":true,"home":"克罗地亚","away":"斯洛文尼亚","jc":{"spf":{"w":1.41,"d":5.43,"l":11.11},"hcp":{"line":-1,"w":1.96,"d":3.53,"l":3.35}},"b3":{"x2":{"h":1.42,"d":4.5,"a":7.5},"ah":[{"T":3,"line":-2.5,"home":3.93,"away":1.27},{"T":2,"line":-1.5,"home":2.04,"away":1.81},{"T":1,"line":-0.5,"home":1.31,"away":3.56}]}},{"league":"国际友谊赛","time":"06-08 03:00","ts":1780858800000,"dan":false,"home":"希腊","away":"意大利","jc":{"spf":{"w":1.89,"d":3.44,"l":3.56},"hcp":{"line":-1,"w":3.73,"d":3.81,"l":1.75}},"b3":{"x2":{"h":2.4,"d":3.25,"a":3},"ah":[{"T":2,"line":-1.5,"home":3.89,"away":1.27},{"T":1,"line":-0.5,"home":1.96,"away":1.87},{"T":0,"line":0.5,"home":1.28,"away":3.79}]}},{"league":"国际友谊赛","time":"06-08 03:00","ts":1780858800000,"dan":false,"home":"摩洛哥","away":"挪威","jc":{"spf":{"w":4.86,"d":3.46,"l":1.85},"hcp":{"line":1,"w":1.76,"d":3.69,"l":3.68}},"b3":{"x2":{"h":2.8,"d":3.35,"a":2.45},"ah":[{"T":1,"line":-0.5,"home":3.79,"away":1.28},{"T":0,"line":0.5,"home":1.87,"away":1.96},{"T":-1,"line":1.5,"home":1.27,"away":3.89}]}},{"league":"国际友谊赛","time":"06-08 04:00","ts":1780862400000,"dan":false,"home":"厄瓜多尔","away":"Guatemala","jc":{"spf":{"w":1.41,"d":4.87,"l":12.35},"hcp":{"line":-1,"w":1.93,"d":3.76,"l":3.31}},"b3":{"x2":{"h":1.17,"d":7,"a":15},"ah":[{"T":3,"line":-2.5,"home":3.93,"away":1.27},{"T":2,"line":-1.5,"home":2.04,"away":1.81},{"T":1,"line":-0.5,"home":1.31,"away":3.56}]}},{"league":"国际友谊赛","time":"06-08 07:00","ts":1780873200000,"dan":false,"home":"哥伦比亚","away":"Jordan","jc":{"spf":{"w":1.29,"d":5.27,"l":6.93},"hcp":{"line":-1,"w":1.9,"d":4.15,"l":3.03}},"b3":{"x2":{"h":1.19,"d":7,"a":13},"ah":[{"T":3,"line":-2.5,"home":3.42,"away":1.33},{"T":2,"line":-1.5,"home":1.99,"away":1.85},{"T":1,"line":-0.5,"home":1.37,"away":3.19},{"T":0,"line":0.5,"home":1.1,"away":7.29}]}}];/*ENDDATA*/
 
 (function(){
   var grid = document.getElementById('grid');
@@ -197,40 +207,55 @@
   function getp(o,p){ return p.split('.').reduce(function(a,k){return a[k];},o); }
   function setp(o,p,v){ var ks=p.split('.'), last=ks.pop(); ks.reduce(function(a,k){return a[k];},o)[last]=v; }
 
-  // —— 对冲枚举引擎：竞彩6×SP × bet365亚盘，找出所有恰好互补的组合 ——
-  function hedges(mt){
+  // —— 对冲引擎：单关→直接单场互补；非单关→2串1合成单关(竞彩腿等效赔率=腿赔率/搭档不让球水位) ——
+  function spfMargin(m){ return 1/m.jc.spf.w + 1/m.jc.spf.d + 1/m.jc.spf.l; }
+  function bestPartner(idx, nowMs){
+    var c=[];
+    MATCHES.forEach(function(b,j){
+      if(j===idx) return;
+      if(b.ts && nowMs>=b.ts) return;                 // 已开赛不能做串关搭档
+      c.push({ j:j, dan:(b.dan!==false)?1:0, margin:spfMargin(b), label:b.home+'vs'+b.away });
+    });
+    if(!c.length) return null;
+    c.sort(function(a,b){ return (a.dan-b.dan) || (a.margin-b.margin); });  // 优先非单关搭档, 再低水位
+    return c[0];
+  }
+  function buildHedges(mt, jcDiv, partnerLabel){
     var Hf = mt.jc.hcp.line, ahByT = {};
     mt.b3.ah.forEach(function(x){ ahByT[x.T]=x; });
     var L = [];
+    function jcLeg(label, raw){ var o={book:'jc', label:label, odds:(jcDiv>1?Math.round(raw/jcDiv*100)/100:raw)};
+      if(jcDiv>1){ o.raw=raw; o.parlay=partnerLabel; } return o; }
     function add(legs){ var inv=legs.reduce(function(s,x){return s+1/x.odds;},0);
-      L.push({legs:legs, inv:inv, payout:1/inv, profitPct:(1/inv-1)*100}); }
-    // 竞彩 "≥T" 腿（主胜 / 让胜）↔ bet365 同边界客队亚盘（互补）
-    [{lab:'竞彩 主胜', T:1, odds:mt.jc.spf.w},
-     {lab:'竞彩 让胜(主'+sgl(Hf)+')', T:1-Hf, odds:mt.jc.hcp.w}].forEach(function(g){
+      L.push({legs:legs, inv:inv, payout:1/inv, profitPct:(1/inv-1)*100, parlay:jcDiv>1}); }
+    [{lab:'主胜', T:1, odds:mt.jc.spf.w},
+     {lab:'让胜(主'+sgl(Hf)+')', T:1-Hf, odds:mt.jc.hcp.w}].forEach(function(g){
       var ah=ahByT[g.T]; if(!ah) return;
-      add([{book:'jc',label:g.lab,odds:g.odds},{book:'b3',label:'bet365 客'+sgl(-ah.line),odds:ah.away}]); });
-    // 竞彩 "≤T-1" 腿（客胜 / 让负）↔ bet365 同边界主队亚盘（互补）
-    [{lab:'竞彩 客胜', T:0, odds:mt.jc.spf.l},
-     {lab:'竞彩 让负(主'+sgl(Hf)+')', T:-Hf, odds:mt.jc.hcp.l}].forEach(function(g){
+      add([ jcLeg('竞彩 '+g.lab,g.odds), {book:'b3',label:'bet365 客'+sgl(-ah.line),odds:ah.away} ]); });
+    [{lab:'客胜', T:0, odds:mt.jc.spf.l},
+     {lab:'让负(主'+sgl(Hf)+')', T:-Hf, odds:mt.jc.hcp.l}].forEach(function(g){
       var ah=ahByT[g.T]; if(!ah) return;
-      add([{book:'jc',label:g.lab,odds:g.odds},{book:'b3',label:'bet365 主'+sgl(ah.line),odds:ah.home}]); });
-    // 平局类 → 3 条腿覆盖（竞彩平/让平 + bet365 主高线 + bet365 客低线）
+      add([ jcLeg('竞彩 '+g.lab,g.odds), {book:'b3',label:'bet365 主'+sgl(ah.line),odds:ah.home} ]); });
     function drawC(lab,odds,Tlo){ var hi=ahByT[Tlo+1], lo=ahByT[Tlo]; if(!hi||!lo) return;
-      add([{book:'jc',label:lab,odds:odds},
-           {book:'b3',label:'bet365 主'+sgl(hi.line),odds:hi.home},
-           {book:'b3',label:'bet365 客'+sgl(-lo.line),odds:lo.away}]); }
+      add([ jcLeg(lab,odds), {book:'b3',label:'bet365 主'+sgl(hi.line),odds:hi.home}, {book:'b3',label:'bet365 客'+sgl(-lo.line),odds:lo.away} ]); }
     drawC('竞彩 平', mt.jc.spf.d, 0);
     drawC('竞彩 让平(主'+sgl(Hf)+')', mt.jc.hcp.d, -Hf);
     L.sort(function(a,b){ return b.payout-a.payout; });
     return L;
   }
+  function hedges(m, idx, nowMs){
+    if(m.dan!==false) return buildHedges(m, 1, null);   // 单关(含旧数据缺省)
+    var p = bestPartner(idx, nowMs);                     // 非单关 → 串关
+    if(!p) return [];
+    return buildHedges(m, p.margin, p.label);
+  }
 
-  function inp(i, path){
+  function inp(i, path, dis){
     var v = getp(MATCHES[i], path);
     var sign = flash[i+'|'+path]||0;
     var cls = sign>0?' fl-up':(sign<0?' fl-down':'');
     var arr = sign>0?'<span class="arr">▲</span>':(sign<0?'<span class="arr">▼</span>':'');
-    return '<div class="ocell'+cls+'">'+arr+'<input class="mono" type="text" inputmode="decimal" data-i="'+i+'" data-p="'+path+'" value="'+(+v).toFixed(2)+'"></div>';
+    return '<div class="ocell'+cls+'">'+arr+'<input class="mono" type="text" inputmode="decimal"'+(dis?' disabled':'')+' data-i="'+i+'" data-p="'+path+'" value="'+(+v).toFixed(2)+'"></div>';
   }
 
   function render(){
@@ -241,68 +266,81 @@
     grid.innerHTML = '';
     var oppCount=0, bestPct=-Infinity, totalProfit=0;
 
+    var nowMs = Date.now(), live = 0;
     MATCHES.forEach(function(m, i){
-      var hs = hedges(m);
+      var started = !!(m.ts && nowMs>=m.ts);
+      if(!started) live++;
+      var hs = started ? [] : hedges(m, i, nowMs);
       var best = hs.length ? hs[0] : null;
-      var isArb = best && best.payout>1;
+      var isArb = !started && best && best.payout>1;
       if(isArb){ oppCount++; bestPct=Math.max(bestPct,best.profitPct); totalProfit += B*(best.payout-1); }
       var Hf = m.jc.hcp.line;
 
       var card = document.createElement('div');
-      card.className = 'card'+(isArb?' arb':'');
+      card.className = 'card'+(isArb?' arb':'')+(started?' started':'');
 
       // 竞彩 6 SP
       var jcTbl =
         '<table class="ot">'
-        + '<tr><td class="rl">不让球</td><td>'+inpL(i,'jc.spf.w','主胜')+'</td><td>'+inpL(i,'jc.spf.d','平')+'</td><td>'+inpL(i,'jc.spf.l','客胜')+'</td></tr>'
-        + '<tr><td class="rl">让球 主'+sgl(Hf)+'</td><td>'+inpL(i,'jc.hcp.w','让胜')+'</td><td>'+inpL(i,'jc.hcp.d','让平')+'</td><td>'+inpL(i,'jc.hcp.l','让负')+'</td></tr>'
+        + '<tr><td class="rl">不让球</td><td>'+inpL(i,'jc.spf.w','主胜',started)+'</td><td>'+inpL(i,'jc.spf.d','平',started)+'</td><td>'+inpL(i,'jc.spf.l','客胜',started)+'</td></tr>'
+        + '<tr><td class="rl">让球 主'+sgl(Hf)+'</td><td>'+inpL(i,'jc.hcp.w','让胜',started)+'</td><td>'+inpL(i,'jc.hcp.d','让平',started)+'</td><td>'+inpL(i,'jc.hcp.l','让负',started)+'</td></tr>'
         + '</table>';
 
-      // bet365 亚盘梯子（逐线竖排，每行 主/客 两侧）
+      // bet365 亚盘梯子
       var ahTbl = '<table class="ot">'+ m.b3.ah.map(function(a,ai){
         return '<tr><td class="rl">盘口 '+Math.abs(a.line)+'</td>'
-             + '<td>'+inpL(i,'b3.ah.'+ai+'.home','主'+sgl(a.line))+'</td>'
-             + '<td>'+inpL(i,'b3.ah.'+ai+'.away','客'+sgl(-a.line))+'</td></tr>';
+             + '<td>'+inpL(i,'b3.ah.'+ai+'.home','主'+sgl(a.line),started)+'</td>'
+             + '<td>'+inpL(i,'b3.ah.'+ai+'.away','客'+sgl(-a.line),started)+'</td></tr>';
       }).join('') + '</table>';
 
-      // 对冲组合：所有套利 + 至多补到 3 条（不足用最接近的无套利参考）
-      var arbs = hs.filter(function(h){return h.payout>1;});
-      var show = arbs.slice(0,4);
-      if(show.length < 3) show = show.concat(hs.filter(function(h){return h.payout<=1;}).slice(0, 3-show.length));
-      var hgHtml = show.map(function(h){
-        var arb = h.payout>1;
-        var ret = B*h.payout, prof = ret-B;
-        var legHtml = h.legs.map(function(g){
-          var stake = B*(1/g.odds)/h.inv;
-          return '<div class="leg"><i class="chip '+g.book+'">'+(g.book==='jc'?'竞彩':'365')+'</i>'
-               + g.label.replace('竞彩 ','').replace('bet365 ','')+' @'+(+g.odds).toFixed(2)
-               + '<span class="stk">投<b>¥'+fmt(stake)+'</b></span></div>';
+      // 对冲组合 / 开赛状态
+      var hgInner;
+      if(started){
+        hgInner = '<div class="started-note">⏱ 已开赛 · 盘口冻结、停止更新</div>';
+      } else if(m.dan===false && hs.length===0){
+        hgInner = '<div class="started-note">非单关：暂无可搭档的未开赛比赛</div>';
+      } else {
+        var arbs = hs.filter(function(h){return h.payout>1;});
+        var show = arbs.slice(0,4);
+        if(show.length<3) show = show.concat(hs.filter(function(h){return h.payout<=1;}).slice(0,3-show.length));
+        hgInner = show.map(function(h){
+          var arb = h.payout>1, ret = B*h.payout, prof = ret-B;
+          var legHtml = h.legs.map(function(g){
+            var stake = B*(1/g.odds)/h.inv;
+            var lab = g.label.replace('竞彩 ','').replace('bet365 ','');
+            var extra = g.parlay ? ' <span class="parlaytag">2串1·搭'+g.parlay+'·原@'+(+g.raw).toFixed(2)+'</span>' : '';
+            return '<div class="leg"><i class="chip '+g.book+'">'+(g.book==='jc'?'竞彩':'365')+'</i>'+lab+' @'+(+g.odds).toFixed(2)+extra
+                 + '<span class="stk">投<b>¥'+fmt(stake)+'</b></span></div>';
+          }).join('');
+          return '<div class="hg'+(arb?' arb':'')+'">'
+            + '<div class="hg-top"><span class="hg-ret'+(arb?' arb':'')+'">返还 '+(h.payout*100).toFixed(2)+'%</span>'
+            + '<span class="hg-prof '+(arb?'arb':'neg')+'">'+(prof>=0?'+¥'+fmt(prof):'−¥'+fmt(-prof))+' ('+(h.profitPct>=0?'+':'')+h.profitPct.toFixed(2)+'%)</span></div>'
+            + '<div class="hg-legs">'+legHtml+'</div>'
+            + '<div class="hg-foot">任意比分保底回收 <b>¥'+fmt(ret)+'</b></div></div>';
         }).join('');
-        return '<div class="hg'+(arb?' arb':'')+'">'
-          + '<div class="hg-top"><span class="hg-ret'+(arb?' arb':'')+'">返还 '+(h.payout*100).toFixed(2)+'%</span>'
-          + '<span class="hg-prof '+(arb?'arb':'neg')+'">'+(prof>=0?'+¥'+fmt(prof):'−¥'+fmt(-prof))+' ('+(h.profitPct>=0?'+':'')+h.profitPct.toFixed(2)+'%)</span></div>'
-          + '<div class="hg-legs">'+legHtml+'</div>'
-          + '<div class="hg-foot">任意比分保底回收 <b>¥'+fmt(ret)+'</b></div>'
-          + '</div>';
-      }).join('');
+      }
+      var hgTitle = started ? '已开赛' : (m.dan===false ? '对冲组合 · 2串1' : '对冲组合');
+      var rightBadge = started
+        ? '<span class="badge started">已开赛·停更</span>'
+        : '<span class="badge '+(isArb?'yes':'no')+'">'+(isArb?'套利 +'+best.profitPct.toFixed(2)+'%':'无套利 '+(best?best.profitPct.toFixed(2)+'%':'—'))+'</span>';
+      var danChip = started ? '' : '<span class="danchip '+(m.dan!==false?'dan':'nodan')+'" data-i="'+i+'">'+(m.dan!==false?'单关':'非单关')+'</span>';
 
       card.innerHTML =
           '<div class="card-h">'
         +   '<div class="meta"><span>'+m.league+'</span><span>'+m.time+' 北京</span></div>'
         +   '<div class="teams"><span class="t">'+m.home+'</span><span class="vs">VS</span><span class="t">'+m.away+'</span></div>'
-        +   '<div class="sub"><span class="hcap">竞彩让球：主队 '+sgl(Hf)+'</span>'
-        +     '<span class="badge '+(isArb?'yes':'no')+'">'+(isArb?'套利 +'+best.profitPct.toFixed(2)+'%':'无套利 '+(best?best.profitPct.toFixed(2)+'%':'—'))+'</span></div>'
+        +   '<div class="sub"><span class="hcap">让球 主'+sgl(Hf)+'</span><span class="subr">'+danChip+rightBadge+'</span></div>'
         + '</div>'
-        + '<div class="mkt"><div class="mkt-h"><span class="bk jc">竞彩</span><span>胜平负 + 让球（6 个 SP）</span></div>'+jcTbl+'</div>'
+        + '<div class="mkt"><div class="mkt-h"><span class="bk jc">竞彩</span><span>胜平负 + 让球</span></div>'+jcTbl+'</div>'
         + '<div class="mkt"><div class="mkt-h"><span class="bk b3">bet365</span><span>欧赔 + 亚盘梯子</span></div>'
         +   '<div class="x2">欧赔 <b>主 '+m.b3.x2.h.toFixed(2)+'</b> · <b>平 '+m.b3.x2.d.toFixed(2)+'</b> · <b>客 '+m.b3.x2.a.toFixed(2)+'</b><em>实时</em></div>'
         +   ahTbl+'</div>'
-        + '<div class="hedges"><div class="hh"><span>对冲组合</span><span>本金 ¥'+fmt(B)+'/场</span></div>'+hgHtml+'</div>';
+        + '<div class="hedges"><div class="hh"><span>'+hgTitle+'</span><span>本金 ¥'+fmt(B)+'/场</span></div>'+hgInner+'</div>';
 
       grid.appendChild(card);
     });
 
-    document.getElementById('sumOpp').textContent = oppCount+' / '+MATCHES.length;
+    document.getElementById('sumOpp').textContent = oppCount+' / '+live;
     document.getElementById('sumOpp').className = 'val '+(oppCount>0?'green':'gray');
     document.getElementById('sumBest').textContent = oppCount>0?('+'+bestPct.toFixed(2)+'%'):'—';
     document.getElementById('sumBest').className = 'val '+(oppCount>0?'green':'gray');
@@ -316,9 +354,8 @@
     flash = {};
   }
   // 带小标签的输入
-  function inpL(i,path,label){
-    var html = inp(i,path);
-    return html.replace('</div>', '<small>'+label+'</small></div>');
+  function inpL(i,path,label,dis){
+    return inp(i,path,dis).replace('</div>', '<small>'+label+'</small></div>');
   }
 
   // 赔率编辑 → 实时重算
@@ -330,8 +367,15 @@
   });
   bankrollEl.addEventListener('input', render);
 
-  // ===== 每30秒模拟盘口跳动 + 倒计时 =====
-  var REFRESH=30, remain=REFRESH, paused=false;
+  // 点击"单关/非单关"徽章可切换(供现场按真实竞彩单关标记设置)
+  grid.addEventListener('click', function(e){
+    var t = e.target.closest ? e.target.closest('.danchip') : null;
+    if(!t) return;
+    var i=+t.dataset.i; MATCHES[i].dan = (MATCHES[i].dan===false); render();
+  });
+
+  // ===== 每30秒模拟盘口跳动 + 倒计时；并实时检测开赛 =====
+  var REFRESH=30, remain=REFRESH, paused=false, lastStartedKey='';
   var cdEl=document.getElementById('countdown'), pbar=document.getElementById('pbar'), pauseBtn=document.getElementById('pauseBtn');
   function nudge(cur,base){ var v=cur+(Math.random()-0.5)*0.024*cur+(base-cur)*0.18; return Math.max(1.02, Math.round(v*100)/100); }
   function oddPaths(m,i){
@@ -342,8 +386,9 @@
   function refreshOdds(){
     var act=document.activeElement;
     if(act&&act.tagName==='INPUT'&&act.dataset.p!==undefined) return false;  // 正在手改则本轮跳过
-    flash={};
+    flash={}; var now=Date.now();
     MATCHES.forEach(function(m,i){
+      if(m.ts && now>=m.ts) return;                 // 已开赛不再更新
       oddPaths(m,i).forEach(function(p){
         var old=getp(m,p), nv=nudge(old, getp(BASE[i],p));
         setp(m,p,nv);
@@ -354,8 +399,15 @@
   }
   function paintCD(){ cdEl.textContent=paused?'已暂停':remain+'s'; cdEl.className='val '+(paused?'gray':'green');
     if(pbar) pbar.style.transform='scaleX('+(paused?0:remain/REFRESH)+')'; }
-  setInterval(function(){ if(paused) return; remain--;
-    if(remain<=0){ remain=REFRESH; if(refreshOdds()) render(); } paintCD(); }, 1000);
+  setInterval(function(){
+    // 每秒检测开赛状态变化(有比赛刚开赛就重渲染→自动置灰/冻结)
+    var sk = MATCHES.map(function(m){ return (m.ts && Date.now()>=m.ts)?1:0; }).join('');
+    if(sk!==lastStartedKey){ lastStartedKey=sk; render(); }
+    if(paused) return;
+    remain--;
+    if(remain<=0){ remain=REFRESH; if(refreshOdds()) render(); }
+    paintCD();
+  }, 1000);
   pauseBtn.addEventListener('click', function(){ paused=!paused;
     pauseBtn.textContent=paused?'▶ 继续':'⏸ 暂停'; paintCD(); });
 
