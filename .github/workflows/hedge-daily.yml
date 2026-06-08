@@ -2,10 +2,12 @@ name: hedge-daily-refresh
 
 # 每天北京时间 11:00 自动抓当日真实比赛, 重建 hedge 数据并提交 (GitHub Pages 自动部署)
 on:
-  schedule:
-    - cron: '19 3 * * *'    # 11:19 北京 (避开整点 cron 争抢, 整点常被 GitHub 延迟/丢弃)
-    - cron: '37 4 * * *'    # 12:37 北京 (冗余备份, 防 GitHub 丢调度)
-  workflow_dispatch:          # 允许手动触发
+  # 已暂停 ESPN 自动抓取 —— 改用真实竞彩截图人工录入(数据更准)。
+  # 需要恢复自动抓取时, 取消下面 schedule 的注释即可。
+  # schedule:
+  #   - cron: '19 3 * * *'    # 11:19 北京
+  #   - cron: '37 4 * * *'    # 12:37 北京 冗余
+  workflow_dispatch:          # 仍可手动触发(ESPN 抓取)
 
 permissions:
   contents: write

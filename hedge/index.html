@@ -111,6 +111,7 @@
   .started-note { font-size:11.5px; color:#7f8da0; padding:7px 2px; }
   .meta .del { cursor:pointer; color:#5f6b7a; padding:0 3px; font-weight:700; }
   .meta .del:active { color:#e06a6a; }
+  td.soldout { color:#6b7787; font-size:11px; text-align:center; padding:9px 4px; font-style:italic; }
 
   .mkt { padding:10px 14px 4px; }
   .mkt + .mkt { border-top:1px solid rgba(255,255,255,.05); }
@@ -208,7 +209,7 @@
   </a>
 
 <script>
-/*DATA*/var MATCHES = [{"league":"国际友谊赛","time":"06-09 02:45","ts":1780944300000,"dan":false,"home":"荷兰","away":"Uzbekistan","jc":{"spf":{"w":1.26,"d":4.74,"l":11.19},"hcp":{"line":-1,"w":1.91,"d":3.95,"l":3.3}},"b3":{"x2":{"h":1.26,"d":6,"a":10},"ah":[{"T":3,"line":-2.5,"home":3.93,"away":1.27},{"T":2,"line":-1.5,"home":2.04,"away":1.81},{"T":1,"line":-0.5,"home":1.31,"away":3.56}]}},{"league":"国际友谊赛","time":"06-09 10:00","ts":1780970400000,"dan":false,"home":"秘鲁","away":"西班牙","jc":{"spf":{"w":27.28,"d":10.2,"l":1.06},"hcp":{"line":2,"w":4.19,"d":4.15,"l":1.93}},"b3":{"x2":{"h":17,"d":8,"a":1.14},"ah":[{"T":0,"line":0.5,"home":7.23,"away":1.1},{"T":-1,"line":1.5,"home":3.09,"away":1.39},{"T":-2,"line":2.5,"home":1.81,"away":2.03}]}}];/*ENDDATA*/
+/*DATA*/var MATCHES = [{"league":"国际赛","time":"06-09 02:45","ts":1780944300000,"dan":false,"home":"荷兰","away":"乌兹别克斯坦","jc":{"spf":{"w":1.14,"d":5.85,"l":12.5},"hcp":{"line":-2,"w":2.62,"d":3.85,"l":2.05}},"b3":{"x2":{"h":1.23,"d":6.27,"a":13.78},"ah":[{"T":3,"line":-2.5,"home":3.03,"away":1.4},{"T":2,"line":-1.5,"home":1.76,"away":2.1},{"T":1,"line":-0.5,"home":1.23,"away":4.31}]}},{"league":"国际赛","time":"06-09 03:10","ts":1780945800000,"dan":false,"home":"法国","away":"北爱尔兰","jc":{"spf":null,"hcp":{"line":-2,"w":1.92,"d":3.9,"l":2.85}},"b3":{"x2":{"h":1.1,"d":9.84,"a":30.61},"ah":[{"T":3,"line":-2.5,"home":2.09,"away":1.77},{"T":2,"line":-1.5,"home":1.4,"away":3.04},{"T":1,"line":-0.5,"home":1.1,"away":7.44}]}},{"league":"国际赛","time":"06-09 10:00","ts":1780970400000,"dan":false,"home":"秘鲁","away":"西班牙","jc":{"spf":null,"hcp":{"line":2,"w":2.68,"d":3.85,"l":2.02}},"b3":{"x2":{"h":28.15,"d":9.14,"a":1.11},"ah":[{"T":0,"line":0.5,"home":6.9,"away":1.11},{"T":-1,"line":1.5,"home":2.86,"away":1.44},{"T":-2,"line":2.5,"home":1.69,"away":2.2}]}},{"league":"世界杯","time":"06-12 03:00","ts":1781204400000,"dan":true,"home":"墨西哥","away":"南非","jc":{"spf":{"w":1.34,"d":3.92,"l":7.85},"hcp":{"line":-1,"w":2.25,"d":3.18,"l":2.7}},"b3":{"x2":{"h":1.44,"d":4.3,"a":8.62},"ah":[{"T":3,"line":-2.5,"home":5.24,"away":1.17},{"T":2,"line":-1.5,"home":2.44,"away":1.57},{"T":1,"line":-0.5,"home":1.44,"away":2.87},{"T":0,"line":0.5,"home":1.08,"away":8.62}]}},{"league":"世界杯","time":"06-12 10:00","ts":1781229600000,"dan":true,"home":"韩国","away":"捷克","jc":{"spf":{"w":2.43,"d":2.84,"l":2.74},"hcp":{"line":-1,"w":5.8,"d":4.05,"l":1.41}},"b3":{"x2":{"h":2.57,"d":3.11,"a":2.99},"ah":[{"T":2,"line":-1.5,"home":6.54,"away":1.24},{"T":1,"line":-0.5,"home":2.57,"away":1.52},{"T":0,"line":0.5,"home":1.41,"away":2.99},{"T":-1,"line":1.5,"home":1.08,"away":8.28}]}}];/*ENDDATA*/
 
 (function(){
   var grid = document.getElementById('grid');
@@ -222,20 +223,25 @@
   function setp(o,p,v){ var ks=p.split('.'), last=ks.pop(); ks.reduce(function(a,k){return a[k];},o)[last]=v; }
 
   // —— 对冲引擎：单关→直接单场互补；非单关→2串1合成单关(竞彩腿等效赔率=腿赔率/搭档不让球水位) ——
-  function spfMargin(m){ return 1/m.jc.spf.w + 1/m.jc.spf.d + 1/m.jc.spf.l; }
+  function marketOf(m){   // 串关垫脚用的市场：不让球可用就用它, 否则用让球
+    return (m.jc.spf && m.jc.spf.w) ? { odds:m.jc.spf, cells:['胜','平','负'] }
+                                    : { odds:m.jc.hcp, cells:['让胜','让平','让负'] };
+  }
+  function sweepMargin(m){ var o=marketOf(m).odds; return 1/o.w + 1/o.d + 1/o.l; }
   function bestPartner(idx, nowMs){
     var c=[];
     MATCHES.forEach(function(b,j){
       if(j===idx) return;
       if(b.ts && nowMs>=b.ts) return;                 // 已开赛不能做串关搭档
-      c.push({ j:j, dan:(b.dan!==false)?1:0, margin:spfMargin(b), label:b.home+' vs '+b.away, spf:b.jc.spf });
+      var mk=marketOf(b);
+      c.push({ j:j, dan:(b.dan!==false)?1:0, margin:sweepMargin(b), label:b.home+' vs '+b.away, sweep:mk.odds, cells:mk.cells });
     });
     if(!c.length) return null;
     c.sort(function(a,b){ return (a.dan-b.dan) || (a.margin-b.margin); });  // 优先非单关搭档, 再低水位
     return c[0];
   }
   function buildHedges(mt, jcDiv, partner){
-    var Hf = mt.jc.hcp.line, ahByT = {};
+    var Hf = mt.jc.hcp.line, ahByT = {}, spf = mt.jc.spf;   // spf 为 null = 不让球未开售
     mt.b3.ah.forEach(function(x){ ahByT[x.T]=x; });
     var L = [];
     function jcLeg(kind, raw){ var o={book:'jc', kind:kind, raw:raw, odds:(jcDiv>1?Math.round(raw/jcDiv*100)/100:raw)};
@@ -243,13 +249,13 @@
     function b3Leg(side, line, odds){ return {book:'b3', side:side, line:line, odds:odds}; }
     function add(legs){ var inv=legs.reduce(function(s,x){return s+1/x.odds;},0);
       L.push({legs:legs, inv:inv, payout:1/inv, profitPct:(1/inv-1)*100, parlay:jcDiv>1}); }
-    if(ahByT[1])    add([ jcLeg('主胜', mt.jc.spf.w), b3Leg('away', -ahByT[1].line, ahByT[1].away) ]);
-    if(ahByT[1-Hf]) add([ jcLeg('让胜', mt.jc.hcp.w), b3Leg('away', -ahByT[1-Hf].line, ahByT[1-Hf].away) ]);
-    if(ahByT[0])    add([ jcLeg('客胜', mt.jc.spf.l), b3Leg('home', ahByT[0].line, ahByT[0].home) ]);
-    if(ahByT[-Hf])  add([ jcLeg('让负', mt.jc.hcp.l), b3Leg('home', ahByT[-Hf].line, ahByT[-Hf].home) ]);
-    function drawC(kind, odds, Tlo){ var hi=ahByT[Tlo+1], lo=ahByT[Tlo]; if(!hi||!lo) return;
+    if(spf && ahByT[1])  add([ jcLeg('主胜', spf.w), b3Leg('away', -ahByT[1].line, ahByT[1].away) ]);
+    if(ahByT[1-Hf])      add([ jcLeg('让胜', mt.jc.hcp.w), b3Leg('away', -ahByT[1-Hf].line, ahByT[1-Hf].away) ]);
+    if(spf && ahByT[0])  add([ jcLeg('客胜', spf.l), b3Leg('home', ahByT[0].line, ahByT[0].home) ]);
+    if(ahByT[-Hf])       add([ jcLeg('让负', mt.jc.hcp.l), b3Leg('home', ahByT[-Hf].line, ahByT[-Hf].home) ]);
+    function drawC(kind, odds, Tlo){ var hi=ahByT[Tlo+1], lo=ahByT[Tlo]; if(!hi||!lo||odds==null) return;
       add([ jcLeg(kind, odds), b3Leg('home', hi.line, hi.home), b3Leg('away', -lo.line, lo.away) ]); }
-    drawC('平', mt.jc.spf.d, 0);
+    if(spf) drawC('平', spf.d, 0);
     drawC('让平', mt.jc.hcp.d, -Hf);
     L.sort(function(a,b){ return b.payout-a.payout; });
     return L;
@@ -290,10 +296,13 @@
       var card = document.createElement('div');
       card.className = 'card'+(isArb?' arb':'')+(started?' started':'');
 
-      // 竞彩 6 SP
+      // 竞彩 6 SP（不让球未开售时该行置灰）
+      var spfRow = m.jc.spf
+        ? '<td>'+inpL(i,'jc.spf.w','主胜',started)+'</td><td>'+inpL(i,'jc.spf.d','平',started)+'</td><td>'+inpL(i,'jc.spf.l','客胜',started)+'</td>'
+        : '<td colspan="3" class="soldout">未开售</td>';
       var jcTbl =
         '<table class="ot">'
-        + '<tr><td class="rl">不让球</td><td>'+inpL(i,'jc.spf.w','主胜',started)+'</td><td>'+inpL(i,'jc.spf.d','平',started)+'</td><td>'+inpL(i,'jc.spf.l','客胜',started)+'</td></tr>'
+        + '<tr><td class="rl">不让球</td>'+spfRow+'</tr>'
         + '<tr><td class="rl">让球 主'+sgl(Hf)+'</td><td>'+inpL(i,'jc.hcp.w','让胜',started)+'</td><td>'+inpL(i,'jc.hcp.d','让平',started)+'</td><td>'+inpL(i,'jc.hcp.l','让负',started)+'</td></tr>'
         + '</table>';
 
@@ -332,8 +341,8 @@
               lines += '<div class="betline"><span class="step">'+step+'</span><i class="chip jc">竞彩</i>'
                      + '<span><b>2串1 · 复式共3注</b> · 投 <b>¥'+fmt(stake)+'</b></span></div>';
               if(arb){
-                var mB=g.partner.margin, sp=g.partner.spf;
-                var parts=[['胜',sp.w],['平',sp.d],['负',sp.l]].map(function(pp){
+                var mB=g.partner.margin, sp=g.partner.sweep, cl=g.partner.cells;
+                var parts=[[cl[0],sp.w],[cl[1],sp.d],[cl[2],sp.l]].map(function(pp){
                   return pp[0]+'@'+pp[1].toFixed(2)+' <b>¥'+fmt(stake*(1/pp[1])/mB)+'</b>'; }).join('　');
                 lines += '<div class="betsub">主选 <b>'+jcText(g)+'</b> @'+(+g.raw).toFixed(2)
                        + ' × 垫脚场 <b>'+g.partner.label+'</b>【胜/平/负 全包】<br>'+parts+'</div>';
@@ -416,7 +425,9 @@
   var cdEl=document.getElementById('countdown'), pbar=document.getElementById('pbar'), pauseBtn=document.getElementById('pauseBtn');
   function nudge(cur,base){ var v=cur+(Math.random()-0.5)*0.024*cur+(base-cur)*0.18; return Math.max(1.02, Math.round(v*100)/100); }
   function oddPaths(m,i){
-    var ps=['jc.spf.w','jc.spf.d','jc.spf.l','jc.hcp.w','jc.hcp.d','jc.hcp.l'];
+    var ps=[];
+    if(m.jc.spf){ ps.push('jc.spf.w','jc.spf.d','jc.spf.l'); }   // 未开售则跳过不让球
+    ps.push('jc.hcp.w','jc.hcp.d','jc.hcp.l');
     m.b3.ah.forEach(function(a,ai){ ps.push('b3.ah.'+ai+'.home'); ps.push('b3.ah.'+ai+'.away'); });
     return ps;
   }
