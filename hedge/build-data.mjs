@@ -152,7 +152,7 @@ export async function buildMatches(){
 export async function main({ htmlPath, outPath }){
   const matches=await buildMatches();
   console.log('发现可用比赛:', matches.length);
-  if(matches.length<4){ console.error('比赛太少, 跳过写入(保留现有数据)'); return { written:false, count:matches.length }; }
+  if(matches.length<1){ console.error('今日无可用比赛, 跳过写入(保留现有数据)'); return { written:false, count:matches.length }; }
   const html=readFileSync(htmlPath,'utf8');
   if(!/\/\*DATA\*\/[\s\S]*?\/\*ENDDATA\*\//.test(html)) throw new Error('index.html 缺少 /*DATA*/.../*ENDDATA*/ 标记');
   const line='/*DATA*/var MATCHES = '+JSON.stringify(matches)+';/*ENDDATA*/';
