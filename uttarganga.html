@@ -22,7 +22,7 @@
   }
   *{margin:0;padding:0;box-sizing:border-box}
   body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
-       background:var(--bg);color:var(--ink);line-height:1.75;font-size:16px}
+       background:var(--bg);color:var(--ink);line-height:1.75;font-size:16px;overflow-x:hidden}
   .hero{background:linear-gradient(160deg,#081222 0%,#13294b 55%,#1b4068 100%);
         color:#fff;padding:52px 22px 44px;position:relative;overflow:hidden}
   .hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:90px;
@@ -49,7 +49,8 @@
   th{background:var(--navy2);color:#fff;text-align:left;padding:10px 12px;font-weight:600;font-size:13.5px}
   td{padding:10px 12px;border-top:1px solid var(--line);vertical-align:top;color:#2c3a48}
   tr:nth-child(even) td{background:#f9fbfd}
-  .num{font-variant-numeric:tabular-nums;white-space:nowrap}
+  .kv th:first-child{width:38%}
+  .num{font-variant-numeric:tabular-nums}
   ul,ol{padding-left:22px;margin:10px 0}
   li{margin:7px 0;color:#2c3a48}
   .pill{display:inline-block;font-size:12px;font-weight:700;padding:2px 10px;border-radius:99px;margin-right:8px;vertical-align:1px}
@@ -68,11 +69,32 @@
   .src a{color:#3a7ca5;text-decoration:none;word-break:break-all}
   footer{background:var(--navy);color:#7a90a8;text-align:center;padding:30px 20px;font-size:13px;margin-top:56px}
   footer .b{color:#bfd6e8;letter-spacing:3px;font-weight:700;font-size:14px;margin-bottom:6px}
+  @media(max-width:560px){
+    /* 三列表格在窄屏改为堆叠卡片，避免横向挤压 */
+    table.stack,table.stack tbody,table.stack tr,table.stack td{display:block;width:100%}
+    table.stack{border:none;background:transparent;border-radius:0}
+    table.stack tr.h{display:none}
+    table.stack tr{background:#fff;border:1px solid var(--line);border-radius:10px;margin:10px 0;padding:7px 0}
+    table.stack td{border:none;background:transparent !important;padding:5px 14px}
+    table.stack td::before{content:attr(data-label);display:block;font-size:12px;font-weight:700;color:#8aa0b5;line-height:1.5}
+    table.stack td:first-child{font-weight:700;color:var(--navy2);font-size:15px;padding-top:10px}
+    table.stack td:first-child::before{display:none}
+    table.stack td:last-child{padding-bottom:11px}
+  }
   @media(max-width:480px){
-    .hero h1{font-size:22px}
+    .hero{padding:42px 20px 36px}
+    .hero h1{font-size:21.5px}
+    .hero h1 br{display:none}
     h2{font-size:18px}
+    h3{font-size:15.5px}
     body{font-size:15px}
+    .wrap{padding:6px 14px 50px}
+    .card{padding:16px 15px}
+    section{margin-top:30px}
     td,th{padding:8px 9px;font-size:13.5px}
+    .kv th:first-child{width:34%}
+    .step{gap:11px}
+    .step .n{flex:0 0 30px;height:30px;font-size:14px}
   }
 </style>
 </head>
@@ -98,8 +120,8 @@
 
 <section>
   <h2>二、项目档案</h2>
-  <table>
-    <tr><th style="width:38%">项目</th><th>数据</th></tr>
+  <table class="kv">
+    <tr><th>项目</th><th>数据</th></tr>
     <tr><td>装机 / 类型</td><td class="">828MW · 蓄水式（Storage HEP）</td></tr>
     <tr><td>位置</td><td>尼泊尔 Baglung / Rukum East 两县（甘达基、蓝毗尼两省）</td></tr>
     <tr><td>总投资</td><td class="num">USD 10.83 亿（$1,308/kW，B/C 1.8，EIRR 23.19%）</td></tr>
@@ -136,12 +158,12 @@
   <h3><span class="pill a">角色 B</span>定向分包商 —— 与裕丰资质真正对口的"软包件"</h3>
   <div class="card">
     <p>EIA 报告中的环境与社会包件，恰好是大型总包方最不愿自营、最愿意分出的部分：</p>
-    <table>
-      <tr><th>包件</th><th>规模</th><th>对口资质</th></tr>
-      <tr><td>环境管理工程</td><td class="num">约 1.7 亿美元（含土地）</td><td>园林绿化壹级</td></tr>
-      <tr><td>补偿造林</td><td>占林 1,210 公顷，按尼泊尔 1:10 补偿即约 1.2 万公顷造林抚育</td><td>园林绿化壹级（老本行）</td></tr>
-      <tr><td>移民安置重建</td><td>1,470 户 · 1,143 栋房屋及公共建筑重建</td><td>建筑总承包贰级</td></tr>
-      <tr><td>营地 / 进场道路 / 边坡生态修复</td><td>常规配套</td><td>市政贰级 + 园林壹级</td></tr>
+    <table class="stack">
+      <tr class="h"><th>包件</th><th>规模</th><th>对口资质</th></tr>
+      <tr><td>环境管理工程</td><td class="num" data-label="规模">约 1.7 亿美元（含土地）</td><td data-label="对口资质">园林绿化壹级</td></tr>
+      <tr><td>补偿造林</td><td data-label="规模">占林 1,210 公顷，按尼泊尔 1:10 补偿即约 1.2 万公顷造林抚育</td><td data-label="对口资质">园林绿化壹级（老本行）</td></tr>
+      <tr><td>移民安置重建</td><td data-label="规模">1,470 户 · 1,143 栋房屋及公共建筑重建</td><td data-label="对口资质">建筑总承包贰级</td></tr>
+      <tr><td>营地 / 进场道路 / 边坡生态修复</td><td data-label="规模">常规配套</td><td data-label="对口资质">市政贰级 + 园林壹级</td></tr>
     </table>
     <p>打包合计为 <b>5,000 万–1.5 亿美元量级</b>的真实业务，技术门槛在能力范围内，与总包方不构成竞争；"具备尼方通道的中国园林壹级企业"在这一细分领域几乎没有竞争者。</p>
   </div>
@@ -158,11 +180,11 @@
     <p><strong>杭州恰好坐着全国最对口的伙伴。</strong>按"牵头方→联合体→投资人"三个层次：</p>
   </div>
   <div class="card">
-    <table>
-      <tr><th>对象</th><th>角色定位</th><th>为什么对口</th></tr>
-      <tr><td><b>中国电建华东勘测设计研究院</b>（华东院，杭州）</td><td>首选牵头方：设计 + EPC 龙头</td><td>全球高水头水电与抽水蓄能设计第一梯队，中国电建系出海主力之一；本项目 1,350m 水头正是其强项</td></tr>
-      <tr><td><b>浙江省建设投资集团</b>（浙建集团）</td><td>施工联合体 / 对外承包平台</td><td>浙江对外承包工程的主要省属平台，具备海外履约与劳务组织经验，可作裕丰之上的施工总包层</td></tr>
-      <tr><td><b>浙江省能源集团</b>（浙能集团）</td><td>潜在投资人 / 业主侧伙伴</td><td>省属能源投资平台，若未来出现股权或购电相关窗口可引入</td></tr>
+    <table class="stack">
+      <tr class="h"><th>对象</th><th>角色定位</th><th>为什么对口</th></tr>
+      <tr><td><b>中国电建华东勘测设计研究院</b>（华东院，杭州）</td><td data-label="角色定位">首选牵头方：设计 + EPC 龙头</td><td data-label="为什么对口">全球高水头水电与抽水蓄能设计第一梯队，中国电建系出海主力之一；本项目 1,350m 水头正是其强项</td></tr>
+      <tr><td><b>浙江省建设投资集团</b>（浙建集团）</td><td data-label="角色定位">施工联合体 / 对外承包平台</td><td data-label="为什么对口">浙江对外承包工程的主要省属平台，具备海外履约与劳务组织经验，可作裕丰之上的施工总包层</td></tr>
+      <tr><td><b>浙江省能源集团</b>（浙能集团）</td><td data-label="角色定位">潜在投资人 / 业主侧伙伴</td><td data-label="为什么对口">省属能源投资平台，若未来出现股权或购电相关窗口可引入</td></tr>
     </table>
     <p><b>谈判筹码与顺序：</b>先华东院（决定项目能不能拿），再浙建（决定施工层怎么分），浙能备选。裕丰的筹码 = 尼方通道 + 本地软包件执行能力；要价 = 联合开发协议中的居间费条款 + 定向分包包件清单写入附件。</p>
     <p><b>关键提醒：</b>与国企谈判前必须先完成下面第 1–2 步（关系书面化）。没有 UGPCL/NEA 的书面文件，在华东院这样的对手盘面前没有谈判地位——他们自己也有尼泊尔渠道。</p>
