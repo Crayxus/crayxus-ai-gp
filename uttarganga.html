@@ -36,7 +36,13 @@
   .wrap{max-width:760px;margin:0 auto;padding:10px 18px 60px}
   section{margin-top:38px}
   h2{font-size:20px;font-weight:700;color:var(--navy2);margin-bottom:14px;
-     padding-left:12px;border-left:4px solid var(--teal)}
+     padding-left:12px;border-left:4px solid var(--teal);
+     display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+  .tts{margin-left:auto;flex:0 0 auto;border:1px solid var(--teal);color:#1b7fae;background:#fff;
+       border-radius:99px;font-size:12.5px;line-height:1;padding:6px 13px;cursor:pointer;
+       font-family:inherit;white-space:nowrap;-webkit-tap-highlight-color:transparent}
+  .tts.on{background:var(--teal);color:#fff;border-color:var(--teal)}
+  .tts:disabled{opacity:.45;cursor:default}
   h3{font-size:16.5px;font-weight:700;color:var(--navy2);margin:20px 0 8px}
   p{margin:10px 0;color:#2c3a48}
   .card{background:var(--card);border:1px solid var(--line);border-radius:12px;
@@ -240,6 +246,86 @@
   <div class="b">CRAYXUS</div>
   <div>战略分析 · 2026.06 · 本报告基于公开信息整理，仅供合作方内部参考</div>
 </footer>
+
+<script>
+(function(){
+  var supported = 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
+  var zhVoice = null, playing = null;
+
+  function pickVoice(){
+    try{
+      var vs = speechSynthesis.getVoices() || [];
+      zhVoice = vs.filter(function(v){ return /zh[-_]CN|cmn[-_]Hans/i.test(v.lang); })[0]
+             || vs.filter(function(v){ return /^zh/i.test(v.lang); })[0] || null;
+    }catch(e){}
+  }
+  if(supported){
+    pickVoice();
+    if(speechSynthesis.onvoiceschanged !== undefined){ speechSynthesis.onvoiceschanged = pickVoice; }
+  }
+
+  function chunkText(t){
+    var out = [], buf = '', i, ch;
+    for(i = 0; i < t.length; i++){
+      ch = t[i]; buf += ch;
+      if('。！？；\n'.indexOf(ch) >= 0){
+        if(buf.replace(/\s/g,'').length > 3){ out.push(buf.trim()); buf = ''; }
+      }else if(buf.length >= 110){ out.push(buf.trim()); buf = ''; }
+    }
+    if(buf.trim()) out.push(buf.trim());
+    return out;
+  }
+
+  function sectionText(sec){
+    var clone = sec.cloneNode(true);
+    var btns = clone.querySelectorAll('.tts');
+    for(var i = 0; i < btns.length; i++){ btns[i].parentNode.removeChild(btns[i]); }
+    return (clone.innerText || clone.textContent || '').replace(/https?:\/\/\S+/g, '').replace(/\s+/g, function(s){ return s.indexOf('\n') >= 0 ? '\n' : ' '; });
+  }
+
+  function resetBtn(btn){ btn.classList.remove('on'); btn.textContent = '🔊 朗读'; }
+
+  function stopAll(){
+    if(playing){ playing.stopped = true; resetBtn(playing.btn); playing = null; }
+    try{ speechSynthesis.cancel(); }catch(e){}
+  }
+
+  function speak(sec, btn){
+    if(playing && playing.btn === btn){ stopAll(); return; }
+    stopAll();
+    var state = { btn: btn, chunks: chunkText(sectionText(sec)), i: 0, stopped: false };
+    if(!state.chunks.length) return;
+    playing = state;
+    btn.classList.add('on'); btn.textContent = '⏹ 停止';
+    var next = function(){
+      if(state.stopped || playing !== state) return;
+      if(state.i >= state.chunks.length){ stopAll(); return; }
+      var u = new SpeechSynthesisUtterance(state.chunks[state.i++]);
+      u.lang = 'zh-CN'; u.rate = 1;
+      if(zhVoice) u.voice = zhVoice;
+      u.onend = next;
+      u.onerror = function(){ if(!state.stopped) next(); };
+      try{ speechSynthesis.speak(u); }catch(e){ stopAll(); }
+    };
+    next();
+  }
+
+  var secs = document.querySelectorAll('.wrap section');
+  for(var i = 0; i < secs.length; i++){
+    (function(sec){
+      var h2 = sec.querySelector('h2'); if(!h2) return;
+      var btn = document.createElement('button');
+      btn.type = 'button'; btn.className = 'tts'; btn.textContent = '🔊 朗读';
+      if(!supported){ btn.disabled = true; btn.textContent = '🔇 不支持朗读'; }
+      h2.appendChild(btn);
+      btn.addEventListener('click', function(e){ e.preventDefault(); speak(sec, btn); });
+    })(secs[i]);
+  }
+
+  document.addEventListener('visibilitychange', function(){ if(document.hidden) stopAll(); });
+  window.addEventListener('pagehide', stopAll);
+})();
+</script>
 
 </body>
 </html>
