@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-10 11:30:08",
+  "updated": "2026-06-10 13:00:13",
   "mode": "模拟盘 · 实时",
   "engine": "Crayxus AI Quant v1",
   "market": "etf",
@@ -18,8 +18,8 @@
     "code": "515050",
     "name": "通信ETF华夏",
     "market": 1,
-    "price": 1.213,
-    "chg": -3.27,
+    "price": 1.208,
+    "chg": -3.67,
     "held": false,
     "preview": true,
     "score": 79,
@@ -520,6 +520,14 @@
       {
         "t": "1130",
         "p": 1.213
+      },
+      {
+        "t": "1300",
+        "p": 1.213
+      },
+      {
+        "t": "1301",
+        "p": 1.208
       }
     ],
     "prev_close": 1.254
@@ -529,8 +537,8 @@
       "code": "515050",
       "name": "通信ETF华夏",
       "market": 1,
-      "price": 1.213,
-      "chg": -3.27,
+      "price": 1.208,
+      "chg": -3.67,
       "locked": false,
       "status": "监控"
     },
