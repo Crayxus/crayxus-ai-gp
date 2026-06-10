@@ -249,9 +249,12 @@
 
 <script>
 (function(){
-  var supported = 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
-  var zhVoice = null, playing = null;
+  var BASE = '/tts/utg-';   // 云希(Yunxi)神经语音预生成 MP3
+  var playing = null;
 
+  /* —— 降级路径：系统语音合成（仅当音频文件加载失败） —— */
+  var supported = 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
+  var zhVoice = null;
   function pickVoice(){
     try{
       var vs = speechSynthesis.getVoices() || [];
@@ -286,15 +289,19 @@
   function resetBtn(btn){ btn.classList.remove('on'); btn.textContent = '🔊 朗读'; }
 
   function stopAll(){
-    if(playing){ playing.stopped = true; resetBtn(playing.btn); playing = null; }
-    try{ speechSynthesis.cancel(); }catch(e){}
+    var p = playing; playing = null;
+    if(p){
+      p.stopped = true;
+      if(p.audio){ try{ p.audio.pause(); p.audio.removeAttribute('src'); p.audio.load(); }catch(e){} }
+      resetBtn(p.btn);
+    }
+    try{ if(supported) speechSynthesis.cancel(); }catch(e){}
   }
 
-  function speak(sec, btn){
-    if(playing && playing.btn === btn){ stopAll(); return; }
-    stopAll();
+  function speakSynth(sec, btn){
+    if(!supported){ resetBtn(btn); return; }
     var state = { btn: btn, chunks: chunkText(sectionText(sec)), i: 0, stopped: false };
-    if(!state.chunks.length) return;
+    if(!state.chunks.length){ resetBtn(btn); return; }
     playing = state;
     btn.classList.add('on'); btn.textContent = '⏹ 停止';
     var next = function(){
@@ -310,19 +317,40 @@
     next();
   }
 
+  /* —— 主路径：播放云希 MP3 —— */
+  function speak(sec, btn, idx){
+    if(playing && playing.btn === btn){ stopAll(); return; }
+    stopAll();
+    var a = new Audio(BASE + idx + '.mp3');
+    var state = { btn: btn, audio: a, stopped: false };
+    playing = state;
+    btn.classList.add('on'); btn.textContent = '⏳ 加载中';
+    a.onplaying = function(){ if(playing === state) btn.textContent = '⏹ 停止'; };
+    a.onended = function(){ if(playing === state) stopAll(); };
+    a.onerror = function(){
+      if(playing !== state || state.stopped) return;
+      playing = null;
+      speakSynth(sec, btn);
+    };
+    var pr = a.play();
+    if(pr && pr.catch){
+      pr.catch(function(){
+        if(playing === state && !state.stopped){ playing = null; speakSynth(sec, btn); }
+      });
+    }
+  }
+
   var secs = document.querySelectorAll('.wrap section');
   for(var i = 0; i < secs.length; i++){
-    (function(sec){
+    (function(sec, idx){
       var h2 = sec.querySelector('h2'); if(!h2) return;
       var btn = document.createElement('button');
       btn.type = 'button'; btn.className = 'tts'; btn.textContent = '🔊 朗读';
-      if(!supported){ btn.disabled = true; btn.textContent = '🔇 不支持朗读'; }
       h2.appendChild(btn);
-      btn.addEventListener('click', function(e){ e.preventDefault(); speak(sec, btn); });
-    })(secs[i]);
+      btn.addEventListener('click', function(e){ e.preventDefault(); speak(sec, btn, idx); });
+    })(secs[i], i + 1);
   }
 
-  document.addEventListener('visibilitychange', function(){ if(document.hidden) stopAll(); });
   window.addEventListener('pagehide', stopAll);
 })();
 </script>
