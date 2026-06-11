@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#06120c">
+<title>AI·掼蛋挑战赛 · 合作策划案 | Crayxus AI × 富阳大青农场</title>
+<meta name="description" content="全国首个落地农场的人机掼蛋挑战赛:挑战与DeepSeek/千问/GLM对战600局全胜的Crayxus掼蛋AI,打赢现场拿农场大奖。AI段位测评、大师级复盘、企业团建赛事——农场零投入,合作共赢。">
+
+<!-- Favicons -->
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="shortcut icon" type="image/png" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
+<!-- Open Graph · 微信分享卡片 -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Crayxus AI">
+<meta property="og:title" content="AI·掼蛋挑战赛 · 合作策划案">
+<meta property="og:description" content="挑战600局全胜大模型的掼蛋AI,打赢拿农场大奖。AI段位测评·大师级复盘·团建赛事 — Crayxus AI × 富阳大青农场">
+<meta property="og:image" content="https://crayxus.com.au/og-daqing.jpg?v=dq1">
+<meta property="og:image:secure_url" content="https://crayxus.com.au/og-daqing.jpg?v=dq1">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="800">
+<meta property="og:image:height" content="800">
+<meta property="og:image:alt" content="AI·掼蛋挑战赛">
+<meta property="og:url" content="https://crayxus.com.au/daqing.html">
+<meta property="og:locale" content="zh_CN">
+
+<!-- 微信内置浏览器 / 老版本兜底 -->
+<meta itemprop="image" content="https://crayxus.com.au/og-daqing.jpg?v=dq1">
+<meta name="image" content="https://crayxus.com.au/og-daqing.jpg?v=dq1">
+<link rel="image_src" href="https://crayxus.com.au/og-daqing.jpg?v=dq1">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI·掼蛋挑战赛 · 合作策划案">
+<meta name="twitter:description" content="挑战600局全胜的掼蛋AI,打赢拿农场大奖 — Crayxus AI × 富阳大青农场">
+<meta name="twitter:image" content="https://crayxus.com.au/og-daqing.jpg?v=dq1">
+
+<style>
+  :root{
+    --bg:#06120c; --bg2:#081a11; --card:rgba(12,30,21,.78); --line:rgba(0,255,157,.18); --line2:rgba(0,255,157,.08);
+    --gr:#00ff9d; --gr2:#00d4ff; --gold:#ffc457; --red:#ff5d6d;
+    --txt:#e9fbf2; --dim:#a3c8b4; --mute:#628a76;
+    --sans:ui-sans-serif,system-ui,"PingFang SC","Microsoft YaHei",sans-serif;
+    --mono:ui-monospace,Consolas,"JetBrains Mono",monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{background:var(--bg);color:var(--txt);font-family:var(--sans);line-height:1.75;
+    background-image:radial-gradient(1200px 600px at 50% -10%,rgba(0,255,157,.07),transparent 60%),
+                     radial-gradient(800px 500px at 90% 30%,rgba(0,212,255,.05),transparent 60%);}
+  .wrap{max-width:860px;margin:0 auto;padding:0 20px 80px}
+  a{color:var(--gr);text-decoration:none}
+
+  /* hero */
+  header{padding:64px 0 36px;text-align:center}
+  .badge{display:inline-block;font-size:13px;letter-spacing:.35em;color:var(--gr);border:1px solid var(--line);
+    border-radius:999px;padding:6px 18px 6px 22px;margin-bottom:26px;background:rgba(0,255,157,.05)}
+  h1{font-size:clamp(34px,8vw,56px);font-weight:800;letter-spacing:.02em;line-height:1.25}
+  h1 .ai{color:var(--gr)}
+  .hero-sub{margin-top:14px;color:var(--dim);font-size:clamp(15px,3.5vw,18px)}
+  .hero-x{margin-top:22px;font-size:14px;color:var(--mute);letter-spacing:.12em}
+  .hero-x b{color:var(--gold);font-weight:600}
+
+  /* slogan */
+  .slogan{margin:26px auto 0;max-width:640px;border:1px solid var(--line);border-radius:16px;background:var(--card);
+    padding:22px 24px;font-size:clamp(16px,4vw,20px);font-weight:700}
+  .slogan em{font-style:normal;color:var(--gr)}
+  .slogan small{display:block;margin-top:8px;font-size:13px;font-weight:400;color:var(--mute)}
+
+  /* stats */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:34px 0 8px}
+  .stat{border:1px solid var(--line2);border-radius:14px;background:var(--card);padding:16px 6px;text-align:center}
+  .stat b{display:block;font-size:clamp(20px,5vw,30px);color:var(--gr);font-family:var(--mono)}
+  .stat span{font-size:12px;color:var(--mute)}
+  @media(max-width:560px){.stats{grid-template-columns:repeat(2,1fr)}}
+
+  section{margin-top:56px}
+  h2{font-size:clamp(20px,5vw,26px);font-weight:800;margin-bottom:6px}
+  h2::before{content:"◆ ";color:var(--gr);font-size:.8em}
+  .h2sub{color:var(--mute);font-size:14px;margin-bottom:22px}
+
+  .card{border:1px solid var(--line);border-radius:18px;background:var(--card);padding:24px 22px;margin-bottom:16px}
+  .card h3{font-size:18px;margin-bottom:10px}
+  .card h3 .tag{display:inline-block;font-size:11px;font-weight:600;color:#06120c;background:var(--gr);
+    border-radius:6px;padding:1px 8px;margin-right:8px;vertical-align:2px}
+  .card h3 .tag.gold{background:var(--gold)}
+  .card h3 .tag.cy{background:var(--gr2)}
+  .card p{color:var(--dim);font-size:15px}
+  .card ul{margin:10px 0 0 0;list-style:none}
+  .card li{color:var(--dim);font-size:15px;padding-left:1.4em;position:relative;margin-top:6px}
+  .card li::before{content:"▸";position:absolute;left:2px;color:var(--gr)}
+  .price{margin-top:12px;font-size:14px;color:var(--gold);font-family:var(--mono)}
+
+  /* two col win-win */
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:640px){.duo{grid-template-columns:1fr}}
+  .duo .card{margin-bottom:0}
+  .duo h3{color:var(--gr)}
+  .duo .card:last-child h3{color:var(--gr2)}
+
+  /* flow table */
+  table{width:100%;border-collapse:collapse;font-size:14px;margin-top:6px}
+  th,td{border:1px solid var(--line2);padding:10px 12px;text-align:left;vertical-align:top}
+  th{color:var(--gr);font-weight:600;background:rgba(0,255,157,.05);white-space:nowrap}
+  td{color:var(--dim)}
+  td b{color:var(--txt)}
+
+  /* timeline */
+  .steps{counter-reset:step}
+  .step{position:relative;padding:0 0 26px 56px}
+  .step::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:0;width:38px;height:38px;
+    border-radius:50%;border:1px solid var(--gr);color:var(--gr);font-weight:800;font-family:var(--mono);
+    display:flex;align-items:center;justify-content:center;background:rgba(0,255,157,.06)}
+  .step::after{content:"";position:absolute;left:19px;top:42px;bottom:4px;width:1px;background:var(--line)}
+  .step:last-child::after{display:none}
+  .step h3{font-size:17px;margin-bottom:4px}
+  .step h3 small{color:var(--gold);font-size:12px;font-weight:400;margin-left:8px}
+  .step p{color:var(--dim);font-size:14.5px}
+
+  /* cta */
+  .cta{margin-top:64px;text-align:center;border:1px solid var(--line);border-radius:20px;
+    background:linear-gradient(160deg,rgba(0,255,157,.08),rgba(0,212,255,.04));padding:40px 24px}
+  .cta h2::before{content:""}
+  .cta p{color:var(--dim);margin-top:8px;font-size:15px}
+  .cta .mail{display:inline-block;margin-top:18px;font-family:var(--mono);font-size:16px;color:var(--gold);
+    border:1px solid rgba(255,196,87,.4);border-radius:10px;padding:10px 22px}
+
+  footer{margin-top:56px;text-align:center;color:var(--mute);font-size:12.5px;line-height:2}
+  .note{margin-top:30px;border-left:3px solid var(--gold);background:rgba(255,196,87,.06);
+    border-radius:0 12px 12px 0;padding:14px 18px;font-size:13.5px;color:var(--dim)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="badge">合作策划案 · 2026</div>
+  <h1><span class="ai">AI</span>·掼蛋挑战赛</h1>
+  <div class="hero-sub">把江浙最火的智力运动,搬进杭州人最爱的草莓农场</div>
+  <div class="hero-x"><b>CRAYXUS AI</b> &nbsp;×&nbsp; <b>富阳·大青农场</b></div>
+  <div class="slogan">"敢不敢,挑战 <em>AI</em>?"<small>—— 全国首个落地农场的人机掼蛋挑战赛。打赢 AI,当场拿走农场大奖。</small></div>
+  <div class="stats">
+    <div class="stat"><b>600局</b><span>对战三大大模型全胜</span></div>
+    <div class="stat"><b>13级</b><span>AI 段位认证体系</span></div>
+    <div class="stat"><b>6维</b><span>牌技能力雷达</span></div>
+    <div class="stat"><b>0元</b><span>农场现金投入</span></div>
+  </div>
+</header>
+
+<section>
+  <h2>为什么是"AI × 掼蛋 × 农场"</h2>
+  <div class="h2sub">三个本来不相干的东西,拼在一起恰好互补</div>
+  <div class="card">
+    <ul>
+      <li><b>掼蛋是江浙沪的"社交硬通货"</b>——企业团建、商务接待、家庭聚会的第一桌游,核心人群正是农场周末客群和企业团建采购方。</li>
+      <li><b>大青是杭州亲子采摘的顶流</b>——富春街道大青片区两千余亩草莓基地、年年办大青草莓节,有现成的场地、餐饮和口碑;挑战赛为草莓季之外的月份补上全季节内容。</li>
+      <li><b>AI 是现场的"话题发动机"</b>——"人机大战"自带传播属性:挑战 AI、打败 AI、被 AI 复盘,每一桌都是现成的短视频素材,给农场带来草莓之外的第二个话题。</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <h2>核心玩法 · 挑战 AI</h2>
+  <div class="h2sub">Crayxus 自研掼蛋 AI,与 DeepSeek、千问、GLM 三大顶级大模型对战 600 局全胜</div>
+  <div class="card">
+    <p><b>擂台规则(建议版):</b>玩家两人一组上桌,搭档对抗 AI 组合。打平有礼、打赢拿大奖——奖品就是农场的草莓、农产品礼包或餐饮券,<b>赢了 AI 的快乐,最后都变成农场的销量</b>。</p>
+    <ul>
+      <li><b>AI 段位测评</b>:扫码 20 题定级,13 级段位 + 六维能力雷达,现场出报告——"我是什么段位"是最强的社交分享钩子。</li>
+      <li><b>大师级 AI 复盘</b>:每位参赛者赛后拿到一份 AI 复盘报告——哪手牌打错了、关键局怎么打更优,输了也有获得感。</li>
+      <li><b>段位证书</b>:现场颁发电子段位证书,可分享朋友圈,长期为赛事和农场引流。</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <h2>三大产品包</h2>
+  <div class="h2sub">由轻到重,可单独跑,也可组合</div>
+
+  <div class="card">
+    <h3><span class="tag">旗舰</span>AI·掼蛋挑战赛(公开赛)</h3>
+    <p>周末或节庆(草莓节联动)举办,面向散客与掼蛋爱好者公开报名。海选积分赛 + 决赛挑战 AI,全程 AI 计分与段位认证。</p>
+    <ul>
+      <li>规模:每期 8–20 桌(32–80 人),半天赛程</li>
+      <li>奖品:农场提供(草莓/农产品礼包/餐饮券)——即奖品即带货</li>
+    </ul>
+    <div class="price">建议报名费 ¥50–100/人 · 双方分成</div>
+  </div>
+
+  <div class="card">
+    <h3><span class="tag gold">主力</span>企业团建专场(B2B 定制)</h3>
+    <p>面向杭州/富阳企业的半日团建包:AI 段位速测分组 → 循环积分赛 → 冠军组挑战 AI → AI 复盘颁奖 → 农家餐/采摘。一站式,行政只需带人来。</p>
+    <ul>
+      <li>规模:30–100 人,工作日/周末均可</li>
+      <li>含 AI 系统、裁判主持、物料奖状;餐饮采摘按农场标准另计</li>
+    </ul>
+    <div class="price">建议 ¥150–300/人(含餐) · 赛事运营费归 Crayxus,餐饮场地归农场</div>
+  </div>
+
+  <div class="card">
+    <h3><span class="tag cy">常设</span>草莓季 AI 测评体验角</h3>
+    <p>草莓季(12月–4月)在园区设一个"AI 掼蛋段位测评角":游客扫码即测、即出段位,零人力值守。给采摘客流多一个停留点和传播点,也为挑战赛持续蓄水。</p>
+    <div class="price">免费体验 · 零成本常驻引流</div>
+  </div>
+</section>
+
+<section>
+  <h2>合作模式 · 农场零投入</h2>
+  <div class="h2sub">各出所长,收益分成,先小后大</div>
+  <table>
+    <tr><th></th><th>大青农场</th><th>Crayxus AI</th></tr>
+    <tr><td><b>投入</b></td><td>场地桌椅 · 餐饮 · 奖品(自产农产品)</td><td>赛事运营 · AI 全套系统 · 物料设计 · 宣传素材</td></tr>
+    <tr><td><b>收益</b></td><td>餐饮采摘消费 · 奖品带货 · 淡季客流 · 品牌话题</td><td>赛事运营费 · 报名分成 · 线上课程转化</td></tr>
+    <tr><td><b>风险</b></td><td>零现金投入,试水赛不满意随时叫停</td><td>承担全部赛事执行成本</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>落地三步走</h2>
+  <div class="h2sub">先办一场,数据说话,再谈框架</div>
+  <div class="steps">
+    <div class="step">
+      <h3>试水赛<small>两周内可办</small></h3>
+      <p>30 人规模免费试水赛,跑通"测评—对战—挑战 AI—复盘"全流程,拍摄现场素材。农场只出场地和少量奖品,零风险验证。</p>
+    </div>
+    <div class="step">
+      <h3>数据复盘 · 签订框架<small>试水赛后一周</small></h3>
+      <p>用真实报名转化、现场满意度和传播数据做决策。双方满意则签订分成框架,排期月度公开赛,并启动企业团建客户拓展。</p>
+    </div>
+    <div class="step">
+      <h3>常态运营 · 挂牌基地<small>当季</small></h3>
+      <p>挂牌"AI·掼蛋挑战赛 大青基地":月度公开赛 + 团建专场常态化 + 草莓季测评角,联动大青草莓节,打造富阳"农旅 × AI"标杆案例。</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>关于 Crayxus AI</h2>
+  <div class="card">
+    <p>Crayxus AI 专注掼蛋人工智能与智力运动教培,与浙江大学教授团队深度合作。自研掼蛋 AI 在与 DeepSeek、千问、GLM 三大顶级大模型的公开对战中 <b>600 局全胜</b>;已建成 13 级段位认证、6 门课 60 节 300 题的 AI 教培体系与微信小程序平台。</p>
+  </div>
+  <div class="note">本页为合作策划建议书,所列玩法、定价与分成均为建议方案,具体以双方协商签署的协议为准。</div>
+</section>
+
+<div class="cta">
+  <h2>来聊聊这场比赛怎么办</h2>
+  <p>一场试水赛,就能看到答案。</p>
+  <a class="mail" href="mailto:general@crayxus.com.au">general@crayxus.com.au</a>
+  <p style="margin-top:14px;font-size:13px">crayxus.com.au</p>
+</div>
+
+<footer>
+  © 2026 Crayxus AI · AI·掼蛋挑战赛 合作策划案<br>
+  Crayxus AI × 富阳大青农场(策划阶段)
+</footer>
+
+</div>
+</body>
+</html>
