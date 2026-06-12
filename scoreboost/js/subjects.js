@@ -1,4 +1,4 @@
-// Crayxus AI 提分系统 · 科目注册表 (Web 版)
+// 择大 AI 提分系统 · 科目注册表 (Web 版)
 // 6 主科目 + 6 贝赛思子学科, 每科 12-20 道演示题
 (function() {
 const SUBJECTS_RAW = [

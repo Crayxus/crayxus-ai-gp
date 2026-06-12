@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Crayxus AI 提分系统</title>
+<title>择大 AI 提分系统</title>
 <link rel="stylesheet" href="css/theme.css">
 </head>
 <body>
@@ -16,7 +16,7 @@
     <div class="pc-logo">
       <div class="pc-logo-mark">CX</div>
       <div class="pc-logo-text">
-        <span class="pc-logo-name">CRAYXUS</span>
+        <span class="pc-logo-name">择大</span>
         <span class="pc-logo-sub">AI 提分系统</span>
       </div>
     </div>
@@ -65,7 +65,7 @@
 
     <div class="pc-topbar">
       <div class="pc-breadcrumb">
-        <span>CRAYXUS</span>
+        <span>择大</span>
         <span class="sep">›</span>
         <span id="bcView">主科目</span>
         <span class="sep">›</span>
@@ -79,7 +79,7 @@
 
     <!-- HERO -->
     <div class="pc-hero-main">
-      <div class="pc-hero-tag" id="heroTag">CRAYXUS · 大模型自适应 · SAT</div>
+      <div class="pc-hero-tag" id="heroTag">择大 · 大模型自适应 · SAT</div>
       <div class="pc-hero-title">AI 提分系统</div>
       <div class="pc-hero-sub" id="heroSub">当前科目 · SAT · 400 → 1600</div>
 
@@ -352,7 +352,7 @@ function renderTopbar() {
 
 function renderHero() {
   const subject = getSubject(state.currentId)
-  document.getElementById('heroTag').textContent = `CRAYXUS · 大模型自适应 · ${subject.shortName || subject.name}`
+  document.getElementById('heroTag').textContent = `择大 · 大模型自适应 · ${subject.shortName || subject.name}`
   document.getElementById('heroSub').textContent = `当前科目 · ${subject.name} · ${subject.textbook.grade}`
 
   // hero stats 来自 prog
@@ -585,7 +585,7 @@ function launchMatch() {
       else if (r.tapIndex === 1) startMatchFlow()
     })
   } else {
-    showModal({ title: '◆ MATCH DRIVE · 匹配度测评', content: '10 题 · 5 分钟 · AI 判定你的学习型人格 + Crayxus 兼容指数 + 推荐方案', confirmText: '开始评估', confirmColor: '#ffd700' }).then(r => {
+    showModal({ title: '◆ MATCH DRIVE · 匹配度测评', content: '10 题 · 5 分钟 · AI 判定你的学习型人格 + 择大 兼容指数 + 推荐方案', confirmText: '开始评估', confirmColor: '#ffd700' }).then(r => {
       if (r.confirm) startMatchFlow()
     })
   }

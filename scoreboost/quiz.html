@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>测评 · Crayxus AI</title>
+<title>测评 · 择大 AI</title>
 <link rel="stylesheet" href="css/theme.css">
 </head>
 <body>
 
 <div class="app-frame narrow">
-  <div class="status-bar">CRAYXUS · AI 测评</div>
+  <div class="status-bar">择大 AI 测评</div>
 
   <div class="ai-loading" id="aiLoading"></div>
 
@@ -98,7 +98,7 @@ const storageKeyOf = id => 'sb_progress__' + id
 function init() {
   // 启动 AI loading 假动画
   const messages = mode === 'assess'
-    ? ['启动 Crayxus AI 命题引擎...', '覆盖 6 大维度知识图谱...', '混合难度梯度（简单/中等/进阶）...', 'AI 校对题目与答案...', '即将完成, 准备就绪...']
+    ? ['启动 择大 AI 命题引擎...', '覆盖 6 大维度知识图谱...', '混合难度梯度（简单/中等/进阶）...', 'AI 校对题目与答案...', '即将完成, 准备就绪...']
     : ['分析你的薄弱维度...', '定位你的当前水平...', 'AI 定制专属强化题目...', 'AI 校对质量...', '即将完成, 准备就绪...']
   const loader = startAILoader(document.getElementById('aiLoading'), messages, { minDuration: 2200 })
   loader.finish(() => {

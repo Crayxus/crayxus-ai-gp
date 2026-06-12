@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>CRAYXUS AI · 量化自动交易终端</title>
-<meta name="description" content="Crayxus AI 量化自动交易终端 · AI首选信号 · 实时日线 · 止盈止损 · 自动下单 · 每日盈亏">
+<title>择大 AI · 量化自动交易终端</title>
+<meta name="description" content="择大 AI 量化自动交易终端 · AI首选信号 · 实时日线 · 止盈止损 · 自动下单 · 每日盈亏">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="CRAYXUS AI">
-<meta property="og:title" content="CRAYXUS AI · 量化自动交易终端">
+<meta property="og:site_name" content="择大 AI">
+<meta property="og:title" content="择大 AI · 量化自动交易终端">
 <meta property="og:description" content="AI 首选信号 · 实时日线 · 自动下单 · 每日盈亏">
 <meta property="og:image" content="https://crayxus.com.au/og-auto.jpg">
 <meta property="og:image:width" content="640">
 <meta property="og:image:height" content="640">
 <meta property="og:url" content="https://crayxus.com.au/auto.html">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="CRAYXUS AI · 量化自动交易终端">
+<meta name="twitter:title" content="择大 AI · 量化自动交易终端">
 <meta name="twitter:description" content="AI 首选信号 · 实时日线 · 自动下单 · 每日盈亏">
 <meta name="twitter:image" content="https://crayxus.com.au/og-auto.jpg">
 <meta itemprop="image" content="https://crayxus.com.au/og-auto.jpg">
@@ -392,13 +392,13 @@ body::before{/* 远处光晕 + 更深的黑蓝渐变 */
 </style>
 </head>
 <body>
-<img src="https://crayxus.com.au/og-auto.jpg" alt="CRAYXUS AI 量化自动交易终端" width="640" height="640" style="position:absolute;left:-9999px;top:0;width:1px;height:1px;opacity:0;pointer-events:none">
+<img src="https://crayxus.com.au/og-auto.jpg" alt="择大 AI 量化自动交易终端" width="640" height="640" style="position:absolute;left:-9999px;top:0;width:1px;height:1px;opacity:0;pointer-events:none">
 <div class="scan"></div>
 <div class="fx"></div>
 <div class="wrap">
   <div class="bar">
     <div class="brand"><div class="logo">⬡</div>
-      <div><b>CRAYXUS&nbsp;AI</b><div class="sub">QUANT&nbsp;·&nbsp;量化自动交易终端</div></div></div>
+      <div><b>择大&nbsp;AI</b><div class="sub">QUANT&nbsp;·&nbsp;量化自动交易终端</div></div></div>
     <div class="kpis">
       <div class="kpi"><div class="k">总资产</div><div class="v mono" id="kNav">—</div></div>
       <div class="kpi"><div class="k">累计收益</div><div class="v mono" id="kRet">—</div></div>
@@ -453,7 +453,7 @@ body::before{/* 远处光晕 + 更深的黑蓝渐变 */
       <div class="lockNote">完整版解锁全部 AI 信号</div>
     </div>
   </div>
-  <div class="foot" id="foot">CRAYXUS AI Quant · 自动刷新中</div>
+  <div class="foot" id="foot">择大 AI Quant · 自动刷新中</div>
 </div>
 
 <script>
@@ -477,7 +477,7 @@ function render(d){
   animK('kDD',d.max_drawdown_pct||0,function(v){return '-'+fmt(v,2)+'%'},'down');
   el('modeTag').textContent=d.mode||'—';
   el('sigMkt').textContent=(d.market==='etf'?'ETF':'股票');
-  el('foot').textContent='CRAYXUS AI Quant v1 · '+(d.mode||'')+' · 数据'+(d.source||'')+' · 更新 '+(d.updated||'')+' · 8秒自动刷新 · 模拟盘';
+  el('foot').textContent='择大 AI Quant v1 · '+(d.mode||'')+' · 数据'+(d.source||'')+' · 更新 '+(d.updated||'')+' · 8秒自动刷新 · 模拟盘';
 
   var sg=d.signal;
   // ticker

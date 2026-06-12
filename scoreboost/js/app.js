@@ -1,4 +1,4 @@
-// Crayxus AI 提分系统 · Web 版工具函数
+// 择大 AI 提分系统 · Web 版工具函数
 // 模拟微信 API: storage / vibrate / showToast / showModal / showActionSheet
 (function() {
 const Storage = {
@@ -102,7 +102,7 @@ function startAILoader(host, messages, opts = {}) {
   const minDuration = opts.minDuration || 2400
   host.innerHTML = `
     <div class="ai-ring"></div>
-    <div class="ai-title">Crayxus AI 运行中</div>
+    <div class="ai-title">择大 AI 运行中</div>
     <div class="ai-msg">${messages[0]}</div>
     <div class="ai-bar-wrap"><div class="ai-bar-fill" style="width:0%"></div></div>
     <div class="ai-pct">0%</div>
@@ -155,7 +155,7 @@ function startAILoader(host, messages, opts = {}) {
 
 // 全局 AI Helper 浮动按钮 (页面引导)
 const AI_HELPER_TEXTS = {
-  scoreboost: ['👋 欢迎来到 Crayxus AI 提分系统！这里是 6 大科目 Hub。', '点击科目卡选择你要冲分的科目, 比如 SAT。', '完成「BOOST 测评」会解锁六维诊断 + AI 预测分数。', '建议先做「MATCH 匹配测评」, AI 会推荐方案 + 主攻科目。'],
+  scoreboost: ['👋 欢迎来到 择大 AI 提分系统！这里是 6 大科目 Hub。', '点击科目卡选择你要冲分的科目, 比如 SAT。', '完成「BOOST 测评」会解锁六维诊断 + AI 预测分数。', '建议先做「MATCH 匹配测评」, AI 会推荐方案 + 主攻科目。'],
   'sb-quiz-assess': ['📋 20 题定级测评。请认真作答。', '答完每题点确认查看解析, 系统会建立你的能力画像。', '连对 3 题有盲盒奖励!', '完成后会生成六维诊断报告。'],
   'sb-quiz-adaptive': ['🎯 自适应训练。AI 已锁定你的薄弱维度。', '10 道针对性题目, 比定级测评更精准。', '记得仔细看解析, 加入生词本/错题本可复习。'],
   'pre-screen-test': ['◆ MATCH DRIVE · 学习人格 + 兼容指数测评。', '10 道题, 5 分钟。如实选择, AI 会判断你的学习型人格。', '完成后获得专属推荐方案。'],
@@ -165,7 +165,7 @@ const AI_HELPER_TEXTS = {
 }
 
 function attachAIHelper(pageKey) {
-  const texts = AI_HELPER_TEXTS[pageKey] || ['Crayxus AI 助手已就绪。']
+  const texts = AI_HELPER_TEXTS[pageKey] || ['择大 AI 助手已就绪。']
   let step = 0
   const btn = document.createElement('div')
   btn.className = 'ai-helper-fab'

@@ -97,7 +97,7 @@ let currentIdx = 0
 let answers = []
 
 function init() {
-  const messages = ['启动 Crayxus AI 大模型...', '读取你的备考画像...', '生成 10 道学习人格题...', 'AI 审核题目质量...', '即将完成, 准备就绪...']
+  const messages = ['启动 择大 AI 大模型...', '读取你的备考画像...', '生成 10 道学习人格题...', 'AI 审核题目质量...', '即将完成, 准备就绪...']
   const loader = startAILoader(document.getElementById('aiLoading'), messages, { minDuration: 2200 })
   loader.finish(renderQ)
 }
