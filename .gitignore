@@ -2,3 +2,4 @@ Thumbs.db
 .DS_Store
 *.bak
 *~
+gen_cover.py
