@@ -106,12 +106,36 @@ footer{margin-top:34px;background:linear-gradient(160deg,var(--lvd),#143d29);col
 .fwrap .r .big{font-size:15px;color:var(--gold);font-weight:700}
 
 @media(max-width:680px){
- .dash{grid-template-columns:1fr 1fr}
- .terms{grid-template-columns:1fr}
- .shint{display:block}
+ .wrap{padding:22px 16px 0}
  header h1{font-size:19px}
+ .share-cover{width:172px;height:172px}
  .fwrap{flex-direction:column;align-items:flex-start}
  .fwrap .r{text-align:left}
+
+ /* BOQ 表格 → 卡片式，免横滑 */
+ .shint{display:none}
+ .scroll{border:none;background:transparent;overflow:visible;margin:0}
+ table{display:block;min-width:0;width:100%}
+ thead{display:none}
+ tbody{display:block;counter-reset:row}
+ tbody tr{display:block;counter-increment:row;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:13px 15px;margin-bottom:11px;box-shadow:0 1px 4px rgba(31,93,63,.05)}
+ tbody td{display:flex;justify-content:space-between;align-items:baseline;text-align:right;padding:8px 0;border:none;border-top:1px solid var(--line);font-size:13.5px}
+ tbody td::before{content:attr(data-label);color:var(--mut);font-size:12px;font-weight:600;text-align:left;white-space:nowrap;margin-right:14px}
+ tbody td.no:first-child{display:none}
+ tbody td.l{display:block;text-align:left;padding:0 0 9px;border-top:none}
+ tbody td.l::before{content:counter(row) ".";color:var(--lv);font-weight:800;margin-right:7px}
+ tbody td.l .cnname{font-size:15px}
+ tbody td.l .spec{font-size:11.5px;margin-top:5px}
+ tbody td[data-label="备注"]{display:none}
+ tbody td[data-label="合价"]{color:var(--lvd);font-weight:700}
+
+ /* 总额卡片 */
+ tbody tr.grand{background:var(--lvd);border:none;padding:15px 16px}
+ tbody tr.grand td{display:block;text-align:left;border:none;padding:1px 0;color:#fff}
+ tbody tr.grand td::before{display:none}
+ tbody tr.grand td.l{font-size:12px;color:#bfe0cd;font-weight:600;letter-spacing:.5px}
+ tbody tr.grand td[data-label="合价"]{font-size:21px;font-weight:760;color:var(--gold);margin-top:3px}
+ tbody tr.grand td[data-label="合价"] .cur{display:block;font-size:11px;color:#bfe0cd;font-weight:500;margin-top:3px}
 }
 </style>
 </head>
@@ -153,62 +177,62 @@ footer{margin-top:34px;background:linear-gradient(160deg,var(--lvd),#143d29);col
       <tr>
         <td class="no">1</td>
         <td class="l"><span class="cnname">泰国榕</span><span class="spec">胸径 20–22cm,高 701–750cm,冠幅 ≥501cm;全冠、树形优美;含吊装运输</span></td>
-        <td class="c">株</td>
-        <td class="no">2</td>
-        <td class="amt">70,000.00</td>
-        <td class="amt">140,000.00</td>
-        <td class="c"></td>
+        <td class="c" data-label="单位">株</td>
+        <td class="no" data-label="工程量">2</td>
+        <td class="amt" data-label="综合单价">70,000.00</td>
+        <td class="amt" data-label="合价">140,000.00</td>
+        <td class="c" data-label="备注"></td>
       </tr>
       <tr>
         <td class="no">2</td>
         <td class="l"><span class="cnname">琴叶榕</span><span class="spec">高 351–400cm,冠幅 301–350cm;全冠、树形优美</span></td>
-        <td class="c">株</td>
-        <td class="no">7</td>
-        <td class="amt">26,000.00</td>
-        <td class="amt">182,000.00</td>
-        <td class="c"></td>
+        <td class="c" data-label="单位">株</td>
+        <td class="no" data-label="工程量">7</td>
+        <td class="amt" data-label="综合单价">26,000.00</td>
+        <td class="amt" data-label="合价">182,000.00</td>
+        <td class="c" data-label="备注"></td>
       </tr>
       <tr>
         <td class="no">3</td>
         <td class="l"><span class="cnname">小果野蕉</span><span class="spec">高 251–300cm,冠幅 201–250cm;全冠、树形优美</span></td>
-        <td class="c">株</td>
-        <td class="no">10</td>
-        <td class="amt">5,500.00</td>
-        <td class="amt">55,000.00</td>
-        <td class="c"></td>
+        <td class="c" data-label="单位">株</td>
+        <td class="no" data-label="工程量">10</td>
+        <td class="amt" data-label="综合单价">5,500.00</td>
+        <td class="amt" data-label="合价">55,000.00</td>
+        <td class="c" data-label="备注"></td>
       </tr>
       <tr>
         <td class="no">4</td>
         <td class="l"><span class="cnname">草坪满铺</span><span class="spec">马尼拉草满铺;含草皮材料、铺设、滚压及首遍浇水养护(基层精整见序 5)</span></td>
-        <td class="c">m²</td>
-        <td class="no">12,129.20</td>
-        <td class="amt">160.00</td>
-        <td class="amt">1,940,672.00</td>
-        <td class="c"></td>
+        <td class="c" data-label="单位">m²</td>
+        <td class="no" data-label="工程量">12,129.20</td>
+        <td class="amt" data-label="综合单价">160.00</td>
+        <td class="amt" data-label="合价">1,940,672.00</td>
+        <td class="c" data-label="备注"></td>
       </tr>
       <tr>
         <td class="no">5</td>
         <td class="l"><span class="cnname">整理绿化用地</span><span class="spec">土方地形到位,种植前翻挖深度 ≥30cm;乔灌木种植后二次地形精细整理;铺草前再一次精整(土粒细致化);含微地形造景</span></td>
-        <td class="c">m²</td>
-        <td class="no">12,129.20</td>
-        <td class="amt">284.00</td>
-        <td class="amt">3,444,692.80</td>
-        <td class="c"></td>
+        <td class="c" data-label="单位">m²</td>
+        <td class="no" data-label="工程量">12,129.20</td>
+        <td class="amt" data-label="综合单价">284.00</td>
+        <td class="amt" data-label="合价">3,444,692.80</td>
+        <td class="c" data-label="备注"></td>
       </tr>
       <tr>
         <td class="no">6</td>
         <td class="l"><span class="cnname">种植土回(换)填</span><span class="spec">回填土质符合种植要求;含土源、运距及土源费;含造型费用</span></td>
-        <td class="c">m³</td>
-        <td class="no">3,638.76</td>
-        <td class="amt">470.00</td>
-        <td class="amt">1,710,217.20</td>
-        <td class="c"></td>
+        <td class="c" data-label="单位">m³</td>
+        <td class="no" data-label="工程量">3,638.76</td>
+        <td class="amt" data-label="综合单价">470.00</td>
+        <td class="amt" data-label="合价">1,710,217.20</td>
+        <td class="c" data-label="备注"></td>
       </tr>
 
       <tr class="grand">
         <td class="l" colspan="5">报价总额 TOTAL</td>
-        <td class="amt">7,472,582.00<span class="cur">≈ ¥154.1 万 / US$ 20.76 万</span></td>
-        <td class="c"></td>
+        <td class="amt" data-label="合价">7,472,582.00<span class="cur">≈ ¥154.1 万 / US$ 20.76 万</span></td>
+        <td class="c" data-label="备注"></td>
       </tr>
     </tbody>
   </table>
