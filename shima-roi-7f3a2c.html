@@ -4,14 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>石马镇选址 ROI · 瑞幸 vs 乌镇泰丰斋</title>
-<meta name="description" content="桐乡石马镇单店选址测算：瑞幸咖啡 vs 乌镇泰丰斋，36个月现金流、回本周期与年化ROI对比，参数可调。">
-<!-- 微信/社交分享卡片 -->
+<meta name="description" content="桐乡石马镇单店选址测算：瑞幸咖啡(重投入) vs 乌镇泰丰斋(自有房产·0现金投入)，36个月现金流、回本、年化ROI对比，参数可调，支持语音朗读。">
+<!-- 微信/社交分享卡片：正方形缩略图 + ?v 破缓存 -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="石马镇选址 ROI · 瑞幸 vs 乌镇泰丰斋">
-<meta property="og:description" content="36个月现金流 · 回本周期 · 年化ROI 全测算，参数可调。CRAYXUS 选址决策测算。">
-<meta property="og:image" content="https://crayxus.com.au/shima-roi-7f3a2c-cover.png?v=1">
+<meta property="og:description" content="泰丰斋自有房产·0现金投入·首月即正现金流 vs 瑞幸重投入2年回本。36个月现金流全测算。">
+<meta property="og:image" content="https://crayxus.com.au/shima-roi-cover-sq.png?v=2">
 <meta property="og:url" content="https://crayxus.com.au/shima-roi-7f3a2c.html">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://crayxus.com.au/shima-roi-cover-sq.png?v=2">
 <style>
   :root{
     --bg:#0e1116; --panel:#171b22; --panel2:#1d2230; --line:#2a3140;
@@ -22,8 +23,8 @@
   body{font-family:-apple-system,"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif;
     background:var(--bg);color:var(--txt);padding:24px;line-height:1.5}
   .wrap{max-width:1180px;margin:0 auto}
-  /* 微信抓图关键：body 内一张 ≥200px 真实图片，绝对地址 + ?v= 破缓存 */
-  .hero{width:100%;max-width:1180px;border-radius:14px;margin-bottom:18px;display:block;border:1px solid var(--line)}
+  /* 微信抓图关键：body 内一张接近正方形的真实图片，绝对地址 + ?v= 破缓存 */
+  .hero{display:block;margin:0 auto 18px;width:100%;max-width:440px;border-radius:16px;border:1px solid var(--line)}
   h1{font-size:24px;font-weight:700;margin-bottom:4px}
   h1 .sub{font-size:13px;color:var(--sub);font-weight:400;margin-left:8px}
   .note{font-size:12px;color:var(--sub);margin-bottom:18px}
@@ -47,9 +48,10 @@
   .kcard{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px;position:relative}
   .kcard .head{font-size:12px;color:var(--sub);margin-bottom:10px;display:flex;align-items:center;gap:6px}
   .kcard .dot{width:9px;height:9px;border-radius:50%}
-  .krow{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:1px dashed var(--line)}
+  .krow{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:1px dashed var(--line);gap:8px}
   .krow:last-child{border-bottom:none}
-  .krow .v{font-weight:700;font-variant-numeric:tabular-nums}
+  .krow span:first-child{color:var(--sub)}
+  .krow .v{font-weight:700;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
   .win{position:absolute;top:12px;right:12px;font-size:10px;background:var(--good);color:#06210f;padding:1px 6px;border-radius:5px;font-weight:700}
 
   .chart{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:18px}
@@ -67,17 +69,25 @@
   .pill.t{background:rgba(245,158,11,.2);color:#fcd34d}
   ul{margin:6px 0 0 18px;font-size:13px;color:var(--sub)}
   li{margin-bottom:5px}
+
+  .tts{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:6px;background:var(--panel2);border:1px solid var(--line);
+    color:var(--txt);padding:8px 15px;border-radius:9px;font-size:14px;cursor:pointer;font-family:inherit}
+  .btn:hover{border-color:var(--accent)}
+  .btn.primary{background:var(--accent);color:#1a1530;border-color:var(--accent);font-weight:700}
+  .btn.playing{background:var(--good);border-color:var(--good);color:#06210f}
+  .tts small{color:var(--sub);font-size:11px}
   .foot{font-size:11px;color:var(--sub);margin-top:18px;border-top:1px solid var(--line);padding-top:12px}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <img class="hero" src="https://crayxus.com.au/shima-roi-7f3a2c-cover.png?v=1"
+  <img class="hero" src="https://crayxus.com.au/shima-roi-cover-sq.png?v=2"
        alt="石马镇单店 ROI 对比 · 瑞幸咖啡 vs 乌镇泰丰斋">
   <h1>石马镇选址决策 · ROI Dashboard<span class="sub">桐乡·石门(石马·公交站一带) · 单店 36 个月现金流模型</span></h1>
   <div class="note">
-    <span class="badge b-luckin">瑞幸咖啡</span>连锁标准化 · 重投入 ¥38万 · 年轻客群 ·
-    <span class="badge b-taifeng">乌镇泰丰斋</span>老字号糕点 · 轻投入 ¥15万 · 本地+节庆 ·
+    <span class="badge b-luckin">瑞幸咖啡</span>连锁标准化 · 现金投入 ¥38万 · 年轻客群 ·
+    <span class="badge b-taifeng">乌镇泰丰斋</span>老字号糕点 · <b style="color:#22c55e">自有房产·0现金投入·租金作投入</b> ·
     拖动滑块改假设，曲线与裁决实时重算。
   </div>
 
@@ -102,9 +112,14 @@
         <input type="range" id="tp" min="10" max="35" step="1" value="18">
       </div>
       <div class="ctrl">
-        <label>月租金(瑞幸基准元) <b id="vRent">6000</b></label>
+        <label>泰丰斋 · 现金投入(万) <b id="vTc">0</b></label>
+        <input type="range" id="tcash" min="0" max="10" step="0.5" value="0">
+        <small>房子自有→0现金；若需购设备/装修可上调</small>
+      </div>
+      <div class="ctrl">
+        <label>市场月租金(瑞幸付现/泰丰机会成本) <b id="vRent">6000</b></label>
         <input type="range" id="rent" min="3000" max="12000" step="500" value="6000">
-        <small>泰丰斋店面按基准 55% 计</small>
+        <small>泰丰斋自有房产按基准 55% 估算机会成本租金</small>
       </div>
       <div class="ctrl">
         <label>泰丰斋 · 节庆波幅 <b id="vAmp">1.0</b></label>
@@ -112,8 +127,8 @@
         <small>0=无季节性，1=默认锯齿，1.5=节庆更猛</small>
       </div>
       <div style="font-size:11px;color:var(--sub);margin-top:10px;border-top:1px solid var(--line);padding-top:10px">
-        固定假设：初始投入 瑞幸¥38万 / 泰丰¥15万；物料率 瑞幸42%·泰丰40%；
-        瑞幸人工¥1.5万、泰丰¥1.2万(节庆月+临时工)；均含开业爬坡。
+        固定假设：瑞幸现金投入¥38万、付现房租；泰丰斋<b>自有房产不付现金房租</b>、租金计为机会成本投入。
+        物料率 瑞幸42%·泰丰40%；瑞幸人工¥1.5万、泰丰¥1.2万(节庆月+临时工)；均含开业爬坡。
       </div>
     </div>
 
@@ -123,7 +138,7 @@
         <div class="kcard">
           <div id="winL" class="win" style="display:none">更优</div>
           <div class="head"><span class="dot" style="background:var(--luckin)"></span>瑞幸咖啡</div>
-          <div class="krow"><span>初始投入</span><span class="v">¥38.0万</span></div>
+          <div class="krow"><span>现金投入</span><span class="v">¥38.0万</span></div>
           <div class="krow"><span>稳定期月净利</span><span class="v" id="lProfit">—</span></div>
           <div class="krow"><span>回本周期</span><span class="v" id="lPay">—</span></div>
           <div class="krow"><span>年化ROI</span><span class="v" id="lRoi">—</span></div>
@@ -131,18 +146,19 @@
         </div>
         <div class="kcard">
           <div id="winT" class="win" style="display:none">更优</div>
-          <div class="head"><span class="dot" style="background:var(--taifeng)"></span>乌镇泰丰斋</div>
-          <div class="krow"><span>初始投入</span><span class="v">¥15.0万</span></div>
-          <div class="krow"><span>稳定期月净利(年均)</span><span class="v" id="tProfit">—</span></div>
-          <div class="krow"><span>回本周期</span><span class="v" id="tPay">—</span></div>
-          <div class="krow"><span>年化ROI</span><span class="v" id="tRoi">—</span></div>
-          <div class="krow"><span>36月累计净现金流</span><span class="v" id="tCum">—</span></div>
+          <div class="head"><span class="dot" style="background:var(--taifeng)"></span>乌镇泰丰斋 · 自有房产</div>
+          <div class="krow"><span>现金投入</span><span class="v" id="tCash">¥0</span></div>
+          <div class="krow"><span>折算投入·年租金</span><span class="v" id="tYearRent">—</span></div>
+          <div class="krow"><span>月经营净利(自有房产)</span><span class="v" id="tProfit">—</span></div>
+          <div class="krow"><span>比单纯收租多赚/月</span><span class="v" id="tExcess">—</span></div>
+          <div class="krow"><span>年化ROI(租金口径)</span><span class="v" id="tRoi">—</span></div>
+          <div class="krow"><span>36月累计净利</span><span class="v" id="tCum">—</span></div>
         </div>
       </div>
 
       <div class="chart">
         <h3>累计净现金流曲线（穿越 0 线 = 回本）</h3>
-        <div class="cap">纵轴=累计现金(万元)，含初始投入。曲线越早越高地越过零线，回本越快、ROI越高。</div>
+        <div class="cap">瑞幸从 −38万 起步、爬升较久才回本；泰丰斋 0 现金投入从零线起步，首月即正、一路在上方。</div>
         <canvas id="cumChart" height="340"></canvas>
       </div>
 
@@ -154,13 +170,18 @@
 
       <div class="verdict">
         <h2>一眼裁决 · ROI 仲裁</h2>
+        <div class="tts">
+          <button class="btn primary" id="btnSpeak">🔊 朗读结论</button>
+          <button class="btn" id="btnStop">⏹ 停止</button>
+          <small id="ttsHint">点一下，语音播报当前结论（建议用系统浏览器/Safari/Chrome；微信内可能不支持）</small>
+        </div>
         <div id="vText"></div>
         <p class="big" style="color:var(--txt);margin-top:14px">定性风险（不随滑块变，必须看）：</p>
         <ul>
-          <li><b style="color:#fcd34d">泰丰斋的 ROI 是“脆的”</b>：高回报全押在“平月日客单”和节庆翻倍两个假设上。脱离乌镇景区客流后，这两个数极不确定，本地糕点店/超市同质竞争会压制它 —— 把“泰丰斋平月日客单”滑到 50 以下，它立刻变平庸。</li>
+          <li><b style="color:#22c55e">“0现金投入”是相对自有房产而言</b>：真实代价是放弃的租金（机会成本）。本表已用“租金口径”折算 ROI，别读成无本万利；开店仍要投精力、备货资金与食品安全管理。</li>
+          <li><b style="color:#fcd34d">泰丰斋的回报“脆”</b>：高利润押在“平月日客单”和节庆翻倍两个假设上。脱离乌镇景区客流后这两个数极不确定，把“泰丰斋平月日客单”滑到 50 以下，它立刻变平庸。</li>
           <li><b style="color:#93c5fd">瑞幸的价值在“稳”和“可复制”</b>：现金流抗季节、品牌势能强、一套模型能在多个乡镇复制成连锁；泰丰斋(本地糕点)几乎无法标准化扩张，天花板就是这一个镇。</li>
-          <li><b>季节锯齿 = 现金流风险</b>：泰丰斋靠 4–5 个节庆月赚全年，平月可能微利甚至亏，对资金链和备货要求高。</li>
-          <li><b>结论取向</b>：求“快回本/高单店回报率/轻资产” → 泰丰斋；求“稳定/抗风险/能做成连锁规模” → 瑞幸。两者不是同一种生意。</li>
+          <li><b>季节锯齿 = 现金流风险</b>：泰丰斋靠 4–5 个节庆月赚全年，平月可能微利，对备货资金要求高。</li>
         </ul>
       </div>
     </div>
@@ -175,24 +196,27 @@
 <script>
 const MONTHS = 36;
 const SEASON0 = [1.7,2.0,1.0,1.6,1.0,1.5,1.0,1.0,2.2,1.1,1.0,1.8];
-const CAP_L = 380000, CAP_T = 150000;
+const CAP_L = 380000;
 
 function rampL(m){ return Math.min(1.05, (1 - 0.55*Math.exp(-m/3.5)) * (m===1?1.06:1)); }
 function rampT(m){ return 1 - 0.40*Math.exp(-m/4); }
 
 function compute(p){
+  const CAP_T = p.tcash;                 // 泰丰斋现金投入(默认0)
+  const marketRent = p.rent*0.55;        // 自有房产的市场月租=机会成本
   const L={rev:[],profit:[],cum:[]}, T={rev:[],profit:[],cum:[]};
   let cl=-CAP_L, ct=-CAP_T;
   L.cum.push(cl); T.cum.push(ct); L.rev.push(0); T.rev.push(0); L.profit.push(0); T.profit.push(0);
   for(let m=1;m<=MONTHS;m++){
+    // 瑞幸：付现房租
     const lr = p.cups*p.price*30*rampL(m);
     const lp = lr - lr*0.42 - p.rent - 15000 - 4000 - lr*0.05;
     cl += lp; L.rev.push(lr); L.profit.push(lp); L.cum.push(cl);
+    // 泰丰斋：自有房产，经营利润不扣现金房租
     const s = 1 + (SEASON0[(m-1)%12]-1)*p.amp;
     const tr = p.base*p.tp*30*s*rampT(m);
-    const rentT = p.rent*0.55;
     const labor = s>1.3 ? 16000 : 12000;
-    const tp_ = tr - tr*0.40 - rentT - labor - 3000;
+    const tp_ = tr - tr*0.40 - labor - 3000;   // 无房租
     ct += tp_; T.rev.push(tr); T.profit.push(tp_); T.cum.push(ct);
   }
   const payback = (cum)=>{
@@ -204,10 +228,12 @@ function compute(p){
   const lStable = avg(L.profit,24,36);
   const tStableM = avg(T.profit,25,36);
   const lAnnual = lStable*12, tAnnual = tStableM*12;
+  const yearRent = marketRent*12;
   return {L,T,
     lPay:payback(L.cum), tPay:payback(T.cum),
     lStable, tStableM, lAnnual, tAnnual,
-    lRoi:lAnnual/CAP_L, tRoi:tAnnual/CAP_T,
+    marketRent, yearRent, excessM: tStableM - marketRent, cashT: CAP_T,
+    lRoi:lAnnual/CAP_L, tRoi:tAnnual/yearRent,   // 泰丰斋=租金口径
     lCum:L.cum[MONTHS], tCum:T.cum[MONTHS]};
 }
 
@@ -279,38 +305,76 @@ function drawRev(r){
   }
 }
 
+let curR=null, curP=null;
 function render(){
   const p={
     cups:+cups.value, price:+price.value, base:+base.value,
-    tp:+tp.value, rent:+rent.value, amp:+amp.value
+    tp:+tp.value, rent:+rent.value, amp:+amp.value, tcash:(+tcash.value)*10000
   };
   vCups.textContent=p.cups; vPrice.textContent=p.price; vBase.textContent=p.base;
   vTp.textContent=p.tp; vRent.textContent=p.rent; vAmp.textContent=p.amp.toFixed(1);
-  const r=compute(p);
-  lProfit.textContent=W(r.lStable); tProfit.textContent=W(r.tStableM);
-  lPay.textContent=MO(r.lPay); tPay.textContent=MO(r.tPay);
-  lRoi.textContent=PCT(r.lRoi); tRoi.textContent=PCT(r.tRoi);
-  lCum.textContent=W(r.lCum); tCum.textContent=W(r.tCum);
+  vTc.textContent=(+tcash.value).toFixed(1);
+  const r=compute(p); curR=r; curP=p;
+  lProfit.textContent=W(r.lStable); lPay.textContent=MO(r.lPay);
+  lRoi.textContent=PCT(r.lRoi); lCum.textContent=W(r.lCum);
+  tCash.textContent=W(r.cashT);
+  tYearRent.textContent=W(r.yearRent);
+  tProfit.textContent=W(r.tStableM); tExcess.textContent=W(r.excessM);
+  tRoi.textContent=PCT(r.tRoi); tCum.textContent=W(r.tCum);
   const lScore=r.lRoi*0.6 + (r.lPay?1/r.lPay:0)*8;
-  const tScore=r.tRoi*0.6 + (r.tPay?1/r.tPay:0)*8;
+  const tScore=r.tRoi*0.3 + (r.tPay!=null?1/Math.max(r.tPay,0.3):3)*8;
   winL.style.display = lScore>=tScore?'block':'none';
   winT.style.display = tScore>lScore?'block':'none';
   drawCum(r); drawRev(r);
-  const faster = (r.tPay??99)<(r.lPay??99)?'taifeng':'luckin';
-  const higherRoi = r.tRoi>r.lRoi?'taifeng':'luckin';
-  const higherCum = r.tCum>r.lCum?'taifeng':'luckin';
+  const lPayTxt = r.lPay==null?'超过36个月':r.lPay.toFixed(0)+'个月';
+  const tPayTxt = p.tcash===0?'首月即正':(r.tPay==null?'超过36个月':r.tPay.toFixed(0)+'个月');
   const nm=k=>k==='taifeng'?'<span class="pill t">泰丰斋</span>':'<span class="pill l">瑞幸</span>';
   vText.innerHTML =
-    '<p class="big">回本更快：'+nm(faster)+' &nbsp;|&nbsp; 年化ROI更高：'+nm(higherRoi)+
-    ' &nbsp;|&nbsp; 3年累计现金更多：'+nm(higherCum)+'</p>'+
-    '<p>当前假设下，瑞幸 年化ROI <b>'+PCT(r.lRoi)+'</b>、'+MO(r.lPay)+'回本；'+
-    '泰丰斋 年化ROI <b>'+PCT(r.tRoi)+'</b>、'+MO(r.tPay)+'回本。'+
-    (r.tRoi>r.lRoi
-      ? '泰丰斋因投入轻(¥15万)、毛利高，单店回报率更亮眼 —— 但这建立在本地客流假设成立之上。'
-      : '把泰丰斋客流调低后，瑞幸的稳定性反而胜出。')+'</p>';
+    '<p class="big">现金投入 '+nm('luckin')+' ¥38万 vs '+nm('taifeng')+' '+W(p.tcash)+
+    ' &nbsp;|&nbsp; 回本 瑞幸 '+lPayTxt+' vs 泰丰斋 '+tPayTxt+'</p>'+
+    '<p>泰丰斋用<b>自有房产</b>、租金作投入、<b>0现金</b>起步，'+tPayTxt+'，每月经营净利约 <b>'+W(r.tStableM)+
+    '</b>；相比单纯把房子租出去(月租约'+W(r.marketRent)+')，<b style="color:#22c55e">每月多赚 '+W(r.excessM)+
+    '</b>，租金口径年化ROI <b>'+PCT(r.tRoi)+'</b>。瑞幸则需先投 38 万、约 '+lPayTxt+' 回本、年化ROI '+
+    PCT(r.lRoi)+'，但现金流更稳、可复制成连锁。</p>';
 }
-['cups','price','base','tp','rent','amp'].forEach(id=>
-  document.getElementById(id).addEventListener('input',render));
+
+// ---------- 朗读功能 (Web Speech API) ----------
+const btnSpeak=document.getElementById('btnSpeak'), btnStop=document.getElementById('btnStop');
+const ttsOK = 'speechSynthesis' in window;
+if(!ttsOK){ btnSpeak.disabled=true; document.getElementById('ttsHint').textContent='当前浏览器不支持语音朗读，请用系统浏览器(Safari/Chrome)打开'; }
+function pickVoice(){
+  const vs=speechSynthesis.getVoices()||[];
+  return vs.find(v=>/zh|cmn|Chinese|普通话/i.test(v.lang+' '+v.name)) || vs[0];
+}
+if(ttsOK){ speechSynthesis.onvoiceschanged=()=>{}; }
+function buildSpeech(){
+  const r=curR,p=curP; if(!r) return '';
+  const wan=v=>(v/10000).toFixed(1)+'万元';
+  const lpay = r.lPay==null?'超过三十六个月':Math.round(r.lPay)+'个月';
+  return '石马镇选址 ROI 测算结论。'+
+    '方案一，瑞幸咖啡：需要现金投入三十八万元，稳定期每月净利约'+wan(r.lStable)+'，约'+lpay+'回本，年化投资回报率'+PCT(r.lRoi)+'。'+
+    '方案二，乌镇泰丰斋：房子是我们自有的，用租金作为投入，零现金投入，开业首月就是正现金流。'+
+    '每月经营净利约'+wan(r.tStableM)+'，相当于比单纯把房子租出去，每月多赚约'+wan(r.excessM)+'，租金口径年化回报率'+PCT(r.tRoi)+'。'+
+    '总结：泰丰斋胜在零现金投入、回报快、盘活了自有房产，但利润依赖本地客流，且有节庆波动；'+
+    '瑞幸胜在经营稳定、抗季节、品牌可复制成连锁，代价是前期重投入、回本要两年。'+
+    '两者不是同一种生意，建议结合现金状况和扩张目标来定。';
+}
+function setPlaying(on){ btnSpeak.classList.toggle('playing',on); btnSpeak.textContent= on?'🔊 朗读中…':'🔊 朗读结论'; }
+function speak(){
+  if(!ttsOK) return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(buildSpeech());
+  u.lang='zh-CN'; u.rate=1.0; u.pitch=1.0;
+  const v=pickVoice(); if(v) u.voice=v;
+  u.onend=()=>setPlaying(false); u.onerror=()=>setPlaying(false);
+  setPlaying(true); speechSynthesis.speak(u);
+}
+function stopSpeak(){ if(ttsOK) speechSynthesis.cancel(); setPlaying(false); }
+btnSpeak.addEventListener('click',speak);
+btnStop.addEventListener('click',stopSpeak);
+
+['cups','price','base','tp','rent','amp','tcash'].forEach(id=>
+  document.getElementById(id).addEventListener('input',()=>{ stopSpeak(); render(); }));
 window.addEventListener('resize',render);
 render();
 </script>
