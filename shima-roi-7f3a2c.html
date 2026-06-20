@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>石马镇选址 ROI · 瑞幸 vs 乌镇泰丰斋</title>
+<meta name="description" content="桐乡石马镇单店选址测算：瑞幸咖啡 vs 乌镇泰丰斋，36个月现金流、回本周期与年化ROI对比，参数可调。">
+<!-- 微信/社交分享卡片 -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="石马镇选址 ROI · 瑞幸 vs 乌镇泰丰斋">
+<meta property="og:description" content="36个月现金流 · 回本周期 · 年化ROI 全测算，参数可调。CRAYXUS 选址决策测算。">
+<meta property="og:image" content="https://crayxus.com.au/shima-roi-7f3a2c-cover.png?v=1">
+<meta property="og:url" content="https://crayxus.com.au/shima-roi-7f3a2c.html">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  :root{
+    --bg:#0e1116; --panel:#171b22; --panel2:#1d2230; --line:#2a3140;
+    --txt:#e6e9ef; --sub:#8b94a7; --luckin:#3b82f6; --taifeng:#f59e0b;
+    --good:#22c55e; --bad:#ef4444; --accent:#a78bfa;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif;
+    background:var(--bg);color:var(--txt);padding:24px;line-height:1.5}
+  .wrap{max-width:1180px;margin:0 auto}
+  /* 微信抓图关键：body 内一张 ≥200px 真实图片，绝对地址 + ?v= 破缓存 */
+  .hero{width:100%;max-width:1180px;border-radius:14px;margin-bottom:18px;display:block;border:1px solid var(--line)}
+  h1{font-size:24px;font-weight:700;margin-bottom:4px}
+  h1 .sub{font-size:13px;color:var(--sub);font-weight:400;margin-left:8px}
+  .note{font-size:12px;color:var(--sub);margin-bottom:18px}
+  .badge{display:inline-block;padding:1px 7px;border-radius:5px;font-size:11px;margin-right:6px}
+  .b-luckin{background:rgba(59,130,246,.18);color:#93c5fd}
+  .b-taifeng{background:rgba(245,158,11,.18);color:#fcd34d}
+
+  .grid{display:grid;grid-template-columns:300px 1fr;gap:18px}
+  @media(max-width:900px){.grid{grid-template-columns:1fr}}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+  .panel h2{font-size:13px;color:var(--sub);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px;font-weight:600}
+
+  .ctrl{margin-bottom:16px}
+  .ctrl label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px}
+  .ctrl label b{color:var(--accent);font-variant-numeric:tabular-nums}
+  input[type=range]{width:100%;accent-color:var(--accent);height:4px}
+  .ctrl small{color:var(--sub);font-size:11px}
+
+  .kpis{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+  .kcard{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px;position:relative}
+  .kcard .head{font-size:12px;color:var(--sub);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+  .kcard .dot{width:9px;height:9px;border-radius:50%}
+  .krow{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:1px dashed var(--line)}
+  .krow:last-child{border-bottom:none}
+  .krow .v{font-weight:700;font-variant-numeric:tabular-nums}
+  .win{position:absolute;top:12px;right:12px;font-size:10px;background:var(--good);color:#06210f;padding:1px 6px;border-radius:5px;font-weight:700}
+
+  .chart{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:18px}
+  .chart h3{font-size:14px;margin-bottom:2px}
+  .chart .cap{font-size:12px;color:var(--sub);margin-bottom:10px}
+  canvas{width:100%;display:block}
+
+  .verdict{background:linear-gradient(135deg,#1d2230,#171b22);border:1px solid var(--line);
+    border-radius:14px;padding:18px}
+  .verdict h2{color:var(--accent)}
+  .verdict p{font-size:14px;margin-bottom:10px}
+  .verdict .big{font-size:16px;font-weight:700;margin:8px 0}
+  .pill{display:inline-block;padding:2px 9px;border-radius:6px;font-size:12px;font-weight:600}
+  .pill.l{background:rgba(59,130,246,.2);color:#93c5fd}
+  .pill.t{background:rgba(245,158,11,.2);color:#fcd34d}
+  ul{margin:6px 0 0 18px;font-size:13px;color:var(--sub)}
+  li{margin-bottom:5px}
+  .foot{font-size:11px;color:var(--sub);margin-top:18px;border-top:1px solid var(--line);padding-top:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <img class="hero" src="https://crayxus.com.au/shima-roi-7f3a2c-cover.png?v=1"
+       alt="石马镇单店 ROI 对比 · 瑞幸咖啡 vs 乌镇泰丰斋">
+  <h1>石马镇选址决策 · ROI Dashboard<span class="sub">桐乡·石门(石马·公交站一带) · 单店 36 个月现金流模型</span></h1>
+  <div class="note">
+    <span class="badge b-luckin">瑞幸咖啡</span>连锁标准化 · 重投入 ¥38万 · 年轻客群 ·
+    <span class="badge b-taifeng">乌镇泰丰斋</span>老字号糕点 · 轻投入 ¥15万 · 本地+节庆 ·
+    拖动滑块改假设，曲线与裁决实时重算。
+  </div>
+
+  <div class="grid">
+    <!-- 控制台 -->
+    <div class="panel">
+      <h2>假设参数</h2>
+      <div class="ctrl">
+        <label>瑞幸 · 稳定期日杯量 <b id="vCups">200</b></label>
+        <input type="range" id="cups" min="80" max="400" step="10" value="200">
+      </div>
+      <div class="ctrl">
+        <label>瑞幸 · 客单价(实收元) <b id="vPrice">13</b></label>
+        <input type="range" id="price" min="10" max="18" step="0.5" value="13">
+      </div>
+      <div class="ctrl">
+        <label>泰丰斋 · 平月日客单 <b id="vBase">80</b></label>
+        <input type="range" id="base" min="30" max="180" step="5" value="80">
+      </div>
+      <div class="ctrl">
+        <label>泰丰斋 · 客单价(元) <b id="vTp">18</b></label>
+        <input type="range" id="tp" min="10" max="35" step="1" value="18">
+      </div>
+      <div class="ctrl">
+        <label>月租金(瑞幸基准元) <b id="vRent">6000</b></label>
+        <input type="range" id="rent" min="3000" max="12000" step="500" value="6000">
+        <small>泰丰斋店面按基准 55% 计</small>
+      </div>
+      <div class="ctrl">
+        <label>泰丰斋 · 节庆波幅 <b id="vAmp">1.0</b></label>
+        <input type="range" id="amp" min="0" max="1.5" step="0.1" value="1.0">
+        <small>0=无季节性，1=默认锯齿，1.5=节庆更猛</small>
+      </div>
+      <div style="font-size:11px;color:var(--sub);margin-top:10px;border-top:1px solid var(--line);padding-top:10px">
+        固定假设：初始投入 瑞幸¥38万 / 泰丰¥15万；物料率 瑞幸42%·泰丰40%；
+        瑞幸人工¥1.5万、泰丰¥1.2万(节庆月+临时工)；均含开业爬坡。
+      </div>
+    </div>
+
+    <!-- 右侧 -->
+    <div>
+      <div class="kpis">
+        <div class="kcard">
+          <div id="winL" class="win" style="display:none">更优</div>
+          <div class="head"><span class="dot" style="background:var(--luckin)"></span>瑞幸咖啡</div>
+          <div class="krow"><span>初始投入</span><span class="v">¥38.0万</span></div>
+          <div class="krow"><span>稳定期月净利</span><span class="v" id="lProfit">—</span></div>
+          <div class="krow"><span>回本周期</span><span class="v" id="lPay">—</span></div>
+          <div class="krow"><span>年化ROI</span><span class="v" id="lRoi">—</span></div>
+          <div class="krow"><span>36月累计净现金流</span><span class="v" id="lCum">—</span></div>
+        </div>
+        <div class="kcard">
+          <div id="winT" class="win" style="display:none">更优</div>
+          <div class="head"><span class="dot" style="background:var(--taifeng)"></span>乌镇泰丰斋</div>
+          <div class="krow"><span>初始投入</span><span class="v">¥15.0万</span></div>
+          <div class="krow"><span>稳定期月净利(年均)</span><span class="v" id="tProfit">—</span></div>
+          <div class="krow"><span>回本周期</span><span class="v" id="tPay">—</span></div>
+          <div class="krow"><span>年化ROI</span><span class="v" id="tRoi">—</span></div>
+          <div class="krow"><span>36月累计净现金流</span><span class="v" id="tCum">—</span></div>
+        </div>
+      </div>
+
+      <div class="chart">
+        <h3>累计净现金流曲线（穿越 0 线 = 回本）</h3>
+        <div class="cap">纵轴=累计现金(万元)，含初始投入。曲线越早越高地越过零线，回本越快、ROI越高。</div>
+        <canvas id="cumChart" height="340"></canvas>
+      </div>
+
+      <div class="chart">
+        <h3>稳定年 · 月营收对比（看季节性）</h3>
+        <div class="cap">蓝=瑞幸(全年平稳)，橙=泰丰斋(节庆锯齿：2月春节·4月清明·6月端午·9月中秋·12月年货)。</div>
+        <canvas id="revChart" height="260"></canvas>
+      </div>
+
+      <div class="verdict">
+        <h2>一眼裁决 · ROI 仲裁</h2>
+        <div id="vText"></div>
+        <p class="big" style="color:var(--txt);margin-top:14px">定性风险（不随滑块变，必须看）：</p>
+        <ul>
+          <li><b style="color:#fcd34d">泰丰斋的 ROI 是“脆的”</b>：高回报全押在“平月日客单”和节庆翻倍两个假设上。脱离乌镇景区客流后，这两个数极不确定，本地糕点店/超市同质竞争会压制它 —— 把“泰丰斋平月日客单”滑到 50 以下，它立刻变平庸。</li>
+          <li><b style="color:#93c5fd">瑞幸的价值在“稳”和“可复制”</b>：现金流抗季节、品牌势能强、一套模型能在多个乡镇复制成连锁；泰丰斋(本地糕点)几乎无法标准化扩张，天花板就是这一个镇。</li>
+          <li><b>季节锯齿 = 现金流风险</b>：泰丰斋靠 4–5 个节庆月赚全年，平月可能微利甚至亏，对资金链和备货要求高。</li>
+          <li><b>结论取向</b>：求“快回本/高单店回报率/轻资产” → 泰丰斋；求“稳定/抗风险/能做成连锁规模” → 瑞幸。两者不是同一种生意。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    ⚠️ 本看板为基于公开行业参数的<strong>情景测算</strong>，非真实门店财务，也非真正的神经网络训练（无该镇真实客流样本可学）。
+    用途：在合理假设区间内比较两种生意的回本与 ROI 量级。决策前请用实地踩点的客流/租金/竞争数据替换默认参数。 · CRAYXUS
+  </div>
+</div>
+
+<script>
+const MONTHS = 36;
+const SEASON0 = [1.7,2.0,1.0,1.6,1.0,1.5,1.0,1.0,2.2,1.1,1.0,1.8];
+const CAP_L = 380000, CAP_T = 150000;
+
+function rampL(m){ return Math.min(1.05, (1 - 0.55*Math.exp(-m/3.5)) * (m===1?1.06:1)); }
+function rampT(m){ return 1 - 0.40*Math.exp(-m/4); }
+
+function compute(p){
+  const L={rev:[],profit:[],cum:[]}, T={rev:[],profit:[],cum:[]};
+  let cl=-CAP_L, ct=-CAP_T;
+  L.cum.push(cl); T.cum.push(ct); L.rev.push(0); T.rev.push(0); L.profit.push(0); T.profit.push(0);
+  for(let m=1;m<=MONTHS;m++){
+    const lr = p.cups*p.price*30*rampL(m);
+    const lp = lr - lr*0.42 - p.rent - 15000 - 4000 - lr*0.05;
+    cl += lp; L.rev.push(lr); L.profit.push(lp); L.cum.push(cl);
+    const s = 1 + (SEASON0[(m-1)%12]-1)*p.amp;
+    const tr = p.base*p.tp*30*s*rampT(m);
+    const rentT = p.rent*0.55;
+    const labor = s>1.3 ? 16000 : 12000;
+    const tp_ = tr - tr*0.40 - rentT - labor - 3000;
+    ct += tp_; T.rev.push(tr); T.profit.push(tp_); T.cum.push(ct);
+  }
+  const payback = (cum)=>{
+    for(let m=1;m<=MONTHS;m++){ if(cum[m]>=0){
+      const prev=cum[m-1], frac=(0-prev)/(cum[m]-prev); return (m-1)+frac; } }
+    return null;
+  };
+  const avg=(a,s,e)=>{let x=0,n=0;for(let i=s;i<=e;i++){x+=a[i];n++;}return x/n;};
+  const lStable = avg(L.profit,24,36);
+  const tStableM = avg(T.profit,25,36);
+  const lAnnual = lStable*12, tAnnual = tStableM*12;
+  return {L,T,
+    lPay:payback(L.cum), tPay:payback(T.cum),
+    lStable, tStableM, lAnnual, tAnnual,
+    lRoi:lAnnual/CAP_L, tRoi:tAnnual/CAP_T,
+    lCum:L.cum[MONTHS], tCum:T.cum[MONTHS]};
+}
+
+const W=v=>'¥'+(v/10000).toFixed(1)+'万';
+const PCT=v=>(v*100).toFixed(0)+'%';
+const MO=v=> v==null?'>36月':v.toFixed(1)+'月';
+
+function setup(cv,h){
+  const dpr=window.devicePixelRatio||1, w=cv.clientWidth;
+  cv.width=w*dpr; cv.height=h*dpr;
+  const ctx=cv.getContext('2d'); ctx.scale(dpr,dpr);
+  ctx.clearRect(0,0,w,h);
+  return {ctx,w,h};
+}
+function drawCum(r){
+  const cv=document.getElementById('cumChart');
+  const {ctx,w,h}=setup(cv,340);
+  const pl=58,pr=18,pt=18,pb=28, iw=w-pl-pr, ih=h-pt-pb;
+  let all=r.L.cum.concat(r.T.cum,[0]);
+  let mn=Math.min(...all), mx=Math.max(...all);
+  const pad=(mx-mn)*0.08||10000; mn-=pad; mx+=pad;
+  const X=m=>pl+ iw*m/MONTHS;
+  const Y=v=>pt+ ih*(1-(v-mn)/(mx-mn));
+  ctx.font='11px sans-serif'; ctx.textAlign='right'; ctx.textBaseline='middle';
+  for(let i=0;i<=5;i++){
+    const v=mn+(mx-mn)*i/5, y=Y(v);
+    ctx.strokeStyle='#222936'; ctx.beginPath(); ctx.moveTo(pl,y); ctx.lineTo(w-pr,y); ctx.stroke();
+    ctx.fillStyle='#8b94a7'; ctx.fillText((v/10000).toFixed(0)+'万',pl-8,y);
+  }
+  ctx.textAlign='center'; ctx.textBaseline='top';
+  for(let m=0;m<=MONTHS;m+=6){ ctx.fillStyle='#8b94a7'; ctx.fillText(m+'月',X(m),h-pb+6); }
+  ctx.strokeStyle='#566'; ctx.lineWidth=1.5; ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.moveTo(pl,Y(0)); ctx.lineTo(w-pr,Y(0)); ctx.stroke(); ctx.setLineDash([]);
+  const line=(cum,color)=>{
+    ctx.strokeStyle=color; ctx.lineWidth=2.4; ctx.beginPath();
+    for(let m=0;m<=MONTHS;m++){ const x=X(m),y=Y(cum[m]); m?ctx.lineTo(x,y):ctx.moveTo(x,y);} ctx.stroke();
+  };
+  line(r.L.cum,'#3b82f6'); line(r.T.cum,'#f59e0b');
+  const mark=(pay,color)=>{ if(pay==null)return;
+    const x=X(pay),y=Y(0);
+    ctx.fillStyle=color; ctx.beginPath(); ctx.arc(x,y,5,0,7); ctx.fill();
+    ctx.strokeStyle='#0e1116'; ctx.lineWidth=2; ctx.stroke();
+  };
+  mark(r.lPay,'#3b82f6'); mark(r.tPay,'#f59e0b');
+  ctx.textAlign='left'; ctx.textBaseline='middle'; ctx.font='12px sans-serif';
+  ctx.fillStyle='#3b82f6'; ctx.fillRect(pl+6,pt+4,14,4); ctx.fillStyle='#e6e9ef'; ctx.fillText('瑞幸',pl+24,pt+6);
+  ctx.fillStyle='#f59e0b'; ctx.fillRect(pl+70,pt+4,14,4); ctx.fillStyle='#e6e9ef'; ctx.fillText('泰丰斋',pl+88,pt+6);
+}
+function drawRev(r){
+  const cv=document.getElementById('revChart');
+  const {ctx,w,h}=setup(cv,260);
+  const pl=50,pr=18,pt=16,pb=26, iw=w-pl-pr, ih=h-pt-pb;
+  const ls=r.L.rev.slice(13,25), ts=r.T.rev.slice(13,25);
+  const mx=Math.max(...ls,...ts)*1.1;
+  const Y=v=>pt+ih*(1-v/mx);
+  ctx.font='11px sans-serif'; ctx.textAlign='right'; ctx.textBaseline='middle';
+  for(let i=0;i<=4;i++){ const v=mx*i/4,y=Y(v);
+    ctx.strokeStyle='#222936'; ctx.beginPath(); ctx.moveTo(pl,y); ctx.lineTo(w-pr,y); ctx.stroke();
+    ctx.fillStyle='#8b94a7'; ctx.fillText((v/10000).toFixed(0)+'万',pl-6,y);
+  }
+  const bw=iw/12, gap=bw*0.18, bar=(bw-gap*2)/2;
+  const mlab=['1','2','3','4','5','6','7','8','9','10','11','12'];
+  for(let i=0;i<12;i++){
+    const x0=pl+bw*i+gap;
+    ctx.fillStyle='#3b82f6'; ctx.fillRect(x0, Y(ls[i]), bar, pt+ih-Y(ls[i]));
+    ctx.fillStyle='#f59e0b'; ctx.fillRect(x0+bar, Y(ts[i]), bar, pt+ih-Y(ts[i]));
+    ctx.fillStyle='#8b94a7'; ctx.textAlign='center'; ctx.textBaseline='top'; ctx.font='10px sans-serif';
+    ctx.fillText(mlab[i]+'月',x0+bar,h-pb+5);
+  }
+}
+
+function render(){
+  const p={
+    cups:+cups.value, price:+price.value, base:+base.value,
+    tp:+tp.value, rent:+rent.value, amp:+amp.value
+  };
+  vCups.textContent=p.cups; vPrice.textContent=p.price; vBase.textContent=p.base;
+  vTp.textContent=p.tp; vRent.textContent=p.rent; vAmp.textContent=p.amp.toFixed(1);
+  const r=compute(p);
+  lProfit.textContent=W(r.lStable); tProfit.textContent=W(r.tStableM);
+  lPay.textContent=MO(r.lPay); tPay.textContent=MO(r.tPay);
+  lRoi.textContent=PCT(r.lRoi); tRoi.textContent=PCT(r.tRoi);
+  lCum.textContent=W(r.lCum); tCum.textContent=W(r.tCum);
+  const lScore=r.lRoi*0.6 + (r.lPay?1/r.lPay:0)*8;
+  const tScore=r.tRoi*0.6 + (r.tPay?1/r.tPay:0)*8;
+  winL.style.display = lScore>=tScore?'block':'none';
+  winT.style.display = tScore>lScore?'block':'none';
+  drawCum(r); drawRev(r);
+  const faster = (r.tPay??99)<(r.lPay??99)?'taifeng':'luckin';
+  const higherRoi = r.tRoi>r.lRoi?'taifeng':'luckin';
+  const higherCum = r.tCum>r.lCum?'taifeng':'luckin';
+  const nm=k=>k==='taifeng'?'<span class="pill t">泰丰斋</span>':'<span class="pill l">瑞幸</span>';
+  vText.innerHTML =
+    '<p class="big">回本更快：'+nm(faster)+' &nbsp;|&nbsp; 年化ROI更高：'+nm(higherRoi)+
+    ' &nbsp;|&nbsp; 3年累计现金更多：'+nm(higherCum)+'</p>'+
+    '<p>当前假设下，瑞幸 年化ROI <b>'+PCT(r.lRoi)+'</b>、'+MO(r.lPay)+'回本；'+
+    '泰丰斋 年化ROI <b>'+PCT(r.tRoi)+'</b>、'+MO(r.tPay)+'回本。'+
+    (r.tRoi>r.lRoi
+      ? '泰丰斋因投入轻(¥15万)、毛利高，单店回报率更亮眼 —— 但这建立在本地客流假设成立之上。'
+      : '把泰丰斋客流调低后，瑞幸的稳定性反而胜出。')+'</p>';
+}
+['cups','price','base','tp','rent','amp'].forEach(id=>
+  document.getElementById(id).addEventListener('input',render));
+window.addEventListener('resize',render);
+render();
+</script>
+</body>
+</html>
