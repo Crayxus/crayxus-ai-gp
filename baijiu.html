@@ -62,79 +62,103 @@
   section{margin-top:46px}
   h2{font-size:clamp(19px,5vw,24px);font-weight:800;text-align:center}
   h2 .d{color:var(--gr);font-size:.7em;vertical-align:2px}
-  .h2sub{color:var(--mute);font-size:13.5px;text-align:center;margin-top:5px;margin-bottom:22px}
+  .h2sub{color:var(--mute);font-size:13.5px;text-align:center;margin-top:5px;margin-bottom:26px}
 
   /* ===== 界面预览 ===== */
-  .screens{display:flex;gap:26px;justify-content:center;align-items:flex-start;flex-wrap:wrap}
+  .screens{display:flex;gap:30px;justify-content:center;align-items:flex-start;flex-wrap:wrap}
   .screen{display:flex;flex-direction:column;align-items:center}
-  .cap{margin-top:13px;font-size:12.5px;color:var(--dim);text-align:center}
-  .cap b{color:var(--gold);font-weight:600}
+  .cap{margin-top:15px;font-size:12.5px;color:var(--dim);text-align:center;max-width:240px}
+  .cap b{color:var(--gold);font-weight:700}
 
-  /* phone */
-  .device{width:236px;aspect-ratio:9/18.6;border-radius:32px;background:#0b0805;border:7px solid #2c1d11;
-    box-shadow:0 34px 70px -30px #000,inset 0 0 0 1px rgba(240,196,106,.14);
-    overflow:hidden;position:relative;display:flex;flex-direction:column;font-size:11px}
-  .device::before{content:"";position:absolute;top:8px;left:50%;transform:translateX(-50%);
-    width:60px;height:5px;border-radius:3px;background:#000;z-index:6}
-  .lv-top{display:flex;align-items:center;gap:6px;padding:16px 9px 6px}
-  .lv-host{display:flex;align-items:center;gap:5px;background:rgba(0,0,0,.4);border-radius:999px;padding:3px 9px 3px 4px;font-weight:600}
-  .lv-host i{width:15px;height:15px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gr2))}
-  .lv-live{margin-left:auto;color:#fff;background:var(--red);border-radius:4px;padding:2px 6px;font-size:9px;font-weight:700}
-  .lv-eye{color:var(--dim);font-size:10px}
-  .lv-stage{flex:1;position:relative;margin:2px 7px;border-radius:14px;border:1px solid var(--line2);
-    background:radial-gradient(120% 70% at 50% 25%,rgba(240,196,106,.10),transparent 60%),rgba(0,0,0,.22);
-    display:flex;flex-direction:column;justify-content:space-between;padding:9px 8px;overflow:hidden}
-  .lv-tag{font-size:9.5px;color:var(--gr2);font-weight:600}
-  .lv-tag.gold{color:var(--gold)}
-  .lv-hand{display:flex;gap:3px;margin-top:4px}
-  .cb{width:15px;height:22px;border-radius:3px;border:1px solid #e0a94a;
+  /* playing card */
+  .pc{position:relative;width:30px;height:42px;border-radius:5px;flex:none;
+    background:linear-gradient(158deg,#fffdf8,#ece4d2);border:1px solid #cdbf9f;
+    box-shadow:0 4px 10px -6px rgba(0,0,0,.85)}
+  .pc em{position:absolute;top:2px;left:3px;font-style:normal;font-weight:800;font-size:8.5px;line-height:.88;text-align:center;color:#1d160e}
+  .pc b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#1d160e}
+  .pc.red em,.pc.red b{color:#c0392b}
+
+  /* ===== phone (直播间) ===== */
+  .device{width:244px;aspect-ratio:9/19.3;border-radius:38px;background:#05060a;border:9px solid #221610;
+    box-shadow:0 46px 84px -34px #000,inset 0 0 0 1px rgba(240,196,106,.16);position:relative;overflow:hidden}
+  .scr{position:absolute;inset:0;display:flex;flex-direction:column;color:#fff;font-size:10px;
+    background:radial-gradient(130% 55% at 50% 6%,rgba(240,196,106,.16),transparent 55%),
+               linear-gradient(180deg,#2c1e13,#170f08 46%,#0b0805)}
+  .statusbar{display:flex;justify-content:space-between;padding:9px 17px 0;font-size:9.5px;font-weight:700;opacity:.9}
+  .live-head{display:flex;align-items:center;gap:6px;padding:8px 10px 2px}
+  .host{display:flex;align-items:center;gap:5px;background:rgba(0,0,0,.42);border-radius:999px;padding:3px 4px}
+  .hav{width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gr2));flex:none}
+  .hn{display:flex;flex-direction:column;line-height:1.04;font-weight:700;font-size:10px}
+  .hn small{font-weight:400;font-size:8px;color:#e9d7b8;opacity:.8}
+  .follow{background:linear-gradient(135deg,var(--red),#ff4d68);color:#fff;border:none;border-radius:999px;font-size:9px;font-weight:700;padding:3px 9px}
+  .viewers{margin-left:auto;background:rgba(0,0,0,.42);border-radius:999px;padding:3px 8px;font-size:9px}
+  .cam{position:absolute;top:60px;right:12px;width:44px;height:56px;border-radius:9px;z-index:4;
+    background:linear-gradient(160deg,#3a2a1a,#180f09);border:1px solid rgba(240,196,106,.35);
+    display:flex;align-items:flex-end;justify-content:center;padding-bottom:3px;font-size:8px;color:#e9d7b8;box-shadow:0 6px 16px -8px #000}
+  .cam::before{content:"";position:absolute;top:11px;width:19px;height:19px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#f1d4a1,#7a5230)}
+  .game{position:relative;flex:1;margin:4px 9px 0;border-radius:16px;display:flex;flex-direction:column;justify-content:space-between;padding:10px 9px 8px;overflow:hidden}
+  .seat{display:flex;flex-direction:column;gap:5px}
+  .seat.me{align-items:flex-start}
+  .sn{font-size:9px;color:var(--gr2);font-weight:700}
+  .sn.gold{color:var(--gold)}
+  .mini-hand{display:flex;gap:2px}
+  .cb{width:13px;height:19px;border-radius:2px;border:1px solid #e0a94a;
     background:repeating-linear-gradient(45deg,#6e4310,#6e4310 2px,#9c6a1f 2px,#9c6a1f 4px)}
-  .lv-mid{align-self:center;text-align:center}
-  .lv-round{margin-top:6px;font-size:9px;color:var(--dim);background:rgba(0,0,0,.4);border-radius:999px;padding:2px 9px;display:inline-block}
-  .lv-played{display:flex;gap:4px;justify-content:center}
-  .lv-meRow{display:flex;flex-direction:column;align-items:flex-start;gap:3px}
-  .dm{position:absolute;background:rgba(0,0,0,.5);color:#fff;border-radius:10px;padding:2px 7px;font-size:9px;white-space:nowrap}
-  .dm1{left:8px;bottom:50px}.dm2{right:9px;bottom:33px;background:rgba(232,117,140,.4)}.dm3{left:8px;bottom:16px}
-  .lv-gift{margin:6px 7px 0;text-align:center;font-size:10px;font-weight:700;color:#150d07;
-    background:linear-gradient(90deg,var(--gold),var(--gr));border-radius:8px;padding:5px}
-  .lv-bottom{display:flex;align-items:center;gap:8px;padding:8px 9px 12px}
-  .lv-cart{flex:1;background:var(--red);color:#fff;font-weight:700;border-radius:999px;padding:6px;font-size:10px;text-align:center}
-  .lv-like{color:var(--gr2);font-size:10px;white-space:nowrap}
+  .felt{align-self:center;display:flex;flex-direction:column;align-items:center;gap:6px;padding:11px 16px;border-radius:16px;
+    background:radial-gradient(80% 80% at 50% 50%,rgba(20,62,40,.5),rgba(0,0,0,.32));border:1px solid rgba(240,196,106,.12)}
+  .combo{display:flex;gap:4px}
+  .felt-tip{font-size:8.5px;color:#e9d7b8;background:rgba(0,0,0,.42);border-radius:999px;padding:2px 9px}
+  .my-hand{display:flex;padding-left:8px}
+  .my-hand .pc{margin-left:-8px;box-shadow:0 5px 11px -6px #000}
+  .my-hand .pc:first-child{margin-left:0}
+  .dm{position:absolute;left:7px;max-width:72%;background:rgba(0,0,0,.52);border-radius:11px;padding:2px 7px;font-size:8.5px;white-space:nowrap;backdrop-filter:blur(1px)}
+  .dm b{color:var(--gr);font-weight:700}
+  .dm1{bottom:96px}.dm2{bottom:78px}.dm3{bottom:60px}
+  .gift-banner{margin:4px 9px 0;border-radius:11px;padding:5px;text-align:center;font-size:9.5px;font-weight:700;color:#3a2408;
+    background:linear-gradient(90deg,var(--gold),#ffb74a);box-shadow:0 0 18px -5px rgba(255,196,87,.55)}
+  .gift-banner b{color:#7a1020}
+  .product{display:flex;align-items:center;gap:7px;margin:6px 9px 0;padding:5px 6px;border-radius:11px;background:rgba(255,255,255,.07);border:1px solid rgba(240,196,106,.2)}
+  .pthumb{width:27px;height:27px;border-radius:7px;background:linear-gradient(160deg,#3a2a1a,#180f09);display:flex;align-items:center;justify-content:center;font-size:15px;flex:none}
+  .pinfo{display:flex;flex-direction:column;line-height:1.1}
+  .pinfo b{font-size:10px;color:var(--gold)}
+  .pinfo span{font-size:8px;color:#b89a72}
+  .pbuy{margin-left:auto;background:linear-gradient(135deg,var(--red),#ff4d68);color:#fff;font-weight:800;border-radius:999px;padding:4px 12px;font-size:10px}
+  .livebar{display:flex;align-items:center;gap:6px;padding:7px 10px 12px}
+  .cmt{flex:1;background:rgba(255,255,255,.08);border-radius:999px;padding:5px 11px;font-size:9px;color:#b89a72}
+  .ib{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:11px}
+  .cart{position:relative;width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:12px}
+  .cart i{position:absolute;top:-3px;right:-4px;background:var(--red);color:#fff;font-style:normal;font-size:8px;font-weight:700;border-radius:999px;padding:0 4px}
 
-  /* board */
-  .board{width:300px;max-width:100%;border:1px solid var(--line);border-radius:18px;
-    background:linear-gradient(165deg,rgba(40,26,14,.92),rgba(20,13,8,.92));
-    box-shadow:0 34px 70px -34px #000;padding:14px;display:grid;grid-template-columns:1fr 104px;gap:12px}
-  @media(max-width:380px){.board{grid-template-columns:1fr}}
-  .bd-players{display:flex;align-items:center;gap:8px}
-  .bd-p{display:flex;align-items:center;gap:6px}
-  .bd-p.ai{flex-direction:row-reverse}
-  .bd-ava{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;flex:none}
-  .bd-ava.you{background:rgba(240,196,106,.15);border:1.5px solid var(--gr);color:var(--gold)}
-  .bd-ava.aiv{background:rgba(232,117,140,.15);border:1.5px solid var(--gr2);color:var(--gr2);font-family:var(--mono)}
-  .bd-meta b{font-size:11.5px}.bd-meta small{color:var(--mute);display:block;font-size:9px}
-  .bd-p.ai .bd-meta{text-align:right}
-  .bd-sc{display:flex;align-items:center;gap:6px;margin:0 auto;font-family:var(--mono)}
-  .bd-sc b{color:var(--gr);font-size:18px}.bd-sc span{color:var(--mute);font-size:10px}
-  .bd-felt{margin-top:11px;border-radius:12px;border:1px solid var(--line2);background:rgba(0,0,0,.28);padding:13px 8px;text-align:center}
-  .bd-turn{margin-top:9px;font-size:10px;color:var(--gr2)}
-  .bd-myhand{display:flex;gap:4px;justify-content:center;margin-top:10px}
-  .bd-side{border-left:1px solid var(--line2);padding-left:11px}
-  @media(max-width:380px){.bd-side{border-left:none;border-top:1px solid var(--line2);padding-left:0;padding-top:11px}}
-  .bd-side-h{font-size:11px;color:var(--gr);font-weight:700;margin-bottom:9px}
-  .bd-rank{display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--dim);margin-bottom:7px}
-  .bd-rank .rk{width:16px;height:16px;border-radius:4px;background:rgba(255,255,255,.06);color:var(--mute);
-    display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;font-weight:700;flex:none}
-  .bd-rank .rk.g{background:var(--gold);color:#150d07}
-  .bd-rank .rv{margin-left:auto;color:var(--gr2);font-size:9.5px;white-space:nowrap}
-  .bd-radar{margin-top:8px;font-size:9.5px;color:var(--mute);border:1px dashed var(--line);border-radius:8px;padding:6px;text-align:center}
-
-  /* playing cards */
-  .pc{width:28px;height:40px;border-radius:5px;background:#f7f3ea;border:1px solid #d8cdb6;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.05;font-weight:800;
-    box-shadow:0 3px 9px -5px rgba(0,0,0,.8)}
-  .pc .r{font-size:12px;color:#1d160e}.pc .s{font-size:10px;color:#1d160e}
-  .pc.red .r,.pc.red .s{color:#c0392b}
+  /* ===== board (赛事对战界面) ===== */
+  .board{width:244px;border-radius:24px;overflow:hidden;position:relative;display:flex;flex-direction:column;gap:9px;
+    padding:13px 13px 15px;font-size:10px;color:var(--txt);border:1px solid var(--line);box-shadow:0 46px 84px -34px #000;
+    background:radial-gradient(130% 48% at 50% 0%,rgba(232,117,140,.14),transparent 55%),linear-gradient(180deg,#1f140c,#0d0805)}
+  .bd-bar{display:flex;justify-content:space-between;align-items:center;font-size:10px;color:var(--dim)}
+  .bd-bar span:first-child{color:var(--gr);font-weight:700}
+  .bd-timer{font-family:var(--mono);background:rgba(0,0,0,.4);border-radius:999px;padding:2px 9px;color:var(--gold)}
+  .seat2{display:flex;align-items:center;gap:8px}
+  .av2{width:31px;height:31px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;flex:none}
+  .av2.ai{background:rgba(232,117,140,.15);border:2px solid var(--gr2);color:var(--gr2);font-family:var(--mono)}
+  .av2.you{background:rgba(240,196,106,.15);border:2px solid var(--gr);color:var(--gold)}
+  .who{line-height:1.08}
+  .who b{font-size:11.5px}.who small{display:block;font-size:8.5px;color:var(--mute)}
+  .hcount{margin-left:auto;font-size:9px;color:var(--dim);background:rgba(0,0,0,.35);border-radius:999px;padding:2px 8px}
+  .sc2{font-family:var(--mono);font-weight:800;font-size:19px;color:var(--gr2);min-width:18px;text-align:center}
+  .sc2.g{color:var(--gold)}
+  .felt2{display:flex;flex-direction:column;align-items:center;gap:9px;padding:14px 8px;border-radius:16px;
+    background:radial-gradient(90% 80% at 50% 45%,rgba(20,62,40,.46),rgba(0,0,0,.34));border:1px solid var(--line2)}
+  .felt2 .combo .pc{margin-left:-3px}.felt2 .combo .pc:first-child{margin-left:0}
+  .think{font-size:9.5px;color:var(--gr2);letter-spacing:.12em}
+  .my-fan{display:flex;justify-content:center;padding-left:10px}
+  .my-fan .pc{margin-left:-10px}.my-fan .pc:first-child{margin-left:0}
+  .bd-foot{display:flex;gap:9px;align-items:stretch}
+  .lb{flex:1;display:flex;flex-direction:column;gap:3px;font-size:9px;color:var(--dim)}
+  .lbh{color:var(--gr);font-weight:700;margin-bottom:1px}
+  .lb .rk{display:inline-flex;width:13px;height:13px;border-radius:3px;align-items:center;justify-content:center;
+    font-size:8px;font-weight:800;font-family:var(--mono);background:rgba(255,255,255,.08);color:var(--mute);margin-right:5px}
+  .lb .rk.g{background:var(--gold);color:#150d07}
+  .rp{display:flex;flex-direction:column;justify-content:center;text-align:center;font-size:9px;color:var(--mute);
+    border:1px dashed var(--line);border-radius:10px;padding:6px 9px;line-height:1.35}
 
   /* mini cards */
   .cards{display:grid;gap:12px}
@@ -143,8 +167,7 @@
   @media(max-width:600px){.g4{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:1fr}}
   .mini{border:1px solid var(--line);border-radius:16px;background:var(--card);padding:18px 12px;text-align:center}
   .mini .ic{font-size:26px;line-height:1}
-  .mini .ph{display:inline-block;font-size:11px;color:var(--gold);border:1px solid rgba(255,210,122,.35);
-    border-radius:999px;padding:2px 11px;margin-bottom:4px}
+  .mini .ph{display:inline-block;font-size:11px;color:var(--gold);border:1px solid rgba(255,210,122,.35);border-radius:999px;padding:2px 11px;margin-bottom:4px}
   .mini b{display:block;margin-top:8px;font-size:15px;color:var(--txt)}
   .mini span{display:block;margin-top:3px;font-size:12.5px;color:var(--mute)}
 
@@ -181,75 +204,92 @@
 
     <!-- 直播间 UI -->
     <div class="screen">
-      <div class="device">
-        <div class="lv-top">
-          <span class="lv-host"><i></i>酒掌门</span>
-          <span class="lv-live">● LIVE</span>
-          <span class="lv-eye">👁 1.2万</span>
+      <div class="device"><div class="scr">
+        <div class="statusbar"><span>20:08</span><span>5G&nbsp;&nbsp;100%</span></div>
+        <div class="live-head">
+          <div class="host"><i class="hav"></i><span class="hn">酒掌门<small>粉丝 8.2万</small></span></div>
+          <button class="follow">+ 关注</button>
+          <span class="viewers">👁 1.2万</span>
         </div>
-        <div class="lv-stage">
-          <div class="lv-ai">
-            <span class="lv-tag">AI · AlphaDan</span>
-            <div class="lv-hand"><i class="cb"></i><i class="cb"></i><i class="cb"></i><i class="cb"></i></div>
+        <div class="cam">主播</div>
+        <div class="game">
+          <div class="seat ai">
+            <span class="sn">AlphaDan · AI 大师</span>
+            <div class="mini-hand"><i class="cb"></i><i class="cb"></i><i class="cb"></i><i class="cb"></i><i class="cb"></i></div>
           </div>
-          <div class="lv-mid">
-            <div class="lv-played">
-              <div class="pc"><span class="r">A</span><span class="s">♠</span></div>
-              <div class="pc"><span class="r">A</span><span class="s">♣</span></div>
+          <div class="felt">
+            <div class="combo">
+              <div class="pc"><em>A<br>♠</em><b>♠</b></div>
+              <div class="pc"><em>A<br>♣</em><b>♣</b></div>
             </div>
-            <div class="lv-round">第 3 局 · 主播 1 : 1 AI</div>
+            <span class="felt-tip">AI 出对 A · 该主播了</span>
           </div>
-          <div class="lv-meRow">
-            <span class="lv-tag gold">主播 · 该你出牌</span>
-            <div class="lv-played">
-              <div class="pc"><span class="r">2</span><span class="s">♠</span></div>
-              <div class="pc red"><span class="r">2</span><span class="s">♥</span></div>
-              <div class="pc"><span class="r">K</span><span class="s">♣</span></div>
+          <div class="seat me">
+            <span class="sn gold">主播 · 钻石 III</span>
+            <div class="my-hand">
+              <div class="pc"><em>K<br>♠</em><b>♠</b></div>
+              <div class="pc red"><em>K<br>♥</em><b>♥</b></div>
+              <div class="pc"><em>2<br>♣</em><b>♣</b></div>
+              <div class="pc red"><em>2<br>♦</em><b>♦</b></div>
             </div>
           </div>
-          <span class="dm dm1">出对 A!🔥</span>
-          <span class="dm dm2">押主播赢</span>
-          <span class="dm dm3">扫码我也来 →</span>
+          <span class="dm dm1"><b>牌神老王:</b>出对 K 压它 🔥</span>
+          <span class="dm dm2"><b>小酌怡情:</b>押主播赢</span>
+          <span class="dm dm3"><b>新粉:</b>扫码我也来 →</span>
         </div>
-        <div class="lv-gift">🎁 主播赢这局 · 全场抽 5 瓶</div>
-        <div class="lv-bottom">
-          <span class="lv-cart">🛒 挑战价 ¥199 秒杀</span>
-          <span class="lv-like">❤ 8.6k</span>
+        <div class="gift-banner">🎁 主播赢这局 · 全场抽 <b>5 瓶</b></div>
+        <div class="product">
+          <div class="pthumb">🍾</div>
+          <div class="pinfo"><b>挑战价 ¥199</b><span>原价 ¥598 · 限量秒杀</span></div>
+          <span class="pbuy">抢</span>
         </div>
-      </div>
-      <div class="cap"><b>直播间 UI</b> · 主播单挑 AI,观众扫码参战 · 赢局送酒 / 秒杀卖酒</div>
+        <div class="livebar">
+          <span class="cmt">说点什么…</span>
+          <span class="ib">🎁</span><span class="ib">↗</span><span class="cart">🛒<i>3</i></span>
+        </div>
+      </div></div>
+      <div class="cap"><b>直播间 UI</b> · 主播单挑 AI,观众扫码参战,赢局送酒 / 秒杀卖酒</div>
     </div>
 
     <!-- 赛事对战界面 -->
     <div class="screen">
       <div class="board">
-        <div class="bd-main">
-          <div class="bd-players">
-            <div class="bd-p"><div class="bd-ava you">你</div><div class="bd-meta"><b>你</b><small>钻石 III</small></div></div>
-            <div class="bd-sc"><b>2</b><span>VS</span><b>1</b></div>
-            <div class="bd-p ai"><div class="bd-ava aiv">AI</div><div class="bd-meta"><b>AlphaDan</b><small>AI 大师</small></div></div>
-          </div>
-          <div class="bd-felt">
-            <div class="lv-played">
-              <div class="pc red"><span class="r">10</span><span class="s">♥</span></div>
-              <div class="pc"><span class="r">10</span><span class="s">♠</span></div>
-              <div class="pc red"><span class="r">10</span><span class="s">♦</span></div>
-            </div>
-            <div class="bd-turn">AI 思考中…</div>
-            <div class="bd-myhand">
-              <div class="pc"><span class="r">A</span><span class="s">♠</span></div>
-              <div class="pc red"><span class="r">A</span><span class="s">♥</span></div>
-              <div class="pc"><span class="r">K</span><span class="s">♣</span></div>
-              <div class="pc"><span class="r">Q</span><span class="s">♠</span></div>
-            </div>
-          </div>
+        <div class="bd-bar"><span>段位赛 · 第 3 局</span><span class="bd-timer">⏱ 0:14</span></div>
+        <div class="seat2">
+          <i class="av2 ai">AI</i>
+          <div class="who"><b>AlphaDan</b><small>AI 大师</small></div>
+          <span class="hcount">手牌 7</span>
+          <span class="sc2">1</span>
         </div>
-        <div class="bd-side">
-          <div class="bd-side-h">🏆 挑战榜</div>
-          <div class="bd-rank"><span class="rk g">1</span>老李·王者<span class="rv">12连胜</span></div>
-          <div class="bd-rank"><span class="rk">2</span>阿强·星耀<span class="rv">9连胜</span></div>
-          <div class="bd-rank"><span class="rk">3</span>小敏·钻石<span class="rv">7连胜</span></div>
-          <div class="bd-radar">📊 六维雷达 · AI 复盘</div>
+        <div class="felt2">
+          <div class="combo">
+            <div class="pc red"><em>10<br>♥</em><b>♥</b></div>
+            <div class="pc"><em>10<br>♠</em><b>♠</b></div>
+            <div class="pc red"><em>10<br>♦</em><b>♦</b></div>
+          </div>
+          <span class="think">AI 思考中 · · ·</span>
+        </div>
+        <div class="seat2">
+          <i class="av2 you">你</i>
+          <div class="who"><b>你</b><small>钻石 III</small></div>
+          <span class="hcount">手牌 9</span>
+          <span class="sc2 g">2</span>
+        </div>
+        <div class="my-fan">
+          <div class="pc"><em>A<br>♠</em><b>♠</b></div>
+          <div class="pc red"><em>A<br>♥</em><b>♥</b></div>
+          <div class="pc"><em>K<br>♣</em><b>♣</b></div>
+          <div class="pc"><em>Q<br>♠</em><b>♠</b></div>
+          <div class="pc red"><em>J<br>♦</em><b>♦</b></div>
+          <div class="pc"><em>10<br>♣</em><b>♣</b></div>
+        </div>
+        <div class="bd-foot">
+          <div class="lb">
+            <span class="lbh">🏆 挑战榜</span>
+            <span><i class="rk g">1</i>老李·王者 12连胜</span>
+            <span><i class="rk">2</i>阿强·星耀 9连胜</span>
+          </div>
+          <div class="rp">📊 六维雷达<br>AI 复盘报告</div>
         </div>
       </div>
       <div class="cap"><b>赛事对战界面</b> · 1v1 牌局 · 段位积分 · 挑战榜 · AI 复盘</div>
