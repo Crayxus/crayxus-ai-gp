@@ -1,8 +1,8 @@
 /* Crayxus access gate — client-side PIN.
    NOTE: static-hosting gate; stops casual visitors, not someone who reads page source. */
 (function () {
-  var KEY = '__crayxus_gate_v1', PIN = '8888';
-  try { if (sessionStorage.getItem(KEY) === '1') return; } catch (e) {}
+  var PIN = '8888';
+  // 每次进入都要求输入密码：不做任何记忆(无 session/local 缓存)。
 
   // Hide the page immediately (runs while <head> is still parsing) so content never flashes.
   var hide = document.createElement('style');
@@ -28,7 +28,6 @@
     var inp = g.querySelector('#__pin_in'), err = g.querySelector('#__pin_err');
     function ok() {
       if (inp.value === PIN) {
-        try { sessionStorage.setItem(KEY, '1'); } catch (e) {}
         var h = document.getElementById('__pin_hide'); if (h) h.parentNode.removeChild(h);
         g.parentNode.removeChild(g);
       } else {
