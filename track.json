@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-25 11:30:31",
+  "updated": "2026-06-25 13:00:12",
   "mode": "模拟盘 · 实时",
   "engine": "Crayxus AI Quant v1",
   "market": "etf",
@@ -18,8 +18,8 @@
     "code": "513310",
     "name": "中韩半导体ETF华泰柏瑞",
     "market": 1,
-    "price": 6.586,
-    "chg": 4.39,
+    "price": 6.608,
+    "chg": 4.74,
     "held": false,
     "preview": true,
     "score": 89,
@@ -520,6 +520,14 @@
       {
         "t": "1130",
         "p": 6.586
+      },
+      {
+        "t": "1300",
+        "p": 6.586
+      },
+      {
+        "t": "1301",
+        "p": 6.608
       }
     ],
     "prev_close": 6.309
@@ -529,8 +537,8 @@
       "code": "513310",
       "name": "中韩半导体ETF华泰柏瑞",
       "market": 1,
-      "price": 6.586,
-      "chg": 4.39,
+      "price": 6.608,
+      "chg": 4.74,
       "locked": false,
       "status": "监控"
     },
