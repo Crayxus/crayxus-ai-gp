@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>赛博德州 · CYBER HOLD'EM · 1v1</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;font-family:"PingFang SC","Microsoft YaHei",sans-serif;-webkit-user-select:none;user-select:none}
+  html,body{height:100%;overflow:hidden;background:#000}
+  body{display:flex;align-items:center;justify-content:center}
+  .stage{position:relative;height:100vh;aspect-ratio:9/16;max-width:100vw;overflow:hidden;background:#05030c;box-shadow:0 0 50px rgba(120,40,220,.45)}
+  #scene{position:absolute;inset:0;width:100%;height:100%;z-index:0;display:block}
+  /* 赛博扫描线 */
+  .scan{position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:repeating-linear-gradient(0deg,rgba(0,0,0,0) 0,rgba(0,0,0,0) 2px,rgba(0,0,0,.18) 3px,rgba(0,0,0,0) 4px);
+    mix-blend-mode:overlay;opacity:.5}
+  .ui{position:absolute;inset:0;z-index:2;pointer-events:none;color:#eaf6ff}
+  .glass{background:rgba(10,8,24,.55);backdrop-filter:blur(10px);border:1px solid rgba(120,90,255,.35);border-radius:14px;
+    box-shadow:0 0 22px rgba(120,90,255,.2)}
+
+  /* 标题 */
+  .title{position:absolute;top:14px;left:50%;transform:translateX(-50%);font-size:26px;font-weight:900;letter-spacing:4px;
+    color:#fff;text-shadow:0 0 10px #ff3df0,0 0 22px #00e5ff,2px 0 #ff3df0,-2px 0 #00e5ff}
+  .title small{display:block;text-align:center;font-size:11px;letter-spacing:6px;color:#8fe;margin-top:2px;text-shadow:0 0 8px #00e5ff}
+
+  /* AI 区（顶部） */
+  .ai-seat{position:absolute;top:43%;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:7px;z-index:3}
+  .seatlabel{font-size:13px;font-weight:800;letter-spacing:1px}
+  .ai-bar .seatlabel{color:#ff6bdc;text-shadow:0 0 8px #ff3df0}
+  .chip{padding:4px 14px;border-radius:20px;font-size:14px;font-weight:800}
+  .chip b{color:#ffe06a}
+  .bubble{position:absolute;top:150px;left:50%;transform:translate(-50%,6px);max-width:60%;padding:8px 15px;border-radius:14px;
+    font-size:15px;font-weight:700;opacity:0;transition:.2s;border:1.5px solid rgba(255,61,240,.55);white-space:nowrap;text-align:center;z-index:4}
+  .bubble.show{opacity:1;transform:translate(-50%,0)}
+
+  /* 牌 */
+  .cards{display:flex;gap:6px;justify-content:center}
+  .card{width:58px;height:82px;border-radius:8px;position:relative;flex:0 0 auto;
+    background:linear-gradient(160deg,#fbfbff,#e7ecf6);border:1px solid #b9c2d6;color:#13131c;
+    box-shadow:0 3px 10px rgba(0,0,0,.5)}
+  .card.red{color:#ff2d6e}
+  .card .r{position:absolute;top:5px;left:7px;font-weight:900;font-size:19px;line-height:1}
+  .card .s{position:absolute;bottom:5px;right:7px;font-size:19px}
+  .card.back{background:linear-gradient(135deg,#1a0f3a,#2a1060);border:1px solid #6a4dff;
+    box-shadow:0 0 14px rgba(120,80,255,.6),inset 0 0 12px rgba(180,120,255,.4)}
+  .card.back::after{content:"⬡";position:absolute;inset:0;display:grid;place-items:center;font-size:30px;color:#9a7bff;text-shadow:0 0 10px #6a4dff}
+  .card.deal{animation:deal .35s ease both}
+  @keyframes deal{from{transform:translateY(-30px) scale(.8);opacity:0}to{transform:none;opacity:1}}
+
+  /* 公共牌 + 底池 */
+  .board{position:absolute;top:58%;left:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:8px}
+  .pot{font-size:17px;font-weight:900;color:#ffe06a;text-shadow:0 0 12px rgba(255,200,60,.6)}
+  .pot small{color:#9fd;font-weight:700;margin-right:6px}
+  .stage-msg{font-size:13px;color:#8ad;letter-spacing:1px;height:18px;text-shadow:0 0 8px #00e5ff}
+
+  /* 我的区（底部） */
+  .me-bar{position:absolute;bottom:148px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px}
+  .me-bar .seatlabel{color:#5fd0ff;text-shadow:0 0 8px #00e5ff}
+  .me-bar .card{width:74px;height:104px}.me-bar .card .r{font-size:24px}.me-bar .card .s{font-size:24px}
+
+  /* 操作栏 */
+  .controls{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px;pointer-events:auto;flex-wrap:wrap;justify-content:center;max-width:92%;width:92%}
+  .btn{border:none;border-radius:11px;padding:10px 15px;font-size:14px;font-weight:800;cursor:pointer;color:#fff;
+    background:linear-gradient(135deg,#7a2dff,#c026d3);box-shadow:0 0 16px rgba(160,40,220,.5);letter-spacing:1px}
+  .btn.call{background:linear-gradient(135deg,#0891b2,#06b6d4);box-shadow:0 0 16px rgba(6,182,212,.5)}
+  .btn.fold{background:linear-gradient(135deg,#3a3550,#211d33);box-shadow:none;color:#c9c0e6}
+  .btn.allin{background:linear-gradient(135deg,#ff3df0,#ff7a3d);box-shadow:0 0 18px rgba(255,61,240,.55)}
+  .btn:active{transform:translateY(1px)} .btn:disabled{opacity:.35;cursor:not-allowed}
+  .raisebox{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:11px}
+  .raisebox input[type=range]{width:116px;accent-color:#c026d3}
+  .raisebox .amt{font-size:15px;font-weight:900;color:#ffe06a;min-width:54px;text-align:center}
+
+  /* 思考/胜率核心球 */
+  .nnorb{position:absolute;left:14px;top:46%;transform:translateY(-50%);z-index:3;width:108px;text-align:center;pointer-events:none}
+  #nnCanvas{display:block;width:108px;height:108px;border-radius:50%;border:1px solid rgba(255,61,240,.5);
+    background:radial-gradient(circle,rgba(20,8,40,.6),rgba(8,4,20,.4));box-shadow:0 0 22px rgba(255,61,240,.3);transition:.3s}
+  .nnorb.busy #nnCanvas{box-shadow:0 0 40px rgba(255,61,240,.8);border-color:#ff3df0}
+  .nn-lab{margin-top:6px;font-size:11px;font-weight:800;color:#ff8fe6;display:none}.nnorb.busy .nn-lab{display:block}
+  .nn-eq{font-size:18px;font-weight:900;color:#ffe06a;text-shadow:0 0 10px rgba(255,200,60,.7)}
+
+  /* 结算遮罩 */
+  .over{position:fixed;inset:0;z-index:8;background:rgba(3,1,10,.7);display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px}
+  .over.show{display:flex}
+  .over h1{font-size:46px;font-weight:900;letter-spacing:2px}
+  .toast{position:fixed;top:120px;left:50%;transform:translateX(-50%);z-index:9;background:rgba(10,8,24,.85);
+    padding:9px 18px;border-radius:20px;font-size:14px;opacity:0;transition:.2s;pointer-events:none;border:1px solid rgba(255,61,240,.4)}
+  .toast.show{opacity:1}
+  .loading{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;color:#9a7bff;font-size:15px;background:#05030c;letter-spacing:2px}
+  .loading.hide{display:none}
+  .flash{position:absolute;inset:0;z-index:7;pointer-events:none;background:#fff;opacity:0}
+  .flash.go{animation:flashfx .3s ease-out}
+  @keyframes flashfx{0%{opacity:0}16%{opacity:.5}100%{opacity:0}}
+</style>
+</head>
+<body>
+  <div class="stage" id="stage">
+  <canvas id="scene"></canvas>
+  <div class="scan"></div>
+  <div class="loading" id="loading">LOADING NEON CORE…</div>
+
+  <div class="ui">
+    <div class="title">赛博德州<small>CYBER HOLD'EM · 1v1</small></div>
+
+    <div class="ai-seat">
+      <div class="chip glass">🤖 AI 庄家 · 筹码 <b id="aiStack">1000</b></div>
+      <div class="cards" id="aiCards"></div>
+    </div>
+    <div class="bubble glass" id="aiBubble"></div>
+
+    <div class="board">
+      <div class="cards" id="boardCards"></div>
+      <div class="pot glass" style="padding:6px 16px"><small>底池</small><b id="pot">0</b></div>
+      <div class="stage-msg" id="stageMsg"></div>
+    </div>
+
+    <div class="me-bar">
+      <div class="chip glass">😎 你 · 筹码 <b id="myStack">1000</b></div>
+      <div class="cards" id="myCards"></div>
+    </div>
+
+    <div class="controls" id="controls"></div>
+
+    <div class="nnorb" id="orb">
+      <canvas id="nnCanvas" width="108" height="108"></canvas>
+      <div class="nn-lab">胜率推演<div class="nn-eq" id="nnEq">—</div></div>
+    </div>
+  </div>
+
+  <div class="flash" id="flash"></div>
+  </div>
+  <div class="toast" id="toast"></div>
+  <div class="over" id="over"><h1 id="overText"></h1><button class="btn" id="overBtn" style="pointer-events:auto">再来一局</button></div>
+
+<script src="poker.js"></script>
+<script type="importmap">
+{ "imports": { "three": "./three/three.module.js", "three/addons/": "./three/jsm/" } }
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+/* ============ 3D 赛博朋克场景 ============ */
+const canvas=document.getElementById('scene');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;renderer.outputColorSpace=THREE.SRGBColorSpace;
+const scene=new THREE.Scene();
+const bc=document.createElement('canvas');bc.width=2;bc.height=512;const g=bc.getContext('2d');
+const gr=g.createLinearGradient(0,0,0,512);gr.addColorStop(0,'#1a0838');gr.addColorStop(.5,'#0c0524');gr.addColorStop(1,'#03010a');
+g.fillStyle=gr;g.fillRect(0,0,2,512);const bt=new THREE.CanvasTexture(bc);bt.colorSpace=THREE.SRGBColorSpace;scene.background=bt;
+scene.fog=new THREE.Fog(0x0a0428,9,26);
+const stageEl=document.getElementById('stage');
+const camera=new THREE.PerspectiveCamera(52,stageEl.clientWidth/stageEl.clientHeight,0.1,100);
+camera.position.set(0,2.7,6.8);camera.lookAt(0,1.5,-1.3);
+function sizeStage(){const w=stageEl.clientWidth,h=stageEl.clientHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();}
+const pmrem=new THREE.PMREMGenerator(renderer);scene.environment=pmrem.fromScene(new RoomEnvironment(),0.04).texture;
+scene.add(new THREE.HemisphereLight(0x9a6bff,0x140a28,0.5));
+const key=new THREE.SpotLight(0xff4df0,70,34,Math.PI/5,0.5,1.2);key.position.set(3,9,5);key.castShadow=true;key.shadow.mapSize.set(2048,2048);scene.add(key,key.target);
+const c1=new THREE.PointLight(0x00e5ff,50,24);c1.position.set(-6,3,-3);scene.add(c1);
+const c2=new THREE.PointLight(0xb026ff,40,24);c2.position.set(6,2.4,-4);scene.add(c2);
+const floor=new THREE.Mesh(new THREE.CircleGeometry(16,64),new THREE.MeshStandardMaterial({color:0x07041a,roughness:.9,metalness:.2}));
+floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;scene.add(floor);
+const grid=new THREE.GridHelper(60,60,0xff3df0,0x00e5ff);grid.material.transparent=true;grid.material.opacity=0.35;grid.position.y=0.02;scene.add(grid);
+// 牌桌
+const felt=new THREE.MeshStandardMaterial({color:0x16103a,roughness:.7,metalness:.1});
+const top=new THREE.Mesh(new THREE.CylinderGeometry(2.9,2.9,0.16,72),felt);top.position.y=0.92;top.receiveShadow=true;scene.add(top);
+const ring=new THREE.Mesh(new THREE.TorusGeometry(2.93,0.06,16,120),new THREE.MeshBasicMaterial({color:0x00e5ff}));ring.rotation.x=Math.PI/2;ring.position.y=1.0;scene.add(ring);
+const ped=new THREE.Mesh(new THREE.CylinderGeometry(0.6,0.95,0.92,40),new THREE.MeshStandardMaterial({color:0x1a0f3a,metalness:.4,roughness:.4}));ped.position.y=0.46;ped.castShadow=true;scene.add(ped);
+// 粒子
+const pc=300,pg=new THREE.BufferGeometry(),pp=new Float32Array(pc*3);
+for(let i=0;i<pc;i++){pp[i*3]=(Math.random()-.5)*36;pp[i*3+1]=Math.random()*10;pp[i*3+2]=(Math.random()-.5)*36-4;}
+pg.setAttribute('position',new THREE.BufferAttribute(pp,3));
+let particles=new THREE.Points(pg,new THREE.PointsMaterial({color:0xff7bf0,size:.05,transparent:true,opacity:.6,depthWrite:false}));scene.add(particles);
+// 霓虹横幅
+const bnc=document.createElement('canvas');bnc.width=1024;bnc.height=256;const bx=bnc.getContext('2d');
+bx.textAlign='center';bx.textBaseline='middle';bx.shadowColor='#ff3df0';bx.shadowBlur=30;bx.fillStyle='#eaf6ff';bx.font='900 120px "Microsoft YaHei"';bx.fillText('赛博德州',512,108);
+bx.shadowColor='#00e5ff';bx.shadowBlur=16;bx.fillStyle='#7df9ff';bx.font='700 40px Arial';bx.fillText('C Y B E R   H O L D ’ E M',512,196);
+const bnt=new THREE.CanvasTexture(bnc);bnt.colorSpace=THREE.SRGBColorSpace;
+const banner=new THREE.Mesh(new THREE.PlaneGeometry(4.6,1.15),new THREE.MeshBasicMaterial({map:bnt,transparent:true}));banner.position.set(0,4.2,-3.6);scene.add(banner);
+// 机器人 + 光环
+// 机器人：模型无关（任何 GLB 都能用，程序化反应）
+let mixer=null, halo=null, robotObj=null, baseY=0, baseScale=1, baseRy=0, reactKind='idle', reactStart=0;
+const baseZ=-3.3;
+function react(k){ reactKind=k; reactStart=performance.now(); }
+const RMAP={Punch:'raise',Jump:'raise',Dance:'win',Death:'lose',No:'fold',ThumbsUp:'call',Yes:'call',Wave:'call',Idle:'idle'};
+window.RBT={ready:false, gesture:n=>react(RMAP[n]||'idle'), play:n=>react(RMAP[n]||'idle')};
+new GLTFLoader().load('three/model/Astronaut.glb',gltf=>{
+  const r=gltf.scene;
+  let box=new THREE.Box3().setFromObject(r), sz=box.getSize(new THREE.Vector3());
+  baseScale=2.6/(sz.y||1); r.scale.setScalar(baseScale);
+  box=new THREE.Box3().setFromObject(r); baseY=-box.min.y;
+  r.traverse(o=>{if(o.isMesh)o.castShadow=true;}); scene.add(r); robotObj=r;
+  // 播 Idle 安静呼吸（不乱动、避免 T-pose）
+  if(gltf.animations.length){ mixer=new THREE.AnimationMixer(r); const idle=gltf.animations.find(c=>/idle/i.test(c.name))||gltf.animations[0]; mixer.clipAction(idle).play(); }
+  window.RBT.ready=true; document.getElementById('loading').classList.add('hide');
+},undefined,e=>{document.getElementById('loading').textContent='3D 加载失败，请用 http://localhost:8077/texas.html 打开';console.error(e);});
+const clock=new THREE.Clock();
+(function loop(){requestAnimationFrame(loop);const dt=clock.getDelta();if(mixer)mixer.update(dt);if(particles)particles.rotation.y+=dt*0.025;
+  if(robotObj){const t=(performance.now()-reactStart)/1000;let y=baseY,rx=0,ry=baseRy,s=baseScale,z=baseZ;
+    if(reactKind==='win'){y=baseY+Math.abs(Math.sin(t*6))*0.22;ry=baseRy+t*3.2;if(t>2.2)reactKind='idle';}
+    else if(reactKind==='lose'){rx=-Math.min(t*2.5,1.45);}
+    else if(reactKind==='raise'){const p=Math.max(0,1-t/0.45);s=baseScale*(1+0.18*p);z=baseZ+0.45*p;if(t>0.45)reactKind='idle';}
+    else if(reactKind==='fold'){ry=baseRy+Math.sin(t*22)*0.25*Math.max(0,1-t/0.6);if(t>0.6)reactKind='idle';}
+    else if(reactKind==='call'){y=baseY+Math.max(0,Math.sin(t*10))*0.08*Math.max(0,1-t/0.4);if(t>0.4)reactKind='idle';}
+    robotObj.position.set(0,y,z);robotObj.rotation.set(rx,ry,0);robotObj.scale.setScalar(s);}
+  if(halo){halo.rotation.z+=dt*1.5;}
+  renderer.render(scene,camera);})();
+addEventListener('resize',sizeStage); sizeStage();
+
+/* ============ 胜率核心球 ============ */
+let nnBusy=false;
+(function makeOrb(){
+  const cv=document.getElementById('nnCanvas');const ctx=cv.getContext('2d'),W=cv.width,H=cv.height,cx=W/2,cy=H/2,R=Math.min(W,H)*0.4,N=90,pts=[];
+  for(let i=0;i<N;i++){const phi=Math.acos(1-2*(i+.5)/N),th=Math.PI*(1+Math.sqrt(5))*i;pts.push({x:Math.sin(phi)*Math.cos(th),y:Math.sin(phi)*Math.sin(th),z:Math.cos(phi)});}
+  const links=[];for(let i=0;i<N;i++){const d=pts.map((q,j)=>({j,v:(q.x-pts[i].x)**2+(q.y-pts[i].y)**2+(q.z-pts[i].z)**2})).filter(o=>o.j!==i).sort((a,b)=>a.v-b.v);links.push([i,d[0].j]);if(d[1])links.push([i,d[1].j]);}
+  let t=0;(function fr(){requestAnimationFrame(fr);t+=nnBusy?0.05:0.016;ctx.clearRect(0,0,W,H);
+    const cY=Math.cos(t),sY=Math.sin(t),ax=.5+Math.sin(t*.4)*.3,cX=Math.cos(ax),sX=Math.sin(ax);
+    const cg=ctx.createRadialGradient(cx,cy,0,cx,cy,R*1.4);cg.addColorStop(0,nnBusy?'rgba(255,90,240,.55)':'rgba(150,80,255,.3)');cg.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=cg;ctx.beginPath();ctx.arc(cx,cy,R*1.4,0,7);ctx.fill();
+    const P=pts.map(p=>{const x=p.x*cY-p.z*sY,z=p.x*sY+p.z*cY,y=p.y,y2=y*cX-z*sX;return{sx:cx+x*R,sy:cy+y2*R,z:y*sX+z*cX};});
+    ctx.lineWidth=.6;links.forEach(([a,b])=>{const pa=P[a],pb=P[b],dp=((pa.z+pb.z)/2+1)/2;ctx.strokeStyle='rgba(255,120,240,'+(0.05+dp*(nnBusy?.3:.16))+')';ctx.beginPath();ctx.moveTo(pa.sx,pa.sy);ctx.lineTo(pb.sx,pb.sy);ctx.stroke();});
+    P.slice().sort((a,b)=>a.z-b.z).forEach(p=>{const dp=(p.z+1)/2,rr=.6+dp*2,al=.25+dp*.75;ctx.fillStyle=(nnBusy&&Math.random()<.05)?'rgba(255,224,106,'+al+')':'rgba(140,228,255,'+al+')';ctx.beginPath();ctx.arc(p.sx,p.sy,rr,0,7);ctx.fill();});
+  })();
+})();
+
+/* ============ 德州扑克对局 ============ */
+const $=id=>document.getElementById(id);
+let st=null, busy=false;
+// 语音
+let aiVoice=null,meVoice=null;
+function pv(){const vs=speechSynthesis.getVoices(),zh=vs.filter(v=>/zh|chinese/i.test(v.lang+v.name));const f=ns=>{for(const n of ns){const x=zh.find(v=>v.name.toLowerCase().includes(n));if(x)return x;}return null;};aiVoice=f(['yunjian','yunxi','kangkang'])||zh[0]||vs[0];meVoice=f(['xiaoxiao','xiaoyi','huihui'])||zh.find(v=>v!==aiVoice)||aiVoice;}
+speechSynthesis.onvoiceschanged=pv;pv();
+let _sQ=[],_sp=false;
+function say(t,who){const b=$("aiBubble");if(who==='ai'&&b){b.textContent=t;b.classList.add("show");clearTimeout(b._t);b._t=setTimeout(()=>b.classList.remove("show"),2200);}_sQ.push({t,who});if(_sQ.length>3)_sQ.shift();if(!_sp)drain();}
+function drain(){if(!_sQ.length){_sp=false;return;}_sp=true;const it=_sQ.shift();let done=false;const fin=()=>{if(done)return;done=true;_sp=false;drain();};const to=setTimeout(fin,Math.min(4500,700+it.t.length*230));try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(it.t);u.lang="zh-CN";u.rate=1.05;u.pitch=it.who==='ai'?0.86:1.04;const v=it.who==='ai'?aiVoice:meVoice;if(v)u.voice=v;u.onend=()=>{clearTimeout(to);fin();};u.onerror=()=>{clearTimeout(to);fin();};speechSynthesis.speak(u);}catch(e){clearTimeout(to);fin();}}
+function rg(n){if(window.RBT&&RBT.ready)RBT.gesture(n);}
+const TALK={raise:['全推上来','加注，怕了吗','梭一把试试','筹码拿来'],allin:['ALL IN！','全压，敢跟吗','命运由我'],
+  callAI:['陪你玩玩','跟','看你底牌'],win:['筹码是我的了','人类，不过如此','送分愉快','略略略'],lose:['这把让你','算你运气','下把干烧你CPU'],fold:['不奉陪','你赢这手']};
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function flash(){const f=$("flash");f.classList.remove("go");void f.offsetWidth;f.classList.add("go");setTimeout(()=>f.classList.remove("go"),320);}
+function toast(s){const t=$("toast");t.textContent=s;t.classList.add("show");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("show"),1500);}
+
+function cardEl(c,opts){
+  const d=document.createElement("div");
+  if(opts&&opts.back){d.className="card back deal";return d;}
+  d.className="card "+(c.red?"red":"")+(opts&&opts.deal?" deal":"");
+  d.innerHTML=`<span class="r">${c.label}</span><span class="s">${c.suit}</span>`;
+  return d;
+}
+function renderCards(el,cards,opts){el.innerHTML="";cards.forEach(c=>el.appendChild(cardEl(c,opts)));}
+
+function render(){
+  $("aiStack").textContent=st.stacks[1];$("myStack").textContent=st.stacks[0];
+  $("pot").textContent=PK.livePot(st);
+  renderCards($("myCards"),st.p[0].hole,{deal:true});
+  // AI 手牌：摊牌才翻开
+  if(st.showCards) renderCards($("aiCards"),st.p[1].hole,{});
+  else { const e=$("aiCards");e.innerHTML="";for(let i=0;i<2;i++)e.appendChild(cardEl(null,{back:true})); }
+  renderCards($("boardCards"),st.board,{deal:true});
+  renderControls();
+}
+function renderControls(){
+  const c=$("controls");c.innerHTML="";
+  if(st.over || st.toAct!==0){return;}
+  const acts=PK.legal(st), tc=PK.toCall(st,0);
+  const fold=acts.find(a=>a.type==='fold');
+  const check=acts.find(a=>a.type==='check');
+  const call=acts.find(a=>a.type==='call');
+  const raise=acts.find(a=>a.type==='raise'||a.type==='bet');
+  if(fold){const b=mk("弃牌","fold");b.onclick=()=>doAct({type:'fold'});c.appendChild(b);}
+  if(check){const b=mk("过牌","call");b.onclick=()=>doAct({type:'check'});c.appendChild(b);}
+  if(call){const b=mk("跟注 "+call.amount,"call");b.onclick=()=>doAct({type:'call',amount:call.amount});c.appendChild(b);}
+  if(raise){
+    const box=document.createElement("div");box.className="raisebox glass";
+    const rng=document.createElement("input");rng.type="range";rng.min=raise.min;rng.max=raise.max;rng.value=Math.min(raise.max,Math.max(raise.min,Math.round((raise.min+raise.max)/2)));
+    const amt=document.createElement("div");amt.className="amt";amt.textContent=rng.value;
+    rng.oninput=()=>amt.textContent=rng.value;
+    const rb=mk(st.currentBet>0?"加注到":"下注","");rb.onclick=()=>doAct({type:raise.type,amount:+rng.value});
+    box.appendChild(rng);box.appendChild(amt);box.appendChild(rb);c.appendChild(box);
+    const ai=mk("全压 "+raise.max,"allin");ai.onclick=()=>doAct({type:raise.type,amount:raise.max});c.appendChild(ai);
+  }
+}
+function mk(t,cls){const b=document.createElement("button");b.className="btn"+(cls?" "+cls:"");b.textContent=t;return b;}
+
+function doAct(act){
+  if(busy||st.over||st.toAct!==0)return;
+  if(act.type==='fold') say('弃牌','me');
+  else if(act.type==='check') say('过牌','me');
+  else if(act.type==='call') say('跟注','me');
+  else { say('加注','me'); flash(); }
+  PK.apply(st,act); advance();
+}
+async function aiTurn(){
+  busy=true;render();
+  $("orb").classList.add("busy");nnBusy=true;$("nnEq").textContent="…";rg('Idle');$("stageMsg").textContent="AI 推演中…";
+  let act=PK.botAct(st)||{type:'check'};   // 浏览器内实时蒙特卡洛胜率，纯静态无需后端
+  if(act.eq!=null) $("nnEq").textContent=Math.round(act.eq*100)+"%";
+  await sleep(1100);
+  $("orb").classList.remove("busy");nnBusy=false;$("stageMsg").textContent="";
+  // 表演
+  if(act.type==='fold'){ say(pick(TALK.fold),'ai'); rg('No'); }
+  else if(act.type==='raise'||act.type==='bet'){ const allin=act.amount>=st.p[1].inStreet+st.stacks[1]; say(pick(allin?TALK.allin:TALK.raise),'ai'); rg('Punch'); flash(); }
+  else if(act.type==='call'){ if(Math.random()<0.6)say(pick(TALK.callAI),'ai'); rg('ThumbsUp'); }
+  PK.apply(st,act);
+  advance();
+}
+function advance(){
+  render();
+  if(st.over){ return endHand(); }
+  busy=false;
+  if(st.toAct===1){ busy=true; setTimeout(aiTurn,500); }
+  else { renderControls(); }
+}
+function endHand(){
+  render();
+  const w=st.winner, pot=st.potWon||0;
+  $("stageMsg").textContent = (w===0?"你赢 ":w===1?"AI 赢 ":"平分 ")+pot+" 筹码 · "+(st.msg||"");
+  if(window.RBT&&RBT.ready){ if(w===1) RBT.play('Dance'); else if(w===0) RBT.play('Death'); else RBT.gesture('No'); }
+  if(w===1) say(pick(TALK.win),'ai'); else if(w===0) { say('赢筹码了','me'); setTimeout(()=>say(pick(TALK.lose),'ai'),1500); }
+  busy=false;
+  // 游戏结束？
+  if(st.stacks[0]<=0||st.stacks[1]<=0){
+    setTimeout(()=>{ $("overText").textContent= st.stacks[0]<=0?"💀 筹码输光":"🏆 你赢光了 AI！"; $("overText").style.color=st.stacks[0]<=0?"#ff6b6b":"#ffe06a"; $("over").classList.add("show"); },1200);
+  } else {
+    setTimeout(showNext,1600);
+  }
+}
+function showNext(){
+  const c=$("controls");c.innerHTML="";
+  const b=mk("下一手 ▸","");b.onclick=newHand;c.appendChild(b);
+}
+function newHand(){
+  $("over").classList.remove("show");
+  st=PK.newHand(st);
+  busy=false;
+  // 盲注提示
+  $("stageMsg").textContent="盲注 "+st.sb+"/"+st.bb;
+  advance();
+}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+$("overBtn").onclick=()=>{ st=null; newHand(); };
+newHand();
+</script>
+</body>
+</html>
