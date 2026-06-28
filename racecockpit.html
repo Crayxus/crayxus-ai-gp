@@ -80,6 +80,23 @@
   .tile .u{font-size:11px;color:var(--dim);font-weight:600}
   .tile .bar{height:4px;border-radius:2px;background:#16202e;margin-top:5px;overflow:hidden}
   .tile .bar i{display:block;height:100%;border-radius:2px;background:linear-gradient(90deg,var(--green),var(--cyan));transition:width .25s}
+  /* 实车方向控制 D-pad */
+  .dpad-cluster{display:flex;flex-direction:column;align-items:center;gap:8px;flex:0 0 auto;justify-content:center}
+  .dpad-title{font-size:10px;color:var(--dim);letter-spacing:1px;text-transform:uppercase}
+  .dpad-title b{color:var(--amber)}
+  .dpad{display:grid;grid-template-columns:repeat(3,42px);grid-template-rows:repeat(3,42px);gap:6px}
+  .dbtn{border:1px solid var(--line);background:#0a111c;color:var(--fg);border-radius:9px;font-size:18px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;user-select:none;-webkit-user-select:none;touch-action:none;transition:.08s}
+  .dbtn.on{background:linear-gradient(180deg,var(--cyan),var(--blue));color:#03212a;box-shadow:0 0 14px rgba(0,229,255,.5)}
+  .dbtn.up{grid-area:1/2}.dbtn.left{grid-area:2/1}.dbtn.stop{grid-area:2/2;font-size:14px;border-color:#ff5168;color:#ff8a8a}
+  .dbtn.right{grid-area:2/3}.dbtn.down{grid-area:3/2}
+  .dbtn.stop.on,.dbtn.stop:active{background:linear-gradient(180deg,#ff5168,#ff8a3e);color:#fff;box-shadow:0 0 14px rgba(255,81,104,.5)}
+  .dpad-conn{display:flex;flex-direction:column;align-items:center;gap:3px;width:144px}
+  .dpad-conn input{width:100%;background:#0a111c;border:1px solid var(--line);border-radius:7px;color:var(--fg);
+    padding:5px 8px;font-family:inherit;font-size:11px;outline:none;text-align:center}
+  .dpad-conn input:focus{border-color:var(--cyan)}
+  .dpad-tx{font-size:10px;color:var(--dim);font-family:"Cascadia Code",monospace}
+  .dpad-tx.live{color:var(--green)}.dpad-tx.err{color:var(--red)}
 
   #evocard{grid-area:evo;display:flex;flex-direction:column;min-height:0}
   #evo{width:100%;height:150px;display:block;flex:0 0 auto}
@@ -160,6 +177,21 @@
         <div class="ictl"><div class="lab">油门</div><div class="vbar"><i id="thr" style="height:0%"></i></div></div>
         <div class="ictl"><div class="lab">转向</div><div class="vbar steer"><i id="str" style="left:50%;width:0%"></i></div></div>
         <div class="ictl"><div class="lab">刹车</div><div class="vbar"><i id="brk" style="height:0%;background:linear-gradient(0deg,#ff5168,#ff8a3e)"></i></div></div>
+      </div>
+      <!-- 实车方向控制 (按住走 / 松手停 / 也支持方向键) -->
+      <div class="dpad-cluster">
+        <div class="dpad-title">实车方向 · <b>直控</b></div>
+        <div class="dpad">
+          <div class="dbtn up"    data-cmd="a">▲</div>
+          <div class="dbtn left"  data-cmd="b">◀</div>
+          <div class="dbtn stop"  data-cmd="S">■</div>
+          <div class="dbtn right" data-cmd="d">▶</div>
+          <div class="dbtn down"  data-cmd="c">▼</div>
+        </div>
+        <div class="dpad-conn">
+          <input id="carhost" placeholder="车IP(Pi/ESP32) · 空=后端串口">
+          <span class="dpad-tx" id="cartx">按住方向 / 方向键</span>
+        </div>
       </div>
       <div class="midcol">
         <div class="laprow">
@@ -561,6 +593,60 @@ window.addEventListener("mousemove",e=>{if(drag<0)return;const m=mpos(e),wp=s2w(
   WP[drag]=[Math.max(-0.3,Math.min(M.SIZE[0]+0.3,wp[0])),Math.max(-0.3,Math.min(M.SIZE[1]+0.3,wp[1]))];buildPath();});
 window.addEventListener("mouseup",()=>{drag=-1;});
 
+/* ===================== 实车方向控制 ===================== */
+/* 协议对齐 car_ble.ino: a=前进 c=后退 b=左转 d=右转 S=停 (单字符)
+   两条通道: ① 填了车IP → HTTP GET http://<ip>/c?x=<cmd> (Pi/ESP32 WiFi 桥, 同 lap_editor)
+            ② 否则走后端串口 WS (deepseek-console 连着车的 COM/BLE)
+   手动是心跳式: 按住每 400ms 重发(车端 ~2.5s 自停), 松手发 S。
+   注意: 公开 https 页面会被浏览器拦 http/ws://localhost(混合内容);
+        实车直控请在本地/树莓派上以 http 打开本页(或经后端 localhost:8765)。 */
+let carHb=null, carActiveBtn=null;
+function setCarTx(t,cls){const e=$("cartx");if(e){e.textContent=t;e.className='dpad-tx '+(cls||'');}}
+function carSend(cmd){
+  const host=($("carhost").value||"").trim();
+  if(host){ try{ fetch('http://'+host+'/c?x='+cmd,{mode:'no-cors'}); setCarTx('HTTP '+host+' ['+cmd+']','live'); }catch(e){ setCarTx('HTTP 失败','err'); } return; }
+  if(serialWS && serialWS.readyState===1){ serialWS.send(JSON.stringify({action:"write",data:cmd})); setCarTx('串口← '+cmd,'live'); return; }
+  setCarTx('未连接: 切 LIVE 或填车IP','err');
+}
+function carStart(cmd,btn){
+  if(carActiveBtn)carActiveBtn.classList.remove('on');
+  carActiveBtn=btn||null; if(btn)btn.classList.add('on');
+  carSend(cmd);
+  if(carHb)clearInterval(carHb);
+  carHb=setInterval(()=>carSend(cmd),400);
+}
+function carStopMove(){
+  if(carHb){clearInterval(carHb);carHb=null;}
+  if(carActiveBtn){carActiveBtn.classList.remove('on');carActiveBtn=null;}
+  carSend('S');
+}
+function wireDpad(){
+  document.querySelectorAll('.dbtn').forEach(btn=>{
+    const cmd=btn.getAttribute('data-cmd');
+    if(cmd==='S'){
+      const stop=e=>{e.preventDefault();carStopMove();};
+      btn.addEventListener('mousedown',stop); btn.addEventListener('touchstart',stop,{passive:false});
+      return;
+    }
+    const dn=e=>{e.preventDefault();carStart(cmd,btn);};
+    const up=e=>{e.preventDefault();if(carActiveBtn===btn)carStopMove();};
+    btn.addEventListener('mousedown',dn); btn.addEventListener('touchstart',dn,{passive:false});
+    btn.addEventListener('mouseup',up); btn.addEventListener('mouseleave',up); btn.addEventListener('touchend',up,{passive:false});
+  });
+  // 方向键 (不在输入框时)
+  const KMAP={ArrowUp:'a',ArrowDown:'c',ArrowLeft:'b',ArrowRight:'d'};
+  let kdown=null;
+  window.addEventListener('keydown',e=>{
+    const tag=(document.activeElement&&document.activeElement.tagName)||'';
+    if(tag==='INPUT'||tag==='TEXTAREA')return;
+    if(e.key===' '||e.key==='Escape'){carStopMove();return;}
+    const cmd=KMAP[e.key]; if(!cmd)return; e.preventDefault();
+    if(kdown===e.key)return; kdown=e.key;
+    carStart(cmd, document.querySelector('.dbtn[data-cmd="'+cmd+'"]'));
+  });
+  window.addEventListener('keyup',e=>{ if(KMAP[e.key]&&kdown===e.key){kdown=null;carStopMove();} });
+}
+
 /* ===================== 主循环 ===================== */
 let lastT=null;
 function loop(ts){if(lastT==null)lastT=ts;let dt=(ts-lastT)/1000;lastT=ts;if(dt>0.1)dt=0.1;simClock+=dt;
@@ -580,6 +666,7 @@ $("vi").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preven
 $("vi").addEventListener("input",e=>{e.target.style.height="auto";e.target.style.height=Math.min(e.target.scrollHeight,90)+"px";});
 window.addEventListener("resize",drawEvo);
 $("dot").classList.add("on");
+wireDpad();
 connectAgent();
 vSys("跟系统对话：可直接驱动驾驶舱(打乱 / 自己优化到最快 / 加点 / 圈速)，或写代码、烧录 ESP32(需后端)。");
 
