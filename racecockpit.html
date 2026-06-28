@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crayxus AI·GP · 赛车驾驶舱</title>
+<style>
+  :root{
+    --bg:#070a10; --panel:#0e141e; --panel2:#111826;
+    --fg:#dfe9f5; --dim:#5e6f85; --line:#1a2433;
+    --cyan:#00e5ff; --green:#39d98a; --blue:#4aa3ff; --amber:#ffb23e; --red:#ff5168; --yellow:#ffe23e;
+    --glow:0 0 18px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0}
+  body{
+    background:
+      radial-gradient(1200px 600px at 50% -10%, #0f1a2a 0%, transparent 60%),
+      repeating-linear-gradient(135deg,#080c12 0 6px,#0a0f16 6px 12px);
+    color:var(--fg); font-family:"Rajdhani","Segoe UI",system-ui,sans-serif; overflow:hidden;
+  }
+  #top{display:flex;align-items:center;gap:14px;padding:9px 18px;
+    background:linear-gradient(180deg,#0d141f,#0a0f17);border-bottom:1px solid var(--line)}
+  #top .logo{font-weight:800;font-size:18px;letter-spacing:2px}
+  #top .logo b{color:var(--cyan);text-shadow:var(--glow) var(--cyan)}
+  #top .sub{color:var(--dim);font-size:12px;letter-spacing:1px;text-transform:uppercase}
+  #top .sp{flex:1}
+  .pill{display:flex;align-items:center;gap:7px;background:#0b1220;border:1px solid var(--line);
+    border-radius:20px;padding:5px 12px;font-size:12px;letter-spacing:.5px}
+  .dot{width:9px;height:9px;border-radius:50%;background:var(--red);box-shadow:var(--glow) var(--red)}
+  .dot.on{background:var(--green);box-shadow:var(--glow) var(--green)}
+  .badge{font-weight:700;color:var(--amber)}
+  .toggle{cursor:pointer;user-select:none;border:1px solid var(--line);border-radius:20px;
+    overflow:hidden;display:flex;font-size:12px;font-weight:700}
+  .toggle span{padding:5px 14px}
+  .toggle .on{background:var(--cyan);color:#03212a}
+  .toggle .liveon{background:var(--red);color:#fff}
+
+  #main{display:grid;grid-template-columns:1.55fr 1fr;grid-template-rows:1.4fr 1fr;
+    grid-template-areas:"track evo" "gauges vibe";gap:12px;padding:12px 16px;height:calc(100vh - 78px)}
+  .card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);
+    border-radius:14px;padding:12px;position:relative;overflow:hidden;min-height:0;min-width:0}
+  .card::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:.5}
+  .card h2{margin:0 0 8px;font-size:12px;letter-spacing:2px;color:var(--dim);
+    text-transform:uppercase;font-weight:700;display:flex;align-items:center;gap:8px}
+  .card h2 .k{color:var(--cyan)} .card h2 .sp{flex:1}
+  .hint{font-size:11px;color:var(--dim);letter-spacing:.3px}
+  .hint b{color:var(--cyan)} .hint .o{color:var(--amber)}
+
+  #trackcard{grid-area:track;display:flex;flex-direction:column}
+  #track{flex:1;width:100%;display:block;min-height:0;cursor:grab}
+  #track:active{cursor:grabbing}
+
+  #gauges{grid-area:gauges;display:flex;gap:14px;align-items:stretch}
+  .gcol{display:flex;flex-direction:column;justify-content:center}
+  #gaugewrap{position:relative;flex:0 0 230px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  #gauge{width:230px;height:165px;display:block}
+  .speedwrap{margin-top:-96px;text-align:center;pointer-events:none}
+  .speedwrap .v{font-size:46px;font-weight:800;line-height:.9;font-variant-numeric:tabular-nums;
+    text-shadow:var(--glow) rgba(0,229,255,.35)}
+  .speedwrap .u{font-size:11px;letter-spacing:3px;color:var(--dim)}
+  .inputs{display:flex;gap:10px;flex:0 0 auto}
+  .ictl{text-align:center}
+  .ictl .lab{font-size:10px;color:var(--dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px}
+  .vbar{height:96px;width:30px;background:#0a111c;border:1px solid var(--line);border-radius:7px;position:relative;overflow:hidden}
+  .vbar i{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(0deg,var(--green),var(--cyan));transition:height .12s}
+  .steer i{position:absolute;top:0;bottom:0;width:50%;background:linear-gradient(90deg,var(--blue),var(--cyan));transition:all .12s}
+  .midcol{flex:1;display:flex;flex-direction:column;gap:10px;justify-content:center;min-width:0}
+  .laprow{display:flex;gap:8px}
+  .lapbox{flex:1;background:#0a111c;border:1px solid var(--line);border-radius:9px;padding:7px 8px;text-align:center}
+  .lapbox .lab{font-size:10px;color:var(--dim);letter-spacing:1px;text-transform:uppercase}
+  .lapbox .t{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}
+  .lapbox.best .t{color:var(--amber);text-shadow:var(--glow) rgba(255,178,62,.4)}
+  .lapbox.cur .t{color:var(--cyan)}
+  .tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .tile{background:#0a111c;border:1px solid var(--line);border-radius:9px;padding:7px 10px}
+  .tile .lab{font-size:10px;color:var(--dim);letter-spacing:1px;text-transform:uppercase}
+  .tile .val{font-size:20px;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums}
+  .tile .u{font-size:11px;color:var(--dim);font-weight:600}
+  .tile .bar{height:4px;border-radius:2px;background:#16202e;margin-top:5px;overflow:hidden}
+  .tile .bar i{display:block;height:100%;border-radius:2px;background:linear-gradient(90deg,var(--green),var(--cyan));transition:width .25s}
+
+  #evocard{grid-area:evo;display:flex;flex-direction:column;min-height:0}
+  #evo{width:100%;height:150px;display:block;flex:0 0 auto}
+  .evostat{display:flex;gap:8px;margin:9px 0 4px}
+  .evostat .s{flex:1;background:#0a111c;border:1px solid var(--line);border-radius:9px;padding:7px;text-align:center}
+  .evostat .s .lab{font-size:10px;color:var(--dim);letter-spacing:1px;text-transform:uppercase}
+  .evostat .s .v{font-size:19px;font-weight:800;font-variant-numeric:tabular-nums}
+  .evolog{flex:1;overflow-y:auto;font-size:12px;line-height:1.55;margin-top:4px;border-top:1px solid var(--line);padding-top:7px;min-height:40px}
+  .evolog .e{display:flex;gap:8px;padding:2px 0}
+  .evolog .g{color:var(--cyan);font-weight:700;flex-shrink:0}
+  .evolog .down{color:var(--green);font-weight:700}
+  .evolog .step{color:var(--dim)}
+  .btnrow{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+  .btn{border:none;border-radius:9px;padding:10px 12px;font-family:inherit;font-weight:800;font-size:13px;
+    letter-spacing:.5px;cursor:pointer;text-transform:uppercase}
+  .btn.primary{flex:1;background:linear-gradient(90deg,var(--cyan),var(--blue));color:#03212a;box-shadow:var(--glow) rgba(0,229,255,.35)}
+  .btn.primary:disabled{opacity:.45;cursor:default;box-shadow:none}
+  .btn.ghost{background:#101a28;color:var(--fg);border:1px solid var(--line);font-size:12px;padding:9px 10px}
+  /* Vibe Coding 面板 */
+  #vibecard{grid-area:vibe;display:flex;flex-direction:column;min-height:0}
+  #vibecard h2 .hint{font-size:11px;color:var(--green)}
+  .vibelog{flex:1;overflow-y:auto;min-height:0;padding-right:4px;font-size:12.5px;line-height:1.5}
+  .vrow{display:flex;gap:7px;margin:7px 0}
+  .vrole{flex-shrink:0;font-weight:700}
+  .vrole.u{color:var(--amber)}.vrole.a{color:var(--green)}.vrole.s{color:var(--dim)}
+  .vmsg{flex:1;min-width:0;overflow-wrap:anywhere}
+  .vmsg pre{background:#070b11;border:1px solid var(--line);border-radius:6px;padding:7px;overflow-x:auto;
+    margin:5px 0;font-size:11px;font-family:"Cascadia Code",monospace;color:#cfe;white-space:pre-wrap;word-break:break-all}
+  .vmsg code{color:#ffd9a0}
+  .tcard{border:1px solid var(--blue);border-radius:8px;padding:8px 10px;margin:6px 0;background:#0d1622}
+  .tcard .tt{color:var(--blue);font-weight:700;margin-bottom:4px}
+  .tcard .btns{display:flex;gap:8px;margin-top:6px}
+  .tcard button{padding:4px 12px;border-radius:6px;border:none;cursor:pointer;font-family:inherit;font-weight:700}
+  .tcard .ok{background:var(--green);color:#04210f}.tcard .no{background:#26303f;color:var(--fg)}
+  .tcard.done .btns{display:none}.tcard.done{opacity:.6}
+  .vibein{display:flex;gap:8px;padding-top:8px;border-top:1px solid var(--line);flex-shrink:0}
+  .vibein textarea{flex:1;background:#0a111c;border:1px solid var(--line);border-radius:9px;color:var(--fg);
+    padding:8px 11px;font-family:inherit;font-size:13px;resize:none;outline:none;max-height:90px}
+  .vibein textarea:focus{border-color:var(--cyan)}
+  .vibein button{background:var(--cyan);color:#03212a;border:none;border-radius:9px;padding:0 16px;font-weight:800;cursor:pointer}
+  .vibein button:disabled{opacity:.45;cursor:default}
+
+  #ticker{position:fixed;bottom:0;left:0;right:0;height:24px;background:#060a0f;border-top:1px solid var(--line);
+    display:flex;align-items:center;gap:18px;padding:0 16px;font-size:11px;color:var(--dim);
+    font-family:"Cascadia Code",monospace;white-space:nowrap;overflow:hidden}
+  #ticker b{color:var(--green)}
+  .flash-anim{animation:fl .6s ease}
+  @keyframes fl{0%{box-shadow:0 0 0 0 rgba(255,178,62,.6)}100%{box-shadow:0 0 0 30px rgba(255,178,62,0)}}
+</style>
+</head>
+<body>
+  <div id="top">
+    <div class="logo">CRAYXUS <b>AI·GP</b></div>
+    <div class="sub">赛车驾驶舱 / Race Cockpit · 黄金赛道 MAP-B</div>
+    <div class="sp"></div>
+    <div class="pill"><span>模型</span><span class="badge" id="genbadge">GEN 1</span></div>
+    <div class="pill"><span class="dot" id="dot"></span><span id="conntext">DEMO 模拟</span></div>
+    <div class="toggle" id="modetoggle"><span class="on" id="t_demo">DEMO</span><span id="t_live">LIVE</span></div>
+  </div>
+
+  <div id="main">
+    <!-- 赛道 + 拖拽编程点 -->
+    <div class="card" id="trackcard">
+      <h2><span class="k">◈</span> 黄金赛道 · 拖点编程 / Drag-to-Code
+        <span class="sp"></span>
+        <span class="hint"><b>拖动黄点</b>改路线 · <span class="o">彩线</span>=按速度上色 · AI 进化会把它拉向最优线</span>
+      </h2>
+      <canvas id="track"></canvas>
+    </div>
+
+    <!-- 仪表 + 车况 -->
+    <div class="card" id="gauges">
+      <div id="gaugewrap">
+        <canvas id="gauge"></canvas>
+        <div class="speedwrap"><div class="v" id="speed">0.0</div><div class="u">M / S</div></div>
+      </div>
+      <div class="inputs">
+        <div class="ictl"><div class="lab">油门</div><div class="vbar"><i id="thr" style="height:0%"></i></div></div>
+        <div class="ictl"><div class="lab">转向</div><div class="vbar steer"><i id="str" style="left:50%;width:0%"></i></div></div>
+        <div class="ictl"><div class="lab">刹车</div><div class="vbar"><i id="brk" style="height:0%;background:linear-gradient(0deg,#ff5168,#ff8a3e)"></i></div></div>
+      </div>
+      <div class="midcol">
+        <div class="laprow">
+          <div class="lapbox cur"><div class="lab">本圈</div><div class="t" id="curlap">0.00</div></div>
+          <div class="lapbox"><div class="lab">上圈</div><div class="t" id="lastlap">—</div></div>
+          <div class="lapbox best"><div class="lab">最佳</div><div class="t" id="bestlap">—</div></div>
+        </div>
+        <div class="tiles">
+          <div class="tile"><div class="lab">电量</div><div class="val"><span id="v_bat">87</span><span class="u">%</span></div><div class="bar"><i id="b_bat" style="width:87%"></i></div></div>
+          <div class="tile"><div class="lab">电机温度</div><div class="val"><span id="v_temp">41</span><span class="u">°C</span></div><div class="bar"><i id="b_temp" style="width:41%"></i></div></div>
+          <div class="tile"><div class="lab">偏离最优线</div><div class="val"><span id="v_dev">0.00</span><span class="u">m</span></div><div class="bar"><i id="b_dev" style="width:0%;background:linear-gradient(90deg,#39d98a,#ffb23e)"></i></div></div>
+          <div class="tile"><div class="lab">里程</div><div class="val"><span id="v_dist">0</span><span class="u">m</span></div><div class="bar"><i id="b_dist" style="width:0%"></i></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI 自进化 -->
+    <div class="card" id="evocard">
+      <h2><span class="k">◈</span> AI 自进化 / Evolution</h2>
+      <canvas id="evo"></canvas>
+      <div class="evostat">
+        <div class="s"><div class="lab">代数</div><div class="v" id="e_gen">1</div></div>
+        <div class="s"><div class="lab">最佳圈速</div><div class="v" id="e_best">—</div></div>
+        <div class="s"><div class="lab">总提升</div><div class="v" id="e_gain" style="color:var(--green)">0%</div></div>
+      </div>
+      <div class="evolog" id="evolog"></div>
+      <div class="btnrow">
+        <button class="btn primary" id="evobtn">▶ 启动自进化</button>
+        <button class="btn ghost" id="resetbtn">重置曲线</button>
+      </div>
+      <div class="btnrow">
+        <button class="btn ghost" id="btn_resetline">↺ 还原最优线</button>
+        <button class="btn ghost" id="btn_shuffle">🔀 打乱路线</button>
+        <button class="btn ghost" id="btn_addpt">＋ 加点</button>
+        <button class="btn ghost" id="btn_delpt">－ 删点</button>
+      </div>
+    </div>
+
+    <!-- Vibe Coding · 跟系统对话 -->
+    <div class="card" id="vibecard">
+      <h2><span class="k">⌨</span> VIBE CODING · 跟系统对话 <span class="sp"></span><span class="hint" id="vibestat">本地演示</span></h2>
+      <div class="vibelog" id="vibelog"></div>
+      <div class="vibein">
+        <textarea id="vi" rows="1" placeholder="跟系统说话… 例: 把路线打乱再自己优化到最快 / 列出串口并烧录固件"></textarea>
+        <button id="visend">发送</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="ticker"><b>TELEMETRY ▸</b><span id="tk">等待数据…</span></div>
+
+<script src="mapb_track.js"></script>
+<script>
+"use strict";
+const TOKEN="__AUTH_TOKEN__", PORT="__PORT__";
+const STANDALONE = TOKEN.startsWith("__");
+const $=id=>document.getElementById(id);
+const M = window.MAPB;                            // 黄金赛道数据 (CAD 坐标)
+const VMAX = M ? M.VMAX : 8.3, VMIN = M ? M.VMIN : 0.4;
+const GMAX = 9.0;                                 // 仪表满量程 m/s
+
+/* ===================== 状态 ===================== */
+const S = {
+  speed:0, thr:0, steer:0, brake:0,
+  bat:87, temp:41, dev:0, dist:0,
+  curLap:0, lastLap:null, bestLap:null,
+  gen:1, evo:[], trail:[],
+};
+let mode="demo", evolving=false;
+let WP=[], WP_OPT=[], PATH=null, carS=0, carPos=null;
+const NWP_DEFAULT = 14, BASE0 = 5.0, GENS = 7;
+
+/* ===================== 黄金赛道路线点 ===================== */
+function sampleRaceline(n){                        // 沿最优线均匀取 n 个点
+  const R=M.RACELINE, N=R.length, step=N/n, out=[];
+  for(let k=0;k<n;k++){ const i=Math.floor(k*step)%N; out.push([R[i][0],R[i][1]]); }
+  return out;
+}
+function perturb(pts, amt){                        // 沿法向随机推开 -> 次优线
+  const n=pts.length, out=[];
+  for(let i=0;i<n;i++){
+    const a=pts[i], b=pts[(i+1)%n], dx=b[0]-a[0], dy=b[1]-a[1], L=Math.hypot(dx,dy)||1;
+    const off=(Math.random()*2-1)*amt;
+    out.push([a[0]-dy/L*off, a[1]+dx/L*off]);
+  }
+  return out;
+}
+function resetLine(opt){
+  WP_OPT = sampleRaceline(WP.length||NWP_DEFAULT);
+  WP = opt ? WP_OPT.map(p=>p.slice()) : perturb(WP_OPT, 0.42);
+  buildPath(); seedEvo();
+}
+
+/* ===================== Catmull-Rom 闭合样条 ===================== */
+function baseSpeed(){ return Math.min(VMAX, BASE0 + (S.gen-1)/GENS*(VMAX-BASE0)); }
+function buildPath(){
+  const n=WP.length, SUB=18, pts=[];
+  for(let i=0;i<n;i++){
+    const p0=WP[(i-1+n)%n],p1=WP[i],p2=WP[(i+1)%n],p3=WP[(i+2)%n];
+    for(let j=0;j<SUB;j++){
+      const t=j/SUB,t2=t*t,t3=t2*t;
+      const x=0.5*((2*p1[0])+(-p0[0]+p2[0])*t+(2*p0[0]-5*p1[0]+4*p2[0]-p3[0])*t2+(-p0[0]+3*p1[0]-3*p2[0]+p3[0])*t3);
+      const y=0.5*((2*p1[1])+(-p0[1]+p2[1])*t+(2*p0[1]-5*p1[1]+4*p2[1]-p3[1])*t2+(-p0[1]+3*p1[1]-3*p2[1]+p3[1])*t3);
+      pts.push({x,y});
+    }
+  }
+  const m=pts.length, cum=[0];
+  for(let i=0;i<m;i++){
+    const a=pts[i], b=pts[(i+1)%m], dx=b.x-a.x, dy=b.y-a.y, L=Math.hypot(dx,dy)||1e-6;
+    a.h=Math.atan2(dy,dx); a.len=L; if(i<m-1)cum.push(cum[i]+L);
+  }
+  const total=cum[m-1]+pts[m-1].len;
+  for(let i=0;i<m;i++){
+    let dh=pts[i].h-pts[(i-1+m)%m].h; while(dh>Math.PI)dh-=2*Math.PI; while(dh<-Math.PI)dh+=2*Math.PI;
+    const curv=Math.abs(dh)/pts[i].len; pts[i].curv=curv;
+    pts[i].v=Math.max(1.3, baseSpeed()*(1-Math.min(0.72,curv*0.9)));
+  }
+  PATH={pts,cum,total};
+}
+function predictLap(){ let t=0; for(const p of PATH.pts)t+=p.len/p.v; return t; }
+function sampleAt(s){
+  const cum=PATH.cum, pts=PATH.pts; s=((s%PATH.total)+PATH.total)%PATH.total;
+  let lo=0,hi=cum.length-1;
+  while(lo<hi){const mid=(lo+hi+1)>>1; if(cum[mid]<=s)lo=mid;else hi=mid-1;}
+  const p=pts[lo], f=p.len>0?(s-cum[lo])/p.len:0, b=pts[(lo+1)%pts.length];
+  return {x:p.x+(b.x-p.x)*f, y:p.y+(b.y-p.y)*f, h:p.h, v:p.v, curv:p.curv};
+}
+function nearestRL(x,y){ let bd=1e9; for(let i=0;i<M.RACELINE.length;i++){const p=M.RACELINE[i],d=Math.hypot(p[0]-x,p[1]-y);if(d<bd)bd=d;} return bd; }
+
+/* ===================== 视图 (CAD -> 屏幕, 自适应) ===================== */
+let TV={S:50,OX:0,OY:0,w:0,h:0};
+function computeTrackView(w,h){
+  const spanX=M.SIZE[0]*1.06, spanY=M.SIZE[1]*1.10;
+  const sc=Math.min(w/spanX,h/spanY);
+  TV={S:sc, OX:(w-M.SIZE[0]*sc)/2, OY:(h+M.SIZE[1]*sc)/2, w, h};
+}
+function w2s(x,y){ return [TV.OX+x*TV.S, TV.OY-y*TV.S]; }
+function s2w(px,py){ return [(px-TV.OX)/TV.S, (TV.OY-py)/TV.S]; }
+function vColor(v,a){
+  let t=(v-VMIN)/(VMAX-VMIN); t=Math.max(0,Math.min(1,t)); let r,g;
+  if(t<0.5){r=255;g=Math.round(80+350*t);} else {r=Math.round(255-330*(t-0.5));g=255;}
+  return 'rgba('+r+','+g+',70,'+(a==null?1:a)+')';
+}
+
+/* ===================== Canvas 适配 ===================== */
+function fit(cv){const r=cv.getBoundingClientRect(),d=window.devicePixelRatio||1;
+  if(cv.width!==Math.round(r.width*d)||cv.height!==Math.round(r.height*d)){cv.width=r.width*d;cv.height=r.height*d;}
+  const c=cv.getContext("2d");c.setTransform(d,0,0,d,0,0);return {c,w:r.width,h:r.height};}
+
+/* ===================== 画赛道 ===================== */
+function poly(c,pts,close){for(let i=0;i<pts.length;i++){const s=w2s(pts[i][0],pts[i][1]);i?c.lineTo(s[0],s[1]):c.moveTo(s[0],s[1]);}if(close)c.closePath();}
+function drawTrack(){
+  const cv=$("track"),{c,w,h}=fit(cv); computeTrackView(w,h); c.clearRect(0,0,w,h);
+  // 路面 (外圈挖内岛)
+  c.beginPath();poly(c,M.OUTER,true);poly(c,M.INNER,true);c.fillStyle="#0b1018";c.fill("evenodd");
+  // 墙 (绿)
+  c.lineJoin="round";
+  c.strokeStyle="#39d98a";c.lineWidth=2.5;c.shadowBlur=8;c.shadowColor="rgba(57,217,138,.5)";
+  c.beginPath();poly(c,M.OUTER,true);c.stroke();
+  c.beginPath();poly(c,M.INNER,true);c.stroke();c.shadowBlur=0;
+  // AI 最优线 (虚, 参考)
+  c.strokeStyle="rgba(0,229,255,.18)";c.lineWidth=1.5;c.setLineDash([4,5]);
+  c.beginPath();for(let i=0;i<M.RACELINE.length;i++){const s=w2s(M.RACELINE[i][0],M.RACELINE[i][1]);i?c.lineTo(s[0],s[1]):c.moveTo(s[0],s[1]);}c.closePath();c.stroke();c.setLineDash([]);
+  // 用户路线 (按速度上色 + 发光底)
+  if(PATH){
+    c.lineCap="round";c.strokeStyle="rgba(0,229,255,.10)";c.lineWidth=10;
+    c.beginPath();for(let i=0;i<PATH.pts.length;i++){const s=w2s(PATH.pts[i].x,PATH.pts[i].y);i?c.lineTo(s[0],s[1]):c.moveTo(s[0],s[1]);}c.closePath();c.stroke();
+    c.lineWidth=3.5;
+    for(let i=0;i<PATH.pts.length;i++){const a=PATH.pts[i],b=PATH.pts[(i+1)%PATH.pts.length];
+      const pa=w2s(a.x,a.y),pb=w2s(b.x,b.y);c.strokeStyle=vColor((a.v+b.v)/2);c.beginPath();c.moveTo(pa[0],pa[1]);c.lineTo(pb[0],pb[1]);c.stroke();}
+  }
+  // 起跑线
+  if(M.START){const a=w2s(M.START[0][0],M.START[0][1]),b=w2s(M.START[1][0],M.START[1][1]);
+    c.strokeStyle="#fff";c.lineWidth=3;c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke();}
+  // 方向箭头 (黄)
+  drawDirArrow(c);
+  // 拖拽点
+  c.textAlign="center";c.textBaseline="middle";c.font="800 12px Rajdhani,sans-serif";
+  for(let i=0;i<WP.length;i++){const s=w2s(WP[i][0],WP[i][1]);
+    c.beginPath();c.arc(s[0],s[1],9,0,6.283);c.fillStyle="#ffb23e";c.fill();
+    c.strokeStyle="#fff";c.lineWidth=2;c.stroke();c.fillStyle="#1a1200";c.fillText(i+1,s[0],s[1]);}
+  // 残影 + 车
+  for(let i=0;i<S.trail.length;i++){const t=S.trail[i],s=w2s(t.x,t.y);
+    c.globalAlpha=(i/S.trail.length)*0.5;c.fillStyle="#00e5ff";c.beginPath();c.arc(s[0],s[1],2.5,0,6.283);c.fill();}
+  c.globalAlpha=1;
+  if(carPos){const s=w2s(carPos.x,carPos.y);
+    c.shadowBlur=16;c.shadowColor="#00e5ff";c.fillStyle="#00e5ff";c.beginPath();c.arc(s[0],s[1],6,0,6.283);c.fill();c.shadowBlur=0;
+    c.save();c.translate(s[0],s[1]);c.rotate(-carPos.h);c.fillStyle="#fff";
+    c.beginPath();c.moveTo(11,0);c.lineTo(-6,5);c.lineTo(-6,-5);c.closePath();c.fill();c.restore();}
+}
+function drawDirArrow(c){
+  if(!PATH)return;
+  // 找路线最高(屏幕最上)的点放箭头
+  let bi=0,by=1e9; for(let i=0;i<PATH.pts.length;i+=4){const s=w2s(PATH.pts[i].x,PATH.pts[i].y);if(s[1]<by){by=s[1];bi=i;}}
+  const p=PATH.pts[bi],s=w2s(p.x,p.y);
+  c.save();c.translate(s[0],s[1]-2);c.rotate(-p.h);
+  c.fillStyle="#ffe23e";c.shadowBlur=10;c.shadowColor="rgba(255,226,62,.6)";
+  c.beginPath();c.moveTo(16,0);c.lineTo(2,-8);c.lineTo(2,-3);c.lineTo(-14,-3);c.lineTo(-14,3);c.lineTo(2,3);c.lineTo(2,8);c.closePath();c.fill();c.shadowBlur=0;c.restore();
+}
+
+/* ===================== 仪表盘 ===================== */
+function drawGauge(){
+  const cv=$("gauge"),{c,w,h}=fit(cv);
+  const cx=w/2, cy=h*0.92, R=Math.min(w/2-6,h*0.86);
+  const A0=Math.PI*0.85, A1=Math.PI*2.15;
+  c.clearRect(0,0,w,h);
+  c.lineWidth=11;c.lineCap="round";c.strokeStyle="#13202f";c.beginPath();c.arc(cx,cy,R,A0,A1);c.stroke();
+  const frac=Math.min(1,S.speed/GMAX), aNow=A0+(A1-A0)*frac;
+  const g=c.createLinearGradient(0,0,w,0);g.addColorStop(0,"#39d98a");g.addColorStop(.6,"#00e5ff");g.addColorStop(1,"#4aa3ff");
+  c.strokeStyle=g;c.shadowBlur=14;c.shadowColor="rgba(0,229,255,.6)";c.beginPath();c.arc(cx,cy,R,A0,aNow);c.stroke();c.shadowBlur=0;
+  for(let i=0;i<=9;i++){const a=A0+(A1-A0)*i/9,r1=R-16,r2=R-(i%3?22:27);
+    c.strokeStyle=i%3?"#2a3a4d":"#4a6076";c.lineWidth=i%3?1:2;
+    c.beginPath();c.moveTo(cx+Math.cos(a)*r1,cy+Math.sin(a)*r1);c.lineTo(cx+Math.cos(a)*r2,cy+Math.sin(a)*r2);c.stroke();}
+  c.save();c.translate(cx,cy);c.rotate(aNow);c.fillStyle="#00e5ff";c.shadowBlur=12;c.shadowColor="#00e5ff";
+  c.beginPath();c.moveTo(-R*0.74,0);c.lineTo(0,-4);c.lineTo(0,4);c.closePath();c.fill();c.restore();
+  c.beginPath();c.arc(cx,cy,6,0,6.283);c.fillStyle="#0b1018";c.fill();c.strokeStyle="#00e5ff";c.lineWidth=2;c.stroke();
+}
+
+/* ===================== 进化曲线 ===================== */
+function drawEvo(){
+  const cv=$("evo"),{c,w,h}=fit(cv);c.clearRect(0,0,w,h);
+  const pad={l:34,r:10,t:10,b:18},X=w-pad.l-pad.r,Y=h-pad.t-pad.b;
+  c.strokeStyle="#16222f";c.lineWidth=1;
+  for(let i=0;i<=4;i++){const y=pad.t+Y*i/4;c.beginPath();c.moveTo(pad.l,y);c.lineTo(w-pad.r,y);c.stroke();}
+  if(S.evo.length===0){c.fillStyle="#3c4d60";c.textAlign="center";c.font="13px Rajdhani";
+    c.fillText("点「启动自进化」看 AI 把圈速越练越快",w/2,h/2);return;}
+  const laps=S.evo.map(e=>e.lap);let lo=Math.min(...laps)-0.5,hi=Math.max(...laps)+0.5;if(hi-lo<1){hi+=.5;lo-=.5;}
+  const n=Math.max(S.evo.length,8),xi=i=>pad.l+X*i/(n-1),yi=v=>pad.t+Y*(1-((hi-v)/(hi-lo)));
+  c.fillStyle="#3c4d60";c.font="10px Cascadia Code,monospace";c.textAlign="right";
+  for(let i=0;i<=4;i++){const v=lo+(hi-lo)*i/4;c.fillText(v.toFixed(1),pad.l-5,pad.t+Y*(1-i/4)+3);}
+  const grad=c.createLinearGradient(0,pad.t,0,h);grad.addColorStop(0,"rgba(0,229,255,.28)");grad.addColorStop(1,"rgba(0,229,255,0)");
+  c.beginPath();S.evo.forEach((e,i)=>{const x=xi(i),y=yi(e.lap);i?c.lineTo(x,y):c.moveTo(x,y);});
+  c.lineTo(xi(S.evo.length-1),h-pad.b);c.lineTo(xi(0),h-pad.b);c.closePath();c.fillStyle=grad;c.fill();
+  c.strokeStyle="#00e5ff";c.lineWidth=2.5;c.shadowBlur=9;c.shadowColor="rgba(0,229,255,.6)";
+  c.beginPath();S.evo.forEach((e,i)=>{const x=xi(i),y=yi(e.lap);i?c.lineTo(x,y):c.moveTo(x,y);});c.stroke();c.shadowBlur=0;
+  S.evo.forEach((e,i)=>{const x=xi(i),y=yi(e.lap);c.fillStyle=i===S.evo.length-1?"#ffb23e":"#00e5ff";c.beginPath();c.arc(x,y,i===S.evo.length-1?5:3,0,6.283);c.fill();});
+}
+
+/* ===================== HUD 数字 ===================== */
+function refreshHUD(){
+  $("speed").textContent=S.speed.toFixed(1);
+  $("thr").style.height=(S.thr*100)+"%";$("brk").style.height=(S.brake*100)+"%";
+  const st=$("str");
+  if(S.steer>=0){st.style.left="50%";st.style.width=(S.steer*50)+"%";}else{st.style.width=(-S.steer*50)+"%";st.style.left=(50+S.steer*50)+"%";}
+  $("curlap").textContent=S.curLap.toFixed(2);
+  $("lastlap").textContent=S.lastLap==null?"—":S.lastLap.toFixed(2);
+  $("bestlap").textContent=S.bestLap==null?"—":S.bestLap.toFixed(2);
+  $("v_bat").textContent=S.bat.toFixed(0);$("b_bat").style.width=S.bat+"%";
+  $("v_temp").textContent=S.temp.toFixed(0);$("b_temp").style.width=Math.min(100,S.temp)+"%";
+  $("v_dev").textContent=S.dev.toFixed(2);$("b_dev").style.width=Math.min(100,S.dev/1.0*100)+"%";
+  $("v_dist").textContent=S.dist.toFixed(0);$("b_dist").style.width=(S.dist%100)+"%";
+  $("genbadge").textContent="GEN "+S.gen;$("e_gen").textContent=S.gen;
+  $("e_best").textContent=S.bestLap==null?"—":S.bestLap.toFixed(2)+"s";
+  if(S.evo.length>1){const g=(S.evo[0].lap-S.bestLap)/S.evo[0].lap*100;$("e_gain").textContent="↓"+g.toFixed(0)+"%";}
+  $("tk").textContent=`v=${S.speed.toFixed(2)}m/s  本圈=${S.curLap.toFixed(2)}s  偏离=${S.dev.toFixed(2)}m  路线点=${WP.length}  gen=${S.gen}  base=${baseSpeed().toFixed(1)}m/s`;
+}
+
+/* ===================== DEMO 驾驶 (沿用户路线) ===================== */
+let lapStart=0, simClock=0;
+function demoStep(dt){
+  if(!PATH)return;
+  carS+=S.speed*dt;
+  if(carS>=PATH.total){carS-=PATH.total;const lap=simClock-lapStart;if(lap>1){S.lastLap=lap;if(S.bestLap==null||lap<S.bestLap)S.bestLap=lap;}lapStart=simClock;}
+  const sp=sampleAt(carS);carPos=sp;
+  S.speed+=(sp.v-S.speed)*Math.min(1,dt*4);
+  S.brake=S.speed>sp.v+0.1?Math.min(1,(S.speed-sp.v)*1.5):Math.max(0,S.brake-dt*3);
+  S.thr=S.speed<sp.v?Math.min(1,(sp.v-S.speed)*1.2+0.35):Math.max(0,S.thr-dt*2);
+  S.steer=Math.max(-1,Math.min(1, sp.curv*8 * (Math.sin(carS*0.7)>=0?1:-1) ));
+  S.dist+=S.speed*dt;S.curLap=simClock-lapStart;S.dev=nearestRL(sp.x,sp.y);
+  S.trail.push({x:sp.x,y:sp.y});if(S.trail.length>26)S.trail.shift();
+  S.bat=Math.max(20,S.bat-dt*0.05);S.temp=38+S.speed*2.5+Math.sin(simClock*0.3)*2;
+}
+
+/* ===================== LIVE 串口遥测 ===================== */
+let lineBuf="";
+function feedSerial(chunk){lineBuf+=chunk;let i;while((i=lineBuf.indexOf("\n"))>=0){parseLine(lineBuf.slice(0,i).trim());lineBuf=lineBuf.slice(i+1);}}
+function parseLine(ln){
+  if(!ln)return;
+  if(ln.startsWith("TLM")){const kv={};ln.slice(3).trim().split(/\s+/).forEach(p=>{const[k,v]=p.split("=");if(k)kv[k]=parseFloat(v);});
+    if("v"in kv)S.speed=kv.v;if("thr"in kv)S.thr=kv.thr;if("str"in kv)S.steer=kv.str;if("b"in kv)S.bat=kv.b;if("t"in kv)S.temp=kv.t;if("d"in kv)S.dist=kv.d;}
+  else if(ln.startsWith("POS")){const m=ln.slice(3).trim().split(/\s+/),x=parseFloat(m[0]),y=parseFloat(m[1]);
+    if(!isNaN(x)&&!isNaN(y)){carPos={x,y,h:carPos?carPos.h:0};S.dev=nearestRL(x,y);S.trail.push({x,y});if(S.trail.length>26)S.trail.shift();}}
+  else if(ln.startsWith("LAP")){const lap=parseFloat(ln.slice(3));if(!isNaN(lap)){S.lastLap=lap;if(S.bestLap==null||lap<S.bestLap)S.bestLap=lap;}}
+  else if(ln.startsWith("GEN")){const m=ln.slice(3).trim().split(/\s+/),g=parseInt(m[0]),lap=parseFloat(m[1]);
+    if(!isNaN(g))S.gen=g;if(!isNaN(lap)){S.evo.push({gen:g,lap});S.bestLap=Math.min(S.bestLap==null?lap:S.bestLap,lap);logEvo(g,lap);drawEvo();}}
+}
+
+/* ===================== 自进化 (DEMO 动画) ===================== */
+function seedEvo(){S.evo=[{gen:S.gen,lap:predictLap()}];S.bestLap=predictLap();$("evolog").innerHTML="";drawEvo();}
+function logEvo(g,lap,delta){const e=document.createElement("div");e.className="e";
+  e.innerHTML=`<span class="g">GEN ${g}</span><span class="step">实测圈速</span><b>${lap.toFixed(2)}s</b> ${delta?`<span class="down">↓${delta.toFixed(2)}s</span>`:""}`;$("evolog").prepend(e);}
+async function logStep(g,txt){const e=document.createElement("div");e.className="e";
+  e.innerHTML=`<span class="g">GEN ${g}</span><span class="step">${txt}</span>`;$("evolog").prepend(e);await sleep(480);}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function runEvolution(){
+  if(evolving||!PATH)return;evolving=true;const btn=$("evobtn");btn.disabled=true;btn.textContent="进化中…";
+  if(S.evo.length===0)seedEvo();
+  while(S.gen<GENS+1){
+    const g=S.gen+1,prev=S.evo[S.evo.length-1].lap;
+    await logStep(g,"AI 分析圈速 + 偏离最优线…");
+    await logStep(g,"优化路线点 / 强化学习微调…");
+    // 把每个拖拽点拉向最优线
+    for(let i=0;i<WP.length;i++){WP[i][0]+=(WP_OPT[i][0]-WP[i][0])*0.32;WP[i][1]+=(WP_OPT[i][1]-WP[i][1])*0.32;}
+    S.gen=g;buildPath();
+    await logStep(g,"⚡ 烧录 ESP32 → 上车实测…");
+    const lap=predictLap();S.evo.push({gen:g,lap});S.bestLap=Math.min(S.bestLap,lap);
+    logEvo(g,lap,prev-lap);drawEvo();
+    $("evocard").classList.remove("flash-anim");void $("evocard").offsetWidth;$("evocard").classList.add("flash-anim");
+    await sleep(340);
+  }
+  btn.disabled=false;btn.textContent="▶ 继续进化";evolving=false;
+}
+
+/* ===================== AI 意图 ===================== */
+let agentWS=null, vibeBusy=false, curTerm=null;
+function vEsc(s){return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function vMd(t){return t.split(/```/).map((p,i)=>i%2?`<pre>${vEsc(p.replace(/^\w*\n/,""))}</pre>`
+  :vEsc(p).replace(/`([^`]+)`/g,"<code>$1</code>").replace(/\n/g,"<br>")).join("");}
+function vRow(role,cls){const r=document.createElement("div");r.className="vrow";
+  r.innerHTML=`<span class="vrole ${cls}">${role}</span><div class="vmsg"></div>`;
+  $("vibelog").appendChild(r);$("vibelog").scrollTop=$("vibelog").scrollHeight;return r.querySelector(".vmsg");}
+function vSys(t){vRow("···","s").textContent=t;}
+function setVibeBusy(b){vibeBusy=b;$("visend").disabled=b;}
+function termOut(s){if(!curTerm){const msg=vRow("▶","s");curTerm=document.createElement("pre");msg.appendChild(curTerm);}
+  curTerm.textContent+=s;$("vibelog").scrollTop=$("vibelog").scrollHeight;}
+
+function connectAgent(){
+  if(STANDALONE){$("vibestat").textContent="本地演示 (无后端)";return;}
+  try{agentWS=new WebSocket(`ws://localhost:${PORT}/ws/agent?token=${TOKEN}`);}catch(e){return;}
+  agentWS.onopen=()=>{$("vibestat").textContent="🐋 DeepSeek 在线";};
+  agentWS.onmessage=e=>handleAgent(JSON.parse(e.data));
+  agentWS.onclose=()=>{agentWS=null;$("vibestat").textContent="后端断开 · 本地演示";};
+}
+function handleAgent(m){
+  switch(m.type){
+    case "status": $("vibestat").textContent=m.text; break;
+    case "assistant": vRow("🐋","a").innerHTML=vMd(m.text); curTerm=null; break;
+    case "tool_request": renderToolCard(m); break;
+    case "tool_output": termOut(m.chunk); break;
+    case "tool_result": termOut("‹"+m.summary+"›\n"); curTerm=null; break;
+    case "error": vRow("✗","s").innerHTML='<span style="color:var(--red)">'+vEsc(m.text)+'</span>'; break;
+    case "turn_done": setVibeBusy(false); $("vibestat").textContent="🐋 DeepSeek 在线"; break;
+  }
+}
+function renderToolCard(m){
+  const msg=vRow("⚙","a"); curTerm=null;
+  msg.innerHTML=`<div class="tcard"><div class="tt">AI 请求执行: ${vEsc(m.name)}</div>
+    <pre>${vEsc(JSON.stringify(m.args,null,2))}</pre>
+    <div class="btns"><button class="ok">确认执行</button><button class="no">取消</button></div></div>`;
+  const card=msg.querySelector(".tcard");
+  card.querySelector(".ok").onclick=()=>{agentWS.send(JSON.stringify({type:"tool_decision",id:m.id,approved:true}));card.classList.add("done");};
+  card.querySelector(".no").onclick=()=>{agentWS.send(JSON.stringify({type:"tool_decision",id:m.id,approved:false}));card.classList.add("done");};
+}
+// 本地"系统"：听懂并直接执行驾驶舱指令 (DEMO/LIVE 都可用)
+function localCockpitIntent(text){
+  const hit=(...ws)=>ws.some(w=>text.includes(w));
+  if(hit("打乱","乱一","搞乱","调差")){S.gen=1;WP=perturb(WP_OPT,0.5);buildPath();seedEvo();return "好,把路线打乱了。要我自己优化回最优就说「自己优化到最快」。";}
+  if(hit("还原","复位","回到最优","贴最优","最优线")){S.gen=1;resetLine(true);return "已还原到 CMA-ES 最优线,理想圈速 "+M.META.lap.toFixed(2)+"s。";}
+  if(hit("进化","优化","变快","更快","快一点","快一些","自己跑","自己练","跑快","再快")){runEvolution();return "开始自进化:每代把路线点拉向最优线并提速,看右上曲线往下走。";}
+  if(hit("加点","多加","增加点")){S.gen=1;const i=Math.floor(WP.length/2);WP.splice(i+1,0,[(WP[i][0]+WP[(i+1)%WP.length][0])/2,(WP[i][1]+WP[(i+1)%WP.length][1])/2]);WP_OPT=sampleRaceline(WP.length);buildPath();return "加了一个编程点,现在 "+WP.length+" 个。";}
+  if(hit("删点","减点","少一","去掉点")){if(WP.length>5){WP.pop();WP_OPT=sampleRaceline(WP.length);buildPath();}return "删了一个点,现在 "+WP.length+" 个。";}
+  if(hit("圈速","多快","成绩","几秒","跑多少")){return S.bestLap==null?"还没数据,先让它跑一圈。":"当前最佳圈速 "+S.bestLap.toFixed(2)+"s,理想 "+M.META.lap.toFixed(2)+"s。";}
+  return null;
+}
+function sendVibe(){
+  if(vibeBusy)return;
+  const t=$("vi").value.trim();if(!t)return;
+  $("vi").value="";$("vi").style.height="auto";
+  vRow("你","u").textContent=t;curTerm=null;
+  const local=localCockpitIntent(t);
+  if(local!==null){setTimeout(()=>{vRow("🐋","a").textContent=local;},220);return;}
+  if(agentWS&&agentWS.readyState===1){setVibeBusy(true);agentWS.send(JSON.stringify({type:"user",text:t}));}
+  else{setTimeout(()=>{vRow("🐋","a").innerHTML=vMd("本地演示模式,我现在只能驱动驾驶舱(试试「打乱」「自己优化到最快」「加点」「圈速多少」)。\n要真写代码 / 烧录 ESP32,请用后端打开:`http://localhost:8765/cockpit`");},220);}
+}
+
+/* ===================== LIVE 串口 ===================== */
+let serialWS=null;
+function connectSerial(){
+  if(STANDALONE){alert("这是直接打开的文件(无后端)。要连真车请用 http://localhost:8765/cockpit 访问。");return false;}
+  serialWS=new WebSocket(`ws://localhost:${PORT}/ws/serial?token=${TOKEN}`);
+  serialWS.onopen=()=>{fetch(`/api/ports?token=${TOKEN}`).then(r=>r.json()).then(ports=>{const d=ports[0]&&ports[0].device;if(d)serialWS.send(JSON.stringify({action:"open",port:d,baud:115200}));else logState("未发现串口");});
+    $("dot").classList.add("on");$("conntext").textContent="LIVE 已连后端";};
+  serialWS.onmessage=e=>{const m=JSON.parse(e.data);if(m.type==="data")feedSerial(m.chunk);else if(m.type==="status")logState(m.text);};
+  serialWS.onclose=()=>{$("dot").classList.remove("on");$("conntext").textContent="LIVE 后端断开";};
+  return true;
+}
+function logState(t){const e=document.createElement("div");e.className="e";e.innerHTML=`<span class="step">• ${t}</span>`;$("evolog").prepend(e);}
+function setMode(m){
+  if(m==="live"){if(!connectSerial())return;mode="live";$("t_live").className="liveon";$("t_demo").className="";}
+  else{mode="demo";$("t_demo").className="on";$("t_live").className="";if(serialWS){try{serialWS.send(JSON.stringify({action:"close"}));serialWS.close();}catch(e){}}$("dot").classList.add("on");$("conntext").textContent="DEMO 模拟";}
+}
+
+/* ===================== 拖拽编程点 ===================== */
+let drag=-1;
+function mpos(e){const r=$("track").getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top];}
+$("track").addEventListener("mousedown",e=>{const m=mpos(e);let best=-1,bd=16;
+  for(let i=0;i<WP.length;i++){const s=w2s(WP[i][0],WP[i][1]),d=Math.hypot(m[0]-s[0],m[1]-s[1]);if(d<bd){bd=d;best=i;}}drag=best;});
+window.addEventListener("mousemove",e=>{if(drag<0)return;const m=mpos(e),wp=s2w(m[0],m[1]);
+  WP[drag]=[Math.max(-0.3,Math.min(M.SIZE[0]+0.3,wp[0])),Math.max(-0.3,Math.min(M.SIZE[1]+0.3,wp[1]))];buildPath();});
+window.addEventListener("mouseup",()=>{drag=-1;});
+
+/* ===================== 主循环 ===================== */
+let lastT=null;
+function loop(ts){if(lastT==null)lastT=ts;let dt=(ts-lastT)/1000;lastT=ts;if(dt>0.1)dt=0.1;simClock+=dt;
+  if(mode==="demo")demoStep(dt);
+  drawTrack();drawGauge();refreshHUD();requestAnimationFrame(loop);}
+
+/* ===================== 启动 ===================== */
+$("modetoggle").onclick=e=>{if(e.target.id==="t_live")setMode("live");else if(e.target.id==="t_demo")setMode("demo");};
+$("evobtn").onclick=runEvolution;
+$("resetbtn").onclick=()=>{S.gen=1;buildPath();seedEvo();};
+$("btn_resetline").onclick=()=>{S.gen=1;resetLine(true);};
+$("btn_shuffle").onclick=()=>{S.gen=1;WP=perturb(WP_OPT,0.5);buildPath();seedEvo();};
+$("btn_addpt").onclick=()=>{const i=Math.floor(WP.length/2);WP.splice(i+1,0,[(WP[i][0]+WP[(i+1)%WP.length][0])/2,(WP[i][1]+WP[(i+1)%WP.length][1])/2]);WP_OPT=sampleRaceline(WP.length);buildPath();};
+$("btn_delpt").onclick=()=>{if(WP.length>5){WP.pop();WP_OPT=sampleRaceline(WP.length);buildPath();}};
+$("visend").onclick=sendVibe;
+$("vi").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendVibe();}});
+$("vi").addEventListener("input",e=>{e.target.style.height="auto";e.target.style.height=Math.min(e.target.scrollHeight,90)+"px";});
+window.addEventListener("resize",drawEvo);
+$("dot").classList.add("on");
+connectAgent();
+vSys("跟系统对话：可直接驱动驾驶舱(打乱 / 自己优化到最快 / 加点 / 圈速)，或写代码、烧录 ESP32(需后端)。");
+
+if(!M){document.body.innerHTML='<div style="padding:40px;color:#ff5168;font-family:sans-serif">未能加载 mapb_track.js（黄金赛道数据）。请确认它和 cockpit.html 在同一目录。</div>';}
+else{ WP=sampleRaceline(NWP_DEFAULT); resetLine(false); requestAnimationFrame(loop); }
+</script>
+</body>
+</html>
