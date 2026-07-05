@@ -158,7 +158,7 @@
 
 <!-- ===== HERO ===== -->
 <section id="hero">
-  <video src="https://crayxus.com.au/aigp/assets/F1.mp4" autoplay muted loop playsinline></video>
+  <video src="https://crayxus.com.au/aigp/assets/F1.mp4" autoplay muted loop playsinline webkit-playsinline x5-playsinline x5-video-player-type="h5" x5-video-player-fullscreen="false" preload="auto" poster="https://crayxus.com.au/aigp/assets/og-cover.jpg"></video>
   <div class="hero-in">
     <div class="brand">择 大 <b>·</b> A I <b>·</b> G P</div>
     <div class="hero-title">CHOOSE AI<br>MASTER IT</div>
@@ -273,11 +273,11 @@
     <div class="scene-grid">
       <div style="position:relative">
         <span class="scene-badge">现场实况 · 全景</span>
-        <video class="scene-v-wide" src="https://crayxus.com.au/aigp/assets/scene1.mp4" autoplay muted loop playsinline poster="https://crayxus.com.au/aigp/assets/scene_wide.jpg"></video>
+        <video class="scene-v-wide" src="https://crayxus.com.au/aigp/assets/scene1.mp4" autoplay muted loop playsinline webkit-playsinline x5-playsinline x5-video-player-type="h5" x5-video-player-fullscreen="false" preload="auto" poster="https://crayxus.com.au/aigp/assets/scene_wide.jpg"></video>
       </div>
       <div style="position:relative">
         <span class="scene-badge">大屏 · racecockpit</span>
-        <video class="scene-v-tall" src="https://crayxus.com.au/aigp/assets/scene2.mp4" autoplay muted loop playsinline></video>
+        <video class="scene-v-tall" src="https://crayxus.com.au/aigp/assets/scene2.mp4" autoplay muted loop playsinline webkit-playsinline x5-playsinline x5-video-player-type="h5" x5-video-player-fullscreen="false" preload="auto" poster="https://crayxus.com.au/aigp/assets/scene_track.jpg"></video>
       </div>
     </div>
   </div>
@@ -368,6 +368,14 @@
   var kick=function(){tryPlay();['pointerdown','scroll','keydown','touchstart'].forEach(function(ev){window.removeEventListener(ev,kick);});};
   ['pointerdown','scroll','keydown','touchstart'].forEach(function(ev){window.addEventListener(ev,kick,{passive:true});});
   mbtn.addEventListener('click',function(e){e.stopPropagation();if(bgm.paused){tryPlay();}else{bgm.pause();setIcon(false);}});
+  // 微信内置浏览器(WeixinJSBridge): 事件就绪后触发视频+音乐播放, 绕过微信 autoplay 限制
+  function wxPlayAll(){
+    var vs=document.querySelectorAll('video');
+    for(var i=0;i<vs.length;i++){ try{ vs[i].play(); }catch(e){} }
+    tryPlay();
+  }
+  document.addEventListener('WeixinJSBridgeReady', wxPlayAll, false);
+  if(window.WeixinJSBridge){ wxPlayAll(); }
   // 滚动淡入
   var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.style.opacity=1;e.target.style.transform='none';}})},{threshold:.12});
   document.querySelectorAll('.band .wrap>*, .fcard, .buycol, .rank').forEach(function(el){
