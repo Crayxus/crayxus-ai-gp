@@ -95,6 +95,16 @@ async function sync(){try{
   document.getElementById("cand").textContent=s.cand;document.getElementById("rej").textContent=s.rej;
   const sb=document.getElementById("sincebar");
   sb.innerHTML=d.first_signal?("实盘验证 · 自 <b>"+d.start+"</b> 起 · 已运行 <b>"+d.days+"</b> 天 · 首个入选 "+d.first_signal):("实盘验证系统就绪 · 数据自 <b>"+d.start+"</b> 起收集 · 等待首个入选信号");
+  const B=document.getElementById("board");
+  if(d.pool&&d.pool.length){
+    document.getElementById("pooln").textContent=d.pool.length+" 场";
+    B.innerHTML=d.pool.map(function(p){
+      var hot=p.sc!=="0-0"&&p.sc!=="";
+      var live=(p.st>=1&&p.st<=3);
+      return '<div class="brow"><span class="bdot'+(live?" on":"")+'"></span>'+
+        '<span class="blg">'+p.lg+'</span><span class="bm">'+p.m+'</span>'+
+        '<span class="bsc'+(hot?" hot":"")+'">'+p.sc+'</span><span class="bmn">'+p.mn+'</span></div>';}).join("");
+  }else{document.getElementById("pooln").textContent="";B.innerHTML='<div class="empty" style="padding:16px">此刻无进行中赛事 · 引擎持续扫描</div>';}
   const L=document.getElementById("list");
   if(!d.rows.length){L.innerHTML='<div class="empty">系统实时筛选中<br>正式信号出现后即刻显示</div>';}
   else{L.innerHTML=d.rows.map(function(x){var b;
