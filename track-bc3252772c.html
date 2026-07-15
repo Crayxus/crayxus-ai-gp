@@ -88,9 +88,9 @@ footer img{width:180px;max-width:56%;border-radius:14px;opacity:.85;margin:0 aut
   <div class="chip"><small>今日候选</small><b id="cand" style="color:var(--cyan)">—</b></div>
   <div class="chip"><small>未过模型筛选</small><b id="rej" style="color:var(--amber)">—</b></div>
 </div>
-<div class="sec">LIVE BOARD · 实时盯盘 <span id="pooln" style="color:var(--green)"></span></div><div id="board"></div>
-<div class="sec" style="margin-top:22px">SIGNALS · 正式信号</div><div id="list"></div>
-<div class="sec" style="margin-top:22px">评估记录</div><div id="scanlist"></div>
+<div class="sec">🔴 LIVE BOARD · 实时盯盘 <span id="pooln" style="color:var(--green)"></span></div><div class="board" id="board"></div>
+<div class="sec" style="margin-top:22px">📈 SIGNALS · 正式信号</div><div id="list"></div>
+<div id="scanwrap" style="display:none"><div class="sec" style="margin-top:22px">近期评估</div><div id="scanlist"></div></div>
 <footer><img src="https://crayxus.com.au/og-track.jpg" alt="Crayxus">
 CRAYXUS SPORTS INTELLIGENCE · 实盘信号自动记录<br>仅供合作方参考 · 不构成任何投注建议</footer>
 <script>
@@ -125,12 +125,14 @@ async function sync(){try{
     else b='<span class="badge bp">'+x.res+'</span>';
     var sc=x.sc?'<span class="pill" style="color:var(--cyan)">'+x.sc+'</span>':'';
     return '<div class="sig"><div class="top"><span class="tag">'+x.lg+'</span><span class="tm">'+x.t+'</span></div><div class="match">'+x.m+'</div><div class="bot"><span class="pill">'+x.px+'</span>'+sc+b+'</div></div>';}).join("");}
-  const SL=document.getElementById("scanlist");
-  if(d.scan&&d.scan.length){SL.innerHTML=d.scan.map(function(x){
+  var td=(d.updated||"").slice(0,5);
+  var recent=(d.scan||[]).filter(function(x){return x.t.slice(0,5)===td;});
+  var SL=document.getElementById("scanlist"),SW=document.getElementById("scanwrap");
+  if(recent.length){SW.style.display="";SL.innerHTML=recent.map(function(x){
     var t=x.hit?'<span class="scantag hit">入选</span>':'<span class="scantag">已评估</span>';
     var sc=x.sc?'<span class="scansc">'+x.sc+'</span>':'';
-    return '<div class="scanrow"><span class="scandot"></span><span class="scanlg">'+x.lg+'</span><span class="scanm">'+x.m+'</span>'+sc+t+'<span class="scant">'+x.t.slice(5,11)+'</span></div>';}).join("");}
-  else{SL.innerHTML='<div class="empty" style="padding:16px">扫描引擎运行中 · 候选场次将实时进入</div>';}
+    return '<div class="scanrow"><span class="scandot"></span><span class="scanlg">'+x.lg+'</span><span class="scanm">'+x.m+'</span>'+sc+t+'<span class="scant">'+x.t.slice(6,11)+'</span></div>';}).join("");}
+  else{SW.style.display="none";}
 }catch(e){}}
 sync();setInterval(sync,30000);
 </script></body></html>
