@@ -135,6 +135,9 @@ async function sync(){
     n.style.color=s.net>=0?"var(--green)":"var(--red)";
     document.getElementById("rec").textContent=s.wins+" 胜 "+s.losses+" 负 · 已结算 "+s.settled;
     document.getElementById("scanned").textContent=(s.scanned||0).toLocaleString();
+    var sb=document.getElementById("sincebar");
+    if(d.first_signal){sb.innerHTML="实盘验证 · 自 <b>"+d.start+"</b> 起 · 已运行 <b>"+d.days+"</b> 天 · 首个入选信号 "+d.first_signal;}
+    else{sb.innerHTML="实盘验证系统就绪 · 数据自 <b>"+d.start+"</b> 起收集 · 等待首个入选信号";}
     document.getElementById("cand").textContent=s.cand;
     document.getElementById("rej").textContent=s.rej;
     const L=document.getElementById("list");
