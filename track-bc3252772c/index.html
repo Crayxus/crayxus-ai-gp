@@ -80,6 +80,16 @@ header{display:flex;justify-content:space-between;align-items:center;margin-bott
 .bp{color:#2b1f04;background:linear-gradient(135deg,var(--amber),#ffe29b);animation:pu 2s infinite}
 .empty{border-radius:18px;border:1px dashed rgba(120,150,255,.25);padding:26px;text-align:center;
  color:var(--dim);font-size:12.5px;font-family:var(--mono);line-height:2}
+.scanrow{display:flex;align-items:center;gap:9px;padding:9px 12px;margin-bottom:6px;border-radius:11px;
+ background:rgba(16,22,39,.5);border:1px solid rgba(120,150,255,.08);font-family:var(--mono);font-size:11.5px;
+ animation:sin .45s ease both}
+@keyframes sin{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:none}}
+.scandot{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 7px var(--cyan);flex:none;animation:pu 1.8s infinite}
+.scanlg{color:var(--vio);font-weight:700}
+.scanm{color:var(--tx);letter-spacing:.05em}
+.scant{margin-left:auto;color:#4a5773;font-size:10px}
+.scantag{font-size:9.5px;padding:2px 7px;border-radius:6px;background:rgba(255,255,255,.05);color:var(--dim);border:1px solid rgba(255,255,255,.07)}
+.scantag.hit{color:var(--green);border-color:rgba(46,230,168,.3);background:rgba(46,230,168,.08)}
 footer{color:#3d4966;font-size:9.5px;text-align:center;margin-top:18px;line-height:1.9;font-family:var(--mono)}
 footer img{width:190px;max-width:58%;border-radius:14px;opacity:.85;margin-bottom:10px;display:block;margin-left:auto;margin-right:auto}
 </style>
@@ -135,6 +145,14 @@ async function sync(){
     const sb=document.getElementById("sincebar");
     if(d.first_signal){sb.innerHTML="实盘验证 · 自 <b>"+d.start+"</b> 起 · 已运行 <b>"+d.days+"</b> 天 · 首个入选信号 "+d.first_signal;}
     else{sb.innerHTML="实盘验证系统就绪 · 数据自 <b>"+d.start+"</b> 起收集 · 等待首个入选信号";}
+    const SL=document.getElementById("scanlist");
+    if(d.scan&&d.scan.length){
+      SL.innerHTML=d.scan.map(function(x){
+        var tag=x.hit?'<span class="scantag hit">入选</span>':'<span class="scantag">已评估</span>';
+        return '<div class="scanrow"><span class="scandot"></span><span class="scanlg">'+x.lg+'</span>'+
+          '<span class="scanm">'+x.m+'</span>'+tag+'<span class="scant">'+x.t.slice(6)+'</span></div>';
+      }).join("");
+    }else{SL.innerHTML='<div class="empty" style="padding:16px">扫描引擎运行中 · 候选场次将实时进入</div>';}
     const L=document.getElementById("list");
     if(!d.rows.length){L.innerHTML='<div class="empty">系统实时筛选中<br>正式信号出现后即刻显示</div>';}
     else{
