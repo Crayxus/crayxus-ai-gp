@@ -88,6 +88,7 @@ footer img{width:180px;max-width:56%;border-radius:14px;opacity:.85;margin:0 aut
   <div class="chip"><small>今日候选</small><b id="cand" style="color:var(--cyan)">—</b></div>
   <div class="chip"><small>未过模型筛选</small><b id="rej" style="color:var(--amber)">—</b></div>
 </div>
+<div class="sec">📅 每日活跃度</div><div id="daily" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:16px"></div>
 <div class="sec">🔴 LIVE BOARD · 实时盯盘 <span id="pooln" style="color:var(--green)"></span></div><div class="board" id="board"></div>
 <div class="sec" style="margin-top:22px">📈 SIGNALS · 正式信号</div><div id="list"></div>
 <div id="scanwrap" style="display:none"><div class="sec" style="margin-top:22px">近期评估</div><div id="scanlist"></div></div>
@@ -106,6 +107,17 @@ async function sync(){try{
   document.getElementById("cand").textContent=s.cand;document.getElementById("rej").textContent=s.rej;
   const sb=document.getElementById("sincebar");
   sb.innerHTML=d.first_signal?("实盘验证 · 自 <b>"+d.start+"</b> 起 · 已运行 <b>"+d.days+"</b> 天 · 首个入选 "+d.first_signal):("实盘验证系统就绪 · 数据自 <b>"+d.start+"</b> 起收集 · 等待首个入选信号");
+  var DY=document.getElementById("daily");
+  if(d.daily&&d.daily.length){DY.innerHTML=d.daily.map(function(x){
+    var r=x.formal?(x.w+"胜"+x.l+"负"):"—";
+    var c=x.formal>0?"var(--green)":"var(--dim)";
+    return '<div style="flex:none;min-width:66px;text-align:center;background:rgba(16,22,39,.7);border:1px solid rgba(120,150,255,.1);border-radius:11px;padding:9px 6px;font-family:var(--mono)">'+
+      '<div style="font-size:10px;color:var(--dim)">'+x.date+'</div>'+
+      '<div style="font-size:16px;font-weight:800;color:'+c+'">'+x.formal+'</div>'+
+      '<div style="font-size:8.5px;color:var(--dim)">正式单</div>'+
+      '<div style="font-size:9px;color:var(--dim);margin-top:2px">候选'+x.cand+'</div>'+
+      '<div style="font-size:9px;color:var(--green)">'+r+'</div></div>';}).join("");}
+  else{DY.innerHTML='<div style="color:var(--dim);font-size:11px;font-family:var(--mono)">暂无数据</div>';}
   const B=document.getElementById("board");
   if(d.pool&&d.pool.length){
     document.getElementById("pooln").textContent=d.pool.length+" 场";
