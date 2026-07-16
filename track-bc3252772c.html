@@ -135,7 +135,7 @@ async function sync(){try{
   if(d.pool&&d.pool.length){
     document.getElementById("pooln").textContent=d.pool.length+" 场";
     B.innerHTML=d.pool.map(function(p){
-      var hot=p.sc!=="0-0"&&p.sc!=="";
+      var hot=(p.st>=1)&&p.sc!=="0-0"&&p.sc!=="";
       var lt=(p.lt==="g"||p.lt==="y"||p.lt==="r")?p.lt:((p.st>=1&&p.st<=3)?"y":"r");
       return '<div class="brow"><span class="bdot '+lt+'"></span>'+
         '<span class="blg">'+p.lg+'</span><span class="bm">'+p.m+'</span>'+
