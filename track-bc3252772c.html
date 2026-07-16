@@ -63,8 +63,11 @@ header{display:flex;justify-content:space-between;align-items:center;margin-bott
 .brow{display:flex;align-items:center;gap:9px;padding:9px 12px;border-bottom:1px solid rgba(120,150,255,.06);font-size:12.5px;background:rgba(16,22,39,.45)}
 .brow:nth-child(even){background:rgba(16,22,39,.68)}
 .brow:last-child{border-bottom:none}
-.bdot{width:6px;height:6px;border-radius:50%;background:#2a3450;flex:none}
+.bdot{width:7px;height:7px;border-radius:50%;background:#2a3450;flex:none}
 .bdot.on{background:var(--green);box-shadow:0 0 7px var(--green);animation:pu 1.6s infinite}
+.bdot.g{background:var(--green);box-shadow:0 0 8px var(--green);animation:pu 1.4s infinite}
+.bdot.y{background:var(--amber);box-shadow:0 0 6px rgba(255,194,75,.55)}
+.bdot.r{background:var(--red);opacity:.5}
 .blg{color:var(--vio);font-size:9.5px;flex:none;width:46px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:.02em}
 .bm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#dfe6ff;font-size:12.5px}
 .bsc{flex:none;font-family:var(--mono);font-weight:800;font-size:13px;color:#8894b5;min-width:30px;text-align:center}
@@ -87,9 +90,14 @@ footer img{width:180px;max-width:56%;border-radius:14px;opacity:.85;margin:0 aut
 <div class="chips">
   <div class="chip"><small>今日候选</small><b id="cand" style="color:var(--cyan)">—</b></div>
   <div class="chip"><small>未过模型筛选</small><b id="rej" style="color:var(--amber)">—</b></div>
+  <div class="chip"><small>24H 扫描</small><b id="s24">—</b></div>
+  <div class="chip"><small>🟢 符合条件</small><b id="l24g" style="color:var(--green)">—</b></div>
+  <div class="chip"><small>🟡 纳入监控</small><b id="l24y" style="color:var(--amber)">—</b></div>
+  <div class="chip"><small>🔴 未达标</small><b id="l24r" style="color:var(--red)">—</b></div>
 </div>
 <div class="sec">📅 每日活跃度</div><div id="daily" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:16px"></div>
-<div class="sec">🔴 LIVE BOARD · 实时盯盘 <span id="pooln" style="color:var(--green)"></span></div><div class="board" id="board"></div>
+<div class="sec">🔴 LIVE BOARD · 实时盯盘 <span id="pooln" style="color:var(--green)"></span>
+<span style="float:right;font-size:9px;letter-spacing:.05em;color:var(--dim)">🟢符合 🟡监控中 🔴未达标</span></div><div class="board" id="board"></div>
 <div class="sec" style="margin-top:22px">📈 SIGNALS · 正式信号</div><div id="list"></div>
 <div id="scanwrap" style="display:none"><div class="sec" style="margin-top:22px">近期评估</div><div id="scanlist"></div></div>
 <footer><img src="https://crayxus.com.au/og-track.jpg" alt="Crayxus">
