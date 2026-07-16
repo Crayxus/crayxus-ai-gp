@@ -113,6 +113,11 @@ async function sync(){try{
   document.getElementById("rec").textContent=s.wins+" 胜 "+s.losses+" 负 · 已结算 "+s.settled;
   document.getElementById("scanned").textContent=(s.scanned||0).toLocaleString();
   document.getElementById("cand").textContent=s.cand;document.getElementById("rej").textContent=s.rej;
+  const l24=d.l24||{g:0,y:0,r:0};
+  document.getElementById("s24").textContent=(l24.g+l24.y+l24.r).toLocaleString();
+  document.getElementById("l24g").textContent=l24.g;
+  document.getElementById("l24y").textContent=l24.y;
+  document.getElementById("l24r").textContent=l24.r;
   const sb=document.getElementById("sincebar");
   sb.innerHTML=d.first_signal?("实盘验证 · 自 <b>"+d.start+"</b> 起 · 已运行 <b>"+d.days+"</b> 天 · 首个入选 "+d.first_signal):("实盘验证系统就绪 · 数据自 <b>"+d.start+"</b> 起收集 · 等待首个入选信号");
   var DY=document.getElementById("daily");
@@ -131,8 +136,8 @@ async function sync(){try{
     document.getElementById("pooln").textContent=d.pool.length+" 场";
     B.innerHTML=d.pool.map(function(p){
       var hot=p.sc!=="0-0"&&p.sc!=="";
-      var live=(p.st>=1&&p.st<=3);
-      return '<div class="brow"><span class="bdot'+(live?" on":"")+'"></span>'+
+      var lt=(p.lt==="g"||p.lt==="y"||p.lt==="r")?p.lt:((p.st>=1&&p.st<=3)?"y":"r");
+      return '<div class="brow"><span class="bdot '+lt+'"></span>'+
         '<span class="blg">'+p.lg+'</span><span class="bm">'+p.m+'</span>'+
         '<span class="bsc'+(hot?" hot":"")+'">'+p.sc+'</span><span class="bmn">'+p.mn+'</span></div>';}).join("");
   }else{document.getElementById("pooln").textContent="";B.innerHTML='<div class="empty" style="padding:16px">此刻无进行中赛事 · 引擎持续扫描</div>';}
