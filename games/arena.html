@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>AlphaDan · 敢来一战？掼蛋人机1v1</title>
+<meta name="description" content="它看得见全部108张牌，你只看得见自己的27张。真·掼蛋AI 1v1，赢一局算你狠。">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+
+<!-- Open Graph · 微信分享卡片 -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="择大 AI">
+<meta property="og:title" content="AlphaDan · 敢来一战？">
+<meta property="og:description" content="它看得见全部108张牌，你只看得见自己的27张。真·掼蛋AI 1v1，赢一局算你狠。">
+<meta property="og:image" content="https://crayxus.com.au/og-arena.jpg?v=ad1">
+<meta property="og:image:secure_url" content="https://crayxus.com.au/og-arena.jpg?v=ad1">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="800">
+<meta property="og:image:height" content="800">
+<meta property="og:image:alt" content="AlphaDan 人机对决">
+<meta property="og:url" content="https://crayxus.com.au/games/arena.html">
+<meta property="og:locale" content="zh_CN">
+
+<!-- 微信内置浏览器 / 老版本兜底 -->
+<meta itemprop="image" content="https://crayxus.com.au/og-arena.jpg?v=ad1">
+<meta name="image" content="https://crayxus.com.au/og-arena.jpg?v=ad1">
+<link rel="image_src" href="https://crayxus.com.au/og-arena.jpg?v=ad1">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AlphaDan · 敢来一战？">
+<meta name="twitter:description" content="它看得见全部108张牌，你只看得见自己的27张。真·掼蛋AI 1v1。">
+<meta name="twitter:image" content="https://crayxus.com.au/og-arena.jpg?v=ad1">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;font-family:"PingFang SC","Microsoft YaHei",sans-serif;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;overflow:hidden;background:#000}
+  body{display:flex;align-items:center;justify-content:center;background:#020306;touch-action:manipulation}
+  .stage{position:relative;height:100vh;height:100dvh;aspect-ratio:9/16;max-width:100vw;overflow:hidden;background:#030408;box-shadow:0 0 60px rgba(0,0,0,.9)}
+  #scene{position:absolute;inset:0;width:100%;height:100%;z-index:0;display:block}
+  .ui{position:absolute;inset:0;z-index:1;pointer-events:none;color:#e8eef8}
+  .vignette{position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:radial-gradient(ellipse 90% 80% at 50% 46%,transparent 55%,rgba(60,2,10,.34) 100%)}
+
+  .glass{background:rgba(6,9,15,.58);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    border:1px solid rgba(255,45,64,.22);border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,.5)}
+
+  .ai-info{position:absolute;top:calc(14px + env(safe-area-inset-top));left:16px;padding:8px 15px;border-radius:30px;font-size:14px;font-weight:700;
+    display:flex;align-items:center;gap:8px;color:#c9d6e8}
+  .ai-info .dot{width:8px;height:8px;border-radius:50%;background:#ff2d40;box-shadow:0 0 10px #ff2d40;animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  .ai-info b{color:#ff4d5e;font-size:16px}
+  .bubble{position:absolute;top:34%;left:50%;transform:translate(-50%,8px);max-width:76%;padding:9px 16px;border-radius:14px;font-size:16px;
+    font-weight:700;opacity:0;transition:.22s;border:1.5px solid rgba(255,45,64,.6);color:#ffe9ec;white-space:nowrap;text-align:center;z-index:4}
+  .bubble.show{opacity:1;transform:translate(-50%,0)}
+  .status{position:absolute;top:calc(16px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);padding:6px 16px;border-radius:30px;
+    font-size:13px;font-weight:700;color:#dfe8f5;letter-spacing:2px;max-width:170px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  .played{position:absolute;top:60%;left:50%;transform:translate(-50%,-50%) perspective(820px) rotateX(26deg);
+    display:flex;flex-direction:column;align-items:center;gap:6px;filter:drop-shadow(0 16px 14px rgba(0,0,0,.6))}
+  .played .lbl{font-size:13px;font-weight:800;color:#ff8d99;text-shadow:0 1px 4px #000;transform:perspective(820px) rotateX(-26deg)}
+  .played .row{display:flex}
+  .note{position:absolute;top:49.5%;left:50%;transform:translateX(-50%);font-size:13px;color:#ffb9c0;height:18px;font-weight:600;text-shadow:0 1px 3px #000}
+
+  .bottom{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;gap:11px;
+    padding:12px 0 calc(16px + env(safe-area-inset-bottom));pointer-events:none}
+  .meta{padding:6px 16px;border-radius:30px;font-size:13px;font-weight:700;pointer-events:auto;color:#c9d6e8}
+  .meta b{color:#5ee6ff}
+  .hand{position:relative;margin:0 auto;min-height:96px;pointer-events:auto}
+  .controls{display:flex;gap:10px;pointer-events:auto}
+  .btn{border:none;border-radius:12px;padding:13px 24px;font-size:16px;font-weight:800;cursor:pointer;pointer-events:auto;
+    transition:transform .1s;letter-spacing:2px}
+  .btn:active{transform:translateY(1px)}
+  .btn.primary{background:linear-gradient(135deg,#ff2d40,#8f0d1c);color:#fff;box-shadow:0 6px 22px rgba(255,45,64,.35)}
+  .btn.ghost{background:rgba(255,255,255,.07);color:#c4cfdd;border:1px solid rgba(255,255,255,.13)}
+  .btn:disabled{opacity:.35;cursor:not-allowed}
+
+  .card{width:56px;height:80px;background:linear-gradient(160deg,#fff,#eef2f7);border-radius:8px;position:relative;
+    border:1px solid #c2cad6;box-shadow:0 3px 9px rgba(0,0,0,.55);color:#1a1a1a}
+  .hand .card{position:absolute;bottom:0;margin:0;cursor:pointer;transition:bottom .12s,box-shadow .12s}
+  .hand .card.sel{box-shadow:0 0 0 3px #ff2d40,0 18px 26px rgba(0,0,0,.6);z-index:300}
+  .played .card{position:relative;margin-left:-24px;width:80px;height:114px;border-radius:10px}
+  .played .card:first-child{margin-left:0}
+  .card.red{color:#e3344b}
+  .card .corner{position:absolute;top:5px;left:6px;display:flex;flex-direction:column;align-items:center;line-height:.95}
+  .card .corner .r{font-weight:900;font-size:17px}
+  .card .corner .s{font-size:12px;margin-top:1px}
+  .card .big{position:absolute;bottom:5px;right:7px;font-size:23px;opacity:.85}
+  .card.joker.red{background:linear-gradient(160deg,#fff,#ffeaea)}
+  .card.joker:not(.red){background:linear-gradient(160deg,#fff,#edf1f9)}
+  .card.joker .jstar{position:absolute;top:4px;left:6px;font-size:14px;line-height:1}
+  .card.joker .jstar.jb{top:auto;left:auto;bottom:4px;right:6px;transform:rotate(180deg)}
+  .card.joker .jtext{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-90deg);font-weight:900;font-size:20px;letter-spacing:3px}
+  .played .card.joker .jtext{font-size:28px}
+  .played .card .corner .r{font-size:22px}
+  .played .card .corner .s{font-size:16px}
+  .played .card .big{font-size:38px}
+  .card.wild{border:2px solid #ffd45e;background:linear-gradient(160deg,#fff,#fff6dc)}
+  .card.wild::after{content:'★';position:absolute;top:3px;right:5px;color:#e8a800;font-size:12px}
+  .played .card.wild::after{font-size:16px}
+
+  .over{position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;z-index:7;background:rgba(1,2,4,.78);display:none;flex-direction:column;align-items:center;
+    justify-content:center;gap:20px;backdrop-filter:blur(4px)}
+  .over.show{display:flex}
+  .over h1{font-size:46px;font-weight:900;letter-spacing:6px;text-shadow:0 0 40px currentColor}
+  .over .sub{font-size:14px;color:#8fa0b8;letter-spacing:2px}
+
+  /* ===== 开战入口（压迫感全屏）===== */
+  .intro{position:fixed;left:0;top:0;width:100vw;height:100vh;height:100dvh;z-index:9;overflow:hidden;
+    background:radial-gradient(ellipse 100% 90% at 50% 30%,#0a0d18 0%,#04050a 55%,#000 100%);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+  .intro.hide{display:none}
+  .intro .mark{font-size:12px;letter-spacing:5px;color:#5ee6ff;opacity:.75}
+  .intro h1{font-size:50px;font-weight:900;letter-spacing:3px;color:#f4f7ff;max-width:96vw;
+    text-shadow:0 0 34px rgba(255,45,64,.85),0 0 90px rgba(255,45,64,.4)}
+  .intro .warn{font-size:14px;color:#c7d2e2;letter-spacing:2px;margin-top:2px;
+    max-width:88vw;text-align:center;line-height:1.8}
+  .intro .warn b{color:#ff4d5e}
+  .intro .btn{margin-top:26px;padding:16px 64px;font-size:20px;letter-spacing:10px;text-indent:10px}
+  .intro .ready{font-size:11px;color:#5a6a80;letter-spacing:2px;margin-top:10px;font-family:monospace}
+  .intro .ready.ok{color:#4fd88a}
+  .intro .ready.bad{color:#ff5a6a}
+
+  .toast{position:fixed;bottom:150px;left:50%;transform:translateX(-50%);z-index:8;background:rgba(0,0,0,.85);
+    padding:9px 18px;border-radius:20px;font-size:14px;color:#ffd9dd;opacity:0;transition:.2s;pointer-events:none;border:1px solid rgba(255,45,64,.3)}
+  .toast.show{opacity:1}
+  .loading{position:fixed;inset:0;z-index:8;display:flex;align-items:center;justify-content:center;color:#7d8ba0;font-size:15px;background:#030408;letter-spacing:3px}
+  .loading.hide{display:none}
+
+  /* ===== 战绩 HUD（右上角，简约）===== */
+  .hud{position:absolute;top:calc(52px + env(safe-area-inset-top));right:10px;width:112px;padding:8px 9px;border-radius:12px;z-index:2;
+    background:linear-gradient(160deg,rgba(24,8,12,.82),rgba(8,4,6,.88));border:1px solid rgba(255,45,64,.35);
+    box-shadow:0 6px 20px rgba(0,0,0,.5)}
+  .hud-score{font-size:13px;font-weight:800;color:#e8eef8;text-align:center}
+  .hud-score b{color:#ff4d5e;font-size:16px}.hud-score i{color:#5a6a80;font-style:normal;margin:0 2px}
+  .hud-sub{font-size:10px;color:#8fa0b8;text-align:center;margin-top:3px}.hud-sub b{color:#5ee6ff}
+  .hud-sub2{font-size:11px;font-weight:700;text-align:center;margin:4px 0 6px;color:#8fa0b8}
+  .histlist{display:flex;flex-wrap:wrap;gap:3px;justify-content:center}
+  .hchip{width:18px;height:18px;border-radius:5px;display:grid;place-items:center;font-size:10px;font-weight:800}
+  .hchip.hw{background:rgba(94,230,255,.14);color:#5ee6ff;border:1px solid rgba(94,230,255,.4)}
+  .hchip.hl{background:rgba(255,45,64,.14);color:#ff8d99;border:1px solid rgba(255,45,64,.4)}
+  .me-bubble{position:absolute;left:50%;bottom:250px;transform:translateX(-50%);max-width:76%;background:rgba(6,9,15,.66);backdrop-filter:blur(8px);padding:8px 16px;border-radius:14px;font-size:16px;font-weight:800;color:#eaf4ff;border:1.5px solid rgba(94,230,255,.55);opacity:0;transition:opacity .2s;white-space:nowrap;text-align:center;pointer-events:none;z-index:4}
+  .me-bubble.show{opacity:1}
+
+  /* ===== AI 推演核心 ===== */
+  .nnorb{position:absolute;left:8px;top:43%;transform:translateY(-50%);z-index:2;width:94px;text-align:center;pointer-events:none}
+  #nnCanvas{display:block;width:94px;height:94px;border-radius:50%;border:1px solid rgba(255,45,64,.4);
+    background:radial-gradient(circle,rgba(26,6,10,.6),rgba(8,3,5,.32));
+    box-shadow:0 0 22px rgba(255,45,64,.28),inset 0 0 18px rgba(10,0,3,.6);transition:box-shadow .3s,border-color .3s}
+  .nnorb.busy #nnCanvas{box-shadow:0 0 40px rgba(255,45,64,.75);border-color:rgba(255,45,64,.95)}
+  .nn-cd{position:absolute;top:0;left:0;width:94px;height:94px;display:none;align-items:center;justify-content:center;
+    font-size:30px;font-weight:900;color:#ff8d99;text-shadow:0 0 14px rgba(255,45,64,.9)}
+  .nnorb.busy .nn-cd{display:flex}
+  .nn-lab{margin-top:5px;font-size:10px;font-weight:700;color:#ff8d99;display:none}.nnorb.busy .nn-lab{display:block}.nn-lab b{color:#ffe9ec;font-variant-numeric:tabular-nums}
+  /* 整列全选按钮 */
+  .colbtn{position:absolute;bottom:0;height:20px;border-radius:6px;display:flex;align-items:center;justify-content:center;
+    font-size:11px;font-weight:800;color:#fff;background:linear-gradient(135deg,#67222c,#3a0e15);border:1px solid rgba(255,45,64,.4);
+    cursor:pointer;pointer-events:auto;box-shadow:0 2px 6px rgba(0,0,0,.5)}
+  .colbtn.on{background:linear-gradient(135deg,#ff2d40,#8f0d1c);border-color:#ff6d7c}
+
+  /* ===== 出牌气势特效 ===== */
+  .played .card{animation:slam .4s cubic-bezier(.18,1.4,.4,1) both}
+  @keyframes slam{0%{transform:translateY(-95px) scale(1.9) rotate(-11deg);opacity:0}
+    45%{transform:translateY(9px) scale(.88);opacity:1}68%{transform:translateY(-4px) scale(1.06)}100%{transform:translateY(0) scale(1) rotate(0)}}
+  .shock{position:absolute;left:50%;top:48%;width:64px;height:64px;border-radius:50%;border:3px solid rgba(255,120,135,.95);
+    transform:translate(-50%,-50%) scale(.15);opacity:.95;pointer-events:none;z-index:0;animation:shockwave .55s ease-out forwards}
+  .shock.s2{animation-delay:.08s;border-color:rgba(255,180,190,.6)}
+  .shock.big{border-color:rgba(255,60,80,.98);border-width:5px;box-shadow:0 0 26px rgba(255,45,64,.7)}
+  @keyframes shockwave{to{transform:translate(-50%,-50%) scale(3.8);opacity:0}}
+  .spark{position:absolute;left:50%;top:48%;width:5px;height:5px;border-radius:50%;background:#ffb9c0;box-shadow:0 0 7px #ff5a6a;
+    pointer-events:none;z-index:3;transform:translate(-50%,-50%);animation:spark .6s ease-out forwards}
+  .spark.g{background:#ff8d99;box-shadow:0 0 9px #ff2d40;width:6px;height:6px}
+  @keyframes spark{0%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(.4)}}
+  .boom-emoji{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%) scale(.3);font-size:66px;z-index:2;pointer-events:none;animation:boomfx .55s ease-out forwards}
+  @keyframes boomfx{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}38%{opacity:1;transform:translate(-50%,-50%) scale(1.45)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.9)}}
+  .played.boom .row{animation:rowshake .42s ease}
+  @keyframes rowshake{0%,100%{transform:translateX(0)}15%{transform:translateX(-9px)}35%{transform:translateX(8px)}55%{transform:translateX(-6px)}75%{transform:translateX(4px)}}
+  .flash{position:absolute;inset:0;z-index:6;pointer-events:none;background:#fff;opacity:0}
+  .flash.gold{background:radial-gradient(circle at 50% 48%,rgba(255,130,145,.95),rgba(255,45,64,.25) 60%,transparent)}
+  .flash.go{animation:flashfx .26s ease-out}
+  .flash.go.gold2{animation:flashfx2 .34s ease-out}
+  @keyframes flashfx{0%{opacity:0}14%{opacity:.5}100%{opacity:0}}
+  @keyframes flashfx2{0%{opacity:0}12%{opacity:.85}100%{opacity:0}}
+  .stage.shk{animation:stshake .2s ease}
+  .stage.shkbig{animation:stshakeb .4s ease}
+  @keyframes stshake{0%,100%{transform:translate(0,0)}30%{transform:translate(-3px,2px)}60%{transform:translate(3px,-2px)}}
+  @keyframes stshakeb{0%,100%{transform:translate(0,0)}12%{transform:translate(-9px,5px)}26%{transform:translate(9px,-5px)}42%{transform:translate(-7px,-4px)}58%{transform:translate(7px,4px)}74%{transform:translate(-4px,3px)}}
+</style>
+</head>
+<body>
+  <div class="stage" id="stage">
+  <canvas id="scene"></canvas>
+  <div class="vignette"></div>
+  <div class="loading" id="loading">正在唤醒 AlphaDan …</div>
+
+  <div class="ui">
+    <div class="ai-info glass"><span class="dot"></span>AlphaDan · 剩 <b id="aiCount">27</b></div>
+    <div class="bubble glass" id="aiBubble"></div>
+    <div class="status glass" id="status">等待开战</div>
+    <div class="hud" id="hud">
+      <div class="hud-score">你 <b id="scMe">0</b><i>:</i><b id="scAi">0</b> AI</div>
+      <div class="hud-sub">胜率 <b id="scRate">0%</b> · <b id="scTotal">0</b>局</div>
+      <div class="hud-sub2" id="scStreak">—</div>
+      <div class="histlist" id="histList"></div>
+    </div>
+
+    <div class="played" id="played"></div>
+    <div class="note" id="note"></div>
+    <div class="nnorb" id="thinkBox">
+      <canvas id="nnCanvas" width="94" height="94"></canvas>
+      <div class="nn-cd" id="thinkCount"></div>
+      <div class="nn-lab"><span id="nnTitle">深度推演</span> · <b id="thinkNum">0</b> 局面</div>
+    </div>
+    <div class="me-bubble" id="meBubble"></div>
+    <div class="flash" id="flash"></div>
+
+    <div class="bottom">
+      <div class="meta glass">你 · 剩 <b id="meCount">27</b> 张</div>
+      <div class="hand" id="hand"></div>
+      <div class="controls">
+        <button class="btn primary" id="playBtn">出牌</button>
+        <button class="btn ghost" id="passBtn">不要</button>
+        <button class="btn ghost" id="hintBtn">提示</button>
+        <button class="btn ghost" id="newBtn">新局</button>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div class="intro" id="intro">
+    <div class="mark">HUMAN&nbsp;&nbsp;VS&nbsp;&nbsp;MACHINE</div>
+    <h1>AlphaDan</h1>
+    <div class="warn">它看得见全部 <b>108</b> 张牌 · 你只看得见自己的 27 张</div>
+    <button class="btn primary" id="introBtn">开 战</button>
+    <div class="ready" id="introReady">连接 AI 核心…</div>
+  </div>
+
+  <div class="over" id="over"><h1 id="overText"></h1><div class="sub" id="overSub"></div><button class="btn primary" id="overBtn" style="pointer-events:auto">再来一局</button></div>
+  <div class="toast" id="toast"></div>
+
+<script type="importmap">
+{ "imports": { "three": "./three/three.module.js", "three/addons/": "./three/jsm/" } }
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+/* ================= 3D 场景（暗黑压迫版）================= */
+const canvas=document.getElementById('scene');
+const stageEl=document.getElementById('stage');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=0.95;
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+
+const scene=new THREE.Scene();
+const bc=document.createElement('canvas');bc.width=2;bc.height=512;
+const g=bc.getContext('2d');const grd=g.createLinearGradient(0,0,0,512);
+grd.addColorStop(0,'#0a1020');grd.addColorStop(.5,'#050912');grd.addColorStop(1,'#010204');
+g.fillStyle=grd;g.fillRect(0,0,2,512);
+const bgt=new THREE.CanvasTexture(bc);bgt.colorSpace=THREE.SRGBColorSpace;scene.background=bgt;
+scene.fog=new THREE.Fog(0x04060c,10,26);
+
+const camera=new THREE.PerspectiveCamera(54,stageEl.clientWidth/stageEl.clientHeight,0.1,100);
+camera.position.set(0,2.6,6.6); camera.lookAt(0,1.5,-1.4);
+function sizeToStage(){const w=stageEl.clientWidth,h=stageEl.clientHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();}
+sizeToStage();
+
+const pmrem=new THREE.PMREMGenerator(renderer);
+scene.environment=pmrem.fromScene(new RoomEnvironment(),0.04).texture;
+
+scene.add(new THREE.HemisphereLight(0x6a86c8,0x14141c,0.30));
+const key=new THREE.SpotLight(0xdfe9ff,58,32,Math.PI/5,0.45,1.3);
+key.position.set(2.6,8.5,4.2); key.target.position.set(0,1,-0.6);
+key.castShadow=true; key.shadow.mapSize.set(2048,2048); key.shadow.bias=-0.0004;
+scene.add(key,key.target);
+const rb=new THREE.PointLight(0x3550ff,26,22);rb.position.set(-5.5,3.2,-3);scene.add(rb);
+const rr=new THREE.PointLight(0xff2030,30,22);rr.position.set(5.5,2.2,-4);scene.add(rr);
+const up=new THREE.PointLight(0xff1830,16,7);up.position.set(0,0.3,-2.55);scene.add(up); // 底光压脸，杀气
+
+const floor=new THREE.Mesh(new THREE.CircleGeometry(16,64),
+  new THREE.MeshStandardMaterial({color:0x07090f,roughness:.96,metalness:0}));
+floor.rotation.x=-Math.PI/2; floor.receiveShadow=true; scene.add(floor);
+
+// 牌桌
+const felt=new THREE.MeshStandardMaterial({color:0x0e4029,roughness:.85,metalness:0});
+const top=new THREE.Mesh(new THREE.CylinderGeometry(2.8,2.8,0.16,72),felt);
+top.position.y=0.92; top.receiveShadow=true; scene.add(top);
+const wood=new THREE.MeshStandardMaterial({color:0x3a2412,roughness:.4,metalness:.3});
+const rim=new THREE.Mesh(new THREE.TorusGeometry(2.82,0.17,24,90),wood);
+rim.rotation.x=Math.PI/2; rim.position.y=1.0; rim.castShadow=true; scene.add(rim);
+const ped=new THREE.Mesh(new THREE.CylinderGeometry(0.55,0.9,0.92,40),wood);
+ped.position.y=0.46; ped.castShadow=true; scene.add(ped);
+
+// 竞技场氛围：暗红网格 + 血色霓虹环 + 冷蓝尘埃
+const grid=new THREE.GridHelper(60,60,0x7a1020,0x220608);
+grid.material.transparent=true; grid.material.opacity=0.28; grid.position.y=0.02; scene.add(grid);
+const neon=new THREE.Mesh(new THREE.TorusGeometry(3.0,0.05,16,140),new THREE.MeshBasicMaterial({color:0xff2438}));
+neon.rotation.x=Math.PI/2; neon.position.y=1.0; scene.add(neon);
+const np=new THREE.PointLight(0xff2438,8,9); np.position.set(0,1.2,0); scene.add(np);
+const pc=260,pgeo=new THREE.BufferGeometry(),ppos=new Float32Array(pc*3);
+for(let i=0;i<pc;i++){ppos[i*3]=(Math.random()-.5)*34;ppos[i*3+1]=Math.random()*9;ppos[i*3+2]=(Math.random()-.5)*34-4;}
+pgeo.setAttribute('position',new THREE.BufferAttribute(ppos,3));
+let particles=new THREE.Points(pgeo,new THREE.PointsMaterial({color:0x4a7ab0,size:.05,transparent:true,opacity:.5,depthWrite:false}));
+scene.add(particles);
+const bnc=document.createElement('canvas');bnc.width=1024;bnc.height=256;const bxx=bnc.getContext('2d');
+bxx.clearRect(0,0,1024,256);bxx.textAlign='center';bxx.textBaseline='middle';
+bxx.shadowColor='#ff2d40';bxx.shadowBlur=38;bxx.fillStyle='#f4f7ff';bxx.font='900 128px Arial';
+bxx.fillText('ALPHADAN',512,104);
+bxx.shadowColor='#5ee6ff';bxx.shadowBlur=12;bxx.fillStyle='#8fd8ff';bxx.font='700 34px "Microsoft YaHei"';
+bxx.fillText('人 机 对 决 · 掼 蛋 1 V 1',512,200);
+const bntex=new THREE.CanvasTexture(bnc);bntex.colorSpace=THREE.SRGBColorSpace;
+const banner=new THREE.Mesh(new THREE.PlaneGeometry(4.4,1.1),new THREE.MeshBasicMaterial({map:bntex,transparent:true}));
+banner.position.set(0,4.25,-3.5); scene.add(banner);
+
+// 机器人
+let mixer,actions={},activeName=null,finHandler=null;
+const ONESHOT=new Set(['Jump','Yes','No','Wave','Punch','ThumbsUp']);
+function play(name){
+  const next=actions[name]; if(!next) return;
+  if(activeName===name && !ONESHOT.has(name)) return;
+  const prev=actions[activeName];
+  if(prev&&prev!==next) prev.fadeOut(0.25);
+  next.reset().setEffectiveWeight(1).fadeIn(0.25).play();
+  if(ONESHOT.has(name)||name==='Death'){next.setLoop(THREE.LoopOnce,1);next.clampWhenFinished=true;}
+  else next.setLoop(THREE.LoopRepeat,Infinity);
+  activeName=name;
+}
+function gesture(name){
+  play(name);
+  if(ONESHOT.has(name)&&mixer){
+    if(finHandler) mixer.removeEventListener('finished',finHandler);
+    finHandler=()=>{mixer.removeEventListener('finished',finHandler);finHandler=null;play('Idle');};
+    mixer.addEventListener('finished',finHandler);
+  }
+}
+window.RBT={ready:false,gesture,play};
+let halo=null;
+new GLTFLoader().load('three/model/RobotExpressive.glb',gltf=>{
+  const r=gltf.scene; r.scale.setScalar(0.82); r.position.set(0,0,-3.45); r.rotation.y=0;
+  r.traverse(o=>{if(o.isMesh)o.castShadow=true;});
+  scene.add(r);
+  halo=new THREE.Mesh(new THREE.TorusGeometry(0.6,0.035,10,40),new THREE.MeshBasicMaterial({color:0xff2438}));
+  halo.position.set(0,1.62,-3.45); halo.rotation.x=1.15; scene.add(halo);
+  mixer=new THREE.AnimationMixer(r);
+  gltf.animations.forEach(c=>actions[c.name]=mixer.clipAction(c));
+  play('Idle'); window.RBT.ready=true;
+  document.getElementById('loading').classList.add('hide');
+},undefined,e=>{document.getElementById('loading').textContent='3D 加载失败：请通过 http:// 地址访问本页';console.error(e);});
+
+const clock=new THREE.Clock();
+(function loop(){requestAnimationFrame(loop);const dt=clock.getDelta();if(mixer)mixer.update(dt);if(particles)particles.rotation.y+=dt*0.03;if(halo){halo.rotation.z+=dt*1.6;halo.position.y=1.62+Math.sin(performance.now()*0.002)*0.04;}renderer.render(scene,camera);})();
+addEventListener('resize',sizeToStage);
+
+/* ================= 真·AlphaDan 对局客户端 ================= */
+const $=id=>document.getElementById(id);
+// API 解析：?api=覆盖(记住) > file://本机 > 静态托管(crayxus/GitHub Pages)走公网隧道 > 同源(Flask直接托管)
+const DEFAULT_API='https://names-exchange-cloudy-republic.trycloudflare.com';
+function resolveApi(){
+  const q=new URLSearchParams(location.search).get('api');
+  if(q){const a=q.replace(/\/+$/,'');try{localStorage.setItem('alphadan_api',a)}catch(e){}return a;}
+  if(location.protocol==='file:')return 'http://127.0.0.1:8001';
+  if(/crayxus\.com\.au$|\.github\.io$/i.test(location.hostname)){
+    let s=null;try{s=localStorage.getItem('alphadan_api')}catch(e){}
+    return s||DEFAULT_API;
+  }
+  return location.origin;
+}
+let API=resolveApi();
+
+const SUITS={0:'♠',1:'♥',2:'♣',3:'♦'};
+const VALN={3:'3',4:'4',5:'5',6:'6',7:'7',8:'8',9:'9',10:'10',11:'J',12:'Q',13:'K',14:'A',15:'2',16:'小王',17:'大王'};
+const WILD_UID=25;                       // 红桃2 百搭
+function uidInfo(uid){
+  if(uid===52)return{label:'小王',suit:'★',red:false,joker:true,rank:16,suitIdx:4};
+  if(uid===53)return{label:'大王',suit:'★',red:true,joker:true,rank:17,suitIdx:4};
+  const s=Math.floor(uid/13),v=(uid%13)+3;
+  return{label:VALN[v],suit:SUITS[s],red:(s===1||s===3),joker:false,rank:v,suitIdx:s};
+}
+function flatSort(counts){               // 大→小（你确认的标准排法）
+  const out=[];
+  for(let uid=0;uid<54;uid++)for(let i=0;i<counts[uid];i++)out.push(uid);
+  out.sort((a,b)=>{const A=uidInfo(a),B=uidInfo(b);
+    if(A.rank!==B.rank)return B.rank-A.rank; return A.suitIdx-B.suitIdx;});
+  return out;
+}
+
+let state=null,sessionId=null,selected=new Set(),busy=false;
+
+/* ---- 语音 + 气泡 ---- */
+let aiVoice=null,meVoice=null;
+function pickVoice(){
+  const vs=speechSynthesis.getVoices();
+  const zh=vs.filter(v=>/zh|chinese/i.test(v.lang+v.name));
+  const find=ns=>{for(const n of ns){const f=zh.find(v=>v.name.toLowerCase().includes(n));if(f)return f;}return null;};
+  aiVoice=find(['yunjian','yunxi','yunyang','kangkang'])||zh[0]||vs[0]||null;
+  meVoice=find(['xiaoxiao','xiaoyi','xiaochen','yaoyao','huihui'])||zh.find(v=>v!==aiVoice)||aiVoice;
+}
+speechSynthesis.onvoiceschanged=pickVoice;pickVoice();
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+let _speaking=false;const _sQ=[];
+function say(text,who){
+  const b=who==='ai'?$("aiBubble"):$("meBubble");
+  if(b){b.textContent=text;b.classList.add("show");clearTimeout(b._t);b._t=setTimeout(()=>b.classList.remove("show"),2200);}
+  _sQ.push({text,who});if(_sQ.length>3)_sQ.shift();
+  if(!_speaking)_drain();
+}
+function _drain(){
+  if(_sQ.length===0){_speaking=false;return;}
+  _speaking=true;const it=_sQ.shift();
+  let done=false;const finish=()=>{if(done)return;done=true;_speaking=false;_drain();};
+  const to=setTimeout(finish,Math.min(5000,800+it.text.length*230));
+  try{
+    const u=new SpeechSynthesisUtterance(it.text);u.lang="zh-CN";u.rate=1.02;u.pitch=(it.who==='ai'?0.82:1.06);
+    const vv=(it.who==='ai'?aiVoice:meVoice);if(vv)u.voice=vv;
+    u.onend=()=>{clearTimeout(to);finish();};u.onerror=()=>{clearTimeout(to);finish();};
+    speechSynthesis.speak(u);
+  }catch(e){clearTimeout(to);finish();}
+}
+
+/* ---- 台词（简约 · 杀气）---- */
+const TYPEN={single:'单张',pair:'对子',triple:'三条',fullhouse:'三带二',straight:'顺子',
+  straight_flush:'同花顺',plate:'钢板',tube:'三连对',bomb:'炸弹',joker_bomb:'四大天王'};
+const BOOMT=new Set(['bomb','straight_flush','joker_bomb']);
+const EMOTE={single:'Wave',pair:'Wave',straight:'Wave',tube:'ThumbsUp',plate:'ThumbsUp',
+  triple:'ThumbsUp',fullhouse:'ThumbsUp',bomb:'Punch',straight_flush:'Punch',joker_bomb:'Jump'};
+const OPENING=['我看得见每一张牌。','108张，尽在掌握。','让我看看你的极限。','这局，从发牌起就开始计算了。'];
+const PASSLN=['要不起','过'];
+const BEAT_AI=['大你。','压死。','就这？','算到了。'];
+const WIN_AI=['意料之中。','这局从发牌就结束了。','差一点——但差一点就是输。','回去练，再来。'];
+const WIN_ME=['我赢了！','拿下！'];
+const LOSE_AI=['……重新计算中。','这不可能。','下一局，我不会再让。'];
+function reportLine(type,val,who,isBeat){
+  if(type==='joker_bomb')return who==='ai'?'四大天王。跪吧。':'四大天王！';
+  if(type==='bomb')return isBeat?(who==='ai'?'炸弹，大你。':'炸弹，管上！'):'炸弹。';
+  if(type==='straight_flush')return isBeat?(who==='ai'?'同花顺，大你。':'同花顺，管上！'):'同花顺。';
+  const lab=VALN[val]||'';
+  let base;
+  if(type==='single')base=lab;
+  else if(type==='pair')base='对'+lab;
+  else if(type==='triple')base='三个'+lab;
+  else base=TYPEN[type]||type;
+  if(isBeat&&who==='ai')return pick(BEAT_AI)+base;
+  if(isBeat)return '管上，'+base;
+  return base;
+}
+function rgest(n){if(window.RBT&&RBT.ready)RBT.gesture(n);}
+
+/* ---- 战绩（localStorage 持久）---- */
+let stats=loadStats();
+function loadStats(){try{return JSON.parse(localStorage.getItem('alphadan_arena_stats'))||{me:0,ai:0,hist:[],streak:0}}catch(e){return{me:0,ai:0,hist:[],streak:0}}}
+function saveStats(){try{localStorage.setItem('alphadan_arena_stats',JSON.stringify(stats))}catch(e){}}
+function recordResult(who){
+  if(who==='me'){stats.me++;stats.streak=stats.streak>=0?stats.streak+1:1;}
+  else{stats.ai++;stats.streak=stats.streak<=0?stats.streak-1:-1;}
+  stats.hist.unshift(who);if(stats.hist.length>40)stats.hist.length=40;
+  saveStats();renderStats();
+}
+function renderStats(){
+  const total=stats.me+stats.ai,rate=total?Math.round(stats.me/total*100):0;
+  $("scMe").textContent=stats.me;$("scAi").textContent=stats.ai;
+  $("scRate").textContent=rate+"%";$("scTotal").textContent=total;
+  const st=stats.streak;
+  $("scStreak").textContent=st===0?"—":(st>0?st+" 连胜":(-st)+" 连败");
+  $("scStreak").style.color=st>0?"#5ee6ff":(st<0?"#ff8d99":"#8fa0b8");
+  const h=$("histList");h.innerHTML="";
+  stats.hist.slice(0,10).forEach(w=>{const d=document.createElement("div");d.className="hchip "+(w==='me'?"hw":"hl");d.textContent=w==='me'?"胜":"负";h.appendChild(d);});
+}
+
+/* ---- 卡牌 DOM ---- */
+function cardEl(uid){
+  const c=uidInfo(uid);
+  const d=document.createElement("div");
+  d.className="card "+(c.red?"red ":"")+(c.joker?"joker ":"")+(uid===WILD_UID?"wild":"");
+  if(c.joker)d.innerHTML=`<span class="jstar">★</span><span class="jtext">JOKER</span><span class="jstar jb">★</span>`;
+  else d.innerHTML=`<div class="corner"><span class="r">${c.label}</span><span class="s">${c.suit}</span></div><span class="big">${c.suit}</span>`;
+  return d;
+}
+
+/* ---- 手牌渲染（沿用标准排法：大→小、同点竖列、整列全选、超宽整体缩放）---- */
+function render(){
+  if(!state)return;
+  $("aiCount").textContent=state.counts[1];$("meCount").textContent=state.counts[0];
+  const h=$("hand");h.innerHTML="";
+  const sorted=flatSort(state.my_hand);      // tokens = uid#序号
+  const cardW=56,cardH=80,colStep=40,upStep=26,BTN=22;
+  let x=0,prevR=null,colN=0,maxY=0;
+  const items=[],cols=[];
+  sorted.forEach((uid,idx)=>{
+    const r=uidInfo(uid).rank;
+    if(r!==prevR){if(prevR!==null)x+=colStep;prevR=r;colN=0;cols.push({x,tokens:[]});}
+    else colN++;
+    const y=colN*upStep;if(y>maxY)maxY=y;
+    const token=uid+'#'+idx;
+    items.push({uid,token,x,y,colN});cols[cols.length-1].tokens.push(token);
+  });
+  const totalW=x+cardW;
+  const availW=Math.max(120,stageEl.clientWidth-12);
+  const scale=Math.min(1,availW/totalW);
+  h.style.width=totalW+"px";
+  h.style.height=(BTN+cardH+maxY+34)+"px";
+  h.style.transform="scale("+scale+")";h.style.transformOrigin="bottom center";
+  const myTurn=(state.turn===state.my_seat)&&!state.game_over;
+  for(const it of items){
+    const el=cardEl(it.uid);
+    el.style.left=it.x+"px";
+    el.style.bottom=(BTN+(selected.has(it.token)?30:0)+it.y)+"px";
+    el.style.zIndex=String(selected.has(it.token)?300:(60-it.colN));
+    if(selected.has(it.token))el.classList.add('sel');
+    el.onclick=()=>{if(!myTurn||busy)return;selected.has(it.token)?selected.delete(it.token):selected.add(it.token);render();};
+    h.appendChild(el);
+  }
+  for(const col of cols){
+    const allSel=col.tokens.every(t=>selected.has(t));
+    const b=document.createElement("div");
+    b.className="colbtn"+(allSel?" on":"");
+    b.style.left=(col.x+(cardW-34)/2)+"px";b.style.width="34px";
+    b.textContent=allSel?"✓":"全";
+    b.onclick=()=>{if(!myTurn||busy)return;const all=col.tokens.every(t=>selected.has(t));col.tokens.forEach(t=>all?selected.delete(t):selected.add(t));render();};
+    h.appendChild(b);
+  }
+  $("playBtn").disabled=!(myTurn&&!busy&&selected.size>0);
+  $("passBtn").disabled=!(myTurn&&!busy&&state.last_hand!==null);
+  $("hintBtn").disabled=!(myTurn&&!busy);
+}
+
+function showPlayed(uids,who,type){
+  const p=$("played");p.innerHTML="";
+  const boom=BOOMT.has(type);
+  p.className="played"+(boom?" boom":"");
+  p.appendChild(Object.assign(document.createElement("div"),{className:"shock"+(boom?" big":"")}));
+  p.appendChild(Object.assign(document.createElement("div"),{className:"shock s2"+(boom?" big":"")}));
+  const lbl=document.createElement("div");lbl.className="lbl";
+  lbl.textContent=(who==="ai"?"AlphaDan 出：":"你出：")+(TYPEN[type]||type||'');
+  const row=document.createElement("div");row.className="row";
+  const sorted=uids.slice().sort((a,b)=>uidInfo(b).rank-uidInfo(a).rank);
+  sorted.forEach((uid,i)=>{const el=cardEl(uid);el.style.animationDelay=(i*0.05)+"s";row.appendChild(el);});
+  const rowW=80+(sorted.length-1)*56;
+  const fit=Math.min(1,(stageEl.clientWidth-26)/rowW);
+  if(fit<1){row.style.transform="scale("+fit+")";row.style.transformOrigin="center bottom";}
+  p.appendChild(lbl);p.appendChild(row);
+  burst(p,boom?26:12,boom);
+  if(boom){const b=document.createElement("div");b.className="boom-emoji";b.textContent="💥";p.appendChild(b);flashFx(true);shakeStage(true);}
+  $("note").textContent="";
+}
+function flashFx(boom){const f=$("flash");if(!f)return;f.className="flash"+(boom?" gold gold2":"");void f.offsetWidth;f.classList.add("go");setTimeout(()=>f.classList.remove("go"),360);}
+function shakeStage(boom){if(!stageEl)return;stageEl.classList.remove("shk","shkbig");void stageEl.offsetWidth;stageEl.classList.add(boom?"shkbig":"shk");setTimeout(()=>stageEl.classList.remove("shk","shkbig"),boom?420:240);}
+function burst(p,n,big){for(let i=0;i<n;i++){const d=document.createElement("div");d.className="spark"+(big?" g":"");const ang=Math.random()*6.2832,dist=(big?70:40)+Math.random()*(big?80:45);d.style.setProperty('--dx',(Math.cos(ang)*dist)+'px');d.style.setProperty('--dy',(Math.sin(ang)*dist)+'px');d.style.animationDelay=(Math.random()*0.05)+'s';p.appendChild(d);setTimeout(()=>d.remove(),700);}}
+function setStatus(s){$("status").textContent=s;}
+function note(s){$("note").textContent=s;}
+function toast(s){const t=$("toast");t.textContent=s;t.classList.add("show");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("show"),1600);}
+
+/* ---- API ---- */
+async function api(path,body,method='POST'){
+  const opt={method,headers:{'Content-Type':'application/json'}};
+  if(body)opt.body=JSON.stringify(body);
+  const res=await fetch(API+path,opt);
+  if(!res.ok){let e=await res.text();try{e=JSON.parse(e).error||e;}catch{}throw new Error(e);}
+  return res.json();
+}
+
+/* ---- 推演核心动画 ---- */
+let nnBusy=false,thinkT0=0,thinkRAF=null;
+function makeNN(){
+  const cv=$("nnCanvas");if(!cv)return null;
+  const ctx=cv.getContext('2d'),W=cv.width,H=cv.height,cx=W/2,cy=H/2,R=Math.min(W,H)*0.40,N=100;
+  const pts=[];
+  for(let i=0;i<N;i++){const phi=Math.acos(1-2*(i+0.5)/N),th=Math.PI*(1+Math.sqrt(5))*i;pts.push({x:Math.sin(phi)*Math.cos(th),y:Math.sin(phi)*Math.sin(th),z:Math.cos(phi)});}
+  const links=[];
+  for(let i=0;i<N;i++){const d=pts.map((q,j)=>({j,v:(q.x-pts[i].x)**2+(q.y-pts[i].y)**2+(q.z-pts[i].z)**2})).filter(o=>o.j!==i).sort((a,b)=>a.v-b.v);links.push([i,d[0].j]);if(d[1])links.push([i,d[1].j]);}
+  let raf=null,t=0;
+  function frame(){
+    t+=nnBusy?0.05:0.016;
+    ctx.clearRect(0,0,W,H);
+    const cosY=Math.cos(t),sinY=Math.sin(t),ax=0.5+Math.sin(t*0.4)*0.35,cosX=Math.cos(ax),sinX=Math.sin(ax);
+    const cg=ctx.createRadialGradient(cx,cy,0,cx,cy,R*1.5);
+    cg.addColorStop(0,nnBusy?'rgba(255,80,100,0.5)':'rgba(255,45,64,0.22)');cg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=cg;ctx.beginPath();ctx.arc(cx,cy,R*1.5,0,7);ctx.fill();
+    const P=pts.map(p=>{const x=p.x*cosY-p.z*sinY,z=p.x*sinY+p.z*cosY,y=p.y,y2=y*cosX-z*sinX,z2=y*sinX+z*cosX;return{sx:cx+x*R,sy:cy+y2*R,z:z2};});
+    ctx.lineWidth=0.6;
+    links.forEach(([a,b])=>{const pa=P[a],pb=P[b],dp=((pa.z+pb.z)/2+1)/2;ctx.strokeStyle='rgba(255,90,106,'+(0.05+dp*(nnBusy?0.3:0.15))+')';ctx.beginPath();ctx.moveTo(pa.sx,pa.sy);ctx.lineTo(pb.sx,pb.sy);ctx.stroke();});
+    P.slice().sort((a,b)=>a.z-b.z).forEach(p=>{const dp=(p.z+1)/2,r=0.6+dp*2.2,al=0.25+dp*0.75;ctx.fillStyle=(nnBusy&&Math.random()<0.04)?'rgba(255,230,235,'+al+')':'rgba(255,141,153,'+al+')';ctx.beginPath();ctx.arc(p.sx,p.sy,r,0,7);ctx.fill();});
+    for(let k=0;k<2;k++){
+      const tilt=k===0?1.1:-0.6,rr=R*(1.18+k*0.12);
+      ctx.strokeStyle='rgba(255,90,106,'+(nnBusy?0.45:0.25)+')';ctx.lineWidth=1;ctx.beginPath();
+      for(let a=0;a<=50;a++){const ang=a/50*6.2832;const x=Math.cos(ang)*rr,z=Math.sin(ang)*rr,y1=-z*Math.sin(tilt),z1=z*Math.cos(tilt),x2=x*cosY-z1*sinY,z2=x*sinY+z1*cosY,y2=y1*cosX-z2*sinX,sx=cx+x2,sy=cy+y2;if(a===0)ctx.moveTo(sx,sy);else ctx.lineTo(sx,sy);}
+      ctx.stroke();
+    }
+    raf=requestAnimationFrame(frame);
+  }
+  return{start:()=>{if(!raf)frame();}};
+}
+function startThink(){
+  const box=$("thinkBox");if(box)box.classList.add('busy');
+  nnBusy=true;thinkT0=performance.now();
+  rgest('Idle');setStatus("AI 深度推演中…");
+  const numEl=$("thinkNum"),cntEl=$("thinkCount");
+  (function tick(){
+    if(!nnBusy)return;
+    const el=(performance.now()-thinkT0)/1000;
+    if(cntEl)cntEl.textContent=el.toFixed(0);
+    if(numEl)numEl.textContent=Math.floor(160000*Math.pow(el,0.75)).toLocaleString();
+    thinkRAF=requestAnimationFrame(tick);
+  })();
+}
+function endThink(){
+  const box=$("thinkBox");if(box)box.classList.remove('busy');
+  nnBusy=false;
+  if(thinkRAF){cancelAnimationFrame(thinkRAF);thinkRAF=null;}
+}
+
+/* ---- 对局流程 ---- */
+async function newGame(){
+  endThink();_sQ.length=0;_speaking=false;try{speechSynthesis.cancel()}catch(e){}
+  selected.clear();$("played").innerHTML="";note("");
+  $("over").classList.remove("show");
+  try{
+    busy=true;setStatus("发牌中…");
+    state=await api('/1v1/new_game',{first:'random',reveal:false,human_seat:0,source:'arena'});
+    sessionId=state.session_id;
+    busy=false;rgest('Idle');render();
+    say(pick(OPENING),'ai');
+    if(state.turn!==state.my_seat){setStatus("AlphaDan 先手");setTimeout(aiTurn,600);}
+    else setStatus("你先出牌");
+  }catch(e){busy=false;setStatus("连接失败");toast('无法连接 AI：'+e.message);}
+}
+
+function rankKey(arr){return arr.map(u=>uidInfo(u).rank).sort((a,b)=>a-b).join(',');}
+async function snapToLegal(selUids){
+  // 按点数集合吸附到服务器合法出法：选花色不同也不挡合法牌型
+  const r=await api('/1v1/legal_moves',{session_id:sessionId});
+  const selKey=rankKey(selUids);
+  const cands=(r.legal_moves||[]).filter(m=>m.length===selUids.length&&rankKey(m)===selKey);
+  if(cands.length===0)return null;
+  const selSet=new Set(selUids);
+  let best=cands[0],bestOv=-1;
+  for(const m of cands){const ov=m.filter(u=>selSet.has(u)).length;if(ov>bestOv){bestOv=ov;best=m;}}
+  return best;
+}
+
+async function playerPlay(){
+  if(busy||!state||state.turn!==state.my_seat||state.game_over)return;
+  const uids=[...selected].map(t=>parseInt(t.split('#')[0]));
+  if(uids.length===0)return;
+  busy=true;
+  try{
+    const snapped=await snapToLegal(uids);
+    if(!snapped){busy=false;toast('这组牌不构成可出的牌型');return;}
+    const wasBeat=(state.last_hand!==null);
+    state=await api('/1v1/play_move',{session_id:sessionId,move_uids:snapped});
+    selected.clear();
+    const lh=state.last_hand||{};
+    showPlayed(snapped,'me',lh.type);
+    say(reportLine(lh.type,lh.val,'me',wasBeat),'me');
+    if(BOOMT.has(lh.type))setTimeout(()=>{if(!state.game_over)rgest('No');},650); // 你砸炸弹，它摇头
+    busy=false;render();
+    if(state.game_over)return endGame();
+    setTimeout(aiTurn,500);
+  }catch(e){busy=false;toast(e.message);render();}
+}
+
+async function playerPass(){
+  if(busy||!state||state.turn!==state.my_seat||state.game_over||state.last_hand===null)return;
+  busy=true;
+  try{
+    state=await api('/1v1/play_move',{session_id:sessionId,move_uids:[]});
+    say(pick(PASSLN),'me');note("你：要不起");
+    selected.clear();busy=false;render();
+    if(state.game_over)return endGame();
+    setTimeout(aiTurn,400);
+  }catch(e){busy=false;toast(e.message);render();}
+}
+
+async function aiTurn(){
+  if(busy||!state||state.game_over||state.turn===state.my_seat)return;
+  busy=true;startThink();render();
+  try{
+    const hadLast=(state.last_hand!==null&&state.last_hand_owner===state.my_seat);
+    const r=await api('/1v1/ai_move',{session_id:sessionId});
+    endThink();state=r;
+    const mv=r.ai_move||[];
+    if(mv.length===0){
+      rgest('No');say(pick(PASSLN),'ai');note("AlphaDan：要不起");
+    }else{
+      const lh=r.last_hand||{};
+      showPlayed(mv,'ai',lh.type);
+      rgest(EMOTE[lh.type]||'Wave');
+      say(reportLine(lh.type,lh.val,'ai',hadLast),'ai');
+    }
+    busy=false;render();
+    if(state.game_over)return endGame();
+    if(state.turn!==state.my_seat){setTimeout(aiTurn,500);return;}
+    setStatus(state.last_hand===null?"你领出":"轮到你");
+  }catch(e){
+    endThink();busy=false;
+    setStatus("AI 掉线");toast('AI 出招失败：'+e.message);
+  }
+}
+
+async function hint(){
+  if(busy||!state||state.turn!==state.my_seat||state.game_over)return;
+  try{
+    const r=await api('/1v1/legal_moves',{session_id:sessionId});
+    const moves=(r.legal_moves||[]).filter(m=>m.length>0);
+    if(moves.length===0){toast('没有能压的牌，点「不要」');selected.clear();render();return;}
+    moves.sort((a,b)=>a.length-b.length||
+      Math.max(...a.map(u=>uidInfo(u).rank))-Math.max(...b.map(u=>uidInfo(u).rank)));
+    const mv=moves[0];
+    selected.clear();
+    const need={};mv.forEach(u=>need[u]=(need[u]||0)+1);
+    flatSort(state.my_hand).forEach((uid,idx)=>{
+      if(need[uid]>0){selected.add(uid+'#'+idx);need[uid]--;}
+    });
+    render();
+  }catch(e){toast(e.message);}
+}
+
+function endGame(){
+  render();
+  const iWin=(state.winner===state.my_seat);
+  recordResult(iWin?'me':'ai');
+  if(window.RBT&&RBT.ready)iWin?RBT.play('Death'):RBT.play('Dance');
+  if(iWin){say(pick(WIN_ME),'me');setTimeout(()=>say(pick(LOSE_AI),'ai'),1500);}
+  else say(pick(WIN_AI),'ai');
+  $("overText").textContent=iWin?"你赢了":"AI 获胜";
+  $("overText").style.color=iWin?"#5ee6ff":"#ff2d40";
+  $("overSub").textContent=iWin?("AlphaDan 还剩 "+state.counts[1]+" 张"):("你还剩 "+state.counts[0]+" 张");
+  $("over").classList.add("show");
+}
+
+/* ---- 入口 ---- */
+$("playBtn").onclick=playerPlay;$("passBtn").onclick=playerPass;
+$("hintBtn").onclick=hint;$("newBtn").onclick=()=>{if(!busy)newGame();};
+$("overBtn").onclick=newGame;
+const nn=makeNN();if(nn)nn.start();renderStats();
+
+(async function checkHealth(){
+  const el=$("introReady");
+  const probe=async base=>{
+    const r=await fetch(base+'/1v1/health');if(!r.ok)throw 0;return r.json();
+  };
+  try{
+    const h=await probe(API);
+    el.textContent='AI 核心在线 · '+h.sims+' 次推演/手';el.className='ready ok';
+  }catch(e){
+    if(API!==DEFAULT_API){                      // 记住的旧地址失效→回退默认隧道
+      try{
+        const h=await probe(DEFAULT_API);
+        API=DEFAULT_API;try{localStorage.removeItem('alphadan_api')}catch(e2){}
+        el.textContent='AI 核心在线 · '+h.sims+' 次推演/手';el.className='ready ok';
+        return;
+      }catch(e2){}
+    }
+    el.textContent='AI 核心未连接 — 主机可能休息了，稍后再来';el.className='ready bad';
+  }
+})();
+$("introBtn").onclick=()=>{
+  try{const u=new SpeechSynthesisUtterance(' ');speechSynthesis.speak(u);}catch(e){}
+  $("intro").classList.add('hide');
+  newGame();
+};
+if(location.hash==='#auto')setTimeout(()=>$("introBtn").onclick(),1500); // 自动化测试钩子
+if(location.hash==='#dbg')setTimeout(()=>{$("intro").classList.add('hide');
+  $("status").textContent=[innerWidth,document.documentElement.clientWidth,
+    document.documentElement.scrollWidth,(visualViewport&&visualViewport.scale||1).toFixed(2),
+    document.getElementById('stage').clientWidth].join('/');},2500);
+</script>
+</body>
+</html>
