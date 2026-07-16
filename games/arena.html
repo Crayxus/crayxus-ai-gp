@@ -141,6 +141,16 @@
   .me-bubble{position:absolute;left:50%;bottom:250px;transform:translateX(-50%);max-width:76%;background:rgba(6,9,15,.66);backdrop-filter:blur(8px);padding:8px 16px;border-radius:14px;font-size:16px;font-weight:800;color:#eaf4ff;border:1.5px solid rgba(94,230,255,.55);opacity:0;transition:opacity .2s;white-space:nowrap;text-align:center;pointer-events:none;z-index:4}
   .me-bubble.show{opacity:1}
 
+  /* ===== 报牌警示（≤10张）===== */
+  .lowbadge{padding:6px 16px;border-radius:12px;font-size:14px;font-weight:900;letter-spacing:1px;
+    background:rgba(40,4,8,.82);border:1.5px solid #ff2d40;color:#ff8d99;display:none;
+    box-shadow:0 0 18px rgba(255,45,64,.5);animation:lowpulse 1.1s infinite;white-space:nowrap}
+  .lowbadge b{color:#fff;font-size:19px;margin:0 3px}
+  #aiLowB{position:absolute;top:calc(58px + env(safe-area-inset-top));left:16px;z-index:3}
+  #meLowB{pointer-events:none}
+  @keyframes lowpulse{0%,100%{box-shadow:0 0 12px rgba(255,45,64,.35);opacity:.92}
+    50%{box-shadow:0 0 26px rgba(255,45,64,.85);opacity:1}}
+
   /* ===== AI 推演核心 ===== */
   .nnorb{position:absolute;left:8px;top:43%;transform:translateY(-50%);z-index:2;width:94px;text-align:center;pointer-events:none}
   #nnCanvas{display:block;width:94px;height:94px;border-radius:50%;border:1px solid rgba(255,45,64,.4);
@@ -194,6 +204,7 @@
 
   <div class="ui">
     <div class="ai-info glass"><span class="dot"></span>AlphaDan · 剩 <b id="aiCount">27</b></div>
+    <div class="lowbadge" id="aiLowB"></div>
     <div class="bubble glass" id="aiBubble"></div>
     <div class="status glass" id="status">等待开战</div>
     <div class="hud" id="hud">
@@ -214,6 +225,7 @@
     <div class="flash" id="flash"></div>
 
     <div class="bottom">
+      <div class="lowbadge" id="meLowB"></div>
       <div class="meta glass">你 · 剩 <b id="meCount">27</b> 张</div>
       <div class="hand" id="hand"></div>
       <div class="controls">
@@ -482,6 +494,13 @@ function cardEl(uid){
 function render(){
   if(!state)return;
   $("aiCount").textContent=state.counts[1];$("meCount").textContent=state.counts[0];
+  // 报牌警示：≤10张亮出醒目剩牌数
+  const an=state.counts[1],mn=state.counts[0];
+  const aL=$("aiLowB"),mL=$("meLowB");
+  if(!state.game_over&&an>0&&an<=10){aL.innerHTML='⚠ AlphaDan 只剩 <b>'+an+'</b> 张';aL.style.display='block';}
+  else aL.style.display='none';
+  if(!state.game_over&&mn>0&&mn<=10){mL.innerHTML='你只剩 <b>'+mn+'</b> 张';mL.style.display='block';}
+  else mL.style.display='none';
   const h=$("hand");h.innerHTML="";
   const sorted=flatSort(state.my_hand);      // tokens = uid#序号
   const cardW=56,cardH=80,colStep=40,upStep=26,BTN=22;
@@ -686,7 +705,10 @@ async function aiTurn(){
       const lh=r.last_hand||{};
       showPlayed(mv,'ai',lh.type);
       rgest(EMOTE[lh.type]||'Wave');
-      say(reportLine(lh.type,lh.val,'ai',hadLast),'ai');
+      let line=reportLine(lh.type,lh.val,'ai',hadLast);
+      const an=state.counts[1];
+      if(an>0&&an<=10)line+='，剩'+an+'张';   // 掼蛋报牌
+      say(line,'ai');
     }
     busy=false;render();
     if(state.game_over)return endGame();
@@ -764,7 +786,9 @@ if(location.hash==='#auto')setTimeout(()=>$("introBtn").onclick(),1500); // 自�
 if(location.hash==='#dbg')setTimeout(()=>{$("intro").classList.add('hide');
   $("status").textContent=[innerWidth,document.documentElement.clientWidth,
     document.documentElement.scrollWidth,(visualViewport&&visualViewport.scale||1).toFixed(2),
-    document.getElementById('stage').clientWidth].join('/');},2500);
+    document.getElementById('stage').clientWidth].join('/');
+  $("aiLowB").innerHTML='⚠ AlphaDan 只剩 <b>3</b> 张';$("aiLowB").style.display='block';
+  $("meLowB").innerHTML='你只剩 <b>7</b> 张';$("meLowB").style.display='block';},2500);
 </script>
 </body>
 </html>
