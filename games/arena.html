@@ -192,6 +192,25 @@
   @keyframes flashfx2{0%{opacity:0}12%{opacity:.85}100%{opacity:0}}
   .stage.shk{animation:stshake .2s ease}
   .stage.shkbig{animation:stshakeb .4s ease}
+
+  /* ===== 窄屏手机适配（按钮/顶栏防出屏）===== */
+  .controls{flex-wrap:wrap;justify-content:center}
+  .bubble,.me-bubble{overflow:hidden;text-overflow:ellipsis}
+  @media (max-width: 430px){
+    .btn{padding:12px 15px;font-size:15px;letter-spacing:1px}
+    .controls{gap:7px}
+    .ai-info{font-size:12px;padding:6px 11px;left:10px}
+    .ai-info b{font-size:14px}
+    .status{font-size:11px;max-width:118px;padding:5px 10px;letter-spacing:1px}
+    .hud{width:98px;right:6px;padding:7px 6px}
+    .hud-score{font-size:12px}.hud-score b{font-size:14px}
+    .meta{font-size:12px;padding:5px 13px}
+    #aiLowB{left:10px}
+    .lowbadge{font-size:12px;padding:5px 12px}.lowbadge b{font-size:16px}
+    .nnorb{width:74px;left:5px}
+    #nnCanvas{width:74px;height:74px}
+    .nn-cd{width:74px;height:74px;font-size:24px}
+  }
   @keyframes stshake{0%,100%{transform:translate(0,0)}30%{transform:translate(-3px,2px)}60%{transform:translate(3px,-2px)}}
   @keyframes stshakeb{0%,100%{transform:translate(0,0)}12%{transform:translate(-9px,5px)}26%{transform:translate(9px,-5px)}42%{transform:translate(-7px,-4px)}58%{transform:translate(7px,4px)}74%{transform:translate(-4px,3px)}}
 </style>
@@ -277,6 +296,17 @@ scene.fog=new THREE.Fog(0x04060c,10,26);
 const camera=new THREE.PerspectiveCamera(54,stageEl.clientWidth/stageEl.clientHeight,0.1,100);
 camera.position.set(0,2.6,6.6); camera.lookAt(0,1.5,-1.4);
 function sizeToStage(){const w=stageEl.clientWidth,h=stageEl.clientHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();}
+// 微信/部分手机浏览器 100vh 包含被地址栏遮住的区域 → 底部按钮出屏。
+// 用实测可视高度钉死 stage,旋转/地址栏伸缩时跟着变。
+function fixVH(){
+  const h=(window.visualViewport?visualViewport.height:innerHeight);
+  if(h>0){stageEl.style.height=h+'px';}
+  sizeToStage();
+  if(window.__rerender)window.__rerender();
+}
+fixVH();
+addEventListener('resize',fixVH);
+if(window.visualViewport)visualViewport.addEventListener('resize',fixVH);
 sizeToStage();
 
 const pmrem=new THREE.PMREMGenerator(renderer);
@@ -543,6 +573,8 @@ function render(){
   $("passBtn").disabled=!(myTurn&&!busy&&state.last_hand!==null);
   $("hintBtn").disabled=!(myTurn&&!busy);
 }
+
+window.__rerender=()=>{if(state)render();};   // 视口变化时重排手牌
 
 function showPlayed(uids,who,type){
   const p=$("played");p.innerHTML="";
