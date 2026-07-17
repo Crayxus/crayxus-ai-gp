@@ -636,7 +636,10 @@ async function newGame(){
   $("over").classList.remove("show");
   try{
     busy=true;setStatus("发牌中…");
-    state=await api('/1v1/new_game',{first:'random',reveal:false,human_seat:0,source:'arena'});
+    const isOwner=new URLSearchParams(location.search).get('owner')==='1';
+    if(isOwner)try{localStorage.setItem('alphadan_owner','1')}catch(e){}
+    let owner=isOwner;try{owner=owner||localStorage.getItem('alphadan_owner')==='1'}catch(e){}
+    state=await api('/1v1/new_game',{first:'random',reveal:false,human_seat:0,source:owner?'':'arena'});
     sessionId=state.session_id;
     busy=false;rgest('Idle');render();
     say(pick(OPENING),'ai');
