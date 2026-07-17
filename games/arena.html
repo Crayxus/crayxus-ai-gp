@@ -199,7 +199,8 @@
   @media (max-width: 430px){
     .btn{padding:12px 15px;font-size:15px;letter-spacing:1px}
     .controls{gap:7px}
-    .ai-info{font-size:12px;padding:6px 11px;left:10px}
+    .ai-info{font-size:12px;padding:6px 11px;left:10px;max-width:118px;
+      overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .ai-info b{font-size:14px}
     .status{font-size:11px;max-width:118px;padding:5px 10px;letter-spacing:1px}
     .hud{width:98px;right:6px;padding:7px 6px}
@@ -260,7 +261,6 @@
   <div class="intro" id="intro">
     <div class="mark">HUMAN&nbsp;&nbsp;VS&nbsp;&nbsp;MACHINE</div>
     <h1>AlphaDan</h1>
-    <div class="warn">它看得见全部 <b>108</b> 张牌 · 你只看得见自己的 27 张</div>
     <button class="btn primary" id="introBtn">开 战</button>
     <div class="ready" id="introReady">连接 AI 核心…</div>
   </div>
@@ -300,7 +300,12 @@ function sizeToStage(){const w=stageEl.clientWidth,h=stageEl.clientHeight;render
 // 用实测可视高度钉死 stage,旋转/地址栏伸缩时跟着变。
 function fixVH(){
   const h=(window.visualViewport?visualViewport.height:innerHeight);
-  if(h>0){stageEl.style.height=h+'px';}
+  if(h>0){
+    stageEl.style.height=h+'px';
+    // 手机(≤520px宽)满宽用足屏幕;桌面维持9:16竖屏观感
+    const w=(innerWidth<=520)?innerWidth:Math.min(innerWidth,Math.round(h*9/16));
+    stageEl.style.width=w+'px';
+  }
   sizeToStage();
   if(window.__rerender)window.__rerender();
 }
@@ -467,7 +472,7 @@ const TYPEN={single:'单张',pair:'对子',triple:'三条',fullhouse:'三带二'
 const BOOMT=new Set(['bomb','straight_flush','joker_bomb']);
 const EMOTE={single:'Wave',pair:'Wave',straight:'Wave',tube:'ThumbsUp',plate:'ThumbsUp',
   triple:'ThumbsUp',fullhouse:'ThumbsUp',bomb:'Punch',straight_flush:'Punch',joker_bomb:'Jump'};
-const OPENING=['我看得见每一张牌。','108张，尽在掌握。','让我看看你的极限。','这局，从发牌起就开始计算了。'];
+const OPENING=['让我看看你的极限。','开始吧。','这局，从发牌起就开始计算了。'];
 const PASSLN=['要不起','过'];
 const BEAT_AI=['大你。','压死。','就这？','算到了。'];
 const WIN_AI=['意料之中。','这局从发牌就结束了。','差一点——但差一点就是输。','回去练，再来。'];
@@ -545,10 +550,15 @@ function render(){
     items.push({uid,token,x,y,colN});cols[cols.length-1].tokens.push(token);
   });
   const totalW=x+cardW;
-  const availW=Math.max(120,stageEl.clientWidth-12);
+  const cw=stageEl.clientWidth;
+  const availW=Math.max(120,cw-12);
   const scale=Math.min(1,availW/totalW);
   h.style.width=totalW+"px";
   h.style.height=(BTN+cardH+maxY+34)+"px";
+  // 显式数学居中(负margin):手牌超宽时部分浏览器的flex居中会退化成
+  // 左对齐,缩放锚点随之偏移导致右侧被裁——不依赖flex,自己定位。
+  const mx=Math.round((cw-totalW)/2);
+  h.style.marginLeft=mx+"px";h.style.marginRight=mx+"px";
   h.style.transform="scale("+scale+")";h.style.transformOrigin="bottom center";
   const myTurn=(state.turn===state.my_seat)&&!state.game_over;
   for(const it of items){
