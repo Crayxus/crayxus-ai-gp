@@ -198,6 +198,16 @@
   .stage.shk{animation:stshake .2s ease}
   .stage.shkbig{animation:stshakeb .4s ease}
 
+  /* ===== 赛事弹出菜单 ===== */
+  .menu-pop{display:none;flex-direction:column;gap:8px;pointer-events:auto;
+    background:rgba(8,10,16,.92);backdrop-filter:blur(12px);border:1px solid rgba(255,45,64,.35);
+    border-radius:14px;padding:10px;box-shadow:0 10px 34px rgba(0,0,0,.6)}
+  .menu-pop.show{display:flex}
+  .mp-item{display:block;padding:11px 20px;border-radius:10px;font-size:14px;font-weight:800;
+    color:#e8eef8;text-decoration:none;background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.1);letter-spacing:1px;white-space:nowrap}
+  .mp-item:active{background:rgba(255,45,64,.2)}
+
   /* ===== 窄屏手机适配（按钮/顶栏防出屏）===== */
   .controls{flex-wrap:wrap;justify-content:center}
   .bubble,.me-bubble{overflow:hidden;text-overflow:ellipsis}
@@ -256,6 +266,11 @@
         <button class="btn ghost" id="passBtn">不要</button>
         <button class="btn ghost" id="hintBtn">提示</button>
         <button class="btn ghost" id="newBtn">新局</button>
+        <button class="btn ghost" id="eventBtn">赛事</button>
+      </div>
+      <div class="menu-pop" id="eventPop">
+        <a class="mp-item" id="mpIndexrp" target="_blank" rel="noopener">🏆 48人锦标赛 · 赛事模式</a>
+        <a class="mp-item" id="mpLeague" target="_blank" rel="noopener">📊 赛事 Dashboard</a>
       </div>
     </div>
   </div>
@@ -774,6 +789,14 @@ function endGame(){
 $("playBtn").onclick=playerPlay;$("passBtn").onclick=playerPass;
 $("hintBtn").onclick=hint;$("newBtn").onclick=()=>{if(!busy)newGame();};
 $("overBtn").onclick=newGame;
+// 赛事菜单：链接指向 AI 服务器同源(隧道/局域网均可达)
+$("mpIndexrp").href=API+'/indexrp';
+$("mpLeague").href=API+'/league';
+$("eventBtn").onclick=()=>$("eventPop").classList.toggle('show');
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#eventPop')&&e.target.id!=='eventBtn')
+    $("eventPop").classList.remove('show');
+});
 renderStats();
 
 (async function checkHealth(){
