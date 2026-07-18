@@ -268,10 +268,6 @@
         <button class="btn ghost" id="newBtn">新局</button>
         <button class="btn ghost" id="eventBtn">赛事</button>
       </div>
-      <div class="menu-pop" id="eventPop">
-        <a class="mp-item" id="mpIndexrp" target="_blank" rel="noopener">🏆 48人锦标赛 · 赛事模式</a>
-        <a class="mp-item" id="mpLeague" target="_blank" rel="noopener">📊 赛事 Dashboard</a>
-      </div>
     </div>
   </div>
   </div>
@@ -789,14 +785,8 @@ function endGame(){
 $("playBtn").onclick=playerPlay;$("passBtn").onclick=playerPass;
 $("hintBtn").onclick=hint;$("newBtn").onclick=()=>{if(!busy)newGame();};
 $("overBtn").onclick=newGame;
-// 赛事菜单：链接指向 AI 服务器同源(隧道/局域网均可达)
-$("mpIndexrp").href=API+'/indexrp';
-$("mpLeague").href=API+'/league';
-$("eventBtn").onclick=()=>$("eventPop").classList.toggle('show');
-document.addEventListener('click',e=>{
-  if(!e.target.closest('#eventPop')&&e.target.id!=='eventBtn')
-    $("eventPop").classList.remove('show');
-});
+// 赛事：一键直跳 indexrp 大厅(AI服务器同源,局域网/隧道/线上均可达)
+$("eventBtn").onclick=()=>{location.href=API+'/indexrp';};
 renderStats();
 
 (async function checkHealth(){
