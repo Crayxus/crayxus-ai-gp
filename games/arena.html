@@ -417,7 +417,7 @@ addEventListener('resize',sizeToStage);
 /* ================= 真·AlphaDan 对局客户端 ================= */
 const $=id=>document.getElementById(id);
 // API 解析：?api=覆盖(记住) > file://本机 > 静态托管(crayxus/GitHub Pages)走公网隧道 > 同源(Flask直接托管)
-const DEFAULT_API='https://names-exchange-cloudy-republic.trycloudflare.com';
+const DEFAULT_API='https://drum-improvements-spine-faces.trycloudflare.com';
 function resolveApi(){
   const q=new URLSearchParams(location.search).get('api');
   if(q){const a=q.replace(/\/+$/,'');try{localStorage.setItem('alphadan_api',a)}catch(e){}return a;}
