@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI·GP — 每一个选择, 都是大师之作</title>
+<meta name="description" content="AI 赛车大奖赛: 微信小程序 × 自动驾驶赛车 × 大模型。五档段位, 九家AI工程师, 免费参赛。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="AI·GP — 每一个选择, 都是大师之作">
+<meta property="og:description" content="微信小程序 × 自动驾驶赛车 × 大模型 · 免费参赛">
+<meta property="og:url" content="https://crayxus.com.au/aigp.html">
+<meta property="og:image" content="https://crayxus.com.au/aigp-share.png?v=1">
+<style>
+:root{--cy:#00e5ff;--mg:#ff2d95;--vio:#7b2dff;--gold:#ffd83d;--bg:#05060d;--card:#0d0f1c;--line:#1c2138;--mut:#7d86ad}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:#e8ecf8;font-family:"Bahnschrift","PingFang SC","Microsoft YaHei",sans-serif;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+/* 导航 */
+nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:32px;padding:18px 6vw;transition:all .35s}
+nav.solid{background:rgba(5,6,13,.85);backdrop-filter:blur(14px);border-bottom:1px solid rgba(123,45,255,.25);padding:12px 6vw}
+nav .logo{font-size:22px;font-weight:900;font-style:italic;margin-right:auto}
+nav .logo i{font-style:normal;background:linear-gradient(90deg,var(--cy),var(--vio),var(--mg));-webkit-background-clip:text;background-clip:text;color:transparent}
+nav a.lk{font-size:14px;color:var(--mut);letter-spacing:3px;transition:color .2s}
+nav a.lk:hover{color:var(--cy)}
+/* 渐入 */
+.rv{opacity:0;transform:translateY(50px);transition:opacity .9s cubic-bezier(.2,.7,.3,1),transform .9s cubic-bezier(.2,.7,.3,1)}
+.rv.in{opacity:1;transform:none}
+.d1{transition-delay:.15s}.d2{transition-delay:.3s}
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden}
+.hero .big{font-size:clamp(74px,13vw,190px);font-weight:900;font-style:italic;line-height:1;text-shadow:0 0 46px rgba(0,229,255,.45);animation:pulse 3s ease infinite}
+.hero .big i{font-style:normal;background:linear-gradient(90deg,var(--cy),var(--vio) 55%,var(--mg));-webkit-background-clip:text;background-clip:text;color:transparent}
+@keyframes pulse{0%,100%{text-shadow:0 0 46px rgba(0,229,255,.4)}50%{text-shadow:0 0 90px rgba(123,45,255,.75)}}
+.hero .slo{font-size:clamp(16px,2.2vw,26px);letter-spacing:12px;color:#c6cde4;margin-top:26px}
+.hero .sub2{font-size:14px;letter-spacing:4px;color:var(--mut);margin-top:14px}
+.beam{position:absolute;left:-30%;width:160%;height:3px;background:linear-gradient(90deg,transparent,var(--cy) 30%,var(--vio) 55%,var(--mg) 75%,transparent);box-shadow:0 0 24px rgba(0,229,255,.7);animation:sweep 3s linear infinite}
+.beam.b2{height:1px;opacity:.45;animation-duration:4.4s;animation-delay:1s}
+@keyframes sweep{from{transform:translateX(-18%)}to{transform:translateX(18%)}}
+.car{position:absolute;font-size:34px;animation:drive 3s cubic-bezier(.5,0,.6,1) infinite;filter:drop-shadow(0 0 10px rgba(0,229,255,.6))}
+@keyframes drive{from{left:-8%}to{left:106%}}
+.star{position:absolute;width:4px;height:4px;border-radius:50%;background:#9fd8ff;animation:tw 2.8s ease infinite}
+@keyframes tw{0%,100%{opacity:.1}50%{opacity:.9}}
+.scrolldn{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);color:var(--mut);font-size:12px;letter-spacing:6px;animation:tw 2s ease infinite}
+/* 特性节: 一图一话 */
+.feat{min-height:96vh;display:grid;grid-template-columns:1fr 1fr;gap:6vw;align-items:center;padding:90px 8vw}
+.feat.rev .shot{order:2}
+@media(max-width:900px){.feat{grid-template-columns:1fr;min-height:auto;padding:70px 7vw}.feat.rev .shot{order:0}}
+.txt .no{font-size:15px;letter-spacing:6px;color:var(--cy)}
+.txt .no::before{content:"◢ ";color:var(--mg)}
+.txt h2{font-size:clamp(30px,4vw,50px);font-weight:900;font-style:italic;line-height:1.2;margin:14px 0 18px}
+.txt p{font-size:17px;color:var(--mut);line-height:2;max-width:420px}
+.txt p b{color:#e8ecf8}
+.txt .gd{color:var(--gold);font-weight:800}
+.shot{display:flex;justify-content:center}
+/* 手机壳 */
+.ph{width:min(300px,80vw);background:#0a0c18;border:2px solid #262c48;border-radius:34px;padding:13px 13px 18px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.ph .scr{background:#05060d;border-radius:24px;overflow:hidden;height:560px;position:relative;display:flex;flex-direction:column;font-size:14px}
+.pbar{display:flex;justify-content:space-around;padding:10px 0;background:#0a0c18;border-top:1px solid #1c2138;font-size:12px;color:#7d86ad;margin-top:auto}
+.pbar b{color:var(--cy);font-weight:700}
+.pbx{margin:10px 12px 0;background:#10121f;border:1px solid #1c2138;border-left:4px solid var(--cy);border-radius:12px;padding:10px 13px}
+.pk{font-size:10px;letter-spacing:3px;color:#7d86ad;margin-bottom:6px}
+/* 开屏 */
+.spl{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.spl .lg{font-size:44px;font-weight:900;font-style:italic;color:#fff;text-shadow:0 0 20px rgba(0,229,255,.9)}
+.spl .lg i{color:var(--mg);font-style:normal}
+.spl .sl{font-size:12px;color:#7d86ad;letter-spacing:4px;margin-top:12px}
+.spl .bm{position:absolute;top:60%;left:-20%;width:140%;height:3px;background:linear-gradient(90deg,transparent,var(--cy),var(--vio),var(--mg),transparent);box-shadow:0 0 14px rgba(0,229,255,.8);animation:sweep 2.4s linear infinite}
+.spl .tp{position:absolute;bottom:24px;font-size:11px;color:#4d5470;letter-spacing:6px;animation:tw 1.8s ease infinite}
+/* 领奖台 */
+.pod{display:flex;align-items:flex-end;justify-content:center;gap:10px;padding:12px 0 2px}
+.pd{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1}
+.pd .av{width:46px;height:46px;border-radius:50%;background:#141830;display:flex;align-items:center;justify-content:center;font-weight:900;font-style:italic;color:#fff;font-size:18px}
+.pd.g1 .av{width:60px;height:60px;border:3px solid var(--gold);box-shadow:0 0 16px rgba(255,216,61,.5)}
+.pd.g2 .av{border:2px solid #c0c8d8}.pd.g3 .av{border:2px solid #cd8a4f}
+.pd .nm{font-size:11px;font-weight:700}.pd .tt{font-size:12px;font-weight:900;font-style:italic;color:var(--gold)}
+.pd .st{width:100%;border-radius:6px 6px 0 0;text-align:center;font-weight:900;font-style:italic;color:#05060d;font-size:16px}
+.pd.g1 .st{height:52px;line-height:52px;background:linear-gradient(180deg,#ffd83d,#b8950f)}
+.pd.g2 .st{height:36px;line-height:36px;background:linear-gradient(180deg,#c0c8d8,#7d8698)}
+.pd.g3 .st{height:26px;line-height:26px;background:linear-gradient(180deg,#cd8a4f,#8f5a2e)}
+.rrw{display:flex;justify-content:space-between;padding:6px 3px;border-bottom:1px solid #141830;font-size:12px;color:#aab2d0}
+.rrw b{color:var(--gold);font-style:italic}
+.mava{width:42px;height:42px;border-radius:50%;background:#141830;border:2px solid var(--gold);flex:none;display:flex;align-items:center;justify-content:center;font-weight:900;font-style:italic;color:#fff;font-size:17px;box-shadow:0 0 10px rgba(255,216,61,.45)}
+/* 抽卡 */
+.swn{font-size:13px;color:#aab2d0;font-weight:700;margin:8px 0 5px}
+.gr{display:flex;gap:6px}
+.gb{flex:1;text-align:center;font-size:12px;padding:9px 0;background:rgba(10,12,24,.9);border:1px solid #1c2138;border-radius:8px;color:#7d86ad}
+.gb.on1{background:linear-gradient(135deg,#00997a,#00e5a0);color:#fff;font-weight:800;border:0}
+.gb.on2{background:linear-gradient(135deg,#7b2dff,#00e5ff);color:#fff;font-weight:800;border:0}
+.gb.on3{background:linear-gradient(135deg,#ff2d5e,#ff2d95);color:#fff;font-weight:800;border:0}
+.btr{display:flex;gap:8px;margin:12px 12px 0}
+.btn1{flex:1;text-align:center;padding:12px 0;border-radius:10px;font-weight:800;font-style:italic;font-size:14px;background:linear-gradient(135deg,#7b2dff,#ff2d95);color:#fff;box-shadow:0 0 14px rgba(255,45,149,.4)}
+.btn2{flex:1;text-align:center;padding:12px 0;border-radius:10px;font-weight:800;font-style:italic;font-size:14px;background:linear-gradient(135deg,#00e5a0,#00997a);color:#fff}
+/* 九宫格+聊天 */
+.eng{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.eb{text-align:center;padding:8px 0 6px;background:rgba(10,12,24,.9);border:1px solid #1c2138;border-radius:8px}
+.eb.on{border-color:var(--cy);background:rgba(0,229,255,.1);box-shadow:0 0 10px rgba(0,229,255,.3)}
+.eb .n{font-size:11.5px;font-weight:800;color:#eef2ff}.eb .s{font-size:9px;color:#7d86ad}
+.eb.on .s{color:#4dffc8}
+.bub{max-width:84%;margin:6px 0;padding:8px 12px;border-radius:11px;font-size:12px;line-height:1.55}
+.bub.me{margin-left:auto;background:linear-gradient(135deg,#7b2dff,#ff2d95);color:#fff;border-bottom-right-radius:3px}
+.bub.ai{background:rgba(5,6,13,.95);border:1px solid rgba(123,45,255,.4);color:#d8ddf0;border-bottom-left-radius:3px}
+.bub .ap{margin-top:5px;padding-top:5px;border-top:1px dashed rgba(0,229,255,.35);font-size:10.5px;color:#4dffc8}
+/* 大屏壳 */
+.mon{width:min(620px,88vw);background:#0a0c18;border:2px solid #262c48;border-radius:16px;padding:11px;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.mon .msc{background:#05060d;border-radius:10px;overflow:hidden;display:flex;height:340px}
+.mtrk{flex:1;position:relative;background:linear-gradient(160deg,#07091a,#05060d)}
+.mban{position:absolute;top:12px;left:50%;transform:translateX(-50%);font-size:16px;font-weight:900;font-style:italic;color:#dffaff;border:1px solid var(--cy);border-radius:8px;padding:3px 16px;background:rgba(5,6,13,.85);text-shadow:0 0 10px rgba(0,229,255,.7);letter-spacing:2px}
+.mpan{width:170px;border-left:1px solid #1c2138;padding:8px;display:flex;flex-direction:column;gap:7px}
+.mbx{background:#10121f;border:1px solid #1c2138;border-radius:9px;padding:7px 9px;font-size:10.5px;color:#aab2d0}
+.mbx .h{font-size:8.5px;letter-spacing:2px;color:#7d86ad;margin-bottom:4px}
+.mbx .r{display:flex;justify-content:space-between;padding:1.5px 0}
+.mbx .r b{font-style:italic;color:#eef2ff}
+.msta{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:5px}
+.mst{background:rgba(5,6,13,.8);border:1px solid #1c2138;border-radius:6px;padding:5px 2px;text-align:center}
+.mst b{font-size:13px;font-weight:900;font-style:italic;color:#eef2ff;display:block}
+.mst.gold b{color:var(--gold)}
+.mst span{font-size:7.5px;letter-spacing:1px;color:#7d86ad}
+/* 尾部数字带 */
+.strip{padding:90px 8vw;text-align:center}
+.strip h2{font-size:clamp(28px,4vw,46px);font-weight:900;font-style:italic;margin-bottom:40px}
+.nums{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;max-width:900px;margin:0 auto}
+@media(max-width:860px){.nums{grid-template-columns:1fr 1fr}}
+.num b{font-size:clamp(34px,4.5vw,54px);font-weight:900;font-style:italic;color:var(--gold);display:block}
+.num span{font-size:13px;letter-spacing:3px;color:var(--mut)}
+footer{padding:56px 6vw;text-align:center;color:#3a4160;font-size:12px;letter-spacing:4px;border-top:1px solid rgba(28,33,56,.6)}
+/* ── 移动端 ── */
+@media(max-width:640px){
+  nav{gap:16px;padding:14px 5vw}
+  nav a.lk{font-size:12px;letter-spacing:1px}
+  .hero .slo{letter-spacing:6px}
+  .feat{padding:56px 6vw;gap:34px}
+  .txt p{font-size:15px}
+  .mon .msc{height:300px}
+  .mpan{width:140px}
+  .strip{padding:64px 6vw}
+}
+</style>
+</head>
+<body>
+
+<!-- 微信分享封面: 正文内真图绝对地址(离屏加载, 防白图) -->
+<img src="https://crayxus.com.au/aigp-share.png?v=1" width="300" height="300" alt="AI·GP"
+     style="position:absolute;left:-9999px;top:0">
+<nav id="nav">
+  <a class="logo" href="#top">AI<i>·</i>GP</a>
+  <a class="lk" href="#f1">段位</a>
+  <a class="lk" href="#f2">抽卡</a>
+  <a class="lk" href="#f3">AI工程师</a>
+  <a class="lk" href="#f4">大屏</a>
+  <a class="lk" href="#gp">大奖赛</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="beam" style="top:56%"></div>
+  <div class="beam b2" style="top:61%"></div>
+  <div class="car" style="top:53%">🏎️</div>
+  <div class="star" style="top:18%;left:16%"></div><div class="star" style="top:26%;left:78%;animation-delay:.5s"></div>
+  <div class="star" style="top:70%;left:24%;animation-delay:1s"></div><div class="star" style="top:80%;left:70%;animation-delay:.3s"></div>
+  <div class="star" style="top:12%;left:52%;animation-delay:1.4s"></div>
+  <div class="big rv in">AI<i>·</i>GP</div>
+  <div class="slo rv in d1">每一个选择, 都是大师之作</div>
+  <div class="sub2 rv in d2">微信小程序 × 自动驾驶赛车 × 大模型</div>
+  <div class="scrolldn">▼</div>
+</section>
+
+<!-- 1 段位/排行 -->
+<section class="feat" id="f1">
+  <div class="txt rv">
+    <div class="no">01 · RANKS</div>
+    <h2>圈速上榜<br>段位说话</h2>
+    <p>五档段位 <b>青铜 → 白银 → 黄金 → 钻石 → 传奇</b><br>
+    晋级只看圈速, 限速由赛车强制。<br>
+    <span class="gd">赛道上见真章。</span></p>
+  </div>
+  <div class="shot rv d1"><div class="ph"><div class="scr">
+    <div style="display:flex;align-items:center;gap:10px;padding:16px 15px 6px">
+      <div class="mava">翰</div>
+      <div style="flex:1"><div style="font-size:16px;font-weight:900;font-style:italic">童亿翰</div>
+        <div style="font-size:11px;color:#7d86ad">🥈 白银 · 最快 <span style="color:var(--gold)">19.76s</span></div></div>
+      <div style="font-size:26px;font-weight:900;font-style:italic;color:var(--gold)">#1</div>
+    </div>
+    <div class="pbx" style="border-left-color:var(--gold)"><div class="pk">领奖台 PODIUM</div>
+      <div class="pod">
+        <div class="pd g2"><div class="av">马</div><div class="nm">小马</div><div class="tt">25.02</div><div class="st">2</div></div>
+        <div class="pd g1"><div style="font-size:14px">👑</div><div class="av">翰</div><div class="nm">童亿翰</div><div class="tt">24.31</div><div class="st">1</div></div>
+        <div class="pd g3"><div class="av">朵</div><div class="nm">朵朵</div><div class="tt">27.88</div><div class="st">3</div></div>
+      </div>
+    </div>
+    <div class="pbx"><div class="pk">段位排行 LEADERBOARD</div>
+      <div class="rrw"><span>4&nbsp;&nbsp;安安</span><b>28.40s</b></div>
+      <div class="rrw"><span>5&nbsp;&nbsp;贝贝</span><b>29.11s</b></div>
+      <div class="rrw"><span>6&nbsp;&nbsp;乐乐</span><b>30.05s</b></div>
+    </div>
+    <div class="pbar"><b>🏆 排行</b><span>📅 赛事</span><span>🎧 驾驶舱</span><span>🏁 成绩</span></div>
+  </div></div></div>
+</section>
+
+<!-- 2 抽卡 -->
+<section class="feat rev" id="f2">
+  <div class="txt rv">
+    <div class="no">02 · GACHA</div>
+    <h2>30 秒上手<br>81 种组合</h2>
+    <p>4 个开关 × 3 挡 = <b>81 种调校</b>, 只有 1 种最快。<br>
+    扳一扳, 写入赛车, GO 三圈。<br>
+    <span class="gd">孩子上手的是开关, 学会的是控制变量法。</span></p>
+  </div>
+  <div class="shot rv d1"><div class="ph"><div class="scr">
+    <div style="padding:14px 15px 0;font-size:16px;font-weight:900;font-style:italic">AI·GP <span style="color:var(--mg)">PIT</span>
+      <span style="font-size:10px;color:#4dffc8;border:1px solid #00e5a0;border-radius:8px;padding:1px 8px;margin-left:6px;font-style:normal">LIVE</span>
+      <span style="font-size:10px;color:#b9a8ff;border:1px solid #7b2dff;border-radius:8px;padding:1px 8px;margin-left:4px;font-style:normal">🥉 青铜 ▾</span></div>
+    <div class="pbx" style="border-left-color:var(--mg)"><div class="pk">调校抽卡 GACHA — 组合 <span style="color:var(--cy)">#37</span>/81</div>
+      <div class="swn">🚀 极速</div><div class="gr"><div class="gb">🛡 稳</div><div class="gb on2">⚖ 均衡</div><div class="gb">🔥 猛</div></div>
+      <div class="swn">🛑 刹车点</div><div class="gr"><div class="gb">🛡 稳</div><div class="gb">⚖ 均衡</div><div class="gb on3">🔥 猛</div></div>
+      <div class="swn">🌀 过弯胆量</div><div class="gr"><div class="gb on1">🛡 稳</div><div class="gb">⚖ 均衡</div><div class="gb">🔥 猛</div></div>
+      <div class="swn">📏 走线</div><div class="gr"><div class="gb">🛡 稳</div><div class="gb on2">⚖ 均衡</div><div class="gb">🔥 猛</div></div>
+    </div>
+    <div class="btr"><div class="btn1">📥 写入赛车 •</div><div class="btn2">🏁 GO · 3圈</div></div>
+    <div class="pbar"><span>🏆 排行</span><span>📅 赛事</span><b>🎧 驾驶舱</b><span>🏁 成绩</span></div>
+  </div></div></div>
+</section>
+
+<!-- 3 AI工程师 -->
+<section class="feat" id="f3">
+  <div class="txt rv">
+    <div class="no">03 · AI CREW</div>
+    <h2>九家大模型<br>任选车队工程师</h2>
+    <p>DeepSeek 技术流 · Kimi 学院派 · 豆包热血…<br>
+    你说人话, AI 选参数、调数值、直接写入赛车。<br>
+    <span class="gd">换工程师, 就是换流派。</span></p>
+  </div>
+  <div class="shot rv d1"><div class="ph"><div class="scr">
+    <div style="padding:14px 15px 0;font-size:16px;font-weight:900;font-style:italic">AI·GP <span style="color:var(--mg)">PIT</span>
+      <span style="font-size:10px;color:#b9a8ff;border:1px solid #7b2dff;border-radius:8px;padding:1px 8px;margin-left:6px;font-style:normal">💎 钻石 ▾</span></div>
+    <div class="pbx" style="border-left-color:var(--mg)">
+      <div class="pk">🤖 AI 调参 — 选你的车队工程师</div>
+      <div class="eng">
+        <div class="eb"><div class="n">DeepSeek</div><div class="s">技术流</div></div>
+        <div class="eb on"><div class="n">Kimi</div><div class="s">学院派</div></div>
+        <div class="eb"><div class="n">豆包</div><div class="s">热血</div></div>
+        <div class="eb"><div class="n">千问</div><div class="s">均衡</div></div>
+        <div class="eb"><div class="n">GLM</div><div class="s">控变量</div></div>
+        <div class="eb"><div class="n">混元</div><div class="s">保完赛</div></div>
+        <div class="eb"><div class="n">文心</div><div class="s">先复盘</div></div>
+        <div class="eb"><div class="n">星火</div><div class="s">直接干</div></div>
+        <div class="eb"><div class="n">ChatGPT</div><div class="s">老江湖</div></div>
+      </div>
+      <div class="bub me">弯里别那么怂, 圈速卡在22秒了</div>
+      <div class="bub ai">收到。刹车点推迟, 弯中抓地放开, 出弯给油拉满——盯好一号弯。
+        <div class="ap">✓ 已写入: 刹车点→0.75 抓地→0.22 给油→0.22</div></div>
+    </div>
+    <div class="pbar"><span>🏆 排行</span><span>📅 赛事</span><b>🎧 驾驶舱</b><span>🏁 成绩</span></div>
+  </div></div></div>
+</section>
+
+<!-- 4 大屏 -->
+<section class="feat rev" id="f4">
+  <div class="txt rv">
+    <div class="no">04 · ARENA</div>
+    <h2>扫码上车<br>全场看你跑</h2>
+    <p>微信头像亮上大屏, <b>LAP 横幅</b>实时播报,<br>
+    战力卡一眼看出 <span class="gd">"这对手有点料"</span>。<br>
+    撞墙? 裁判自动判罚, 成绩取消。</p>
+  </div>
+  <div class="shot rv d1"><div class="mon"><div class="msc">
+    <div class="mtrk">
+      <div class="mban">LAP 2 / 3</div>
+      <svg viewBox="0 0 330 250" style="position:absolute;inset:0;width:100%;height:100%">
+        <path d="M45,205 L45,75 Q45,45 75,45 L255,45 Q285,45 285,75 L285,175 Q285,205 255,205 L215,205 Q195,205 195,185 L195,150 Q195,130 175,130 L155,130 Q135,130 135,150 L135,185 Q135,205 115,205 Z"
+              fill="none" stroke="#e8b40f" stroke-width="4" opacity=".9" style="filter:drop-shadow(0 0 6px #ffd83d)"/>
+        <path d="M60,190 L60,80 Q62,62 80,60 L250,60" fill="none" stroke="rgba(40,200,255,.55)" stroke-width="2"/>
+        <rect x="246" y="52" width="16" height="10" rx="2" fill="#28c8ff" style="filter:drop-shadow(0 0 5px #3fb950)"/>
+        <g fill="#fff"><rect x="52" y="120" width="5" height="5"/><rect x="62" y="125" width="5" height="5"/>
+          <rect x="52" y="130" width="5" height="5" opacity=".3"/><rect x="62" y="115" width="5" height="5" opacity=".3"/></g>
+      </svg>
+    </div>
+    <div class="mpan">
+      <div class="mbx"><div class="h">当前车手 DRIVER</div>
+        <div style="display:flex;gap:6px;align-items:center"><div class="mava" style="width:38px;height:38px;font-size:15px">翰</div>
+          <div><div style="font-size:12px;font-weight:900;font-style:italic;color:#fff">童亿翰</div>
+            <div style="font-size:8px;color:#b9a8ff;border:1px solid #7b2dff;border-radius:6px;padding:0 5px;display:inline-block">🥈 白银</div></div></div>
+        <div class="msta">
+          <div class="mst gold"><b>19.76s</b><span>最快圈</span></div>
+          <div class="mst"><b>23.10s</b><span>场均</span></div>
+          <div class="mst"><b>12</b><span>场次</span></div>
+          <div class="mst"><b>87</b><span>总圈数</span></div>
+        </div></div>
+      <div class="mbx"><div class="h">遥测 TELEMETRY</div>
+        <div class="r"><span>速度</span><b>1.82 m/s</b></div>
+        <div class="r"><span>前方</span><b style="color:#4dffc8">2.94 m</b></div>
+        <div class="r"><span>电池</span><b style="color:#4dffc8">24.6 V</b></div></div>
+      <div class="mbx" style="border-left:2px solid var(--gold)">
+        <div class="r"><span>本圈</span><b style="color:var(--gold);font-size:14px">12.4s</b></div>
+        <div class="r"><span>最快</span><b style="color:var(--gold)">20.52</b></div></div>
+    </div>
+  </div></div></div>
+</section>
+
+<!-- 大奖赛数字带 -->
+<section class="strip" id="gp">
+  <h2 class="rv">AI·GP 大奖赛</h2>
+  <div class="nums">
+    <div class="num rv"><b>0元</b><span>永久免费参赛</span></div>
+    <div class="num rv d1"><b>F1</b><span>积分制月度分站</span></div>
+    <div class="num rv d2"><b>TOP 8</b><span>年度总决赛席位</span></div>
+    <div class="num rv d2"><b>12月</b><span>年度车手加冕</span></div>
+  </div>
+</section>
+
+<footer>AI·GP — 每一个选择, 都是大师之作 · CRAYXUS 2026</footer>
+
+<script>
+const nav=document.getElementById('nav');
+addEventListener('scroll',()=>nav.classList.toggle('solid',scrollY>40),{passive:true});
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}
+}),{threshold:.15});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
