@@ -33,6 +33,7 @@
   }
 
   *{box-sizing:border-box;}
+  html,body{max-width:100%;overflow-x:hidden;}
   body{
     margin:0;
     background:var(--bg-soft);
@@ -251,15 +252,145 @@
   footer ol{margin:0;padding-left:18px;}
   footer li{color:var(--ink-3);margin-bottom:6px;font-size:12.5px;}
 
-  /* ---------- 响应式 ---------- */
-  @media (max-width:820px){
+  /* ---------- 平板 ---------- */
+  @media (max-width:900px){
     .sheet{padding:40px 26px 56px;}
     h1{font-size:27px;}
     .summary{grid-template-columns:1fr;}
     .summary div{border-right:none;border-bottom:1px solid var(--line);}
     .summary div:last-child{border-bottom:none;}
-    .table-wrap{overflow-x:auto;}
-    table{min-width:520px;}
+    .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  }
+
+  /* ---------- 手机 ----------
+     合伙人多半在微信里点开，表格横向滚动在手机上很难读，
+     所以小屏下把每一行拆成一张卡片：首列作标题，其余单元格
+     用 data-l 把表头补回到每个值的左边。 */
+  @media (max-width:640px){
+    body{font-size:15px;}
+    .sheet{padding:26px 16px 40px;}
+
+    h1{font-size:22px;line-height:1.35;}
+    .brand{font-size:11px;letter-spacing:.18em;margin-bottom:14px;}
+    .subtitle{font-size:14.5px;}
+    .meta{gap:6px 18px;font-size:12.5px;flex-direction:column;}
+    header{padding-bottom:20px;margin-bottom:32px;}
+    .cover{margin:4px -16px 20px;width:calc(100% + 32px);}
+
+    section{margin-bottom:38px;}
+    h2{font-size:18.5px;flex-direction:column;gap:4px;align-items:flex-start;}
+    .lede{font-size:14.5px;}
+
+    .summary .v{font-size:24px;}
+    .summary div{padding:18px 20px;}
+
+    /* 表格 → 卡片 */
+    .table-wrap{overflow-x:visible;}
+    table{min-width:0;margin:14px 0 6px;}
+    /* table 变成 block 之后，caption 若还是 table-caption 会被塞进一个
+       宽度只有一个字的匿名表格里，整段文字竖排。必须一起改成 block。 */
+    caption{display:block;width:100%;padding-bottom:10px;}
+    table.cards thead{
+      position:absolute;
+      width:1px;height:1px;
+      overflow:hidden;
+      clip:rect(0 0 0 0);
+      white-space:nowrap;
+    }
+    table.cards,
+    table.cards tbody,
+    table.cards tr,
+    table.cards td{display:block;width:100%;}
+    table.cards tr{
+      border:1px solid var(--line);
+      margin-bottom:12px;
+      background:var(--bg);
+    }
+    /* 注意：这里不能用 flex 两端对齐。flex item 的 min-width 默认是 auto，
+       长文本不会收缩，会把整个页面撑出横向滚动条。改成块式：标签在上、值在下。 */
+    table.cards td{
+      border-bottom:1px solid var(--line-2);
+      padding:10px 14px;
+      display:block;
+      text-align:left;
+      overflow-wrap:anywhere;
+    }
+    table.cards td:last-child{border-bottom:none;}
+    table.cards td::before{
+      content:attr(data-l);
+      display:block;
+      font-size:12px;
+      font-weight:600;
+      color:var(--ink-3);
+      line-height:1.5;
+      margin-bottom:1px;
+    }
+    /* 数值短，标签和值挤一行，能把整页高度压掉三成；
+       说明类长文本仍走上面的块式换行。 */
+    table.cards td.num{
+      display:flex;
+      justify-content:space-between;
+      align-items:baseline;
+      gap:12px;
+      text-align:right;
+      min-width:0;
+    }
+    table.cards td.num::before{
+      display:inline;
+      margin-bottom:0;
+      flex:0 1 auto;
+      min-width:0;
+      text-align:left;
+    }
+    /* 首列当卡片标题，占满整行 */
+    table.cards td:first-child{
+      display:block;
+      text-align:left;
+      font-weight:700;
+      background:var(--bg-soft);
+      border-bottom:1px solid var(--line);
+    }
+    table.cards td:first-child::before{content:none;}
+    table.cards td.num{white-space:normal;}
+    table.cards tr.total{border:1px solid var(--accent);}
+    table.cards tr.total td{background:var(--accent-soft);}
+    table.cards tr.total td:first-child{background:var(--accent-soft);}
+    table.cards tr.mark{border:1px solid var(--gold);}
+    table.cards tr.mark td:first-child{background:#fdfaf1;}
+
+    /* 两列的条款表：首列做小标题，次列正常段落 */
+    table.stack thead{display:none;}
+    table.stack,
+    table.stack tbody,
+    table.stack tr,
+    table.stack td{display:block;width:100%;}
+    table.stack tr{
+      border:1px solid var(--line);
+      margin-bottom:12px;
+      background:var(--bg);
+    }
+    table.stack td:first-child{
+      background:var(--bg-soft);
+      border-bottom:1px solid var(--line);
+      font-weight:700;
+      padding:9px 14px;
+    }
+    table.stack td:last-child{
+      border-bottom:none;
+      padding:12px 14px;
+      line-height:1.7;
+    }
+
+    .callout{padding:15px 16px;font-size:14px;}
+    .rec{padding:22px 18px;}
+    .rec ol{padding-left:19px;}
+    ul{padding-left:19px;}
+    footer{margin-top:40px;}
+  }
+
+  /* 深色模式下手机端卡片标题的浅底要跟着变 */
+  @media (max-width:640px) and (prefers-color-scheme:dark){
+    table.cards tr.mark td:first-child{background:#221f16;}
   }
 
   /* ---------- 打印 ---------- */
@@ -343,34 +474,34 @@
   </p>
 
   <div class="table-wrap">
-  <table>
+  <table class="cards">
     <caption>现行人工流程成本测算</caption>
     <thead>
       <tr><th>项目</th><th class="num">下限</th><th class="num">上限</th></tr>
     </thead>
     <tbody>
-      <tr><td>单个客户资料催收耗时</td><td class="num">45 分钟</td><td class="num">90 分钟</td></tr>
-      <tr><td>客户总数</td><td class="num">400</td><td class="num">400</td></tr>
-      <tr><td>年度总工时</td><td class="num">300 小时</td><td class="num">600 小时</td></tr>
-      <tr class="total"><td>按对外计费率折算的年度成本</td><td class="num">$30,000</td><td class="num">$65,000</td></tr>
+      <tr><td>单个客户资料催收耗时</td><td class="num" data-l="下限">45 分钟</td><td class="num" data-l="上限">90 分钟</td></tr>
+      <tr><td>客户总数</td><td class="num" data-l="下限">400</td><td class="num" data-l="上限">400</td></tr>
+      <tr><td>年度总工时</td><td class="num" data-l="下限">300 小时</td><td class="num" data-l="上限">600 小时</td></tr>
+      <tr class="total"><td>按对外计费率折算的年度成本</td><td class="num" data-l="下限">$30,000</td><td class="num" data-l="上限">$65,000</td></tr>
     </tbody>
   </table>
   </div>
 
   <div class="table-wrap">
-  <table>
+  <table class="cards">
     <caption>系统年度总持有成本</caption>
     <thead>
       <tr><th>成本项</th><th>说明</th><th class="num">年度金额</th></tr>
     </thead>
     <tbody>
-      <tr><td>AI 模型调用</td><td>约 150k 输入 + 10k 输出 token / 案 × 400 案</td><td class="num">$35</td></tr>
-      <tr><td>文档 OCR</td><td>扫描件识别，约 36,000 页</td><td class="num">$85</td></tr>
-      <tr><td>服务器托管</td><td>应用服务实例</td><td class="num">$400 – 700</td></tr>
-      <tr><td>数据库与附件存储</td><td>含法定七年留存要求</td><td class="num">$250 – 400</td></tr>
-      <tr><td>域名、监控与邮件送达</td><td>&nbsp;</td><td class="num">$150</td></tr>
-      <tr><td>系统维护</td><td>银行版式更新、异常案件处理、依赖升级，约 70–80 工时</td><td class="num">$8,000 – 10,000</td></tr>
-      <tr class="total"><td>合计</td><td>折合每客户 $30 – 38</td><td class="num">$12,000 – 15,000</td></tr>
+      <tr><td>AI 模型调用</td><td data-l="说明">约 150k 输入 + 10k 输出 token / 案 × 400 案</td><td class="num" data-l="年度金额">$35</td></tr>
+      <tr><td>文档 OCR</td><td data-l="说明">扫描件识别，约 36,000 页</td><td class="num" data-l="年度金额">$85</td></tr>
+      <tr><td>服务器托管</td><td data-l="说明">应用服务实例</td><td class="num" data-l="年度金额">$400 – 700</td></tr>
+      <tr><td>数据库与附件存储</td><td data-l="说明">含法定七年留存要求</td><td class="num" data-l="年度金额">$250 – 400</td></tr>
+      <tr><td>域名、监控与邮件送达</td><td data-l="说明">基础运行开销</td><td class="num" data-l="年度金额">$150</td></tr>
+      <tr><td>系统维护</td><td data-l="说明">银行版式更新、异常案件处理、依赖升级，约 70–80 工时</td><td class="num" data-l="年度金额">$8,000 – 10,000</td></tr>
+      <tr class="total"><td>合计</td><td data-l="说明">折合每客户 $30 – 38</td><td class="num" data-l="年度金额">$12,000 – 15,000</td></tr>
     </tbody>
   </table>
   </div>
@@ -392,14 +523,14 @@
   </p>
 
   <div class="table-wrap">
-  <table>
+  <table class="cards">
     <thead>
       <tr><th>事务所规模</th><th class="num">客户数</th><th class="num">建议年费</th><th class="num">折合每客户</th></tr>
     </thead>
     <tbody>
-      <tr><td>小型</td><td class="num">200 以下</td><td class="num">$1,800 – 3,000</td><td class="num">$12 – 15</td></tr>
-      <tr class="mark"><td>中型</td><td class="num">200 – 800</td><td class="num">$5,000 – 8,400</td><td class="num">$10 – 13</td></tr>
-      <tr><td>大型</td><td class="num">800 以上</td><td class="num">$12,000 – 24,000</td><td class="num">$8 – 15</td></tr>
+      <tr><td>小型</td><td class="num" data-l="客户数">200 以下</td><td class="num" data-l="建议年费">$1,800 – 3,000</td><td class="num" data-l="折合每客户">$12 – 15</td></tr>
+      <tr class="mark"><td>中型</td><td class="num" data-l="客户数">200 – 800</td><td class="num" data-l="建议年费">$5,000 – 8,400</td><td class="num" data-l="折合每客户">$10 – 13</td></tr>
+      <tr><td>大型</td><td class="num" data-l="客户数">800 以上</td><td class="num" data-l="建议年费">$12,000 – 24,000</td><td class="num" data-l="折合每客户">$8 – 15</td></tr>
     </tbody>
   </table>
   </div>
@@ -417,14 +548,14 @@
   </p>
 
   <div class="table-wrap">
-  <table>
+  <table class="cards">
     <thead>
       <tr><th>付费事务所数量</th><th class="num">年度经常性收入</th><th class="num">估值区间（3–8×）</th></tr>
     </thead>
     <tbody>
-      <tr><td>20 家（试点期）</td><td class="num">$120,000</td><td class="num">$360,000 – 960,000</td></tr>
-      <tr><td>50 家</td><td class="num">$300,000</td><td class="num">$0.9M – 2.4M</td></tr>
-      <tr><td>200 家</td><td class="num">$1,200,000</td><td class="num">$3.6M – 9.6M</td></tr>
+      <tr><td>20 家（试点期）</td><td class="num" data-l="年度经常性收入">$120,000</td><td class="num" data-l="估值区间（3–8×）">$360,000 – 960,000</td></tr>
+      <tr><td>50 家</td><td class="num" data-l="年度经常性收入">$300,000</td><td class="num" data-l="估值区间（3–8×）">$0.9M – 2.4M</td></tr>
+      <tr><td>200 家</td><td class="num" data-l="年度经常性收入">$1,200,000</td><td class="num" data-l="估值区间（3–8×）">$3.6M – 9.6M</td></tr>
     </tbody>
   </table>
   </div>
@@ -455,7 +586,7 @@
   </p>
 
   <div class="table-wrap">
-  <table>
+  <table class="stack">
     <caption>合作条款</caption>
     <thead>
       <tr><th>条款</th><th>内容</th></tr>
@@ -504,15 +635,15 @@
   </div>
 
   <div class="table-wrap">
-  <table>
+  <table class="cards">
     <caption>分润回报推演（假设对外商业化推进顺利，仅供参考）</caption>
     <thead>
       <tr><th>对外付费事务所</th><th class="num">年度经常性收入</th><th class="num">年度分润（回本期 20%）</th><th class="num">达 2 倍后（8%）</th></tr>
     </thead>
     <tbody>
-      <tr><td>不对外，仅本所自用</td><td class="num">—</td><td class="num">—</td><td class="num">—</td></tr>
-      <tr><td>20 家</td><td class="num">$120,000</td><td class="num">$24,000</td><td class="num">$9,600 / 年</td></tr>
-      <tr><td>50 家</td><td class="num">$300,000</td><td class="num">$60,000</td><td class="num">$24,000 / 年</td></tr>
+      <tr><td>不对外，仅本所自用</td><td class="num" data-l="年度经常性收入">—</td><td class="num" data-l="年度分润（回本期 20%）">—</td><td class="num" data-l="达 2 倍后（8%）">—</td></tr>
+      <tr><td>20 家</td><td class="num" data-l="年度经常性收入">$120,000</td><td class="num" data-l="年度分润（回本期 20%）">$24,000</td><td class="num" data-l="达 2 倍后（8%）">$9,600 / 年</td></tr>
+      <tr><td>50 家</td><td class="num" data-l="年度经常性收入">$300,000</td><td class="num" data-l="年度分润（回本期 20%）">$60,000</td><td class="num" data-l="达 2 倍后（8%）">$24,000 / 年</td></tr>
     </tbody>
   </table>
   </div>
