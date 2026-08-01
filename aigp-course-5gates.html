@@ -33,11 +33,37 @@ tr.pass td.mo{color:var(--grn)}
 .story{margin:6px 0 26px;padding:9px 14px;background:#181228;border:1px solid #3a2f5c;border-radius:8px;font-size:12.5px;color:var(--dim)}
 .story b{color:var(--mag)}
 footer{margin-top:40px;color:var(--dim);font-size:12px;text-align:center;letter-spacing:1px}
+/* 品牌 banner */
+.banner{background:linear-gradient(135deg,#0d0f18 0%,#141a2e 45%,#1a1030 100%);
+        border-bottom:1px solid #2a3050;position:relative;overflow:hidden}
+.banner::before{content:"";position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 120% at 78% 50%,rgba(40,200,255,.13),transparent 60%),
+             radial-gradient(ellipse 50% 100% at 20% 100%,rgba(255,77,166,.10),transparent 60%)}
+.bn-in{max-width:1000px;margin:0 auto;padding:46px 18px 40px;position:relative;text-align:center}
+.bn-brand{font-size:13px;letter-spacing:8px;color:var(--dim)}
+.bn-brand span{letter-spacing:6px;margin-left:6px;color:#cfd6e4}
+.bn-logo{font-size:64px;font-weight:800;letter-spacing:4px;line-height:1.15;
+  background:linear-gradient(92deg,#28c8ff 10%,#8f7bff 50%,#ff4da6 90%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 26px rgba(90,120,255,.35))}
+.bn-sub{font-size:12px;letter-spacing:7px;color:var(--dim);margin-top:6px}
+.bn-flag{height:10px;max-width:420px;margin:22px auto 0;
+  background:repeating-conic-gradient(#e8ecf4 0 25%,#0a0c12 0 50%) 0 0/20px 10px;
+  opacity:.75;border-radius:2px}
+@media(max-width:640px){.bn-logo{font-size:44px}}
 </style>
 </head>
 <body>
+<div class="banner">
+  <div class="bn-in">
+    <div class="bn-brand">ZEDA <span>择大</span></div>
+    <div class="bn-logo">AI·GP</div>
+    <div class="bn-sub">AUTONOMOUS RACING ACADEMY</div>
+    <div class="bn-flag"></div>
+  </div>
+</div>
 <div class="wrap">
-<h1>HOW TO DRIVE SAFE & FASTER<small>AI·GP 学习清单 · 理论 + 上手调参 · 四关晋级</small></h1>
+<h1>HOW TO DRIVE SAFE & FASTER<small>五关学习清单 · 理论 + 上手调参 · 圈速晋级</small></h1>
 
 <div class="credo">
 车是成品，坐下就开。时间有限，所以只教两件事：<b>理论直达核心 + 上手实践调参</b>。<br>
