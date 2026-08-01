@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>How to Drive Safe & Faster · AI·GP 四关学习清单</title>
+<style>
+:root{--bg:#0a0c12;--card:#12151f;--line:#232838;--txt:#e8ecf4;--dim:#9aa3b8;
+      --gold:#ffd83d;--cyan:#28c8ff;--mag:#ff4da6;--grn:#38d996}
+*{margin:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--txt);font-family:"Bahnschrift","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.6}
+.wrap{max-width:1000px;margin:0 auto;padding:44px 18px 80px}
+h1{font-size:31px;letter-spacing:1px}
+h1 small{display:block;font-size:14px;color:var(--dim);font-weight:400;margin-top:8px;letter-spacing:3px}
+.credo{margin:22px 0;padding:15px 20px;border-left:3px solid var(--gold);background:var(--card);border-radius:0 10px 10px 0;font-size:14.5px}
+.credo b{color:var(--gold)}
+.path{display:flex;gap:8px;margin:22px 0;flex-wrap:wrap}
+.path .st{flex:1;min-width:170px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:12.5px;color:var(--dim);position:relative}
+.path .st b{display:block;font-size:15px;color:var(--txt);margin-bottom:2px}
+.path .st i{position:absolute;top:10px;right:12px;font-style:normal;font-size:18px}
+table{width:100%;border-collapse:collapse;margin:10px 0 4px;font-size:13.5px;background:var(--card);border-radius:10px;overflow:hidden}
+th{background:#1a1f2e;color:var(--cyan);font-size:12.5px;letter-spacing:1px;padding:9px 10px;text-align:left}
+td{border-top:1px solid var(--line);padding:10px 11px;vertical-align:top}
+td.gate{white-space:nowrap;font-weight:700;border-right:1px solid var(--line);font-size:14px}
+td.gate small{display:block;font-weight:400;color:var(--dim);font-size:11.5px;margin-top:6px;line-height:1.8}
+td.ph{white-space:nowrap;color:var(--mag);font-size:12.5px;letter-spacing:1px}
+td.mo{white-space:nowrap;font-weight:600}
+td ol{margin-left:16px}
+td ol li{margin:3px 0;color:#c7cdd9}
+tr.pass td{background:#151b14}
+tr.pass td ol li{color:var(--grn)}
+tr.pass td.mo{color:var(--grn)}
+.story{margin:6px 0 26px;padding:9px 14px;background:#181228;border:1px solid #3a2f5c;border-radius:8px;font-size:12.5px;color:var(--dim)}
+.story b{color:var(--mag)}
+footer{margin-top:40px;color:var(--dim);font-size:12px;text-align:center;letter-spacing:1px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>HOW TO DRIVE SAFE & FASTER<small>AI·GP 学习清单 · 理论 + 上手调参 · 四关晋级</small></h1>
+
+<div class="credo">
+车是成品，坐下就开。时间有限，所以只教两件事：<b>理论直达核心 + 上手实践调参</b>。<br>
+四关的门槛就是参数的复杂度：<b>4 参数 → 8 参数 → 提示词 AI → 打造大模型</b>。过不过关，圈速说了算。
+</div>
+
+<div class="path">
+  <div class="st"><i>🥉</i><b>第一关 · 抽卡新秀</b>10–12 岁 · 4 参数<br>2 课时 · 通关 ≤70s</div>
+  <div class="st"><i>🥈</i><b>第二关 · 调校工程师</b>初中 · 8 参数<br>4 课时 · 通关 ≤60s</div>
+  <div class="st"><i>🥇</i><b>第三关 · AI 调校师</b>高中以上 · 提示词 AI<br>4 课时 · 通关 ≤50s</div>
+  <div class="st"><i>👑</i><b>第四关 · 大模型车队</b>前三关全通 · 自有模型<br>8 课时 · 正赛完赛</div>
+  <div class="st"><i>⚔️</i><b>第五关 · 模型之战</b>四关全通 · 多车对决<br>赛季制 · 年度总决赛</div>
+</div>
+
+<!-- ═══ 第一关 ═══ -->
+<table>
+<tr><th width="120">关卡</th><th width="66">环节</th><th width="150">模块</th><th>内容要点</th></tr>
+<tr><td class="gate" rowspan="3">第一关<br>抽卡新秀<small>10–12 岁<br>4 参数 · 2 课时<br>速度档 0.45 m/s</small></td>
+<td class="ph">理论<br>30min</td><td class="mo">赛车怎么开才安全</td>
+<td><ol><li>激光雷达：赛车的眼睛，一秒看十圈；</li><li>三道保命防线：看见→减速→急停（人挡车前现场验证）；</li><li>四个参数是什么：极速 / 前瞻 / 油门 / 刹车点；</li><li>圈速与最速榜：成绩是怎么算出来的。</li></ol></td></tr>
+<tr><td class="ph">实操<br>80min</td><td class="mo">四参数抽卡调校</td>
+<td><ol><li>小程序抽卡组车（4 参数 × 3 档 = 81 种组合）；</li><li>先预测“这套卡会更快还是更稳”，跑圈验证；</li><li>换卡对比赛：亲眼看懂每张卡改变了什么；</li><li>成绩实时上大屏最速榜，人人留下圈速记录。</li></ol></td></tr>
+<tr class="pass"><td class="ph">通关<br>10min</td><td class="mo">铜牌考核</td>
+<td><ol><li>抽卡赛计时三圈取最快；</li><li>圈速 ≤ 70 秒 → 颁发铜牌 + 晋级第二关资格。</li></ol></td></tr>
+</table>
+<div class="story"><b>真实教材</b>：这台车曾因防线缺一层而撞进围栏——理论 30 分钟里讲的每道防线，都来自一次真实事故复盘。</div>
+
+<!-- ═══ 第二关 ═══ -->
+<table>
+<tr><th width="120">关卡</th><th width="66">环节</th><th width="150">模块</th><th>内容要点</th></tr>
+<tr><td class="gate" rowspan="4">第二关<br>调校工程师<small>初中（11–14 岁）<br>8 参数 · 4 课时<br>速度档 0.8 m/s</small></td>
+<td class="ph">理论<br>45min</td><td class="mo">赛车线与弯道物理</td>
+<td><ol><li>外-内-外：最快的线为什么不是最短的线；</li><li>转弯半径决定弯中速度上限（本车 0.8m 实测讲解）；</li><li>刹车预瞄与油门斜率：快慢衔接的科学；</li><li>新增 4 参数登场：弯中极速 / 入弯借位 / 转向灵敏 / 跟线松紧。</li></ol></td></tr>
+<tr><td class="ph">实操 I<br>75min</td><td class="mo">8 参数逐项实验</td>
+<td><ol><li>单变量法：一次只动一个参数，跑圈记录差异；</li><li>手绘理想赛车线，与车的实际轨迹对比；</li><li>解锁 0.6 m/s 速度档（5 圈零事故自动判定）；</li><li>建立个人参数-圈速实验表。</li></ol></td></tr>
+<tr><td class="ph">实操 II<br>90min</td><td class="mo">数据复盘调校</td>
+<td><ol><li>打开黑匣子：逐帧回放位姿 / 偏差 / 速度；</li><li>找出自己最慢的三个路段并定向调参；</li><li>解锁 0.8 m/s 档，冲击 60 秒关口；</li><li>输出个人圈速分析单。</li></ol></td></tr>
+<tr class="pass"><td class="ph">通关<br>30min</td><td class="mo">银牌考核</td>
+<td><ol><li>连续 5 圈零事故 + 计时三圈取最快；</li><li>圈速 ≤ 60 秒 + 当面讲清“我改了什么、为什么快了” → 银牌。</li></ol></td></tr>
+</table>
+<div class="story"><b>真实教材</b>：0.86m 窄巷，算法三次进不去，工程师手开一圈示范后一次通过——“赛车线值多少秒”，这里有标准答案。</div>
+
+<!-- ═══ 第三关 ═══ -->
+<table>
+<tr><th width="120">关卡</th><th width="66">环节</th><th width="150">模块</th><th>内容要点</th></tr>
+<tr><td class="gate" rowspan="4">第三关<br>AI 调校师<small>高中及以上（15 岁+）<br>须通过前两关<br>提示词 AI · 4 课时<br>速度档 1.0 m/s</small></td>
+<td class="ph">理论<br>45min</td><td class="mo">怎么跟 AI 工程师说话</td>
+<td><ol><li>提示词四要素：车况 / 赛道约束 / 目标 / 已知物理；</li><li>好提示与坏提示对比：同一问题两种答案现场演示；</li><li>AI 的边界：它哪里比你强、哪里必须质疑；</li><li>安全铁律不可谈判：AI 给的参数也要过车端校验。</li></ol></td></tr>
+<tr><td class="ph">实操 I<br>75min</td><td class="mo">提示词调参</td>
+<td><ol><li>向 DeepSeek 描述赛道，索取调校单与预估圈速；</li><li>上车验证：AI 预估 vs 实测，误差归因；</li><li>迭代提示词：补充哪句话让 AI 的方案变好了；</li><li>记录三轮“提示词 → 圈速”演进。</li></ol></td></tr>
+<tr><td class="ph">实操 II<br>90min</td><td class="mo">人机对决</td>
+<td><ol><li>我的手调 vs AI 的方案，同车同线对决；</li><li>混合策略：拿 AI 的框架 + 自己的关键改动；</li><li>解锁 1.0 m/s 档，冲击 50 秒关口；</li><li>复盘：这一关你学会的是“驾驭 AI”。</li></ol></td></tr>
+<tr class="pass"><td class="ph">通关<br>30min</td><td class="mo">金牌考核</td>
+<td><ol><li>用 AI 辅助刷新个人纪录，圈速 ≤ 50 秒；</li><li>提交本人最优提示词一份（进入班级提示词库）→ 金牌。</li></ol></td></tr>
+</table>
+<div class="story"><b>真实教材</b>：DeepSeek 仅凭参数描述推断出“短直道不值得上最高极速、迟滞系统配柔油门”，与车队两小时实测完全一致——第一堂课就重演这场人机对话。</div>
+
+<!-- ═══ 第四关 ═══ -->
+<table>
+<tr><th width="120">关卡</th><th width="66">环节</th><th width="150">模块</th><th>内容要点</th></tr>
+<tr><td class="gate" rowspan="4">第四关<br>大模型车队<small>前三关全部通过<br>自有模型 · 8 课时<br>正赛规格</small></td>
+<td class="ph">理论<br>2h</td><td class="mo">大模型如何当工程师</td>
+<td><ol><li>系统提示词：给模型一个“车队工程师人格”；</li><li>上下文设计：喂哪些数据（黑匣子 / 赛道图 / 历史圈速）；</li><li>接口标准：OpenAI 兼容接口一把钥匙通所有模型；</li><li>评估方法：怎么证明你的模型比别人的强。</li></ol></td></tr>
+<tr><td class="ph">实操 I<br>3h</td><td class="mo">打造车队大模型</td>
+<td><ol><li>接入自选模型（DeepSeek / Kimi / 豆包 / 自部署）；</li><li>编写车队系统提示词 + 数据喂养管线；</li><li>让模型输出整套调校并自动下发车端（安全区内）；</li><li>模型间对决：谁的工程师圈速更快。</li></ol></td></tr>
+<tr><td class="ph">实操 II<br>2h</td><td class="mo">正赛演练</td>
+<td><ol><li>排位赛规则：单圈定发车顺位；</li><li>正赛三圈制：撞墙即成绩作废的真规则；</li><li>车队角色分工：车手 / 工程师 / 数据分析师；</li><li>赛前策略会：用自己的模型出作战计划。</li></ol></td></tr>
+<tr class="pass"><td class="ph">结业<br>1h</td><td class="mo">正赛 + 数据发布会</td>
+<td><ol><li>自有模型调校完成正赛三圈 → 结业认证；</li><li>数据发布会：每人用数据讲述自己的赛季；</li><li>成绩与调校档案永久入库，年度积分入账。</li></ol></td></tr>
+</table>
+<div class="story"><b>真实教材</b>：本页所有速度档、圈速关口、安全机制，全部来自这台车 2026 年 8 月 1 日的真实首航数据——课程没有一页是编的。</div>
+
+<!-- ═══ 第五关 ═══ -->
+<table>
+<tr><th width="120">关卡</th><th width="66">环节</th><th width="150">模块</th><th>内容要点</th></tr>
+<tr><td class="gate" rowspan="4">第五关<br>模型之战<small>四关全部通过<br>多车大模型对决<br>赛季制 · 每站半天<br>联赛积分体系</small></td>
+<td class="ph">理论<br>1h</td><td class="mo">多车博弈论</td>
+<td><ol><li>对手即移动障碍：单车防线如何升级为对抗防线；</li><li>防守线与超车窗口：什么时候让、什么时候抢；</li><li>Follow-the-Gap 攻防：缝隙是留给谁的；</li><li>车队策略：圈速快不等于名次好。</li></ol></td></tr>
+<tr><td class="ph">实操 I<br>2h</td><td class="mo">双车攻防演练</td>
+<td><ol><li>同场双车跟走练习：保持车距与并线规则；</li><li>攻防回合赛：一攻一守轮换计分；</li><li>各队大模型实时改调校应对对手风格；</li><li>事故裁定实练：碰撞责任判定规则。</li></ol></td></tr>
+<tr><td class="ph">实操 II<br>2h</td><td class="mo">车队作战室</td>
+<td><ol><li>三角色分工：车手 / AI 工程师 / 数据分析师；</li><li>赛前：用自家模型生成对手分析与作战计划；</li><li>赛中：工程师席实时调参（安全区内）；</li><li>赛后：数据发布会，模型复盘对决得失。</li></ol></td></tr>
+<tr class="pass"><td class="ph">决战</td><td class="mo">模型之战正赛</td>
+<td><ol><li>排位 + 正赛：你的大模型 vs 对手的大模型，同场轮对轮；</li><li>F1 积分制（25-18-15…），分站积分入年度榜；</li><li>年度前八进总决赛——赛道即擂台，模型即选手。</li></ol></td></tr>
+</table>
+<div class="story"><b>为什么这是终点</b>：前四关培养的是一个人——会开、会调、会用 AI、会造工程师；第五关检验的是一支车队。这也是唯一没有圈速上限的一关：对手有多强，你就要多快。</div>
+
+<footer>AI·GP RACING ACADEMY · 4 参数 → 8 参数 → 提示词 → 大模型 → 模型之战 · 每一关都是圈速说了算</footer>
+</div>
+</body>
+</html>
