@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Crayxus AI·GP · 3×3 课程框架 + 实验场地平面图</title>
+<style>
+  :root{
+    --ink:#0e1726; --ink2:#33475f; --mute:#6b7e96; --line:#dde6f0;
+    --blue:#0066ff; --blue-soft:#eaf1ff; --orange:#ff7a00; --orange-soft:#fff2e6;
+    --green:#0a9d6b; --green-soft:#e7f7ef; --purple:#7a4dff; --purple-soft:#efeaff;
+    --pink:#e0356f; --pink-soft:#ffe9f0; --paper:#fff; --bg:#f4f7fb;
+    --font:'Inter',-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    --mono:'JetBrains Mono','SF Mono',Consolas,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.55;-webkit-font-smoothing:antialiased;}
+  .page{max-width:900px;margin:24px auto;background:var(--paper);padding:40px 48px;box-shadow:0 4px 28px rgba(20,40,70,.08);border-radius:4px;}
+  .page+.page{margin-top:0;}
+  .mast{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #0066ff;padding-bottom:12px;}
+  .mast .brand{font-family:var(--mono);font-size:12px;letter-spacing:.28em;font-weight:800;color:#0066ff;}
+  .mast .brand .a{color:#ff7a00;}
+  .mast .tag{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--mute);text-transform:uppercase;}
+  .doc-title{font-size:27px;font-weight:800;margin:18px 0 4px;}
+  .doc-sub{font-size:14px;color:var(--ink2);margin-bottom:6px;}
+  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:#0066ff;font-weight:700;text-transform:uppercase;margin:22px 0 10px;}
+  p{font-size:13.5px;color:var(--ink2);}
+  b{color:var(--ink);font-weight:700;}
+
+  /* 3x3 grid */
+  .fw{display:grid;grid-template-columns:120px 1fr 1fr 1fr;gap:8px;margin-top:8px;}
+  .fw .hd{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--mute);text-transform:uppercase;text-align:center;padding:4px 0;font-weight:700;}
+  .fw .lab{display:flex;flex-direction:column;justify-content:center;align-items:center;border-radius:6px;color:#fff;padding:10px 6px;text-align:center;}
+  .fw .lab .n{font-family:var(--mono);font-size:11px;font-weight:800;opacity:.8;}
+  .fw .lab .t{font-size:15px;font-weight:800;margin-top:3px;line-height:1.2;}
+  .lab-1{background:linear-gradient(135deg,#0066ff,#003a99);}
+  .lab-2{background:linear-gradient(135deg,#ff7a00,#c75a00);}
+  .lab-3{background:linear-gradient(135deg,#0a9d6b,#066b48);}
+  .cell{border:1px solid var(--line);border-radius:6px;padding:11px 12px;background:#fafcff;}
+  .cell .dim{font-family:var(--mono);font-size:10px;letter-spacing:.1em;font-weight:800;color:#0066ff;text-transform:uppercase;}
+  .cell .body{font-size:12.5px;color:var(--ink2);margin:5px 0 7px;line-height:1.45;}
+  .tagrow{display:flex;gap:5px;flex-wrap:wrap;}
+  .t-have{background:#e7f7ef;color:#0a9d6b;}
+  .t-todo{background:#fff3e0;color:#c47700;}
+  .tg{font-family:var(--mono);font-size:9px;letter-spacing:.04em;padding:2px 6px;border-radius:4px;font-weight:700;}
+  /* AI moat highlight */
+  .cell.ai{border:2px solid #ff7a00;background:linear-gradient(180deg,#fff7ee,#fff);box-shadow:0 0 0 3px rgba(255,122,0,.08);}
+  .cell.ai .dim{color:#ff7a00;}
+  .ai-badge{display:inline-block;font-family:var(--mono);font-size:8.5px;font-weight:800;letter-spacing:.06em;background:#ff7a00;color:#fff;padding:1px 6px;border-radius:4px;margin-left:6px;vertical-align:middle;}
+
+  .moat-note{margin-top:14px;background:#0e1726;color:#dce7f5;border-radius:8px;padding:13px 18px;font-size:13px;}
+  .moat-note b{color:#ffb15a;}
+
+  .legend{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:14px;}
+  .lg{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;color:var(--ink2);padding:8px 11px;border-radius:6px;}
+  .lg .sw{width:14px;height:14px;border-radius:4px;flex-shrink:0;margin-top:1px;}
+  .lg b{display:block;}
+
+  svg{width:100%;height:auto;display:block;}
+  .fz{font-family:var(--font);}
+  .fm{font-family:var(--mono);}
+
+  .footer{margin-top:24px;padding-top:12px;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--mute);text-transform:uppercase;}
+  @media print{body{background:#fff;}.page{box-shadow:none;margin:0;max-width:none;padding:12mm 12mm;page-break-after:always;border-radius:0;}.page:last-child{page-break-after:auto;}@page{size:A4 portrait;margin:0;}}
+  @media(max-width:880px){.page{padding:24px 18px;}.fw{grid-template-columns:1fr;}.fw .hd{display:none;}.legend{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- ============ PAGE 1 · 3×3 框架图 ============ -->
+<section class="page">
+  <div class="mast"><div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div><div class="tag">COURSE FRAMEWORK · 板块 × 维度</div></div>
+  <div class="doc-title">课程框架</div>
+  <div class="doc-sub">板块 × 维度 —— 赛车分 <b>基础版 / 高级版</b>,赛事分 <b>基础 / 中级 / 高级</b> 三档,随段位逐级解锁。</div>
+
+  <div class="fw">
+    <div class="hd"></div><div class="hd">维度 1</div><div class="hd">维度 2</div><div class="hd">维度 3 · AI 主场</div>
+
+    <!-- 板块 1 -->
+    <div class="lab lab-1"><div class="n">板块 ①</div><div class="t">AI<br>智能赛道</div></div>
+    <div class="cell"><div class="dim">原理</div><div class="body">电磁吸合自组装 · 差速驱动 · 模块化拼装 ——"会自己走的赛道"</div><div class="tagrow"><span class="tg t-have">有·3D分解</span></div></div>
+    <div class="cell"><div class="dim">装配</div><div class="body">双 N20 + 电磁铁 + 亚克力 + 抱箍 3D 件,焊接量少,入门第一周动手</div><div class="tagrow"><span class="tg t-have">有·BOM清单</span><span class="tg t-todo">待·SOP</span></div></div>
+    <div class="cell ai"><div class="dim">代码 <span class="ai-badge">AI</span></div><div class="body">ESP32 固件 · 电磁时序 · 自组装算法 · Scratch 积木控制</div><div class="tagrow"><span class="tg t-have">有·固件+blocks</span><span class="tg t-todo">待·教学版</span></div></div>
+
+    <!-- 板块 2a · 赛车基础版 -->
+    <div class="lab lab-2"><div class="n">板块 ②基础</div><div class="t">AI 赛车<br>基础版</div><div style="font-size:9px;opacity:.85;margin-top:3px;">小车 · ESP32+IMU</div></div>
+    <div class="cell"><div class="dim">原理</div><div class="body">感知(IMU)→ 决策(ESP32)→ 执行(电机/舵机)闭环 · 航位推算</div><div class="tagrow"><span class="tg t-have">有·3D分解</span></div></div>
+    <div class="cell"><div class="dim">装配</div><div class="body">整车接线 + 3D 车壳 + 电源链路 —— <b>便宜,人人造一台</b></div><div class="tagrow"><span class="tg t-todo">待·车BOM页</span><span class="tg t-todo">待·SOP</span></div></div>
+    <div class="cell ai"><div class="dim">代码 <span class="ai-badge">AI</span></div><div class="body">ESP32 固件 · IMU 读取 · 基础循迹 / 开环(精度够教学,不够竞速)</div><div class="tagrow"><span class="tg t-have">有·main.py</span><span class="tg t-todo">待·教学版</span></div></div>
+
+    <!-- 板块 2b · 赛车高级版 -->
+    <div class="lab" style="background:linear-gradient(135deg,#ff5a1f,#b81e00);color:#fff;display:flex;flex-direction:column;justify-content:center;align-items:center;border-radius:6px;padding:10px 6px;text-align:center;"><div class="n">板块 ②高级</div><div class="t">AI 赛车<br>高级版</div><div style="font-size:9px;opacity:.9;margin-top:3px;">1:12 大车 · 激光雷达</div></div>
+    <div class="cell"><div class="dim">原理</div><div class="body">激光雷达 / SLAM 定位 · 自动驾驶"感知-规划-控制"栈(借 F1TENTH)</div><div class="tagrow"><span class="tg t-todo">待·课件</span></div></div>
+    <div class="cell"><div class="dim">装配</div><div class="body">1:12 RC 底盘 + 无刷/电调/舵机 + 激光雷达 + 算力(笔记本或树莓派)+ F1 车壳</div><div class="tagrow"><span class="tg t-todo">待·BOM</span><span class="tg t-todo">待·SOP</span></div></div>
+    <div class="cell ai"><div class="dim">代码 <span class="ai-badge">AI 核心</span></div><div class="body">SLAM 定位 · 最优线优化 · Pure Pursuit/MPC 跟踪 ·(RL 自我提速 进阶)</div><div class="tagrow"><span class="tg t-todo">待·借开源栈</span></div></div>
+
+    <!-- 板块 3 -->
+    <div class="lab lab-3"><div class="n">板块 ③</div><div class="t">赛事</div></div>
+    <div class="cell"><div class="dim">原理</div><div class="body">竞速 / 计时 · ICM 积分 · 最优线为何更快(apex 过弯)</div><div class="tagrow"><span class="tg t-have">有·教材W13</span><span class="tg t-todo">待·课件</span></div></div>
+    <div class="cell"><div class="dim">规则</div><div class="body">三级 PK(学校/班级/个人榜)· F1+NBA 积分 · 安全 · 中天赛制</div><div class="tagrow"><span class="tg t-todo">待·规则手册</span></div></div>
+    <div class="cell ai"><div class="dim">调试 <span class="ai-badge">AI Tune 王牌</span></div><div class="body">拖最优线 · CMA-ES 优化 · Vibe Coding 说人话 · 圈速迭代</div><div class="tagrow"><span class="tg t-have">有·live_sim/hub</span><span class="tg t-todo">待·接真车</span></div></div>
+  </div>
+
+  <div class="kicker g">赛事三档 · 逐级解锁</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+    <div class="cell"><div class="dim" style="color:#0a9d6b;">基础版 · 单车计时赛</div><div class="body">一辆车刷圈速、上排行榜(Time Trial)。<b>任意一辆车即可,没有多车难题。</b></div></div>
+    <div class="cell"><div class="dim" style="color:#0a9d6b;">中级版 · 人机对战</div><div class="body">你 vs AI 最优线 / 幽灵影子车同屏比拼。物理上仍是单车,高级版车体验最佳。</div></div>
+    <div class="cell" style="border-color:#ff5a1f;background:#fff4ee;"><div class="dim" style="color:#b81e00;">高级版 · 多车同场竞速</div><div class="body">真·轮对轮 + 避障超车。<b>需多台高级版(各车一套激光雷达),属高阶,成熟后再上。</b></div></div>
+  </div>
+
+  <div class="moat-note">
+    <b>⭐ 第三列 = 你的 AI 护城河。</b> 原理/装配/代码 别家也有,容易被看成"机器人拼装课"。真正卖"AI"溢价的是 <b>代码(感知/路径算法)</b> 和 <b>赛事·调试 = AI Tune(最优线 + 说人话调车)</b> 这一列。其中 <b>赛车高级版·代码(激光雷达自动驾驶)</b> 是整套 AI 的天花板。
+  </div>
+
+  <div class="footer"><span>CRAYXUS AI·GP · 课程框架</span><span>第 1 / 2 页</span></div>
+</section>
+
+<!-- ============ PAGE 2 · 实验场地平面图 ============ -->
+<section class="page">
+  <div class="mast"><div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div><div class="tag">LAB FLOORPLAN · 实验场地平面图</div></div>
+  <div class="doc-title">实验场地平面图</div>
+  <div class="doc-sub">课程框架 → 5 个功能区。完整基地版 ≈ 10×7 m,乞丐版塌进一间房。</div>
+
+  <div class="kicker">完整基地版 · 5 区(≈ 10 × 7 m)</div>
+  <svg viewBox="0 0 1000 720" role="img" aria-label="实验场地平面图">
+    <defs>
+      <filter id="glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+    <!-- room -->
+    <rect x="10" y="10" width="980" height="700" rx="6" fill="#f7fafe" stroke="#0e1726" stroke-width="3"/>
+
+    <!-- E top band: 赛事/导播 + 大屏 -->
+    <rect x="16" y="16" width="968" height="96" rx="5" fill="#ffe9f0" stroke="#e0356f" stroke-width="1.5"/>
+    <rect x="360" y="30" width="280" height="68" rx="4" fill="#0e1726"/>
+    <text x="500" y="60" text-anchor="middle" fill="#5aa6ff" class="fm" font-size="13" font-weight="700">TELEMETRY · LEADERBOARD</text>
+    <text x="500" y="80" text-anchor="middle" fill="#8fb4e0" class="fm" font-size="11">01:12.645 · LAP 1/6</text>
+    <text x="40" y="50" fill="#e0356f" class="fz" font-size="16" font-weight="800">E · 赛事 / 导播区</text>
+    <text x="40" y="72" fill="#9a4a66" class="fz" font-size="11">telemetry 大屏 + 品牌形象墙 + 多机位直播 + 排行榜</text>
+    <text x="820" y="50" fill="#e0356f" class="fm" font-size="11">📹×N</text>
+
+    <!-- B left: 装配/PIT -->
+    <rect x="16" y="120" width="210" height="470" rx="5" fill="#eaf1ff" stroke="#0066ff" stroke-width="1.5"/>
+    <text x="121" y="150" text-anchor="middle" fill="#0066ff" class="fz" font-size="15" font-weight="800">B · 装配 / PIT 区</text>
+    <text x="121" y="172" text-anchor="middle" fill="#3a6bb0" class="fz" font-size="11">车 + 道 的"装配"维度</text>
+    <g fill="#3a6bb0" class="fz" font-size="11.5">
+      <rect x="40" y="200" width="162" height="34" rx="4" fill="#fff" stroke="#0066ff" stroke-width="1"/><text x="121" y="222" text-anchor="middle">🔧 焊台 + 工具 ×4 组</text>
+      <rect x="40" y="246" width="162" height="34" rx="4" fill="#fff" stroke="#0066ff" stroke-width="1"/><text x="121" y="268" text-anchor="middle">🖨 Bambu A1 + AMS</text>
+      <rect x="40" y="292" width="162" height="34" rx="4" fill="#fff" stroke="#0066ff" stroke-width="1"/><text x="121" y="314" text-anchor="middle">📋 BOM / SOP 看板</text>
+      <rect x="40" y="338" width="162" height="60" rx="4" fill="#fff" stroke="#0066ff" stroke-width="1"/><text x="121" y="362" text-anchor="middle">装配工作台</text><text x="121" y="380" text-anchor="middle">4 人 / 组</text>
+      <rect x="40" y="410" width="162" height="60" rx="4" fill="#fff" stroke="#0066ff" stroke-width="1"/><text x="121" y="434" text-anchor="middle">磁吸充电桩</text><text x="121" y="452" text-anchor="middle">车 / 砖归位充电</text>
+    </g>
+
+    <!-- D center: 赛道区 -->
+    <rect x="236" y="120" width="528" height="470" rx="5" fill="#e7f7ef" stroke="#0a9d6b" stroke-width="1.5"/>
+    <text x="500" y="148" text-anchor="middle" fill="#0a9d6b" class="fz" font-size="15" font-weight="800">D · 赛道区(Smart Tile + 护栏/标志杆)</text>
+    <!-- track loop (LED edge) -->
+    <rect x="300" y="180" width="400" height="370" rx="90" fill="none" stroke="#0066ff" stroke-width="9" filter="url(#glow)" opacity="0.9"/>
+    <rect x="300" y="180" width="400" height="370" rx="90" fill="none" stroke="#9fd0ff" stroke-width="2" stroke-dasharray="3 7"/>
+    <text x="500" y="372" text-anchor="middle" fill="#0a7d56" class="fz" font-size="12">蓝色 LED 发光赛道</text>
+    <!-- UWB anchors -->
+    <g fill="#ff7a00"><circle cx="300" cy="180" r="8"/><circle cx="700" cy="180" r="8"/><circle cx="500" cy="550" r="8"/></g>
+    <text x="286" y="175" fill="#ff7a00" class="fm" font-size="11">A0</text>
+    <text x="704" y="175" fill="#ff7a00" class="fm" font-size="11">A1</text>
+    <text x="486" y="572" fill="#ff7a00" class="fm" font-size="11">A2</text>
+    <text x="500" y="540" text-anchor="middle" fill="#9a6a00" class="fm" font-size="10">激光雷达定位 · 护栏/标志杆为参照</text>
+    <!-- cars -->
+    <g><rect x="330" y="258" width="26" height="14" rx="3" fill="#0066ff" transform="rotate(-90 343 265)"/><rect x="475" y="186" width="26" height="14" rx="3" fill="#ff7a00"/><rect x="645" y="430" width="26" height="14" rx="3" fill="#0a9d6b" transform="rotate(90 658 437)"/></g>
+
+    <!-- C right: 代码/调试台 AI Tune -->
+    <rect x="774" y="120" width="210" height="470" rx="5" fill="#fff2e6" stroke="#ff7a00" stroke-width="1.5"/>
+    <text x="879" y="150" text-anchor="middle" fill="#ff7a00" class="fz" font-size="15" font-weight="800">C · 代码 / 调试台</text>
+    <text x="879" y="172" text-anchor="middle" fill="#b8650a" class="fz" font-size="11">车/道"代码" + 赛事"调试"</text>
+    <text x="879" y="190" text-anchor="middle" fill="#b8650a" class="fz" font-size="11" font-weight="700">= AI Tune 操作台</text>
+    <g fill="#b8650a" class="fz" font-size="11">
+      <rect x="798" y="210" width="162" height="50" rx="4" fill="#fff" stroke="#ff7a00" stroke-width="1"/><text x="879" y="232" text-anchor="middle">💻 AI·TUNE 控制台 ①</text><text x="879" y="250" text-anchor="middle">拖最优线 / Vibe Coding</text>
+      <rect x="798" y="272" width="162" height="50" rx="4" fill="#fff" stroke="#ff7a00" stroke-width="1"/><text x="879" y="294" text-anchor="middle">💻 AI·TUNE 控制台 ②</text><text x="879" y="312" text-anchor="middle">积木编程 / 代码</text>
+      <rect x="798" y="334" width="162" height="50" rx="4" fill="#fff" stroke="#ff7a00" stroke-width="1"/><text x="879" y="356" text-anchor="middle">💻 控制台 ③ / ④</text><text x="879" y="374" text-anchor="middle">学生分组调车</text>
+      <rect x="798" y="396" width="162" height="74" rx="4" fill="#fff" stroke="#ff7a00" stroke-width="1"/><text x="879" y="426" text-anchor="middle">教师导播 / 调度</text><text x="879" y="446" text-anchor="middle">笔记本 + 切换台</text>
+    </g>
+
+    <!-- A bottom band: 原理/展示 + 入口 -->
+    <rect x="16" y="600" width="968" height="104" rx="5" fill="#efeaff" stroke="#7a4dff" stroke-width="1.5"/>
+    <text x="40" y="632" fill="#7a4dff" class="fz" font-size="16" font-weight="800">A · 原理 / 展示区</text>
+    <text x="40" y="654" fill="#5a3fb0" class="fz" font-size="11">三板块"原理"维度 · 3D 分解 kiosk + 入口 + 家长观战席</text>
+    <g fill="#5a3fb0" class="fz" font-size="11">
+      <rect x="430" y="618" width="150" height="40" rx="4" fill="#fff" stroke="#7a4dff" stroke-width="1"/><text x="505" y="642" text-anchor="middle">🚗 3D 分解 kiosk</text>
+      <rect x="600" y="618" width="150" height="40" rx="4" fill="#fff" stroke="#7a4dff" stroke-width="1"/><text x="675" y="642" text-anchor="middle">🛣 赛道砖 explode</text>
+      <rect x="800" y="618" width="160" height="68" rx="4" fill="#fff" stroke="#7a4dff" stroke-width="1"/><text x="880" y="648" text-anchor="middle">家长 / 观战席</text><text x="880" y="668" text-anchor="middle">招生体验位</text>
+    </g>
+    <text x="120" y="690" text-anchor="middle" fill="#7a4dff" class="fm" font-size="12" font-weight="700">▣ 入口 ENTRY</text>
+
+    <!-- dims -->
+    <text x="500" y="715" text-anchor="middle" fill="#5a6e8e" class="fm" font-size="11">≈ 10 m</text>
+  </svg>
+
+  <div class="legend">
+    <div class="lg" style="background:#efeaff;"><span class="sw" style="background:#7a4dff"></span><span><b>A 原理/展示区</b>三板块"原理" · 3D 分解 + 入口 + 招生体验</span></div>
+    <div class="lg" style="background:#eaf1ff;"><span class="sw" style="background:#0066ff"></span><span><b>B 装配/PIT 区</b>车 + 道的"装配" · 焊台/3D 打印/工具</span></div>
+    <div class="lg" style="background:#fff2e6;"><span class="sw" style="background:#ff7a00"></span><span><b>C 代码/调试台</b>车/道"代码" + 赛事"调试"(AI Tune)</span></div>
+    <div class="lg" style="background:#e7f7ef;"><span class="sw" style="background:#0a9d6b"></span><span><b>D 赛道区</b>赛事实跑 · Smart Tile + 护栏/标志杆 + LED 发光线</span></div>
+    <div class="lg" style="background:#ffe9f0;grid-column:1 / -1;"><span class="sw" style="background:#e0356f"></span><span><b>E 赛事/导播区</b>赛事"规则/运营" · telemetry 大屏 + 形象墙 + 多机位直播</span></div>
+  </div>
+
+  <div class="kicker o">乞丐版 · 塌进一间房(≈ 5 × 4 m)</div>
+  <svg viewBox="0 0 1000 300" role="img" aria-label="乞丐版场地">
+    <rect x="10" y="10" width="980" height="280" rx="6" fill="#f7fafe" stroke="#0e1726" stroke-width="3"/>
+    <!-- A+E wall: 投影/电视 -->
+    <rect x="16" y="16" width="968" height="56" rx="4" fill="#ffe9f0" stroke="#e0356f" stroke-width="1.3"/>
+    <rect x="410" y="24" width="180" height="40" rx="3" fill="#0e1726"/><text x="500" y="49" text-anchor="middle" fill="#5aa6ff" class="fm" font-size="11">投影 / 电视 · telemetry</text>
+    <text x="40" y="46" fill="#e0356f" class="fz" font-size="13" font-weight="800">A + E · 一块屏 + 形象墙</text>
+    <!-- B+C bench -->
+    <rect x="16" y="86" width="300" height="196" rx="4" fill="#fff2e6" stroke="#ff7a00" stroke-width="1.3"/>
+    <text x="166" y="112" text-anchor="middle" fill="#ff7a00" class="fz" font-size="13" font-weight="800">B + C · 一张工作台</text>
+    <text x="166" y="134" text-anchor="middle" fill="#b8650a" class="fz" font-size="11">焊台 + 笔记本(装配 + 代码 + 调试)</text>
+    <rect x="40" y="150" width="252" height="44" rx="4" fill="#fff" stroke="#ff7a00" stroke-width="1"/><text x="166" y="177" text-anchor="middle" fill="#b8650a" class="fz" font-size="11">🔧 装配 + 💻 AI Tune 共用</text>
+    <rect x="40" y="206" width="252" height="56" rx="4" fill="#fff" stroke="#ff7a00" stroke-width="1"/><text x="166" y="230" text-anchor="middle" fill="#b8650a" class="fz" font-size="11">🖨 Bambu 打印(已有)</text><text x="166" y="250" text-anchor="middle" fill="#b8650a" class="fz" font-size="11">工具 / 耗材</text>
+    <!-- D floor patch -->
+    <rect x="330" y="86" width="654" height="196" rx="4" fill="#e7f7ef" stroke="#0a9d6b" stroke-width="1.3"/>
+    <text x="657" y="112" text-anchor="middle" fill="#0a9d6b" class="fz" font-size="13" font-weight="800">D · 地上一片(4 砖 + LED 边线)</text>
+    <rect x="430" y="135" width="440" height="120" rx="50" fill="none" stroke="#0066ff" stroke-width="6" filter="url(#glow)" opacity="0.9"/>
+    <g fill="#ff7a00"><circle cx="430" cy="135" r="6"/><circle cx="870" cy="135" r="6"/><circle cx="650" cy="255" r="6"/></g>
+    <text x="650" y="200" text-anchor="middle" fill="#0a7d56" class="fz" font-size="11">标志杆 + 4 智能砖 + LED 灯带</text>
+  </svg>
+  <p style="margin-top:8px;">▸ 乞丐版:三板块全在,只是"一块屏 + 一张台 + 一片地"。验证跑通后,把这一间房按上面 5 区图展开成完整基地。</p>
+
+  <div class="footer"><span>实验场地平面图 · 完整 + 乞丐</span><span>第 2 / 2 页</span></div>
+</section>
+
+</body>
+</html>

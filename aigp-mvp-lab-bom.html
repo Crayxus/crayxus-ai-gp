@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Crayxus AI·GP · 乞丐版实验室 · 材料清单 + 教材映射</title>
+<style>
+  :root{
+    --ink:#0e1726; --ink2:#33475f; --mute:#6b7e96; --line:#dde6f0;
+    --blue:#0066ff; --blue-soft:#eaf1ff; --orange:#ff7a00; --orange-soft:#fff2e6;
+    --green:#0a9d6b; --green-soft:#e7f7ef; --paper:#fff; --bg:#f4f7fb;
+    --font:'Inter',-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    --mono:'JetBrains Mono','SF Mono',Consolas,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .page{max-width:840px;margin:24px auto;background:var(--paper);padding:44px 52px;box-shadow:0 4px 28px rgba(20,40,70,.08);border-radius:4px;}
+  .page + .page{margin-top:0;}
+
+  .mast{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid var(--blue);padding-bottom:14px;}
+  .mast .brand{font-family:var(--mono);font-size:12px;letter-spacing:.28em;font-weight:800;color:var(--blue);}
+  .mast .brand .a{color:var(--orange);}
+  .mast .tag{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--mute);text-transform:uppercase;}
+
+  .doc-title{font-size:30px;font-weight:800;letter-spacing:-.01em;margin:20px 0 6px;}
+  .doc-sub{font-size:15px;color:var(--ink2);}
+  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--blue);font-weight:700;text-transform:uppercase;margin:26px 0 10px;}
+  .kicker.o{color:var(--orange);} .kicker.g{color:var(--green);}
+
+  h2{font-size:21px;font-weight:800;margin:4px 0 8px;}
+  h3{font-size:15px;font-weight:700;margin:14px 0 4px;}
+  p{font-size:14px;color:var(--ink2);margin-bottom:8px;}
+  b{color:var(--ink);font-weight:700;}
+  .lead{font-size:15px;color:var(--ink);}
+
+  .pill{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.1em;padding:2px 8px;border-radius:10px;font-weight:700;vertical-align:middle;}
+  .p-build{background:var(--blue-soft);color:var(--blue);}
+  .p-train{background:var(--orange-soft);color:var(--orange);}
+  .p-compete{background:var(--green-soft);color:var(--green);}
+  .p-have{background:#e9eef5;color:#5a6e8e;}
+  .p-opt{background:#fff7e6;color:#b8860b;}
+
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:12.5px;}
+  thead th{text-align:left;background:#0e1726;color:#fff;padding:8px 10px;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;}
+  tbody td{padding:7px 10px;border-bottom:1px solid var(--line);color:var(--ink2);vertical-align:top;}
+  tbody tr:nth-child(even) td{background:#f8fbff;}
+  td.r{text-align:right;font-family:var(--mono);white-space:nowrap;}
+  td.c{text-align:center;}
+  .sub td{background:#eef4ff !important;font-weight:700;color:var(--ink);}
+  .chk{display:inline-block;width:13px;height:13px;border:1.5px solid var(--blue);border-radius:3px;}
+  .note{font-size:11px;color:var(--mute);}
+
+  .meta-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0;}
+  .meta-box{background:var(--blue-soft);border-left:3px solid var(--blue);padding:11px 13px;border-radius:0 4px 4px 0;}
+  .meta-box .v{font-size:19px;font-weight:800;color:var(--blue);line-height:1;}
+  .meta-box .l{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--mute);text-transform:uppercase;margin-top:5px;}
+
+  ul{margin:6px 0 10px;list-style:none;}
+  ul li{position:relative;padding:4px 0 4px 20px;font-size:13.5px;color:var(--ink2);}
+  ul li::before{content:'▸';position:absolute;left:2px;top:4px;color:var(--blue);}
+
+  .band{padding:9px 13px;border-radius:4px;font-size:13px;margin:9px 0;}
+  .band-build{background:var(--blue-soft);border-left:3px solid var(--blue);}
+  .band-train{background:var(--orange-soft);border-left:3px solid var(--orange);}
+  .band-compete{background:var(--green-soft);border-left:3px solid var(--green);}
+
+  .callout{background:#0e1726;color:#dce7f5;border-radius:6px;padding:14px 18px;margin:14px 0;font-size:13.5px;}
+  .callout b{color:#5aa6ff;}
+
+  .total-box{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,#0066ff,#003a99);color:#fff;border-radius:8px;padding:18px 24px;margin:14px 0;}
+  .total-box .lab{font-family:var(--mono);font-size:11px;letter-spacing:.18em;opacity:.85;}
+  .total-box .num{font-size:30px;font-weight:900;}
+
+  .footer{margin-top:26px;padding-top:12px;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--mute);text-transform:uppercase;}
+
+  @media print{
+    body{background:#fff;}
+    .page{box-shadow:none;margin:0;max-width:none;padding:14mm 14mm;page-break-after:always;border-radius:0;}
+    .page:last-child{page-break-after:auto;}
+    @page{size:A4 portrait;margin:0;}
+  }
+  @media(max-width:880px){.page{padding:26px 20px;}.meta-row{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+
+<!-- ============ PAGE 1 · 总览 + 前提 ============ -->
+<section class="page">
+  <div class="mast">
+    <div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div>
+    <div class="tag">MVP LAB · 乞丐版实验室 BOM · V0.1</div>
+  </div>
+
+  <div class="doc-title">乞丐版实验室 · 材料清单</div>
+  <div class="doc-sub">三大板块全跑通的最小成本验证版 —— AI 赛车 · AI 赛道 · AI Tune + 配套教材</div>
+
+  <div class="meta-row">
+    <div class="meta-box"><div class="v">3</div><div class="l">板块全覆盖</div></div>
+    <div class="meta-box"><div class="v">2 车 / 4 砖</div><div class="l">最小可演示</div></div>
+    <div class="meta-box"><div class="v">16 周</div><div class="l">配套教材已有</div></div>
+    <div class="meta-box"><div class="v">≈ ¥2.5k–3.5k</div><div class="l">目标总价</div></div>
+  </div>
+
+  <div class="kicker">设计原则 · 乞丐版哲学</div>
+  <ul>
+    <li><b>目标是验证架构,不是好看</b>:三个板块端到端能跑通(造车 → 调 AI → 比一圈),就算成功。</li>
+    <li><b>已有的绝不重复买</b>:UWB、空间、显示、3D 打印机、AI Tune 软件、16 周教材 —— 全部复用。</li>
+    <li><b>能省则省、可升级</b>:贵件用乞丐替代(MPU6050 替 IMU、塑料万向球替 SP-25、2 磁铁替 4 磁铁),验证通过后再换正式件。</li>
+    <li><b>数量压到最小</b>:2 台车能比赛、4 块智能砖能演示自组装,足够证明概念。</li>
+  </ul>
+
+  <div class="kicker g">前提 · 这些已有 / 不计入</div>
+  <table>
+    <thead><tr><th>已有资源</th><th>用途</th><th>状态</th></tr></thead>
+    <tbody>
+      <tr><td>蓝点 TWR-30 UWB × 4(3 基站 + 1 标签)</td><td>赛车定位(AI 赛车 / AI Tune 共用)</td><td><span class="pill p-have">已有</span></td></tr>
+      <tr><td>实验室空间(学校 / 自有房间)</td><td>赛道区 + 控制区</td><td><span class="pill p-have">已有</span></td></tr>
+      <tr><td>投影仪 / 现有电视</td><td>telemetry 大屏(乞丐版先顶着)</td><td><span class="pill p-have">已有</span></td></tr>
+      <tr><td>Bambu Lab A1 + AMS</td><td>车壳 / 赛道件 3D 打印</td><td><span class="pill p-have">已有</span></td></tr>
+      <tr><td>笔记本 + 焊台 / 万用表 / 工具</td><td>装配 + 跑 AI Tune 软件</td><td><span class="pill p-have">已有</span></td></tr>
+      <tr><td>AI Tune 软件(live_sim / blocks / hub)</td><td>第三板块全部功能</td><td><span class="pill p-have">已有·零成本</span></td></tr>
+      <tr><td>16 周教材(aigp-syllabus-sample.html)</td><td>三板块配套课程</td><td><span class="pill p-have">已有·零成本</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <b>一句话:</b> 乞丐版只花钱在"造 2 台车 + 4 块智能砖 + 一条发光赛道",其余全部复用。验证三板块跑通后,再按 ¥10–15 万方案放大。
+  </div>
+
+  <div class="footer"><span>CRAYXUS AI·GP · 乞丐版实验室 BOM</span><span>第 1 / 3 页</span></div>
+</section>
+
+<!-- ============ PAGE 2 · 板块一 + 板块二 BOM ============ -->
+<section class="page">
+  <div class="mast">
+    <div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div>
+    <div class="tag">PILLAR 1 + 2 · 造车造道 BOM</div>
+  </div>
+
+  <div class="kicker">板块一 · AI 赛车 <span class="pill p-build">BUILD</span></div>
+  <p class="lead">自产 ESP32-S3 赛车,认识感知/决策/执行/能源四大系统。<b>乞丐版造 2 台</b>(能对战 / 比圈速)。</p>
+  <table>
+    <thead><tr><th style="width:30px">✓</th><th>零件</th><th>规格 / 乞丐替代</th><th class="c">单台</th><th class="r">单价¥</th><th class="r">2台¥</th></tr></thead>
+    <tbody>
+      <tr><td class="c"><span class="chk"></span></td><td>主控 ESP32-S3</td><td>N16R8 已焊排针</td><td class="c">1</td><td class="r">35</td><td class="r">70</td></tr>
+      <tr><td class="c"><span class="chk"></span></td><td>IMU 姿态</td><td><b>MPU6050</b>(乞丐替 ICM42688P)</td><td class="c">1</td><td class="r">8</td><td class="r">16</td></tr>
+      <tr><td class="c"><span class="chk"></span></td><td>电机驱动</td><td>TB6612 / DRV8833</td><td class="c">1</td><td class="r">8</td><td class="r">16</td></tr>
+      <tr><td class="c"><span class="chk"></span></td><td>驱动电机</td><td>有刷 TT / N20</td><td class="c">1–2</td><td class="r">15</td><td class="r">30</td></tr>
+      <tr><td class="c"><span class="chk"></span></td><td>转向舵机</td><td>SG90</td><td class="c">1</td><td class="r">8</td><td class="r">16</td></tr>
+      <tr><td class="c"><span class="chk"></span></td><td>升压模块</td><td>MT3608 3.7→5V</td><td class="c">1</td><td class="r">5</td><td class="r">10</td></tr>
+      <tr><td class="c"><span class="chk"></span></td><td>电池 + 充电</td><td>1S LiPo 1000mAh + TP4056</td><td class="c">1</td><td class="r">21</td><td class="r">42</td></tr>
+      <tr><td class="c"><span class="chk"></span></td><td>车轮 + 底盘</td><td>4 轮 + 亚克力/3D 底板</td><td class="c">1套</td><td class="r">30</td><td class="r">60</td></tr>
+      <tr><td class="c"><span class="chk"></span></td><td>WS2812 LED</td><td>灯条 / 车灯效</td><td class="c">1</td><td class="r">8</td><td class="r">16</td></tr>
+      <tr><td class="c"><span class="chk"></span></td><td>3D 车壳</td><td>自产(线材成本)</td><td class="c">1</td><td class="r">30</td><td class="r">60</td></tr>
+      <tr><td class="c"><span class="chk"></span></td><td>杜邦线/螺丝/铜柱</td><td>装配辅料</td><td class="c">1套</td><td class="r">20</td><td class="r">40</td></tr>
+      <tr class="sub"><td></td><td colspan="4">板块一 小计(UWB 标签见基础设施)</td><td class="r">≈ ¥376</td></tr>
+    </tbody>
+  </table>
+  <p class="note">▸ 对应教材:第 1 周《认识 AI 赛车》· 第 3–5 周《赛车组装①②③》· 第 6 周《BUILD 里程碑》</p>
+
+  <div class="kicker o">板块二 · AI 赛道 Smart Tile <span class="pill p-build">BUILD</span></div>
+  <p class="lead">自带电机/电磁吸合的智能砖,演示"会自己走的赛道"。<b>乞丐版造 4 块</b>(够演示自组装),其余赛道用被动发光边砖补。</p>
+  <table>
+    <thead><tr><th style="width:30px">✓</th><th>零件</th><th>规格 / 乞丐替代</th><th class="c">单块</th><th class="r">单价¥</th><th class="r">4块¥</th></tr></thead>
+    <tbody>
+      <tr><td class="c"><span class="chk"></span></td><td>主控 ESP32-S3</td><td>N16R8</td><td class="c">1</td><td class="r">35</td><td class="r">140</td></tr>
+      <tr><td class="c"><span class="chk"></span></td><td>N20 减速电机</td><td>3V 25 转(乞丐可不带编码器)</td><td class="c">2</td><td class="r">25</td><td class="r">200</td></tr>
+      <tr><td class="c"><span class="chk"></span></td><td>驱动轮</td><td>34mm 橡胶轮</td><td class="c">2</td><td class="r">5</td><td class="r">40</td></tr>
+      <tr><td class="c"><span class="chk"></span></td><td>万向球</td><td><b>塑料万向球</b>(乞丐替 SP-25)</td><td class="c">2</td><td class="r">2</td><td class="r">16</td></tr>
+      <tr><td class="c"><span class="chk"></span></td><td>电机驱动</td><td>DRV8833</td><td class="c">1</td><td class="r">8</td><td class="r">32</td></tr>
+      <tr><td class="c"><span class="chk"></span></td><td>电磁铁</td><td>LSD-P20/15 5V 3KG <b>(乞丐 2 个/块,非 4)</b></td><td class="c">2</td><td class="r">20</td><td class="r">160</td></tr>
+      <tr><td class="c"><span class="chk"></span></td><td>MOSFET 模组</td><td>2/4 路</td><td class="c">1</td><td class="r">8</td><td class="r">32</td></tr>
+      <tr><td class="c"><span class="chk"></span></td><td>升压模块</td><td>MT3608</td><td class="c">1</td><td class="r">5</td><td class="r">20</td></tr>
+      <tr><td class="c"><span class="chk"></span></td><td>电池 + 充电</td><td>1S LiPo 500mAh + TP4056</td><td class="c">1</td><td class="r">15</td><td class="r">60</td></tr>
+      <tr><td class="c"><span class="chk"></span></td><td>WS2812 灯环</td><td>边缘发光</td><td class="c">1</td><td class="r">6</td><td class="r">24</td></tr>
+      <tr><td class="c"><span class="chk"></span></td><td>亚克力顶/底板</td><td>200×200×3mm(乞丐用 3mm 更省)</td><td class="c">2</td><td class="r">20</td><td class="r">160</td></tr>
+      <tr><td class="c"><span class="chk"></span></td><td>M3 铜柱/螺丝/辅料</td><td>砖间隔 + 装配</td><td class="c">1套</td><td class="r">15</td><td class="r">60</td></tr>
+      <tr class="sub"><td></td><td colspan="4">板块二 小计</td><td class="r">≈ ¥944</td></tr>
+    </tbody>
+  </table>
+  <p class="note">▸ 对应教材:第 2 周《拼一块 Smart Tile》(焊接量少,入门第一周动手)· 第 6 周《BUILD 里程碑·拼出赛道》</p>
+
+  <div class="footer"><span>板块一 AI 赛车 + 板块二 AI 赛道</span><span>第 2 / 3 页</span></div>
+</section>
+
+<!-- ============ PAGE 3 · 板块三 + 基础 + 汇总 + 升级 ============ -->
+<section class="page">
+  <div class="mast">
+    <div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div>
+    <div class="tag">PILLAR 3 + 基础 + 汇总</div>
+  </div>
+
+  <div class="kicker o">板块三 · AI Tune <span class="pill p-train">TRAIN</span></div>
+  <p class="lead">两种调教 AI 的方式——UI 拖动(Mode 01)+ Vibe Coding 说人话(Mode 02)。<b>几乎零硬件成本</b>:软件是你们自有 IP,跑在现有笔记本上。</p>
+  <table>
+    <thead><tr><th style="width:30px">✓</th><th>项目</th><th>说明</th><th class="r">¥</th></tr></thead>
+    <tbody>
+      <tr><td class="c"><span class="chk"></span></td><td>AI Tune 软件</td><td>live_sim / blocks / hub —— 已有 IP</td><td class="r">0</td></tr>
+      <tr><td class="c"><span class="chk"></span></td><td>运行设备</td><td>现有笔记本 / iPad</td><td class="r">0</td></tr>
+      <tr><td class="c"><span class="chk"></span></td><td>AI·TUNE 控制台触屏</td><td><span class="pill p-opt">可选</span> 嵌一块触屏出"操作台感",乞丐版可省</td><td class="r">0–800</td></tr>
+      <tr class="sub"><td></td><td colspan="2">板块三 小计</td><td class="r">¥0(+800 可选)</td></tr>
+    </tbody>
+  </table>
+  <p class="note">▸ 对应教材:第 7 周《定位原理》· 第 8 周《拖最快的线》· 第 9–10 周《积木编程 / 最优线》· 第 11–12 周《Vibe Coding / TRAIN 里程碑》</p>
+
+  <div class="kicker">基础设施 · 三板块共用 <span class="pill p-compete">COMPETE 也用</span></div>
+  <table>
+    <thead><tr><th style="width:30px">✓</th><th>项目</th><th>说明</th><th class="r">¥</th></tr></thead>
+    <tbody>
+      <tr><td class="c"><span class="chk"></span></td><td>UWB 定位</td><td>已有 3 基站;2 台车需 2 标签 → <b>补 1 个标签</b></td><td class="r">150</td></tr>
+      <tr><td class="c"><span class="chk"></span></td><td>被动发光赛道</td><td>LED 灯带边线 + PVC/泡沫板赛道(出"发光赛道"感的灵魂,几百块)</td><td class="r">300</td></tr>
+      <tr><td class="c"><span class="chk"></span></td><td>telemetry 大屏</td><td>用现有投影/电视,跑自有 telemetry UI</td><td class="r">0</td></tr>
+      <tr><td class="c"><span class="chk"></span></td><td>工具耗材补充</td><td>3D 线材 + 焊锡 + 杜邦线 + 螺丝 + 锂电保护</td><td class="r">400</td></tr>
+      <tr><td class="c"><span class="chk"></span></td><td>教材打印</td><td>16 周大纲 + 样课打印递交</td><td class="r">100</td></tr>
+      <tr class="sub"><td></td><td colspan="2">基础设施 小计</td><td class="r">≈ ¥950</td></tr>
+    </tbody>
+  </table>
+
+  <div class="kicker">造价汇总</div>
+  <table>
+    <thead><tr><th>板块</th><th>内容</th><th class="r">估算 ¥</th></tr></thead>
+    <tbody>
+      <tr><td>① AI 赛车</td><td>2 台(不含 UWB 标签)</td><td class="r">376</td></tr>
+      <tr><td>② AI 赛道</td><td>4 块 Smart Tile</td><td class="r">944</td></tr>
+      <tr><td>③ AI Tune</td><td>软件已有(触屏可选 +800)</td><td class="r">0</td></tr>
+      <tr><td>基础设施</td><td>UWB 标签 + 发光赛道 + 工具 + 教材</td><td class="r">950</td></tr>
+      <tr class="sub"><td colspan="2">合计(核心版)</td><td class="r">≈ ¥2,270</td></tr>
+      <tr class="sub"><td colspan="2">合计(含 AI·TUNE 触屏)</td><td class="r">≈ ¥3,070</td></tr>
+    </tbody>
+  </table>
+
+  <div class="total-box">
+    <div><div class="lab">乞丐版实验室 · 目标总价</div><div style="font-size:12px;opacity:.85;margin-top:4px;">三板块全跑通 · 已有资源全复用</div></div>
+    <div class="num">¥2,300 – 3,500</div>
+  </div>
+
+  <div class="kicker g">验证通过后 · 升级路径</div>
+  <div class="band band-build"><b>乞丐版(¥2.5k–3.5k)</b> → 验证三板块端到端跑通、教材能上、demo 能打动人</div>
+  <div class="band band-train"><b>标准/旗舰基地(¥10–15 万 DIY)</b> → 加车加砖、正式件、发光赛道地台、品牌墙、多机位直播、98" 大屏</div>
+  <div class="band band-compete"><b>完整赛事基地(效果图级)</b> → LED 视频墙 + 6 机位 F1 转播 + 联盟赛事(有收入后再投)</div>
+
+  <div class="callout">
+    <b>为什么先做乞丐版:</b> 用 ¥3,000 验证一套 ¥10–15 万的架构。三板块跑通 + 教材能上课 + demo 能打动学校,再放大 —— 把最大的不确定性用最小的钱排掉。
+  </div>
+
+  <div class="footer"><span>校准单价请联系 · 你采购过更准</span><span>第 3 / 3 页</span></div>
+</section>
+
+</body>
+</html>

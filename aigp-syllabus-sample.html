@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Crayxus AI·GP · 入门阶段教学大纲 + 样课 · 学校用</title>
+<style>
+  :root{
+    --ink:#0e1726; --ink2:#33475f; --mute:#6b7e96; --line:#dde6f0;
+    --blue:#0066ff; --blue-soft:#eaf1ff; --orange:#ff7a00; --orange-soft:#fff2e6;
+    --green:#0a9d6b; --green-soft:#e7f7ef; --paper:#ffffff; --bg:#f4f7fb;
+    --font:'Inter',-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    --mono:'JetBrains Mono','SF Mono',Consolas,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font);font-weight:400;line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .page{
+    max-width:820px;margin:24px auto;background:var(--paper);
+    padding:48px 56px;box-shadow:0 4px 28px rgba(20,40,70,.08);
+    border-radius:4px;
+  }
+  .page + .page{margin-top:0;}
+
+  /* masthead */
+  .mast{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid var(--blue);padding-bottom:14px;margin-bottom:8px;}
+  .mast .brand{font-family:var(--mono);font-size:12px;letter-spacing:.28em;font-weight:800;color:var(--blue);}
+  .mast .brand .a{color:var(--orange);}
+  .mast .tag{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--mute);text-transform:uppercase;}
+
+  .doc-title{font-size:30px;font-weight:800;letter-spacing:-.01em;margin:22px 0 6px;}
+  .doc-sub{font-size:15px;color:var(--ink2);margin-bottom:4px;}
+  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--blue);font-weight:700;text-transform:uppercase;margin-top:26px;margin-bottom:10px;}
+  .kicker.o{color:var(--orange);}
+
+  h2{font-size:22px;font-weight:800;margin:6px 0 10px;letter-spacing:-.01em;}
+  h3{font-size:16px;font-weight:700;color:var(--ink);margin:18px 0 6px;}
+  p{font-size:14.5px;color:var(--ink2);margin-bottom:8px;}
+  .lead{font-size:15.5px;color:var(--ink);}
+  b{color:var(--ink);font-weight:700;}
+  .accent{color:var(--blue);font-weight:700;}
+  .accent-o{color:var(--orange);font-weight:700;}
+
+  .meta-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0 4px;}
+  .meta-box{background:var(--blue-soft);border-left:3px solid var(--blue);padding:12px 14px;border-radius:0 4px 4px 0;}
+  .meta-box .v{font-size:20px;font-weight:800;color:var(--blue);line-height:1;}
+  .meta-box .l{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;color:var(--mute);text-transform:uppercase;margin-top:6px;}
+
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px;}
+  thead th{text-align:left;background:#0e1726;color:#fff;padding:9px 11px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;}
+  tbody td{padding:9px 11px;border-bottom:1px solid var(--line);color:var(--ink2);vertical-align:top;}
+  tbody tr:nth-child(even) td{background:#f8fbff;}
+  .wk{font-family:var(--mono);font-weight:700;color:var(--blue);white-space:nowrap;}
+  .modtag{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.1em;padding:2px 7px;border-radius:3px;font-weight:700;}
+  .m-build{background:var(--blue-soft);color:var(--blue);}
+  .m-train{background:var(--orange-soft);color:var(--orange);}
+  .m-compete{background:var(--green-soft);color:var(--green);}
+
+  .band{padding:8px 12px;border-radius:4px;font-size:12.5px;margin:10px 0;}
+  .band-build{background:var(--blue-soft);border-left:3px solid var(--blue);}
+  .band-train{background:var(--orange-soft);border-left:3px solid var(--orange);}
+  .band-compete{background:var(--green-soft);border-left:3px solid var(--green);}
+
+  ul{margin:6px 0 10px 0;padding-left:0;list-style:none;}
+  ul li{position:relative;padding:5px 0 5px 22px;font-size:14px;color:var(--ink2);}
+  ul li::before{content:'▸';position:absolute;left:2px;top:5px;color:var(--blue);}
+  ol{margin:6px 0 10px 22px;font-size:14px;color:var(--ink2);}
+  ol li{padding:3px 0;}
+
+  /* lesson timeline */
+  .flow{border-left:2px solid var(--line);margin:12px 0 16px;padding-left:0;}
+  .flow .step{position:relative;padding:8px 0 8px 76px;}
+  .flow .step::before{content:'';position:absolute;left:-6px;top:14px;width:10px;height:10px;border-radius:50%;background:var(--blue);}
+  .flow .step .t{position:absolute;left:8px;top:8px;font-family:var(--mono);font-size:11px;font-weight:700;color:var(--blue);}
+  .flow .step h4{font-size:14px;font-weight:700;margin-bottom:2px;}
+  .flow .step p{font-size:13px;margin-bottom:0;}
+
+  .rubric td:first-child{font-weight:700;color:var(--ink);width:120px;}
+  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  .worksheet{border:1px dashed var(--blue);border-radius:6px;padding:16px 18px;background:#fafcff;margin:10px 0;}
+  .worksheet .wt{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--blue);text-transform:uppercase;font-weight:700;margin-bottom:8px;}
+  .en{color:var(--mute);font-style:italic;}
+
+  .callout{background:#0e1726;color:#dce7f5;border-radius:6px;padding:16px 20px;margin:16px 0;font-size:14px;}
+  .callout b{color:#5aa6ff;}
+
+  .footer{margin-top:30px;padding-top:14px;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--mute);text-transform:uppercase;}
+
+  @media print{
+    body{background:#fff;}
+    .page{box-shadow:none;margin:0;max-width:none;padding:18mm 16mm;page-break-after:always;border-radius:0;}
+    .page:last-child{page-break-after:auto;}
+    @page{size:A4 portrait;margin:0;}
+  }
+  @media(max-width:860px){.page{padding:28px 22px;}.meta-row{grid-template-columns:repeat(2,1fr);}.twocol{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- ===================== PAGE 1 · 大纲总览 ===================== -->
+<section class="page">
+  <div class="mast">
+    <div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div>
+    <div class="tag">FOUNDATION SYLLABUS · 入门阶段教学大纲 · V1.0</div>
+  </div>
+
+  <div class="doc-title">入门阶段 · 一学期 16 周教学大纲</div>
+  <div class="doc-sub">Build · Train · Compete —— 拼出车与赛道 → AI Tune 调最优线 → 上场比圈速</div>
+  <p class="en">FOUNDATION STAGE / 16 WEEKS / 90 MIN PER SESSION</p>
+
+  <div class="meta-row">
+    <div class="meta-box"><div class="v">16</div><div class="l">周 · 1学期</div></div>
+    <div class="meta-box"><div class="v">90′</div><div class="l">每节课时</div></div>
+    <div class="meta-box"><div class="v">20</div><div class="l">人 · 1班(4人/组)</div></div>
+    <div class="meta-box"><div class="v">3</div><div class="l">阶段产出</div></div>
+  </div>
+
+  <div class="kicker">教学法 · 为什么这样设计</div>
+  <p>本大纲采用 <b>PBL 项目式学习</b>:不先讲理论再做题,而是让学生<b>第一周就上手真实硬件</b>,在"造车 → 调AI → 比赛"的真实任务中,自然学到感知、算法、决策。每节课都有<b>可带走的产出</b>(作品 / 数据 / 文档),学期末汇成个人作品集,可直接写入 <span class="accent-o">IB MYP Design / EPQ / 大学申请</span>。</p>
+
+  <div class="band band-build"><b>Module A · BUILD 造车造道</b>(第 1–6 周)—— 亲手拼一台能跑的 AI 赛车 + 一段智能赛道,认识每个传感器、每根线。</div>
+  <div class="band band-train"><b>Module B · TRAIN = AI Tune</b>(第 7–12 周)—— 用 UI 拖动和"说人话(Vibe Coding)"两种方式,训练 AI 跑出最优线。</div>
+  <div class="band band-compete"><b>Module C · COMPETE 赛事</b>(第 13–16 周)—— 计时赛 + 班级杯,在真实竞争中迭代,产出成绩与作品集。</div>
+
+  <div class="kicker">16 周课表</div>
+  <table>
+    <thead><tr><th>周</th><th>模块</th><th>主题</th><th>核心活动</th><th>学员产出</th></tr></thead>
+    <tbody>
+      <tr><td class="wk">W1</td><td><span class="modtag m-build">BUILD</span></td><td>认识你的 AI 赛车</td><td>3D 分解图找"眼睛/大脑/手脚/心脏";给 ESP32 烧第一个 LED</td><td>传感器认知工作纸</td></tr>
+      <tr><td class="wk">W2</td><td><span class="modtag m-build">BUILD</span></td><td>拼一块 Smart Tile</td><td>焊接入门 + 电磁吸合原理,组装 1 块智能赛道砖(比车简单,先练手)</td><td>1 块能亮灯/吸合的砖</td></tr>
+      <tr><td class="wk">W3</td><td><span class="modtag m-build">BUILD</span></td><td>AI 赛车组装①·身体与心脏</td><td>车壳 / 四轮 / 电池 / 升压模块 —— 搭出能供电的车身</td><td>通电不冒烟的车身</td></tr>
+      <tr><td class="wk">W4</td><td><span class="modtag m-build">BUILD</span></td><td>AI 赛车组装②·大脑与神经</td><td>ESP32-S3 + IMU + UWB 接线,点亮状态灯,连上 WiFi</td><td>能联网的整车</td></tr>
+      <tr><td class="wk">W5</td><td><span class="modtag m-build">BUILD</span></td><td>第一次让车动起来</td><td>电机/舵机标定,开环跑一条直线,理解"指令→动作"</td><td>跑通 2 米直线</td></tr>
+      <tr><td class="wk">W6</td><td><span class="modtag m-build">BUILD</span></td><td>★ BUILD 里程碑</td><td>多块 Smart Tile 拼成赛道,车跑通一段;小组互检+排错</td><td>赛道 + 跑通视频</td></tr>
+      <tr><td class="wk">W7</td><td><span class="modtag m-train">TRAIN</span></td><td>车怎么知道自己在哪</td><td>UWB 三角定位原理(三圆相交),现场标定基站坐标</td><td>定位标定记录</td></tr>
+      <tr><td class="wk">W8</td><td><span class="modtag m-train">TRAIN</span></td><td>AI Tune·拖一条最快的线</td><td>live_sim 拖 8 个 Waypoint,实时看撞墙/圈速(详见样课)</td><td>个人最快一圈截图</td></tr>
+      <tr><td class="wk">W9</td><td><span class="modtag m-train">TRAIN</span></td><td>积木编程·把路线拆成指令</td><td>blocks 积木(前进/左转/右转)拼路线,仿真预览跑通/撞墙</td><td>一段积木程序</td></tr>
+      <tr><td class="wk">W10</td><td><span class="modtag m-train">TRAIN</span></td><td>什么是"最优线"</td><td>人手画的线 vs AI(CMA-ES)优化线对比,用数据说话(+5% 圈速)</td><td>对比分析一页</td></tr>
+      <tr><td class="wk">W11</td><td><span class="modtag m-train">TRAIN</span></td><td>Vibe Coding·说人话给 AI 听</td><td>"让 WP3 往右 0.5 米""跑一圈"——自然语言直接发车</td><td>一段语音/文字指令</td></tr>
+      <tr><td class="wk">W12</td><td><span class="modtag m-train">TRAIN</span></td><td>★ TRAIN 里程碑</td><td>你的车自己跑完一整圈,记录圈速,写一句"我学到过弯要…"</td><td>整圈成绩 + 反思</td></tr>
+      <tr><td class="wk">W13</td><td><span class="modtag m-compete">COMPETE</span></td><td>什么是公平比赛</td><td>计时赛规则 + 起终线检测 + 排行榜(中天赛事规则体系)</td><td>规则理解卡</td></tr>
+      <tr><td class="wk">W14</td><td><span class="modtag m-compete">COMPETE</span></td><td>调校冲刺</td><td>综合本学期所学,把自己圈速再降 10%</td><td>改进前后对比数据</td></tr>
+      <tr><td class="wk">W15</td><td><span class="modtag m-compete">COMPETE</span></td><td>班级杯·资格赛</td><td>分组对决,积分制(F1+NBA),选拔决赛席位</td><td>资格赛成绩</td></tr>
+      <tr><td class="wk">W16</td><td><span class="modtag m-compete">COMPETE</span></td><td>★ 班级杯决赛 + 结业展示</td><td>决赛 + 家长开放日,提交个人作品集</td><td>奖项 + 作品集 + 技术文档</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <b>给教务的一句话:</b> 学期末每个学生交付 <b>① 一台自己组装的 AI 赛车</b> + <b>② 一份训练数据记录</b> + <b>③ 一份技术文档/作品集</b> + <b>④ 一场班级杯成绩</b>。这四样可直接对接科创竞赛、综合素质评价、IB MYP Design 与海外大学申请。
+  </div>
+
+  <div class="footer"><span>CRAYXUS AI·GP · 入门阶段大纲</span><span>第 1 / 4 页 · 学校沟通用</span></div>
+</section>
+
+<!-- ===================== PAGE 2 · 样课 W1 ===================== -->
+<section class="page">
+  <div class="mast">
+    <div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div>
+    <div class="tag">SAMPLE LESSON 01 · 样课</div>
+  </div>
+
+  <div class="kicker">样课 01 · 第 1 周</div>
+  <h2>认识你的 AI 赛车 —— AI 怎么"看、想、动"</h2>
+  <p class="en">HOW DOES AN AI CAR PERCEIVE · DECIDE · ACT</p>
+
+  <div class="meta-row">
+    <div class="meta-box"><div class="v">90′</div><div class="l">课时</div></div>
+    <div class="meta-box"><div class="v">W1</div><div class="l">第1周·入门</div></div>
+    <div class="meta-box"><div class="v">4</div><div class="l">人/组</div></div>
+    <div class="meta-box"><div class="v">★☆☆</div><div class="l">难度</div></div>
+  </div>
+
+  <h3>教学目标</h3>
+  <ul>
+    <li><b>知识:</b> 说出 AI 赛车四大系统——感知(UWB/IMU)、决策(ESP32)、执行(电机/舵机)、能源(电池/升压)——各自的作用。</li>
+    <li><b>技能:</b> 完成第一次"代码 → 硬件"操作:给 ESP32 烧录程序,让车上的 LED 按指令亮灭。</li>
+    <li><b>素养:</b> 用"感知—决策—执行"闭环,解释一个生活中的智能设备(如扫地机器人)。</li>
+  </ul>
+
+  <h3>课标对应 <span class="en">/ alignment</span></h3>
+  <p>信息科技课标(2022)·数据与感知 · AI4(美)·Perception · IB MYP Design·Inquiring &amp; Analysing。</p>
+
+  <h3>课堂流程(90 分钟)</h3>
+  <div class="flow">
+    <div class="step"><span class="t">0–10′</span><h4>导入 · 它怎么知道往哪开?</h4><p>播放一段赛车自己跑圈的视频,抛问题:"没人遥控,它怎么知道方向、什么时候转弯?"激发猜想,不给答案。</p></div>
+    <div class="step"><span class="t">10–30′</span><h4>探究 · 给 AI 赛车"找器官"</h4><p>发 3D 分解图工作纸,小组讨论并标注:哪个是"眼睛"、"大脑"、"手脚"、"心脏"。教师巡视提示,不直接公布。</p></div>
+    <div class="step"><span class="t">30–55′</span><h4>讲解 · 一个模组一句话</h4><p>传看真实模组(UWB 标签 / IMU / ESP32 / 舵机 / 电池),每个用一句话讲作用,对照学生标注纠偏。引出"感知—决策—执行"闭环图。</p></div>
+    <div class="step"><span class="t">55–80′</span><h4>动手 · 你的第一行"控制"</h4><p>每组连上 ESP32,烧录预置程序让车头 LED 闪烁;改一个数字(闪烁速度)再烧一次,亲身体验"代码改变硬件"。</p></div>
+    <div class="step"><span class="t">80–90′</span><h4>收束 · 闭环 + 预告</h4><p>学生用闭环图复述"车是怎么自己开的";预告下周亲手拼第一块 Smart Tile 智能赛道砖。</p></div>
+  </div>
+
+  <div class="worksheet">
+    <div class="wt">学员工作纸 · AI 赛车"五脏六腑"</div>
+    <p style="margin-bottom:6px;">① 把下列模组连到它的角色(连线):</p>
+    <p style="margin-bottom:6px;color:var(--ink);">UWB / IMU &nbsp;·&nbsp; ESP32-S3 &nbsp;·&nbsp; 电机 + 舵机 &nbsp;·&nbsp; 电池 + 升压 &nbsp;&nbsp;→&nbsp;&nbsp; 眼睛 · 大脑 · 手脚 · 心脏</p>
+    <p style="margin-bottom:0;">② 用一句话回答:如果"眼睛(定位)"坏了,车会怎么样?为什么?</p>
+  </div>
+
+  <h3>评估标准 <span class="en">/ rubric</span></h3>
+  <table class="rubric">
+    <thead><tr><th>等级</th><th>表现描述</th></tr></thead>
+    <tbody>
+      <tr><td>达标</td><td>能正确说出 ≥4 个模组的作用,完成 LED 烧录。</td></tr>
+      <tr><td>良好</td><td>能用"感知—决策—执行"完整描述赛车自动驾驶过程。</td></tr>
+      <tr><td>优秀</td><td>能迁移闭环模型,准确解释另一个智能设备(扫地机器人/自动驾驶汽车)。</td></tr>
+    </tbody>
+  </table>
+
+  <div class="twocol">
+    <div>
+      <h3>差异化 · 双语衔接</h3>
+      <ul>
+        <li>英文术语卡:<span class="en">sensor / actuator / perception / decision</span></li>
+        <li>外国语学校可全程双语,工作纸提供中英对照版</li>
+        <li>进阶组:额外查"IMU 的 6 个轴分别测什么"</li>
+      </ul>
+    </div>
+    <div>
+      <h3>所需物料 / 组</h3>
+      <ul>
+        <li>1 套 AI 赛车模组(可传看)+ 3D 分解图工作纸</li>
+        <li>1 台 ESP32-S3 + 数据线 + 笔记本(教师机演示烧录)</li>
+        <li>真实传感器样品若干</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer"><span>样课 01 · 认识你的 AI 赛车</span><span>第 2 / 4 页</span></div>
+</section>
+
+<!-- ===================== PAGE 3 · 样课 W8 ===================== -->
+<section class="page">
+  <div class="mast">
+    <div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div>
+    <div class="tag">SAMPLE LESSON 02 · 样课</div>
+  </div>
+
+  <div class="kicker o">样课 02 · 第 8 周</div>
+  <h2>AI Tune —— 拖一条"最快的线"</h2>
+  <p class="en">RACING LINE · WAYPOINT · LAP TIME</p>
+
+  <div class="meta-row">
+    <div class="meta-box" style="background:var(--orange-soft);border-color:var(--orange);"><div class="v" style="color:var(--orange);">90′</div><div class="l">课时</div></div>
+    <div class="meta-box" style="background:var(--orange-soft);border-color:var(--orange);"><div class="v" style="color:var(--orange);">W8</div><div class="l">第8周·进阶</div></div>
+    <div class="meta-box" style="background:var(--orange-soft);border-color:var(--orange);"><div class="v" style="color:var(--orange);">2</div><div class="l">人/台</div></div>
+    <div class="meta-box" style="background:var(--orange-soft);border-color:var(--orange);"><div class="v" style="color:var(--orange);">★★☆</div><div class="l">难度</div></div>
+  </div>
+
+  <h3>教学目标</h3>
+  <ul>
+    <li><b>知识:</b> 理解 Waypoint(路径点)、racing line(最优线)、lap time(圈速)三者的关系;明白"最短不等于最快"。</li>
+    <li><b>技能:</b> 在 AI Tune(live_sim)里拖动 8 个 Waypoint,跑出一条不撞墙且更快的线。</li>
+    <li><b>素养:</b> 用"调参 → 看结果 → 再调"的工程迭代思维,优化一个真实目标(圈速)。</li>
+  </ul>
+
+  <h3>课标对应 <span class="en">/ alignment</span></h3>
+  <p>信息科技课标·算法与优化 · AI4·Reasoning &amp; Representation · IB MYP Design·设计循环(Developing → Creating → Evaluating)。</p>
+
+  <h3>课堂流程(90 分钟)</h3>
+  <div class="flow">
+    <div class="step"><span class="t">0–10′</span><h4>导入 · 哪条线更快?</h4><p>同一条弯道展示两条线(贴内沿急转 vs 大弧度外切),先让学生投票猜,埋下"apex 过弯"的悬念。</p></div>
+    <div class="step"><span class="t">10–35′</span><h4>探究 · 拖出你的线</h4><p>两人一台,在 AI Tune 拖动 8 个 Waypoint,实时看撞墙提示与圈速。规则:先求"不撞墙",再求"更快"。</p></div>
+    <div class="step"><span class="t">35–55′</span><h4>对照 · 你 vs AI 的线</h4><p>调出 AI(CMA-ES)算出的最优线,叠在自己的线上对比:差距主要在哪个弯?入弯点/apex 有什么不同?</p></div>
+    <div class="step"><span class="t">55–80′</span><h4>迭代 · 改一个参数</h4><p>调整一个变量(最高速度 / lookahead 预瞄距离),观察对圈速和稳定性的影响,记录三次尝试的数据。</p></div>
+    <div class="step"><span class="t">80–90′</span><h4>收束 · 截图 + 一句话</h4><p>截图本节最快一圈,写下"我发现过弯要 ___"。优秀线投到大屏,全班点评。</p></div>
+  </div>
+
+  <div class="worksheet" style="border-color:var(--orange);background:#fffaf4;">
+    <div class="wt" style="color:var(--orange);">学员工作纸 · 三次尝试记录表</div>
+    <table style="margin:4px 0 0;">
+      <thead><tr><th>尝试</th><th>改了什么</th><th>圈速(s)</th><th>撞墙?</th><th>发现</th></tr></thead>
+      <tbody>
+        <tr><td>① 基准</td><td>—</td><td>____</td><td>□是 □否</td><td>____</td></tr>
+        <tr><td>②</td><td>____</td><td>____</td><td>□是 □否</td><td>____</td></tr>
+        <tr><td>③</td><td>____</td><td>____</td><td>□是 □否</td><td>____</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>评估标准 <span class="en">/ rubric</span></h3>
+  <table class="rubric">
+    <thead><tr><th>等级</th><th>表现描述</th></tr></thead>
+    <tbody>
+      <tr><td>达标</td><td>拖出一条完整不撞墙的线,跑通一圈,填完记录表。</td></tr>
+      <tr><td>良好</td><td>圈速进入全班前 50%,能说出比基准快在哪个弯。</td></tr>
+      <tr><td>优秀</td><td>能用"入弯—apex—出弯"解释最优线原理,并说明所调参数为何影响圈速。</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout" style="background:#2a1a06;color:#ffe5c7;">
+    <b style="color:#ffb15a;">现场连真车(可选):</b> 若条件允许,把这条 AI Tune 出来的最优线一键下发给真车,在教室赛道实跑一圈——学生会亲眼看到"自己在屏幕上调的线,真车真的照着跑"。这是全课最高光的时刻。<b style="color:#ffb15a;">注意:必须用本地文件版连车,在线 HTTPS 版连不上 HTTP 真车。</b>
+  </div>
+
+  <div class="footer"><span>样课 02 · AI Tune 拖最优线</span><span>第 3 / 4 页</span></div>
+</section>
+
+<!-- ===================== PAGE 4 · 外国语学校试点方案 ===================== -->
+<section class="page">
+  <div class="mast">
+    <div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div>
+    <div class="tag">PILOT PROPOSAL · 试点方案</div>
+  </div>
+
+  <div class="kicker">为「外国语学校」定制 · 一学期低门槛试点</div>
+  <h2>先开一个班,跑通一学期,满意再扩</h2>
+  <p class="lead">不要求学校一次性建实验室、签长约。先用一个 <b>20 人选修课 / 社团</b>,一学期(16 周)验证效果,期末一场班级杯交答卷。</p>
+
+  <div class="kicker">试点配置</div>
+  <div class="twocol">
+    <div>
+      <h3>Crayxus 提供</h3>
+      <ul>
+        <li>4 台 AI 赛车 + 12 块 Smart Tile + 1 套 UWB 定位</li>
+        <li>全套入门阶段教案(16 周)+ 学员工作纸 + 评估表</li>
+        <li><b>双师制:</b>前 6 周派教练驻校带教,后续校内老师主导、远程答疑兜底</li>
+        <li>3 天教师培训(不要求老师懂 AI,会基础操作即可)</li>
+      </ul>
+    </div>
+    <div>
+      <h3>学校提供</h3>
+      <ul>
+        <li>一间教室,含 ≥ 6×4m 空地(赛道区)</li>
+        <li>学生用 iPad / Chromebook(跑 AI Tune 界面)</li>
+        <li>1 名信息 / 物理 / 通用技术老师对接</li>
+        <li>排进选修 / 社团 / 课后服务课表(每周 1 次)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="kicker o">为什么特别适合外国语学校</div>
+  <ul>
+    <li><b>升学背景提升:</b> 学期产出(作品+数据+文档)可直接写入 <span class="accent-o">IB MYP Design / EPQ / A-Level Project / Common App</span>,海外招生官认可。</li>
+    <li><b>双语环境天然契合:</b> 课程可全程双语,Vibe Coding 支持<b>英文自然语言</b>给 AI 下指令,英语优势直接转成技术优势。</li>
+    <li><b>差异化办学名片:</b> 全国首个 AI 自动驾驶赛事教育系统,可承办校际赛,做学校科创品牌。</li>
+  </ul>
+
+  <div class="kicker">90 天落地节奏</div>
+  <table>
+    <thead><tr><th>阶段</th><th>时间</th><th>动作</th></tr></thead>
+    <tbody>
+      <tr><td class="accent">签约 & 踏勘</td><td>D 0–14</td><td>确定班型 / 课表 / 教室,签试点协议</td></tr>
+      <tr><td class="accent">设备 & 培训</td><td>D 15–45</td><td>硬件到位 + UWB 标定 + 3 天教师培训</td></tr>
+      <tr><td class="accent">开课</td><td>D 46–80</td><td>首批 20 名学生入营,双师带教 + 远程答疑</td></tr>
+      <tr><td class="accent-o">班级杯</td><td>D 81–90</td><td>首场校内赛 + 家长开放日 + 校内宣发</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <b>风险共担:</b> 试点学期硬件可<b>租赁制 / 优惠价</b>,效果满意再转正式课程班(升级到 8 车 24 砖完整版)。学校先看到成果,再做大投入 —— 我们对效果负责。
+  </div>
+
+  <h3 style="margin-top:22px;">下一步</h3>
+  <ol>
+    <li>确定试点班型(选修 / 社团 / 课后服务)与开课学期。</li>
+    <li>约一次<b>现场体验课</b>:带真车 + AI Tune,给师生跑一圈 demo。</li>
+    <li>签试点协议,启动 90 天落地。</li>
+  </ol>
+
+  <div class="footer"><span>联系 · GENERAL@CRAYXUS.COM.AU · crayxus.com.au</span><span>第 4 / 4 页</span></div>
+</section>
+
+</body>
+</html>
