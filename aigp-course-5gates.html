@@ -53,6 +53,13 @@ tr.pass td.mo{color:var(--grn)}
 .photo{width:100%;max-height:360px;object-fit:cover;border-radius:12px;border:1px solid var(--line);display:block;margin:16px 0 4px}
 .cap{font-size:12px;color:var(--dim);text-align:center;margin-bottom:18px}
 footer{margin-top:40px;color:var(--dim);font-size:12px;text-align:center;letter-spacing:1px}
+.vs2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:34px 0 0}
+.vs2>div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+.vs2 h4{color:var(--gold);font-size:17px;margin-bottom:8px}
+.vs2 p{font-size:13.5px;color:var(--dim);margin-bottom:8px}
+.vs2 li{margin:6px 0 6px 18px;font-size:14px}
+.vs2 b{color:var(--cyan)}
+@media(max-width:640px){.vs2{grid-template-columns:1fr}}
 /* 品牌 banner */
 .banner{background:linear-gradient(135deg,#0d0f18 0%,#141a2e 45%,#1a1030 100%);
         border-bottom:1px solid #2a3050;position:relative;overflow:hidden}
@@ -155,7 +162,6 @@ footer{margin-top:40px;color:var(--dim);font-size:12px;text-align:center;letter-
 <tr class="pass"><td class="ph">通关<br>10min</td><td class="mo">铜牌考核</td>
 <td><ol><li>抽卡赛计时三圈取最快；</li><li>圈速 ≤ 70 秒 → 颁发铜牌 + 晋级第二关资格。</li></ol></td></tr>
 </table></div>
-<div class="story"><b>真实教材</b>：这台车曾因防线缺一层而撞进围栏——理论 30 分钟里讲的每道防线，都来自一次真实事故复盘。</div>
 
 <!-- ═══ 第二关 ═══ -->
 <div class="swipehint">表格可左右滑动 →</div>
@@ -171,7 +177,6 @@ footer{margin-top:40px;color:var(--dim);font-size:12px;text-align:center;letter-
 <tr class="pass"><td class="ph">通关<br>30min</td><td class="mo">银牌考核</td>
 <td><ol><li>连续 5 圈零事故 + 计时三圈取最快；</li><li>圈速 ≤ 60 秒 + 当面讲清“我改了什么、为什么快了” → 银牌。</li></ol></td></tr>
 </table></div>
-<div class="story"><b>真实教材</b>：0.86m 窄巷，算法三次进不去，工程师手开一圈示范后一次通过——“赛车线值多少秒”，这里有标准答案。</div>
 
 <!-- ═══ 第三关 ═══ -->
 <div class="swipehint">表格可左右滑动 →</div>
@@ -203,7 +208,7 @@ footer{margin-top:40px;color:var(--dim);font-size:12px;text-align:center;letter-
 <tr class="pass"><td class="ph">结业<br>1h</td><td class="mo">正赛 + 数据发布会</td>
 <td><ol><li>自有模型调校完成正赛三圈 → 结业认证；</li><li>数据发布会：每人用数据讲述自己的赛季；</li><li>成绩与调校档案永久入库，年度积分入账。</li></ol></td></tr>
 </table></div>
-<div class="story"><b>真实教材</b>：本页所有速度档、圈速关口、安全机制，全部来自这台车 2026 年 8 月 1 日的真实首航数据——课程没有一页是编的。</div>
+<div class="story"><b>真实底气</b>：本页所有速度档与圈速关口，均以自研赛车的真车实测数据锚定——课程不是纸上谈兵，每个数字都跑出来过。</div>
 
 <img class="photo" src="https://crayxus.com.au/aigp-course-pit.jpg?v=2" alt="AI·GP 场边机位">
 <div class="cap">场边计时机位与 P 房视角 · 正赛规格 · 实拍</div>
@@ -224,6 +229,19 @@ footer{margin-top:40px;color:var(--dim);font-size:12px;text-align:center;letter-
 </table></div>
 <div class="story"><b>为什么这是终点</b>：前四关培养的是一个人——会开、会调、会用 AI、会造工程师；第五关检验的是一支车队。这也是唯一没有圈速上限的一关：对手有多强，你就要多快。</div>
 
+
+<div class="vs2">
+  <div><h4>写给家长</h4>
+    <p>孩子带回家的不是一张听课证明，而是：</p>
+    <ul><li>三张以圈速达标为凭的<b>速度驾照</b></li>
+        <li>一份逐圈记录的<b>个人成绩档案</b>（升学综评可直接引用）</li>
+        <li>数理知识的真实落地 + 驾驭 AI 工具的一手能力</li></ul></div>
+  <div><h4>写给学校</h4>
+    <p>一间教室即可落地的人工智能特色课程：</p>
+    <ul><li>五关课程体系 + 实验日志 / 报告模板全配套</li>
+        <li>校园大奖赛与最速榜——可持续运营的<b>校园赛事 IP</b></li>
+        <li>自研体系持续迭代，非一次性教具采购</li></ul></div>
+</div>
 <footer>AI·GP RACING ACADEMY · 4 参数 → 8 参数 → 提示词 → 大模型 → 模型之战 · 每一关都是圈速说了算</footer>
 </div>
 </body>
