@@ -22,6 +22,8 @@
 :root{--bg:#0a0c12;--card:#12151f;--line:#232838;--txt:#e8ecf4;--dim:#9aa3b8;
       --gold:#ffd83d;--cyan:#28c8ff;--mag:#ff4da6;--grn:#38d996}
 *{margin:0;box-sizing:border-box}
+html,body{overflow-x:hidden;max-width:100%}
+img{max-width:100%}
 body{background:var(--bg);color:var(--txt);font-family:"Bahnschrift","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.6}
 .wrap{max-width:1000px;margin:0 auto;padding:44px 18px 80px}
 h1{font-size:31px;letter-spacing:1px}
@@ -69,6 +71,36 @@ footer{margin-top:40px;color:var(--dim);font-size:12px;text-align:center;letter-
   background:repeating-conic-gradient(#e8ecf4 0 25%,#0a0c12 0 50%) 0 0/20px 10px;
   opacity:.75;border-radius:2px}
 @media(max-width:640px){.bn-logo{font-size:44px}}
+
+/* ═══ 移动端 (≤640px) ═══ */
+@media(max-width:640px){
+  .wrap{padding:26px 12px 60px}
+  h1{font-size:21px;letter-spacing:0}
+  h1 small{font-size:12px;letter-spacing:1px}
+  h3.sec{font-size:16.5px}
+  h3.sec span{display:block;margin-left:0;margin-top:3px;letter-spacing:1px}
+  .credo{font-size:13px;padding:12px 14px}
+  .path{gap:6px}
+  .path .st{min-width:calc(50% - 6px);font-size:11.5px;padding:10px 11px}
+  .path .st b{font-size:13.5px}
+  .bn-in{padding:30px 12px 26px}
+  .bn-logo{font-size:40px;letter-spacing:2px}
+  .bn-brand{letter-spacing:4px;font-size:11px}
+  .bn-sub{letter-spacing:3px;font-size:10px}
+  .bn-flag{max-width:260px;height:8px}
+  .tbw{margin:0 -12px;padding:0 12px;position:relative}
+  .tbw table{min-width:560px;font-size:12.5px}
+  th{padding:7px 8px;font-size:11.5px}
+  td{padding:8px 8px}
+  td.gate{font-size:12.5px}
+  td.gate small{font-size:10.5px;line-height:1.6}
+  td ol{margin-left:13px}
+  .swipehint{display:block}
+  .story{font-size:11.5px;padding:8px 11px}
+  .cap{font-size:11px}
+  footer{font-size:11px;letter-spacing:0}
+}
+.swipehint{display:none;text-align:right;font-size:11px;color:#5a6377;margin:6px 2px -4px}
 </style>
 </head>
 <body>
@@ -99,6 +131,7 @@ footer{margin-top:40px;color:var(--dim);font-size:12px;text-align:center;letter-
 </div>
 
 <!-- ═══ 第一关 ═══ -->
+<div class="swipehint">表格可左右滑动 →</div>
 <div class="tbw"><table>
 <tr><th width="120">关卡</th><th width="66">环节</th><th width="150">模块</th><th>内容要点</th></tr>
 <tr><td class="gate" rowspan="3">第一关<br>抽卡新秀<small>10–12 岁<br>4 参数 · 2 课时<br>速度档 0.45 m/s</small></td>
@@ -112,6 +145,7 @@ footer{margin-top:40px;color:var(--dim);font-size:12px;text-align:center;letter-
 <div class="story"><b>真实教材</b>：这台车曾因防线缺一层而撞进围栏——理论 30 分钟里讲的每道防线，都来自一次真实事故复盘。</div>
 
 <!-- ═══ 第二关 ═══ -->
+<div class="swipehint">表格可左右滑动 →</div>
 <div class="tbw"><table>
 <tr><th width="120">关卡</th><th width="66">环节</th><th width="150">模块</th><th>内容要点</th></tr>
 <tr><td class="gate" rowspan="4">第二关<br>调校工程师<small>初中（11–14 岁）<br>8 参数 · 4 课时<br>速度档 0.8 m/s</small></td>
@@ -127,6 +161,7 @@ footer{margin-top:40px;color:var(--dim);font-size:12px;text-align:center;letter-
 <div class="story"><b>真实教材</b>：0.86m 窄巷，算法三次进不去，工程师手开一圈示范后一次通过——“赛车线值多少秒”，这里有标准答案。</div>
 
 <!-- ═══ 第三关 ═══ -->
+<div class="swipehint">表格可左右滑动 →</div>
 <div class="tbw"><table>
 <tr><th width="120">关卡</th><th width="66">环节</th><th width="150">模块</th><th>内容要点</th></tr>
 <tr><td class="gate" rowspan="4">第三关<br>AI 调校师<small>高中及以上（15 岁+）<br>须通过前两关<br>提示词 AI · 4 课时<br>速度档 1.0 m/s</small></td>
@@ -142,6 +177,7 @@ footer{margin-top:40px;color:var(--dim);font-size:12px;text-align:center;letter-
 <div class="story"><b>真实教材</b>：DeepSeek 仅凭参数描述推断出“短直道不值得上最高极速、迟滞系统配柔油门”，与车队两小时实测完全一致——第一堂课就重演这场人机对话。</div>
 
 <!-- ═══ 第四关 ═══ -->
+<div class="swipehint">表格可左右滑动 →</div>
 <div class="tbw"><table>
 <tr><th width="120">关卡</th><th width="66">环节</th><th width="150">模块</th><th>内容要点</th></tr>
 <tr><td class="gate" rowspan="4">第四关<br>大模型车队<small>前三关全部通过<br>自有模型 · 8 课时<br>正赛规格</small></td>
@@ -160,6 +196,7 @@ footer{margin-top:40px;color:var(--dim);font-size:12px;text-align:center;letter-
 <div class="cap">场边计时机位与 P 房视角 · 正赛规格 · 实拍</div>
 
 <!-- ═══ 第五关 ═══ -->
+<div class="swipehint">表格可左右滑动 →</div>
 <div class="tbw"><table>
 <tr><th width="120">关卡</th><th width="66">环节</th><th width="150">模块</th><th>内容要点</th></tr>
 <tr><td class="gate" rowspan="4">第五关<br>模型之战<small>四关全部通过<br>多车大模型对决<br>赛季制 · 每站半天<br>联赛积分体系</small></td>
