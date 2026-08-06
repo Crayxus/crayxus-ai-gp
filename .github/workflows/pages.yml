@@ -28,13 +28,21 @@ name: Deploy Pages
 # 来降低撞上的概率。若仍偶发, 在 https://github.com/settings/notifications
 # 取消勾选 Actions 的失败通知即可彻底静音。
 
+# 2026-08-07 二次修正 —— 去掉 paths-ignore, 恢复 push 触发。
+#   上面的终版把发布的唯一命脉挂在 GitHub cron 上, 当天就被打脸:
+#   GitHub Actions/Pages 大面积故障(incident 2026-08-06 15:22Z, critical,
+#   webhook 限流到约15%, 定时任务同样不跑), 最后一次成功部署停在 16:56Z,
+#   线上 track.json 卡在北京 00:55:59 整整五小时 —— 而扫描机侧扫描/提交/
+#   push 全程正常, 数据一条没丢。
+#   现在: 扫描机 publish_track.py 已把推送节流到每小时一次(PUSH_EVERY=3600),
+#   所以 push 触发本身就是"每小时一次", 不会再出现 deployment_queued 排队;
+#   hourly cron 保留作第二条通道。两条任意一条通, 页面就能上线。
+
 on:
   push:
     branches: [main]
-    paths-ignore:
-      - 'track-bc3252772c/**'      # 足球盘口实时数据, 由下面的 schedule 统一发布
   schedule:
-    - cron: '0 * * * *'            # 每小时发布一次(含最新 track.json)
+    - cron: '0 * * * *'            # 第二条通道: 每小时兜底发布
   workflow_dispatch:
 
 permissions:
