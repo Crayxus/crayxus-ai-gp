@@ -2,17 +2,27 @@ name: Deploy Pages
 
 # 自定义 Pages 部署 —— 取代 GitHub 内置构建(legacy)。
 #
-# 起因(2026-08-06): track-bc3252772c/track.json 每 3 分钟被外部脚本推送一次,
-# 每次推送触发一次 Pages 构建。内置构建无并发策略, 后一次部署会中断前一次,
-# 于是 Actions 记录里 success / cancelled / failure 交替出现, 并触发失败通知。
-# 站点本身始终正常(全量部署, 有一次成功即为最新), 问题只是噪音。
+# 起因(2026-08-06): track-bc3252772c/track.json 每 3 分钟被外部脚本推送一次。
 #
-# 本 workflow 的关键是下面的 concurrency: cancel-in-progress 设为 false,
-# 让部署排队而非互相中断 —— 进行中的部署能跑完, failure 随之消失。
+# 第一次尝试(concurrency + cancel-in-progress:false)只治住了 Actions 层:
+# 部署不再互相中断了, 但 Pages 部署 API 本身是串行的 —— 推送间隔 3 分钟 <
+# 单次部署耗时, 队列越排越长, 每个 run 卡在 deployment_queued 直到
+# "Timeout reached, aborting!" → 仍然是 failure。
+#
+# 真正的解法: 数据推送不再触发部署, 改由定时任务统一发布。
+#   - paths-ignore  → track.json 推送不再触发(把 480 次/天降到 0)
+#   - schedule      → 每 30 分钟发布一次, 数据最多滞后 30 分钟
+#   - 页面/代码改动 → 照常即时部署
+#
+# 若需要立刻发布最新数据: Actions 页面手动 Run workflow。
 
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'track-bc3252772c/**'      # 足球盘口实时数据, 由定时任务统一发布
+  schedule:
+    - cron: '*/30 * * * *'         # 每 30 分钟发布一次(含最新 track.json)
   workflow_dispatch:
 
 permissions:
@@ -46,3 +56,4 @@ jobs:
       - name: 部署
         id: deployment
         uses: actions/deploy-pages@v4
+        timeout-minutes: 15
