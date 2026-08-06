@@ -9,20 +9,27 @@ name: Deploy Pages
 # 单次部署耗时, 队列越排越长, 每个 run 卡在 deployment_queued 直到
 # "Timeout reached, aborting!" → 仍然是 failure。
 #
-# 真正的解法: 数据推送不再触发部署, 改由定时任务统一发布。
-#   - paths-ignore  → track.json 推送不再触发(把 480 次/天降到 0)
-#   - schedule      → 每 30 分钟发布一次, 数据最多滞后 30 分钟
-#   - 页面/代码改动 → 照常即时部署
+# 第二次尝试(paths-ignore + schedule 每 30 分钟)把触发降下来了, 但 run 总数
+# 仍有 48+/天, 每撞上一次 GitHub 侧抖动就是一封 failed 邮件。
 #
-# 若需要立刻发布最新数据: Actions 页面手动 Run workflow。
+# 2026-08-07 终版 —— 目标: 邮箱不再收到 deploy failed。三处改动:
+#   ① publish_track.py 推送间隔 180s → 3600s(每小时, 需在扫描机上同步)
+#      → 间隔 1 小时 >> 单次部署 3-8 分钟, 从源头上不可能再撞车
+#   ② 去掉 paths-ignore —— 既然不再撞车, track.json 推上来就直接发布,
+#      数据实时上线, 不必再靠高频 schedule 兜底
+#   ③ cancel-in-progress: true —— 万一仍有重叠, 旧 run 被"取消"而不是
+#      卡在 deployment_queued 直到超时。cancelled 不发邮件, failure 才发。
+#
+# 注: "Failed to resolve action download info: Service Unavailable" 是 GitHub
+# 侧临时故障, workflow 内无法根治, 只能靠把 run 总数从 480/天降到 ~24/天
+# 来降低撞上的概率。若仍偶发, 在 https://github.com/settings/notifications
+# 取消勾选 Actions 的失败通知即可彻底静音。
 
 on:
   push:
     branches: [main]
-    paths-ignore:
-      - 'track-bc3252772c/**'      # 足球盘口实时数据, 由定时任务统一发布
   schedule:
-    - cron: '*/30 * * * *'         # 每 30 分钟发布一次(含最新 track.json)
+    - cron: '0 */6 * * *'          # 每 6 小时保底发布一次(防漏发)
   workflow_dispatch:
 
 permissions:
@@ -32,7 +39,7 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: false      # 排队, 不中断进行中的部署
+  cancel-in-progress: true         # 重叠时取消旧 run(cancelled 不发失败邮件)
 
 jobs:
   deploy:
@@ -56,4 +63,4 @@ jobs:
       - name: 部署
         id: deployment
         uses: actions/deploy-pages@v4
-        timeout-minutes: 15
+        timeout-minutes: 10
