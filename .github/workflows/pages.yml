@@ -15,9 +15,12 @@ name: Deploy Pages
 # 2026-08-07 终版 —— 目标: 邮箱不再收到 deploy failed。三处改动:
 #   ① publish_track.py 推送间隔 180s → 3600s(每小时, 需在扫描机上同步)
 #      → 间隔 1 小时 >> 单次部署 3-8 分钟, 从源头上不可能再撞车
-#   ② 去掉 paths-ignore —— 既然不再撞车, track.json 推上来就直接发布,
-#      数据实时上线, 不必再靠高频 schedule 兜底
-#   ③ cancel-in-progress: true —— 万一仍有重叠, 旧 run 被"取消"而不是
+#   ② 保留 paths-ignore —— 扫描机是独立机器, 无法保证它一定同步了 ①。
+#      保留后, 不论那台机是 3 分钟还是 1 小时推一次, 都不会触发部署,
+#      发布统一由 schedule 承担。这样本 workflow 不依赖外部机器的状态。
+#   ③ schedule 每 30 分钟 → 每小时 —— run 数量减半, 数据最多滞后 1 小时,
+#      与 ① 的推送节奏一致(用户 2026-08-07 定: 每小时更新结果即可)。
+#   ④ cancel-in-progress: true —— 万一仍有重叠, 旧 run 被"取消"而不是
 #      卡在 deployment_queued 直到超时。cancelled 不发邮件, failure 才发。
 #
 # 注: "Failed to resolve action download info: Service Unavailable" 是 GitHub
@@ -28,8 +31,10 @@ name: Deploy Pages
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'track-bc3252772c/**'      # 足球盘口实时数据, 由下面的 schedule 统一发布
   schedule:
-    - cron: '0 */6 * * *'          # 每 6 小时保底发布一次(防漏发)
+    - cron: '0 * * * *'            # 每小时发布一次(含最新 track.json)
   workflow_dispatch:
 
 permissions:
