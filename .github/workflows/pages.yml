@@ -1,0 +1,48 @@
+name: Deploy Pages
+
+# 自定义 Pages 部署 —— 取代 GitHub 内置构建(legacy)。
+#
+# 起因(2026-08-06): track-bc3252772c/track.json 每 3 分钟被外部脚本推送一次,
+# 每次推送触发一次 Pages 构建。内置构建无并发策略, 后一次部署会中断前一次,
+# 于是 Actions 记录里 success / cancelled / failure 交替出现, 并触发失败通知。
+# 站点本身始终正常(全量部署, 有一次成功即为最新), 问题只是噪音。
+#
+# 本 workflow 的关键是下面的 concurrency: cancel-in-progress 设为 false,
+# 让部署排队而非互相中断 —— 进行中的部署能跑完, failure 随之消失。
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false      # 排队, 不中断进行中的部署
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: 检出(浅克隆, 仓库历史较大)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/configure-pages@v5
+
+      - name: 打包站点
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: 部署
+        id: deployment
+        uses: actions/deploy-pages@v4
