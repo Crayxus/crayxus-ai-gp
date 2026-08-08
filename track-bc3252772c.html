@@ -143,9 +143,12 @@ async function sync(){try{
     B.innerHTML=d.pool.map(function(p){
       var hot=(p.st>=1)&&p.sc!=="0-0"&&p.sc!=="";
       var lt=(p.lt==="g"||p.lt==="y"||p.lt==="r")?p.lt:((p.st>=1&&p.st<=3)?"y":"r");
+      var mn=p.mn;
+      if(p.st===0&&p.ko){var em=(Date.now()/1000-p.ko)/60;
+        if(em>1)mn="约"+Math.min(90,Math.round(em))+"' 更新中";}
       return '<div class="brow"><span class="bdot '+lt+'"></span>'+
         '<span class="blg">'+p.lg+'</span><span class="bm">'+p.m+'</span>'+
-        '<span class="bsc'+(hot?" hot":"")+'">'+p.sc+'</span><span class="bmn">'+p.mn+'</span></div>';}).join("");
+        '<span class="bsc'+(hot?" hot":"")+'">'+p.sc+'</span><span class="bmn">'+mn+'</span></div>';}).join("");
   }else{document.getElementById("pooln").textContent="";B.innerHTML='<div class="empty" style="padding:16px">此刻无进行中赛事 · 引擎持续扫描</div>';}
   const L=document.getElementById("list");
   if(!d.rows.length){L.innerHTML='<div class="empty">系统实时筛选中<br>正式信号出现后即刻显示</div>';}
