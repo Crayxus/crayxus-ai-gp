@@ -6,11 +6,7 @@
 <title>技术合作框架协议（含保密条款）</title>
 <meta name="robots" content="noindex,nofollow">
 <meta name="description" content="红外热成像模组机器人接口优化与 AI 智能消防头盔技术原型开发合作框架，含保密条款。">
-
 <link rel="icon" type="image/png" sizes="32x32" href="https://crayxus.com.au/favicon-32.png">
-<link rel="apple-touch-icon" sizes="180x180" href="https://crayxus.com.au/apple-touch-icon.png">
-
-<!-- Open Graph · 微信分享卡片(绝对URL + 800方形JPG + 多重声明, 防白图) -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="择大教育">
 <meta property="og:title" content="技术合作框架协议 · AI 智能消防头盔项目">
@@ -20,14 +16,12 @@
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="800">
 <meta property="og:image:height" content="800">
-<meta property="og:image:alt" content="技术合作框架协议 · AI 智能消防头盔项目">
 <meta property="og:url" content="https://crayxus.com.au/fire-deal-2c9e4a7b.html">
 <meta property="og:locale" content="zh_CN">
 <meta itemprop="image" content="https://crayxus.com.au/og-fire-helmet.jpg?v=1">
 <meta name="image" content="https://crayxus.com.au/og-fire-helmet.jpg?v=1">
 <link rel="image_src" href="https://crayxus.com.au/og-fire-helmet.jpg?v=1">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="技术合作框架协议 · AI 智能消防头盔项目">
 <meta name="twitter:image" content="https://crayxus.com.au/og-fire-helmet.jpg?v=1">
 <style>
 :root{--ink:#111; --body:#222; --dim:#666; --line:#ccc; --mark:#b03a10}
@@ -103,9 +97,9 @@ td.num{white-space:nowrap;font-variant-numeric:tabular-nums}
 <ol>
   <li><b>第一部分：红外热成像模组机器人接口优化开发</b>
     <ol>
-      <li>对甲方现有模组的数据输出链路进行诊断与优化，建立面向嵌入式平台的数字数据通路；</li>
-      <li>还原并封装设备控制协议，形成可编程接口，替代现有物理按键操作方式；</li>
-      <li>开发面向树莓派（Raspberry Pi 4 / Pi 5 / CM4 / CM5）及同类 ARM 嵌入式平台的原生驱动；</li>
+      <li>对甲方现有模组的数据输出链路进行诊断与优化，建立基于 <b>DVP／BT656 数字接口</b>的原始数据（RAW14／Y14）通路；</li>
+      <li>获取或还原设备控制协议（RS232），封装为可编程控制接口，替代现有物理按键操作方式；</li>
+      <li>开发面向<b>瑞芯微（RK 系列）</b>及同类 ARM 嵌入式平台的驱动适配；算法原型阶段可在树莓派等平台先行验证；</li>
       <li>提供 Python 软件库与 ROS 节点，形成面向开发者的标准接入接口；</li>
       <li>出具优化前后端到端延迟的可量化对比测试报告。</li>
     </ol>
@@ -126,7 +120,7 @@ td.num{white-space:nowrap;font-variant-numeric:tabular-nums}
   <tr><th style="width:82px">方</th><th>投入与职责</th></tr>
   <tr>
     <td><b>甲方</b></td>
-    <td>提供热成像机芯样品、配套按键板及现有上位机软件；<br>提供其掌握的接口技术资料，并指派技术人员配合乙方开展接口分析；<br>提供一期合作资金人民币 50 万元（详见第四条）；<br>参与需求确认与阶段评审。</td>
+    <td>提供热成像机芯样品，<b>含适配头盔视场需求的短焦广角镜头（视场角约 60°–80°）</b>、配套按键板及现有上位机软件；<br>提供接口技术资料，<b>含 DVP／BT656 数字输出的引脚定义与时序、RS232 通信协议</b>，并指派技术人员配合乙方开展接口分析；<br>提供一期合作资金人民币 50 万元（详见第四条）；<br>参与需求确认与阶段评审。</td>
   </tr>
   <tr>
     <td><b>乙方</b></td>
@@ -159,7 +153,7 @@ td.num{white-space:nowrap;font-variant-numeric:tabular-nums}
 
 <h2>第五条　交付周期、交付成果与验收标准</h2>
 <ol>
-  <li><b>起算日</b>：本条各项期限，自第一期款项到账且甲方样品交付之日起算（<b>以两者中较晚者为准</b>）。因甲方样品、技术资料或人员配合提供延迟导致的工期顺延，不计入下述期限。</li>
+  <li><b>起算日</b>：本条各项期限，自第一期款项到账且甲方样品交付之日起算（<b>以两者中较晚者为准</b>）。<b>第三条约定的样品与技术资料全部齐备之日，方视为本条所称「样品交付」</b>。因甲方样品、技术资料或人员配合提供延迟导致的工期顺延，不计入下述期限。</li>
   <li><b>交付分两个阶段进行</b>，合计 <b>6 周（42 日）</b>：
     <table>
       <tr><th style="width:150px">阶段</th><th style="width:96px">交付期限</th><th>交付成果</th></tr>
@@ -175,7 +169,7 @@ td.num{white-space:nowrap;font-variant-numeric:tabular-nums}
       </tr>
     </table>
   </li>
-  <li><b>第一阶段验收标准</b>：热成像模组可在树莓派平台上完成取流并稳定输出图像，模组参数可经程序控制，端到端延迟较优化前有可测量的改善。</li>
+  <li><b>第一阶段验收标准</b>：热成像模组可在嵌入式平台（瑞芯微 RK 系列或同类 ARM 平台）上完成数字取流并稳定输出图像，模组参数可经程序控制，端到端延迟较优化前有可测量的改善。</li>
   <li><b>第二阶段验收标准</b>：在室内模拟场景下完成以下演示，即视为验收通过：
     <ol>
       <li>热成像画面于头盔显示端实时呈现；</li>
