@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI·GP 自动驾驶赛车 · 两小时体验课</title>
+<meta name="description" content="自研整车、真实赛道、可验证成绩。车自己定位、自己规划赛车线、自己守住安全边界——学生的任务是把它教得更快，圈速即实力。">
+<meta name="theme-color" content="#171a21">
+
+<!-- Open Graph · 微信分享卡片（绝对URL + 根目录 800 方 JPG + 多重声明） -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Crayxus AI·GP">
+<meta property="og:title" content="AI·GP 自动驾驶赛车 · 两小时体验课">
+<meta property="og:description" content="自研整车、真实赛道、可验证成绩。车自己定位、自己规划赛车线、自己守住安全边界——学生的任务是把它教得更快，圈速即实力。">
+<meta property="og:image" content="https://crayxus.com.au/og-aigp2h.jpg?v=1">
+<meta property="og:image:secure_url" content="https://crayxus.com.au/og-aigp2h.jpg?v=1">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="800">
+<meta property="og:image:height" content="800">
+<meta property="og:image:alt" content="AI·GP 自动驾驶赛车 · 两小时体验课">
+<meta property="og:url" content="https://crayxus.com.au/aigp-2h.html">
+<meta property="og:locale" content="zh_CN">
+<meta itemprop="image" content="https://crayxus.com.au/og-aigp2h.jpg?v=1">
+<meta name="image" content="https://crayxus.com.au/og-aigp2h.jpg?v=1">
+<link rel="image_src" href="https://crayxus.com.au/og-aigp2h.jpg?v=1">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI·GP 自动驾驶赛车 · 两小时体验课">
+<meta name="twitter:description" content="自研整车、真实赛道、可验证成绩。车自己定位、自己规划赛车线、自己守住安全边界——学生的任务是把它教得更快，圈速即实力。">
+<meta name="twitter:image" content="https://crayxus.com.au/og-aigp2h.jpg?v=1">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#171a21; --panel:#1b2838; --card:rgba(103,193,245,.07); --edge:rgba(103,193,245,.22);
+  --acc:#66c0f4; --ink:#e9eef4; --sub:#a8b8c6; --muted:#6f8296;
+  --gold:#f5b642; --ok:#6fd08c; --bad:#ff6f6f;
+  --v-slow:#3f7fa8; --v-mid:#66b7e8; --v-fast:#aadcff;
+}
+html,body{height:100%;background:var(--bg);color:var(--ink);
+  font-family:"Motiva Sans","Segoe UI","Microsoft YaHei",system-ui,sans-serif;overflow:hidden}
+.slide{display:none;width:100vw;height:100vh;padding:56px 64px 72px;
+  background:radial-gradient(1200px 700px at 70% -10%,#22354a 0%,#1b2838 45%,#171a21 100%)}
+.slide.on{display:flex;gap:48px;align-items:stretch}
+.txt{flex:0 0 40%;display:flex;flex-direction:column;justify-content:center;min-width:0}
+.fig{flex:1 1 0;display:flex;flex-direction:column;justify-content:center;min-width:0}
+.kick{color:var(--acc);font-size:15px;font-weight:700;letter-spacing:.35em;text-transform:uppercase;margin-bottom:14px}
+h2{font-size:40px;font-weight:800;line-height:1.2;margin-bottom:10px}
+.bar{width:120px;height:4px;background:linear-gradient(90deg,var(--acc),transparent);border-radius:2px;margin:14px 0 26px}
+ul{list-style:none}
+li{margin-bottom:18px;font-size:17px;line-height:1.55;color:var(--sub)}
+li b{display:block;color:var(--ink);font-size:19px;margin-bottom:2px}
+.demo{margin-top:26px;padding:12px 16px;border-left:3px solid var(--gold);
+  background:rgba(245,182,66,.07);border-radius:0 8px 8px 0;font-size:15px;color:#e8cf9f}
+.demo b{color:var(--gold)}
+.figbox{background:var(--card);border:1px solid var(--edge);border-radius:14px;padding:22px;
+  box-shadow:0 10px 40px rgba(0,0,0,.35)}
+.figcap{margin-top:12px;font-size:13.5px;color:var(--muted);text-align:center}
+svg{display:block;width:100%;height:auto}
+svg text{font-family:inherit}
+.legend{display:flex;gap:18px;justify-content:center;margin-top:10px;font-size:13.5px;color:var(--sub)}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:4px;margin-right:6px;vertical-align:-2px}
+/* 封面/封底 */
+.hero{flex-direction:column;justify-content:center;align-items:flex-start;position:relative}
+.hero .bgtrack{position:absolute;inset:0;display:flex;align-items:center;justify-content:flex-end;
+  padding-right:4vw;opacity:.9;pointer-events:none}
+.hero .bgtrack svg{width:56vw;height:auto}
+.hero h1{font-size:74px;font-weight:900;line-height:1.15;position:relative}
+.hero h1 span{color:var(--acc)}
+.hero .sub{font-size:22px;color:var(--sub);margin-top:18px;letter-spacing:.12em;position:relative}
+.hero .tip{margin-top:44px;position:relative}
+/* 统计块 */
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.tile{background:var(--card);border:1px solid var(--edge);border-radius:12px;padding:18px 20px}
+.tile .v{font-size:34px;font-weight:800;color:var(--acc)}
+.tile .v em{font-style:normal;font-size:17px;color:var(--sub);margin-left:4px}
+.tile .k{font-size:14px;color:var(--muted);margin-top:4px}
+.tile.gold .v{color:var(--gold)}
+/* 聊天 */
+.chat{display:flex;flex-direction:column;gap:14px}
+.msg{max-width:86%;padding:13px 17px;border-radius:14px;font-size:16.5px;line-height:1.55}
+.msg .who{font-size:12.5px;letter-spacing:.15em;color:var(--muted);margin-bottom:5px}
+.m-stu{align-self:flex-start;background:rgba(103,193,245,.12);border:1px solid var(--edge)}
+.m-ai{align-self:flex-end;background:rgba(111,208,140,.10);border:1px solid rgba(111,208,140,.3)}
+.m-sys{align-self:center;background:rgba(245,182,66,.08);border:1px solid rgba(245,182,66,.35);color:#e8cf9f;font-size:15px}
+.m-ai code{background:rgba(0,0,0,.3);padding:1px 7px;border-radius:6px;color:var(--ok);font-size:15px}
+/* 导航 */
+#nav{position:fixed;right:22px;bottom:16px;color:var(--muted);font-size:13.5px;letter-spacing:.1em;z-index:9}
+#hint{position:fixed;left:26px;bottom:16px;color:#3d4b5c;font-size:12.5px;letter-spacing:.08em;z-index:9}
+.arrow{position:fixed;top:0;bottom:0;width:12vw;cursor:pointer;z-index:5}
+#aL{left:0}#aR{right:0}
+</style>
+</head>
+<body>
+
+<div id="deck"></div>
+<div id="nav"></div>
+<div id="hint">← → 翻页 · F11 全屏</div>
+<div class="arrow" id="aL"></div><div class="arrow" id="aR"></div>
+
+<script>
+const T = {"walls":[[[-0.05,4.35],[-0.04,4.44],[-0.02,4.52],[0.03,4.6],[0.08,4.67],[0.15,4.72],[0.23,4.77],[0.31,4.79],[0.4,4.8],[9.12,4.8],[9.21,4.79],[9.29,4.77],[9.37,4.72],[9.44,4.67],[9.49,4.6],[9.54,4.52],[9.56,4.44],[9.57,4.35],[9.57,0.4],[9.56,0.31],[9.54,0.23],[9.49,0.15],[9.44,0.08],[9.37,0.03],[9.29,-0.02],[9.21,-0.04],[9.12,-0.05],[6.67,-0.05],[6.59,-0.04],[6.5,-0.02],[6.42,0.03],[6.36,0.08],[6.3,0.15],[6.26,0.23],[6.23,0.31],[6.22,0.4],[6.22,1.98],[4.22,1.98],[4.22,0.4],[4.22,0.31],[4.19,0.23],[4.15,0.15],[4.09,0.08],[4.03,0.03],[3.95,-0.02],[3.86,-0.04],[3.77,-0.05],[0.4,-0.05],[0.31,-0.04],[0.23,-0.02],[0.15,0.03],[0.08,0.08],[0.03,0.15],[-0.02,0.23],[-0.04,0.31],[-0.05,0.4]],[[1.74,1.81],[2.94,1.81],[2.94,3.01],[1.74,3.01]],[[2.94,2.81],[7.55,2.81],[7.55,1.4],[7.71,1.4],[7.71,2.93],[2.94,2.93]]],"sl":[[3.05,4.62],[3.05,3.02]],"start":[3.55,3.46,3.14],"line":[[3.52,3.53],[3.37,3.53],[3.23,3.58],[3.13,3.69],[3.02,3.8],[2.9,3.88],[2.75,3.9],[2.6,3.91],[2.45,3.91],[2.3,3.91],[2.15,3.91],[2.0,3.91],[1.85,3.91],[1.7,3.88],[1.58,3.8],[1.49,3.69],[1.42,3.55],[1.34,3.42],[1.24,3.32],[1.11,3.23],[0.99,3.15],[0.9,3.03],[0.86,2.89],[0.85,2.74],[0.85,2.59],[0.85,2.44],[0.85,2.29],[0.85,2.13],[0.85,1.99],[0.88,1.84],[0.94,1.7],[1.04,1.6],[1.16,1.5],[1.22,1.37],[1.26,1.23],[1.35,1.12],[1.46,1.01],[1.6,1.05],[1.71,1.15],[1.85,1.18],[2.0,1.15],[2.15,1.13],[2.3,1.14],[2.44,1.16],[2.59,1.2],[2.72,1.15],[2.81,1.03],[2.93,0.96],[3.05,1.04],[3.13,1.16],[3.23,1.26],[3.35,1.36],[3.43,1.48],[3.52,1.6],[3.54,1.75],[3.58,1.9],[3.6,2.04],[3.66,2.18],[3.78,2.27],[3.92,2.33],[4.06,2.37],[4.21,2.4],[4.36,2.41],[4.51,2.41],[4.66,2.41],[4.81,2.41],[4.96,2.41],[5.11,2.41],[5.26,2.41],[5.41,2.41],[5.56,2.4],[5.71,2.4],[5.86,2.4],[6.01,2.41],[6.16,2.4],[6.31,2.38],[6.45,2.35],[6.59,2.29],[6.71,2.2],[6.82,2.1],[6.86,1.96],[6.86,1.81],[6.91,1.67],[6.91,1.52],[6.91,1.37],[6.96,1.23],[7.01,1.09],[7.07,0.95],[7.16,0.83],[7.29,0.76],[7.43,0.72],[7.58,0.7],[7.72,0.74],[7.85,0.83],[7.96,0.92],[8.08,1.02],[8.22,1.05],[8.37,1.09],[8.49,1.17],[8.49,1.3],[8.39,1.41],[8.38,1.56],[8.43,1.7],[8.47,1.84],[8.5,1.99],[8.5,2.14],[8.49,2.29],[8.45,2.44],[8.41,2.58],[8.37,2.73],[8.45,2.84],[8.54,2.95],[8.49,3.08],[8.38,3.19],[8.29,3.31],[8.18,3.41],[8.04,3.48],[7.92,3.56],[7.8,3.65],[7.7,3.76],[7.57,3.84],[7.42,3.86],[7.27,3.87],[7.12,3.87],[6.97,3.87],[6.82,3.87],[6.67,3.87],[6.52,3.85],[6.42,3.75],[6.33,3.63],[6.21,3.53],[6.07,3.5],[5.92,3.49],[5.77,3.5],[5.62,3.5],[5.47,3.5],[5.32,3.5],[5.17,3.51],[5.02,3.51],[4.87,3.51],[4.72,3.51],[4.57,3.52],[4.42,3.52],[4.27,3.52],[4.12,3.52],[3.97,3.53],[3.82,3.53],[3.67,3.53]]};
+
+/* ══════════ 几何工具 ══════════ */
+const SEGS = [];
+for (const w of T.walls)
+  for (let i = 0; i < w.length; i++) SEGS.push([w[i], w[(i + 1) % w.length]]);
+function inside(x, y) {           // even-odd 全多边形
+  let c = 0;
+  for (const w of T.walls)
+    for (let i = 0, n = w.length; i < n; i++) {
+      const a = w[i], b = w[(i + 1) % n];
+      if ((a[1] > y) !== (b[1] > y) &&
+          x < a[0] + (y - a[1]) / (b[1] - a[1]) * (b[0] - a[0])) c++;
+    }
+  return c % 2 === 1;
+}
+function distW(x, y) {            // 离墙最近距离
+  let m = 9;
+  for (const [a, b] of SEGS) {
+    const dx = b[0] - a[0], dy = b[1] - a[1];
+    const L2 = dx * dx + dy * dy || 1e-9;
+    let t = ((x - a[0]) * dx + (y - a[1]) * dy) / L2;
+    t = Math.max(0, Math.min(1, t));
+    m = Math.min(m, Math.hypot(x - a[0] - t * dx, y - a[1] - t * dy));
+  }
+  return m;
+}
+function ray(x, y, th) {          // 射线到墙
+  const dx = Math.cos(th), dy = Math.sin(th);
+  let best = 12;
+  for (const [a, b] of SEGS) {
+    const ex = b[0] - a[0], ey = b[1] - a[1];
+    const den = dx * ey - dy * ex;
+    if (Math.abs(den) < 1e-9) continue;
+    const t = ((a[0] - x) * ey - (a[1] - y) * ex) / den;
+    const u = ((a[0] - x) * dy - (a[1] - y) * dx) / den;
+    if (t > 0 && u >= 0 && u <= 1) best = Math.min(best, t);
+  }
+  return best;
+}
+/* 逐点速度(与车端 _line_speeds 同规则: cv=0.30, vmax=0.45) */
+const LN = T.line, NL = LN.length, SPD = [];
+for (let i = 0; i < NL; i++) {
+  const a = LN[(i - 2 + NL) % NL], b = LN[i], c = LN[(i + 2) % NL];
+  const h1 = Math.atan2(b[1] - a[1], b[0] - a[0]);
+  const h2 = Math.atan2(c[1] - b[1], c[0] - b[0]);
+  let t = Math.abs((h2 - h1 + Math.PI * 3) % (Math.PI * 2) - Math.PI);
+  let v = t > .40 ? .30 : t > .22 ? .375 : .45;
+  if (b[0] > 3.3 && b[0] < 7.1 && b[1] > 1.7 && b[1] < 3.0) v = .30;
+  SPD.push(v);
+}
+const vcol = v => v <= .30 ? "var(--v-slow)" : v <= .38 ? "var(--v-mid)" : "var(--v-fast)";
+
+/* ══════════ SVG 画布(等比世界坐标) ══════════ */
+const W = 940, H = 520, PAD = 26;
+const bx = [-0.25, 9.85], by = [-0.25, 5.05];
+const S = Math.min((W - 2 * PAD) / (bx[1] - bx[0]), (H - 2 * PAD) / (by[1] - by[0]));
+const mx = x => PAD + (x - bx[0]) * S;
+const my = y => H - PAD - (y - by[0]) * S;
+const poly = w => w.map((p, i) => (i ? "L" : "M") + mx(p[0]).toFixed(1) + " " + my(p[1]).toFixed(1)).join("") + "Z";
+function svgO(extra) {
+  return `<svg viewBox="0 0 ${W} ${H}" ${extra || ""}>`;
+}
+function walls(glow) {
+  let s = "";
+  for (const w of T.walls)
+    s += `<path d="${poly(w)}" fill="none" stroke="${glow ? "var(--acc)" : "#3d5a75"}"
+      stroke-width="${glow ? 3 : 2.2}" ${glow ? 'filter="url(#g)"' : ""} stroke-linejoin="round"/>`;
+  s += `<line x1="${mx(T.sl[0][0])}" y1="${my(T.sl[0][1])}" x2="${mx(T.sl[1][0])}" y2="${my(T.sl[1][1])}"
+        stroke="#e9eef4" stroke-width="3" stroke-dasharray="7 6" opacity=".8"/>`;
+  return s;
+}
+const GLOWDEF = `<defs><filter id="g" x="-30%" y="-30%" width="160%" height="160%">
+  <feGaussianBlur stdDeviation="3.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>`;
+function raceline(colored, width) {
+  let s = "";
+  for (let i = 0; i < NL; i++) {
+    const a = LN[i], b = LN[(i + 1) % NL];
+    s += `<line x1="${mx(a[0]).toFixed(1)}" y1="${my(a[1]).toFixed(1)}" x2="${mx(b[0]).toFixed(1)}" y2="${my(b[1]).toFixed(1)}"
+      stroke="${colored ? vcol(SPD[i]) : "rgba(170,220,255,.55)"}" stroke-width="${width || 3}" stroke-linecap="round">
+      ${colored ? `<title>目标速度 ${SPD[i].toFixed(2)} m/s</title>` : ""}</line>`;
+  }
+  return s;
+}
+function carDot(x, y, r, col) {
+  return `<circle cx="${mx(x)}" cy="${my(y)}" r="${r || 7}" fill="${col || "var(--gold)"}" stroke="#171a21" stroke-width="2"/>`;
+}
+
+/* ══════════ 各页图形 ══════════ */
+function figTrack() {   // 封面/开场底图
+  return svgO() + GLOWDEF + walls(true) + raceline(false, 2.5) + carDot(T.start[0], T.start[1]) + "</svg>";
+}
+function figLidar() {
+  const [cx, cy] = [T.start[0], T.start[1]];
+  let rays = "";
+  for (let a = 0; a < 360; a += 4) {
+    const th = a * Math.PI / 180, d = ray(cx, cy, th);
+    const ex = cx + d * Math.cos(th), ey = cy + d * Math.sin(th);
+    rays += `<line x1="${mx(cx)}" y1="${my(cy)}" x2="${mx(ex).toFixed(1)}" y2="${my(ey).toFixed(1)}"
+       stroke="rgba(103,193,245,.28)" stroke-width="1"/>
+       <circle cx="${mx(ex).toFixed(1)}" cy="${my(ey).toFixed(1)}" r="2.4" fill="var(--acc)"/>`;
+  }
+  return svgO() + walls(false) + rays + carDot(cx, cy) + "</svg>";
+}
+function figDF() {
+  const cell = 0.17;
+  let cells = "";
+  for (let x = 0; x < 9.65; x += cell)
+    for (let y = 0; y < 4.85; y += cell) {
+      const px = x + cell / 2, py = y + cell / 2;
+      if (!inside(px, py)) continue;
+      const d = Math.min(distW(px, py), 1.1) / 1.1;   // 0..1
+      const c = d < .34 ? "#22405c" : d < .67 ? "#3f7fa8" : "#8ecdf6";
+      cells += `<rect x="${mx(x).toFixed(1)}" y="${my(y + cell).toFixed(1)}" width="${(cell * S).toFixed(1)}" height="${(cell * S).toFixed(1)}" fill="${c}" rx="1.5"/>`;
+    }
+  return svgO() + cells + walls(false) + "</svg>";
+}
+function figZones() {
+  const cell = 0.17;
+  let cells = "";
+  for (let x = 0; x < 9.65; x += cell)
+    for (let y = 0; y < 4.85; y += cell) {
+      const px = x + cell / 2, py = y + cell / 2;
+      if (!inside(px, py)) continue;
+      const d = distW(px, py);
+      const c = d < 0.28 ? "rgba(255,111,111,.5)" : "rgba(111,208,140,.32)";
+      cells += `<rect x="${mx(x).toFixed(1)}" y="${my(y + cell).toFixed(1)}" width="${(cell * S).toFixed(1)}" height="${(cell * S).toFixed(1)}" fill="${c}" rx="1.5"/>`;
+    }
+  return svgO() + cells + walls(false) + "</svg>";
+}
+function figPursuit() {
+  const ci = 118;                       // 车所在参考线索引(直道段)
+  const [cx, cy] = LN[ci];
+  let tgt = null;
+  for (let k = 1; k < 25; k++) {
+    const p = LN[(ci + k) % NL];
+    if (Math.hypot(p[0] - cx, p[1] - cy) >= 0.6) { tgt = p; break; }
+  }
+  return svgO() + walls(false) + raceline(false, 3)
+    + `<circle cx="${mx(cx)}" cy="${my(cy)}" r="${(0.6 * S).toFixed(1)}" fill="none" stroke="rgba(245,182,66,.5)" stroke-dasharray="5 5" stroke-width="1.6"/>`
+    + `<line x1="${mx(cx)}" y1="${my(cy)}" x2="${mx(tgt[0])}" y2="${my(tgt[1])}" stroke="var(--gold)" stroke-width="2.6" marker-end="url(#ah)"/>`
+    + `<defs><marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0L8 4.5L0 9z" fill="var(--gold)"/></marker></defs>`
+    + carDot(cx, cy, 8) + `<circle cx="${mx(tgt[0])}" cy="${my(tgt[1])}" r="6" fill="none" stroke="var(--gold)" stroke-width="2.4"/>`
+    + `<text x="${mx(cx) + 14}" y="${my(cy) - 14}" fill="var(--gold)" font-size="15">前瞻 0.6m 注视点</text>`
+    + "</svg>";
+}
+function figSpeed() {
+  return svgO() + walls(false) + raceline(true, 5)
+    + `<rect x="${mx(3.88)}" y="${my(2.96)}" width="${(2.8 * S).toFixed(1)}" height="${(0.12 * S).toFixed(1)}" fill="none"/>`
+    + `<text x="${mx(5.28)}" y="${my(2.35)}" fill="var(--sub)" font-size="14" text-anchor="middle">窄巷区 · 永远 0.30 铁闸</text>`
+    + "</svg>";
+}
+function figReloc() {
+  let dots = "";
+  for (let x = 0.4; x < 9.4; x += 0.45)
+    for (let y = 0.4; y < 4.6; y += 0.45) {
+      if (!inside(x, y) || distW(x, y) < 0.25) continue;
+      dots += `<circle cx="${mx(x).toFixed(1)}" cy="${my(y).toFixed(1)}" r="2.6" fill="rgba(103,193,245,.3)"/>`;
+    }
+  const cands = [[1.5, 1.2, "残差 21cm"], [7.9, 3.9, "残差 14cm"], [3.55, 3.46, "残差 4cm ✓"]];
+  let marks = "";
+  cands.forEach(([x, y, t], i) => {
+    const win = i === 2;
+    marks += `<circle cx="${mx(x)}" cy="${my(y)}" r="${win ? 9 : 7}" fill="none"
+       stroke="${win ? "var(--ok)" : "rgba(255,111,111,.75)"}" stroke-width="${win ? 3 : 2}"/>
+       <text x="${mx(x) + 13}" y="${my(y) + 4}" fill="${win ? "var(--ok)" : "var(--sub)"}" font-size="14.5">${t}</text>`;
+  });
+  return svgO() + walls(false) + dots + marks + "</svg>";
+}
+function node(x, y, w, h, title, sub, col) {
+  return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="12" fill="var(--card)" stroke="${col || "var(--edge)"}" stroke-width="1.5"/>
+    <text x="${x + w / 2}" y="${y + h / 2 - (sub ? 8 : -6)}" text-anchor="middle" fill="var(--ink)" font-size="19" font-weight="700">${title}</text>
+    ${sub ? `<text x="${x + w / 2}" y="${y + h / 2 + 18}" text-anchor="middle" fill="var(--muted)" font-size="13.5">${sub}</text>` : ""}`;
+}
+function arrowH(x1, x2, y, label, up) {
+  return `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="var(--acc)" stroke-width="2.4" marker-end="url(#pa)"/>
+    ${label ? `<text x="${(x1 + x2) / 2}" y="${y + (up ? -10 : 22)}" text-anchor="middle" fill="var(--acc)" font-size="13.5">${label}</text>` : ""}`;
+}
+const PA = `<defs><marker id="pa" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0L8 4.5L0 9z" fill="var(--acc)"/></marker></defs>`;
+function figStack() {
+  return svgO() + PA
+    + node(310, 30, 320, 96, "👁 激光雷达", "每秒10圈 · 一圈约300次测距", "var(--acc)")
+    + node(310, 196, 320, 96, "🧠 树莓派 5", "定位 · 决策 · 驾驶舱 (Python 20Hz)")
+    + node(310, 362, 320, 96, "⚙ STM32 底盘", "速度环 · 电机/舵机 · 编码器+陀螺仪")
+    + `<line x1="470" y1="126" x2="470" y2="188" stroke="var(--acc)" stroke-width="2.4" marker-end="url(#pa)"/>`
+    + `<line x1="470" y1="292" x2="470" y2="354" stroke="var(--acc)" stroke-width="2.4" marker-end="url(#pa)"/>`
+    + `<text x="490" y="162" fill="var(--muted)" font-size="13.5">点云(在哪有墙)</text>`
+    + `<text x="490" y="328" fill="var(--muted)" font-size="13.5">速度+转角指令</text>`
+    + `<text x="140" y="80" fill="var(--muted)" font-size="14">看</text><text x="140" y="246" fill="var(--muted)" font-size="14">想</text><text x="140" y="412" fill="var(--muted)" font-size="14">动</text>`
+    + "</svg>";
+}
+function figAcker() {
+  const cx2 = 610, cy2 = 300, R = 190;
+  return svgO()
+    + `<circle cx="${cx2}" cy="${cy2}" r="${R}" fill="none" stroke="rgba(245,182,66,.45)" stroke-dasharray="6 6" stroke-width="2"/>`
+    + `<text x="${cx2}" y="${cy2 + 6}" text-anchor="middle" fill="var(--gold)" font-size="16">最小转弯半径 0.8m</text>`
+    + `<g transform="translate(${cx2 - R},${cy2}) rotate(-90 0 0)">
+        <rect x="-34" y="-62" width="68" height="124" rx="14" fill="var(--card)" stroke="var(--edge)" stroke-width="1.5"/>
+        <rect x="-40" y="-58" width="12" height="30" rx="4" fill="var(--acc)" transform="rotate(-27 -34 -43)"/>
+        <rect x="28" y="-58" width="12" height="30" rx="4" fill="var(--acc)" transform="rotate(-27 34 -43)"/>
+        <rect x="-40" y="28" width="12" height="30" rx="4" fill="#3d5a75"/>
+        <rect x="28" y="28" width="12" height="30" rx="4" fill="#3d5a75"/>
+      </g>`
+    + `<text x="${cx2 - R}" y="${cy2 - 96}" text-anchor="middle" fill="var(--sub)" font-size="14">前轮最大 26.7°</text>`
+    + `<text x="${cx2 - R}" y="${cy2 + 112}" text-anchor="middle" fill="var(--sub)" font-size="14">轴距 0.322m</text>`
+    + "</svg>";
+}
+function figPipe() {
+  const y = 190, h2 = 104;
+  return svgO() + PA
+    + node(20, y, 170, h2, "📱 指挥端", "手机 / 大屏")
+    + node(262, y, 190, h2, "🧠 树莓派", "每秒决策 20 次")
+    + node(524, y, 190, h2, "⚙ STM32", "速度环 · 舵机")
+    + node(786, y, 134, h2, "🏎 车轮", "")
+    + arrowH(190, 258, y + h2 / 2, "WiFi 指令", true)
+    + arrowH(452, 520, y + h2 / 2, "串口 11 字节", true)
+    + arrowH(714, 782, y + h2 / 2, "电流/角度", true)
+    + `<path d="M 619 ${y + h2} V ${y + h2 + 74} H 357 V ${y + h2 + 8}" fill="none" stroke="var(--ok)" stroke-width="2.2" marker-end="url(#pa)" stroke-dasharray="6 5"/>`
+    + `<text x="488" y="${y + h2 + 66}" text-anchor="middle" fill="var(--ok)" font-size="13.5">24 字节反馈: 轮速 · 六轴姿态 · 电压 (每 0.05 秒)</text>`
+    + "</svg>";
+}
+function figReview() {
+  return svgO() + PA
+    + node(30, 200, 200, 110, "🎛 你的方案", "参数 / 路线 / 弯速档")
+    + node(320, 170, 280, 170, "🖥 仿真预演", "5 个扰动起点 · 各跑两圈")
+    + [[-0, .12], [0, -.12], [.12, 0], [-.12, 0], [0, 0]].map((o, i) =>
+        `<circle cx="${420 + i * 20}" cy="285" r="5.5" fill="var(--acc)" opacity=".8"/>`).join("")
+    + node(700, 90, 216, 100, "✓ 通过", "写入真车 + 预报圈速", "rgba(111,208,140,.6)")
+    + node(700, 330, 216, 100, "✗ 驳回", "报出事地点 · 车纹丝不动", "rgba(255,111,111,.55)")
+    + arrowH(230, 312, 255, "先在仿真里『死一遍』", true)
+    + `<line x1="600" y1="220" x2="692" y2="150" stroke="var(--ok)" stroke-width="2.4" marker-end="url(#pa)"/>`
+    + `<line x1="600" y1="300" x2="692" y2="370" stroke="var(--bad)" stroke-width="2.4" marker-end="url(#pa)"/>`
+    + "</svg>";
+}
+function figLayers() {
+  const rows = [
+    ["发车前", "死区位姿拒发", "这个角度进去转不出来 → 不让走"],
+    ["发车前", "2.5 秒发车预演", "预见 2.5 秒内困住 → 拒绝发车"],
+    ["发车前", "方案仿真审查", "会撞的参数写不进车"],
+    ["行驶中", "绿区断油", "越出允许空间立即停"],
+    ["行驶中", "滚动预演", "每 0.25 秒向未来看 1.5 秒"],
+    ["行驶中", "卡滞保护", "受阻自动断电等人工"],
+    ["永远", "一键急停", "空格 / 手机 — 人有最终否决权"],
+  ];
+  let s = "";
+  rows.forEach((r, i) => {
+    const y = 18 + i * 70;
+    const col = i < 3 ? "var(--acc)" : i < 6 ? "var(--gold)" : "var(--bad)";
+    s += `<rect x="30" y="${y}" width="880" height="56" rx="10" fill="var(--card)" stroke="var(--edge)"/>
+      <rect x="30" y="${y}" width="6" height="56" rx="3" fill="${col}"/>
+      <text x="60" y="${y + 35}" fill="${col}" font-size="13.5" letter-spacing="2">${r[0]}</text>
+      <text x="150" y="${y + 35}" fill="var(--ink)" font-size="17.5" font-weight="700">${r[1]}</text>
+      <text x="420" y="${y + 35}" fill="var(--muted)" font-size="14.5">${r[2]}</text>`;
+  });
+  return svgO() + s + "</svg>";
+}
+function figCase() {
+  return svgO() + PA
+    + `<path d="M 120 470 H 560 Q 700 470 700 330 V 60" fill="none" stroke="#3d5a75" stroke-width="14" stroke-linecap="round"/>`
+    + `<path d="M 120 400 H 520 Q 630 400 630 290 V 60" fill="none" stroke="var(--v-mid)" stroke-width="4" stroke-dasharray="2 8" stroke-linecap="round"/>`
+    + `<path d="M 120 400 H 540 Q 680 400 695 320" fill="none" stroke="var(--bad)" stroke-width="4" stroke-linecap="round"/>`
+    + `<text x="705" y="345" fill="var(--bad)" font-size="26" font-weight="800">✕</text>`
+    + `<text x="300" y="380" fill="var(--v-mid)" font-size="14.5">仿真预测轨迹(0.35) — 全绿</text>`
+    + `<text x="330" y="440" fill="var(--bad)" font-size="14.5">实车轨迹 — 推头外漂 0.4m, 满舵拉不回</text>`
+    + node(60, 60, 250, 96, "仿真说: 能过", "预演 5 起点全部通过", "rgba(111,208,140,.5)")
+    + node(60, 190, 250, 96, "实车说: 不行", "撞墙 · 当晚撤档", "rgba(255,111,111,.5)")
+    + "</svg>";
+}
+function figKnobs() {
+  const ks = [["极速 · AI", "0.30 – 0.45 m/s · ≈1.6s", .62], ["前瞻 · AI", "0.45 – 0.75 m · ≈2.4s", .45], ["刹车点 · AI", "0.60 – 1.50 m · ≈1.3s", .55], ["弯道胆量 · 带教", "0.30 / 0.33 · ≈4.3s", .5]];
+  let s = "";
+  ks.forEach((k, i) => {
+    const cx3 = 130 + (i % 2) * 340, cy3 = 130 + Math.floor(i / 2) * 250, R2 = 74;
+    const a0 = Math.PI * .75, a1 = Math.PI * .75 + Math.PI * 1.5 * k[2];
+    const arc = (a, b2, col, w2) => {
+      const x1 = cx3 + R2 * Math.cos(a), y1 = cy3 + R2 * Math.sin(a);
+      const x2 = cx3 + R2 * Math.cos(b2), y2 = cy3 + R2 * Math.sin(b2);
+      const big = (b2 - a) > Math.PI ? 1 : 0;
+      return `<path d="M ${x1} ${y1} A ${R2} ${R2} 0 ${big} 1 ${x2} ${y2}" fill="none" stroke="${col}" stroke-width="${w2}" stroke-linecap="round"/>`;
+    };
+    s += arc(a0, Math.PI * 2.25, "rgba(103,193,245,.15)", 12)
+      + arc(a0, a1, "var(--acc)", 12)
+      + `<text x="${cx3}" y="${cy3 + 2}" text-anchor="middle" fill="var(--ink)" font-size="21" font-weight="800">${k[0]}</text>
+         <text x="${cx3}" y="${cy3 + 28}" text-anchor="middle" fill="var(--muted)" font-size="13.5">${k[1]}</text>`;
+  });
+  return `<svg viewBox="0 0 940 520">` + s
+    + `<text x="770" y="130" fill="var(--sub)" font-size="15">4 个旋钮</text>
+       <text x="770" y="156" fill="var(--sub)" font-size="15">全部用</text>
+       <text x="770" y="182" fill="var(--acc)" font-size="15">自然语言</text>
+       <text x="770" y="208" fill="var(--sub)" font-size="15">指挥 AI 调</text>` + "</svg>";
+}
+function figStats() {
+  return `<div class="tiles">
+    <div class="tile"><div class="v">65<em>s</em></div><div class="k">基准圈速 (2026-08-03 正赛标定)</div></div>
+    <div class="tile gold"><div class="v">53.89<em>s</em></div><div class="k">场地纪录 — 学生指挥 AI 调出来的</div></div>
+    <div class="tile"><div class="v">0.964</div><div class="k">圈速预测标定系数 (实测/仿真)</div></div>
+    <div class="tile"><div class="v">5.3万<em>帧/晚</em></div><div class="k">黑匣子全记录 · 每 0.05 秒一帧</div></div>
+  </div>
+  <div class="figbox" style="margin-top:14px">
+    <svg viewBox="0 0 940 120">
+      <text x="10" y="34" fill="var(--sub)" font-size="15">基准 65s</text>
+      <rect x="120" y="18" width="790" height="22" rx="4" fill="var(--v-slow)"/>
+      <text x="10" y="88" fill="var(--gold)" font-size="15">纪录 53.89s</text>
+      <rect x="120" y="72" width="${(790 * 53.89 / 65).toFixed(0)}" height="22" rx="4" fill="var(--gold)"/>
+      <text x="${(120 + 790 * 53.89 / 65 + 12).toFixed(0)}" y="88" fill="var(--gold)" font-size="15" font-weight="700">快 17%</text>
+    </svg></div>`;
+}
+function figRules() {
+  let s = "";
+  ["第一组", "第二组", "第三组"].forEach((g, i) => {
+    const y = 30 + i * 90;
+    s += `<text x="26" y="${y + 32}" fill="var(--ink)" font-size="17" font-weight="700">${g}</text>`;
+    ["基准圈", "指挥AI调校", "发车验证", "再调一轮"].forEach((p, j) => {
+      s += `<rect x="${130 + j * 200}" y="${y}" width="184" height="48" rx="9" fill="var(--card)" stroke="var(--edge)"/>
+        <text x="${222 + j * 200}" y="${y + 30}" text-anchor="middle" fill="var(--sub)" font-size="14.5">${p}</text>`;
+    });
+  });
+  s += node(70, 330, 380, 110, "🏆 最快单圈奖", "3圈正赛取最快 · 触发保护=本场无效", "rgba(245,182,66,.5)")
+    + node(500, 330, 380, 110, "🎯 预测最准奖", "|预测−实测| 最小 — 严谨也是本事", "var(--edge)");
+  return svgO() + s + "</svg>";
+}
+function figCamp() {
+  const days = [["D1", "装配整车", "拧下每颗螺丝再装回去"], ["D2", "雷达建图", "手开两圈, 拼出赛道地图"],
+    ["D3", "画线调校", "设计赛车线+逐点限速"], ["D4", "安全系统", "亲手触发七层防护"], ["D5", "自主发车", "结营正赛+颁奖"]];
+  let s = `<line x1="70" y1="260" x2="870" y2="260" stroke="var(--edge)" stroke-width="2"/>`;
+  days.forEach((d, i) => {
+    const x = 90 + i * 190, up = i % 2 === 0;
+    s += `<circle cx="${x}" cy="260" r="9" fill="${i === 4 ? "var(--gold)" : "var(--acc)"}"/>
+      <text x="${x}" y="${up ? 200 : 320}" text-anchor="middle" fill="var(--ink)" font-size="18" font-weight="800">${d[0]} ${d[1]}</text>
+      <text x="${x}" y="${up ? 226 : 346}" text-anchor="middle" fill="var(--muted)" font-size="13.5">${d[2]}</text>`;
+  });
+  return svgO() + s + "</svg>";
+}
+function figChat() {
+  return `<div class="chat">
+    <div class="msg m-stu"><div class="who">🧑 学生 · 对着麦克风说人话</div>它在弯里太怂了，出弯给点劲，直道再冲一点</div>
+    <div class="msg m-ai"><div class="who">🤖 AI 车队工程师 (DeepSeek)</div>收到。弯中稳定优先保留，出弯提前给油：<br>
+      <code>极速 0.42 → 0.45</code> <code>刹车点 0.95 → 0.72</code> <code>前瞻 0.60 → 0.52</code><br>已通过预演审查写入真车，预计圈速 <b>62.1s</b></div>
+    <div class="msg m-sys">🏁 发车实测 61.4s — 预测差 0.7s，下一轮课题：差在哪个弯？</div>
+  </div>`;
+}
+function figLegs() {
+  const legs = [
+    [20, "🧠 人工智能", "定位算法 · 决策 · 大模型", "决定它如何判断"],
+    [335, "🔧 工程", "电路 · 固件 · 结构 · 协议", "决定算法能否落到硬件"],
+    [650, "✋ 动手", "装配 · 打印 · 走线 · 标定", "决定硬件能否稳定运转"]];
+  let s = PA;
+  for (const [x, t, sub, foot] of legs) {
+    s += node(x, 70, 270, 130, t, sub, x === 335 ? "var(--acc)" : "var(--edge)")
+      + `<text x="${x + 135}" y="222" text-anchor="middle" fill="var(--muted)" font-size="13">${foot}</text>`
+      + `<line x1="${x + 135}" y1="238" x2="${470 + (x - 335) * 0.06}" y2="330" stroke="var(--edge)" stroke-width="2" marker-end="url(#pa)"/>`;
+  }
+  s += node(215, 340, 510, 116, "🏎 可稳定完赛的整车", "三者缺一，系统无法闭环", "var(--gold)")
+    + `<text x="470" y="492" text-anchor="middle" fill="var(--sub)" font-size="14.5">三项能力共同构成从设想到实物的完整链路</text>`;
+  return svgO() + s + "</svg>";
+}
+function figRetrofit() {
+  const y = 150, h2 = 116;
+  return svgO() + PA
+    + node(16, y, 196, h2, "🎮 普通遥控车", "接收机 + ESC + 舵机")
+    + node(262, y, 196, h2, "✂ 移除接收机", "断开人工遥控输入")
+    + node(508, y, 196, h2, "🔌 单片机接管", "输出同一类 PWM 信号")
+    + node(754, y, 170, h2, "🏎 自动驾驶平台", "感知 · 决策 · 执行", "var(--gold)")
+    + arrowH(212, 258, y + h2 / 2, "", true)
+    + arrowH(458, 504, y + h2 / 2, "", true)
+    + arrowH(704, 750, y + h2 / 2, "", true)
+    + `<text x="470" y="${y - 34}" text-anchor="middle" fill="var(--acc)" font-size="15">遥控车的油门与转向信号，与自动驾驶车辆执行层为同一类信号</text>`
+    + node(160, 330, 300, 108, "👁 加装感知单元", "激光雷达 / 摄像头")
+    + node(510, 330, 300, 108, "🧠 加装运算单元", "树莓派 · 20Hz 决策")
+    + `<line x1="310" y1="330" x2="580" y2="${y + h2 + 6}" stroke="var(--acc)" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#pa)"/>`
+    + `<line x1="660" y1="330" x2="612" y2="${y + h2 + 6}" stroke="var(--acc)" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#pa)"/>`
+    + `<text x="470" y="474" text-anchor="middle" fill="var(--sub)" font-size="14.5">底盘结构保持不变 — 替换的是指令来源</text>`
+    + "</svg>";
+}
+function figRoutes() {
+  const col = (x, head, sub, steps, accent) => {
+    let s = node(x, 40, 340, 86, head, sub, accent);
+    steps.forEach((st, i) => {
+      const y = 168 + i * 82;
+      s += `<line x1="${x + 170}" y1="${y - 42}" x2="${x + 170}" y2="${y - 8}" stroke="var(--acc)" stroke-width="2" marker-end="url(#pa)"/>`
+        + `<rect x="${x}" y="${y}" width="340" height="60" rx="10" fill="var(--card)" stroke="var(--edge)" stroke-width="1.3"/>`
+        + `<text x="${x + 170}" y="${y + 26}" text-anchor="middle" fill="var(--ink)" font-size="16">${st[0]}</text>`
+        + `<text x="${x + 170}" y="${y + 46}" text-anchor="middle" fill="var(--muted)" font-size="12.5">${st[1]}</text>`;
+    });
+    return s;
+  };
+  return svgO() + PA
+    + col(20, "路线一 · 激光雷达", "显式建图 + 规划", [
+        ["点云 → 距离场匹配", "定位精度约 1cm, 不依赖光线"],
+        ["赛车线 + 纯追踪", "每一步决策可查、可解释"],
+        ["参数化调校", "学生调的是物理量"]], "var(--acc)")
+    + col(580, "路线二 · 纯视觉", "端到端神经网络", [
+        ["灰度图 + CLAHE 预处理", "单目相机, 裁顶 30% → 160×120"],
+        ["PilotNet-lite 推理", "19.4 万参数, 图像直接输出转向"],
+        ["数据驱动调校", "学生调的是训练数据"]], "var(--gold)")
+    + `<text x="470" y="486" text-anchor="middle" fill="var(--sub)" font-size="14.5">同一任务的两种解法 — 对应自动驾驶行业的两大技术流派</text>`
+    + "</svg>";
+}
+function figPipeline() {
+  return svgO() + PA
+    + node(20, 46, 262, 96, "① 手动驾驶采集", "车端录制会话帧")
+    + node(339, 46, 262, 96, "② GPU 训练", "版本号自增, 不覆盖旧版")
+    + node(658, 46, 262, 96, "③ 部署为候选", "保底版本不受影响")
+    + arrowH(282, 335, 94, "", true)
+    + arrowH(601, 654, 94, "", true)
+    + `<line x1="789" y1="142" x2="789" y2="196" stroke="var(--acc)" stroke-width="2.2" marker-end="url(#pa)"/>`
+    + node(339, 214, 262, 96, "④ 试跑评估", "切自动驾驶, 用候选模型")
+    + `<line x1="658" y1="248" x2="607" y2="248" stroke="var(--acc)" stroke-width="2.2" marker-end="url(#pa)"/>`
+    + `<line x1="400" y1="310" x2="330" y2="378" stroke="var(--ok)" stroke-width="2.2" marker-end="url(#pa)"/>`
+    + `<line x1="540" y1="310" x2="610" y2="378" stroke="var(--gold)" stroke-width="2.2" marker-end="url(#pa)"/>`
+    + node(120, 388, 250, 96, "✓ 确认采用", "候选转为活跃, 先行备份", "rgba(111,208,140,.6)")
+    + node(570, 388, 250, 96, "↩ 一键回滚", "切回保底版本, 损失为零", "rgba(245,182,66,.6)")
+    + "</svg>";
+}
+function figMade() {
+  const items = [
+    ["🖨", "结构件", "雷达座 / 立柱\n自建模 3D 打印"],
+    ["⚡", "驱动板固件", "ESP32-S3 接管\n电机 + 舵机"],
+    ["⏱", "视觉计圈器", "ESP32-CAM\n自制计时盒"],
+    ["🛰", "定位算法", "距离场 + 扫描匹配\n绑架自愈"],
+    ["🖥", "网页驾驶舱", "实时遥测\n大屏 + 教师面板"],
+    ["📱", "微信小程序", "扫码上车\n抽卡 / 成绩榜"],
+    ["🧬", "端到端模型", "双光线 CNN\n自采数据训练"],
+    ["🏁", "赛道与围栏", "拼版印刷\n场地标定"]];
+  let s = "";
+  items.forEach((it, i) => {
+    const x = 16 + (i % 4) * 232, yy = 46 + Math.floor(i / 4) * 210;
+    s += `<rect x="${x}" y="${yy}" width="212" height="176" rx="13" fill="var(--card)" stroke="var(--edge)" stroke-width="1.5"/>
+      <text x="${x + 106}" y="${yy + 52}" text-anchor="middle" font-size="30">${it[0]}</text>
+      <text x="${x + 106}" y="${yy + 88}" text-anchor="middle" fill="var(--ink)" font-size="17" font-weight="700">${it[1]}</text>`;
+    it[2].split("\n").forEach((ln, j) => {
+      s += `<text x="${x + 106}" y="${yy + 116 + j * 22}" text-anchor="middle" fill="var(--muted)" font-size="13">${ln}</text>`;
+    });
+  });
+  return svgO() + s + "</svg>";
+}
+
+/* ══════════ 幻灯片内容 ══════════ */
+const slide = (kick, title, bullets, demo, fig, cap) => ({kick, title, bullets, demo, fig, cap});
+const DECK = [
+  {hero: true, html: `
+    <div class="bgtrack">${figTrack()}</div>
+    <h1>AI·GP<br><span>与自动驾驶赛车的两小时</span></h1>
+    <div class="sub">自研整车 · 可验证成绩 · 圈速即实力</div>
+    <div class="demo tip"><b>开场动作</b> 什么都别讲——先让车自己跑一场三圈正赛，再翻开下一页。</div>`},
+  slide("开场", "刚才那三圈，没有任何人操作", [
+    ["它自己知道自己在哪", "车顶激光雷达持续扫描四周，和内置地图比对，定位精度约 1 厘米——比你用卷尺量还准。"],
+    ["它自己决定怎么开", "沿一条优化过的赛车线行驶：直道放开加速，进弯提前减速，出弯再给油。"],
+    ["它自己守住底线", "全程七层安全防护盯着它，宁可停下，绝不冒险——所以我们敢让它在你们面前跑。"],
+    ["接下来的两小时", "上半场把它的『脑子』打开给你看；下半场轮到你们来指挥它，用圈速说话。"]],
+    "指着大屏轨迹回放：金色的线就是它刚才的每一步决定。",
+    figTrack, "真实赛道数据绘制 · 白色虚线=起跑线 · 金点=发车位"),
+  slide("00 · 整车", "整车构成：感知 · 决策 · 执行", [
+    ["眼睛 = 激光雷达", "每秒旋转 10 圈、一圈近 300 次测距，黑暗里也照常开——它看的是距离，不是颜色。"],
+    ["大脑 = 树莓派 5", "一台掌心大小的 Linux 电脑，定位、决策、网页驾驶舱的全部代码都跑在它上面。"],
+    ["小脑 = STM32 底盘", "工业级单片机专管电机与舵机：不思考，但每个指令毫秒级执行——和人的小脑同一分工。"],
+    ["与真车同构", "阿克曼转向 + 感知/决策/执行分层，和真正的自动驾驶汽车是同一套体系，只是缩小到 1/10。"]],
+    "举起备用件让学生传着看：雷达、树莓派、驱动板。",
+    figStack, "三层架构：看 → 想 → 动"),
+  slide("00 · 整车", "关键参数：工程师的语言", [
+    ["底盘几何", "轴距 0.322 米、前轮最大转角 26.7°——反解出最小转弯半径 0.8 米。三个数字互相咬合，每一个都可验证。"],
+    ["动力与限速", "24V 锂电，极速可达 6m/s；比赛限速 0.45m/s——快不是本事，收得住才是本事。"],
+    ["满身传感器", "500 线轮速编码器 + 六轴陀螺仪 + 电压计，每 0.05 秒把车况回传一帧。"],
+    ["一块电池点亮全车", "底盘板载 5V5A 输出直接供电树莓派——没有多余的电源，就没有多余的故障点。"]],
+    "问学生：为什么转弯半径是 0.8 米？给出轴距和转角，现场推一遍。",
+    figAcker, "阿克曼转向几何：轴距 × 转角 = 转弯半径"),
+  slide("00 · 整车", "一条指令的旅程（0.05 秒）", [
+    ["按下发车", "指令从手机或大屏出发，经 WiFi 进入树莓派——这一步和你发微信没有本质区别。"],
+    ["大脑决策", "树莓派每秒决策 20 次：我在哪 → 线上目标点在哪 → 目标速度和转角是多少，打包成 11 个字节。"],
+    ["小脑执行", "字节流经串口(115200)送进 STM32，速度环把它换算成电机电流与舵机角度。"],
+    ["仪表回流", "24 字节反馈逆流而上：轮速、姿态、电压——大屏上你看到的每个读数都是真数据，不是动画。"]],
+    "让一位学生按急停，讲清这条链路为什么 0.05 秒内就能停住。",
+    figPipe, "指令下行 · 反馈上行 — 每秒往返 20 次"),
+  slide("01 · 感知", "它如何看见世界", [
+    ["激光测距", "雷达发出激光碰到墙弹回来，用时间差算距离——每一圈就是几百个『命中点』。"],
+    ["点连成墙", "把命中点画在图上，红点的轮廓就是围栏。它看不见颜色和花纹，但对『哪里有东西』极其敏感。"],
+    ["为什么用雷达", "摄像头怕黑怕逆光，雷达不怕——关了灯它照样跑，这也是夜赛能成立的原因。"]],
+    "大屏切实时点云：把手伸进赛道，看自己的腿变成一排红点。",
+    figLidar, "以发车位为例的一圈扫描 · 蓝点=激光命中点"),
+  slide("01 · 感知", "距离场：把地图算成查询表", [
+    ["预先算好", "赛道上每一个位置『离墙多远』提前全部算出来存成表——跑起来只查表，不现算。"],
+    ["定位 = 摆拼图", "把这一圈雷达点往地图上摆，摆到和墙最贴合的位置——那就是车的位置，每 0.4 秒对一次。"],
+    ["颜色即距离", "右图越亮的地方离墙越远越安全；贴墙的深色窄边，就是系统眼里的『危险贴边区』。"]],
+    "现场把车抱到任意位置放下，看它几秒内在大屏上『找到自己』。",
+    figDF, "距离场热力图：深→浅 = 离墙 0 → 1.1m+"),
+  slide("01 · 感知", "定位失效时的自恢复", [
+    ["自知之明", "每次定位都带一个『残差』分数——雷达点和地图差多少厘米。平时 3~6cm；分数变差，它就不敢信自己。"],
+    ["全局重定位", "连续几拍对不上，立即全场撒网：以 0.45 米网格把每个位置都试一遍，几秒内重新找到自己。"],
+    ["抗干扰", "围观的人腿、临时摆的书包，都会污染扫描——靠『信远墙、疑近物』的权重设计滤掉。"]],
+    "演示『绑架测试』：行驶中把车抱起来换个位置放下，看它自己回过神来。",
+    figReloc, "全场网格搜索 · 绿圈=残差最小的正确答案"),
+  slide("02 · 决策", "一条线 + 一个注视点", [
+    ["赛车线哪来的", "人类老师先手开一圈示范，算法再优化平滑——这条金线是『人机合作』的产物。"],
+    ["纯追踪", "车永远盯着前方 0.6 米线上的一个点打方向——和你骑车时看路的原理完全一样，简单到可以手算。"],
+    ["为什么不用端到端", "可解释：每个转向都能问出『为什么』。出了问题知道找谁——这是工程课，不是魔术课。"]],
+    "在大屏上把前瞻点调到 0.3m 和 1.2m 各跑半圈：一个画龙一个切弯。",
+    figPursuit, "黄圈=前瞻半径 · 箭头=当前注视点"),
+  slide("02 · 决策", "速度如何分配", [
+    ["逐点限速表", "赛车线上每一点都预先标好限速：直道 0.45、急弯 0.30、中弯取中间值——右图的颜色就是速度。"],
+    ["窄巷铁闸", "中间那条 0.86 米宽的窄巷永远锁 0.30，任何档位任何卡牌都改不动——规则里的『不可谈判条款』。"],
+    ["弯速阶梯", "弯速有两档可选（稳 0.30 / 进阶 0.33），每次升档必须先过仿真预演——不安全，按钮按了也不生效。"],
+    ["刹车预瞄", "看见前方 0.9 米内有慢区，现在就开始收油——和老司机『见弯收油』同一个习惯。"]],
+    "切到 0.33 档发一场，让学生盯圈速对比。",
+    figSpeed, "真实限速表着色 · 亮=0.45 快 / 中=0.375 / 暗=0.30 慢"),
+  slide("03 · 安全", "绿区与死区", [
+    ["绿区", "车被允许存在的全部空间（右图绿色）。冲出绿区的瞬间立即断油——没有商量。"],
+    ["贴边红区", "离墙不足 0.28 米的窄边（红色）——位置还合法，但已经是『贴边警戒区』，速度和路线都会被压。"],
+    ["死区", "还有一种更隐蔽的危险：位置安全、但『这个角度进去就转不出来』的位姿——系统按朝向预判，直接拒绝进入。"]],
+    "大屏开安全图层，把车头转向角落：看红色死区跟着车头方向实时变化。",
+    figZones, "绿=允许空间 · 红=贴边警戒(离墙<0.28m)"),
+  slide("03 · 安全", "调校自由度的安全边界", [
+    ["方案级改动 · 预演审查", "路线与弯速档的改动，先在仿真中从 5 个扰动起点各跑两圈完整验证；未通过的方案不写入车辆。"],
+    ["参数级改动 · 区间硬夹", "旋钮取值在写入前一律夹进实测验证过的区间，超出范围的指令不生效。"],
+    ["运行时 · 滚动预演", "行驶中每 0.25 秒向前推演 1.5 秒，预判到无法脱困时提前停车，而非事后处置。"],
+    ["边界的来源", "安全区间由多轮实车测试与零事故演练确定；弯速 0.35 档因实车推头，已于当日撤除。"]],
+    "现场让 AI 提一个激进方案，看系统当众驳回并报出『会在哪出事』。",
+    figReview, "先死在仿真里，才能活在赛道上"),
+  slide("03 · 安全", "七层防护清单", [
+    ["发车前三道闸", "位姿死区拒发 · 2.5 秒发车预演 · 方案仿真审查——问题拦在车动之前。"],
+    ["行驶中三道闸", "绿区越界断油 · 滚动预演提前停 · 受阻卡滞自动断电——问题出现的 0.25 秒内响应。"],
+    ["最后一道永远在", "任何人、任何时刻，一键急停（空格 / 手机）——机器再聪明，最终否决权在人手里。"]],
+    "报数字：这套系统上线以来 24 圈连续零事故的演练记录。",
+    figLayers, "七层防护：三道在发车前，三道在行驶中，一道永远在"),
+  slide("03 · 安全", "真实案例：0.35 为什么被撤档", [
+    ["实验", "就在昨晚：弯速 0.35 仿真预演全绿，实车却推头撞墙——偏差涨到 0.4 米，满舵 26.7° 也拉不回来。"],
+    ["选择", "我们没有调参数去『骗过』审查，而是当晚把 0.35 下架——只保留实测验证过的档位。"],
+    ["工程判据", "仿真结果始终比现实乐观。承认模型存在边界、以实测数据作为最终判据 —— 这是本课程的核心方法论。"]],
+    "把这页当故事讲：昨晚十点，这块屏幕前发生的真实决定。",
+    figCase, "同一个弯：仿真轨迹(蓝虚线) vs 实车轨迹(红线)"),
+  slide("04 · 实操", "你们的工作：调校工程师", [
+    ["不用写代码", "对着麦克风说人话——『弯里别那么怂』『它老蹭右墙』——AI 车队工程师翻译成参数改动。"],
+    ["先预测后实验", "每个方案系统先给出『预计圈速』，发车实测对答案——假设 → 预测 → 实验 → 验证，完整科学闭环。"],
+    ["差值就是学问", "预测 62.1、实测 61.4，差的 0.7 秒在哪个弯丢的？——这就是你们下一轮的研究课题。"]],
+    "现场演示一轮完整对话 → 写入 → 发车 → 对答案。",
+    figChat, "真实界面逻辑复刻：学生说人话，AI 写参数，赛道给答案"),
+  slide("04 · 实操", "认识四个旋钮", [
+    ["极速（对 AI 说）", "直道天花板（0.30–0.45 m/s），约值 1.6 秒；配上进阶弯速档能放大到 5.9 秒。"],
+    ["前瞻（对 AI 说）", "注视点距离（0.45–0.75 m），约值 2.4 秒。太近画龙，太远切弯——赛车手的『视线管理』。"],
+    ["刹车点（对 AI 说）", "提前减速距离（0.60–1.50 m），约值 1.3 秒。晚刹激进，早刹稳妥——进弯风格由它决定。"],
+    ["弯道胆量（带教按）", "弯中两档（稳 0.30 / 进阶 0.33），约值 4.3 秒——最强的旋钮不给 AI，由带教切档并当场过预演。"]],
+    "亮底牌：54 种组合（含全部边界值）仿真预验证全部通过，最小离墙 0.30m，圈速跨度 9.8 秒。",
+    figKnobs, "三个旋钮用人话指挥 AI · 最强那个交给人按 · 全组合仿真预验证"),
+  slide("04 · 实操", "成绩的可验证性", [
+    ["基准与纪录", "基准圈 65 秒（正赛标定）；场地纪录 53.89 秒——不是工程师调的，是学生指挥 AI 调出来的。"],
+    ["预测有多准", "仿真圈速乘以标定系数 0.964 就是预测值——这个系数本身，就是用真实比赛数据校准出来的。"],
+    ["黑匣子", "每场比赛 5 万帧全记录：每 0.05 秒的位置、速度、每一次决策都能回放复盘——错了不可怕，找得到原因才重要。"]],
+    "当场回放上一场的轨迹热图，指出最快圈和普通圈差在哪个弯。",
+    figStats, ""),
+  slide("05 · 工程能力", "课程定位：算法 · 工程 · 动手", [
+    ["能力构成", "算法决定它如何判断，工程决定它能否运转，动手决定它是否真正落地；三者缺一，系统无法闭环。"],
+    ["与常见 AI 课程的差别", "本课程不止于模型与参数，而是完整覆盖结构、电路、固件到上层应用的实现链路。"],
+    ["学生获得的能力", "能够将一个设想推进为可运行的实物系统，并具备排查与修复的基本工程素养。"],
+    ["定位", "AI 是入口，工程与动手是将 AI 转化为实体系统的必经环节。"]],
+    "配合实物讲解：将 3D 打印结构件与驱动板置于台面，对照大屏上的代码同步说明。",
+    figLegs, "算法 · 工程 · 动手 — 完整的实现链路"),
+  slide("05 · 工程能力", "改造路径：从遥控车到自动驾驶平台", [
+    ["技术前提", "遥控车由接收机输出 PWM 控制电调与舵机；自动驾驶车辆的执行层使用同一类信号。"],
+    ["改造方式", "移除接收机，由单片机接管油门与转向，加装感知单元（激光雷达或摄像头）与运算单元（树莓派），底盘结构无需改动。"],
+    ["门槛与成本", "无需专用实验平台，一台标准配置的电动遥控车即可作为起点。"],
+    ["对学校与机构的意义", "现有车辆可直接升级，投入集中于改装件与课程；设备具备自主维护条件。"]],
+    "现场传阅拆下的接收机：说明改造的实质是替换指令来源，而非更换车辆。",
+    figRetrofit, "底盘不变 · 替换的是指令来源"),
+  slide("05 · 工程能力", "两条技术路线均已跑通", [
+    ["路线一 · 激光雷达", "显式建图与扫描匹配定位，配合赛车线规划；决策链路每一步可查，不受光线影响。"],
+    ["路线二 · 纯视觉", "单目灰度相机经 CLAHE 预处理后送入 PilotNet-lite 网络，由图像直接输出转向角。"],
+    ["两者的教学价值不同", "前者训练学生理解物理量与几何约束，后者训练学生理解数据、标注与模型迭代。"],
+    ["对应行业现状", "这正是自动驾驶行业两大技术流派的分歧所在；学生可在同一赛道上亲手比较二者的边界。"]],
+    "两条路线的车同场演示：关灯后雷达车照常完赛，视觉车需切换暗光模型——差异一目了然。",
+    figRoutes, "激光雷达路线 vs 纯视觉路线 — 同一任务的两种解法"),
+  slide("05 · 工程能力", "视觉路线：学生训练自己的模型", [
+    ["数据采集", "学生手动驾驶采集图像与转向数据，界面实时显示距可训练所需帧数的进度。"],
+    ["模型训练", "数据回传至 GPU 工作站训练，车端只负责推理，分工与产业实践一致。"],
+    ["候选机制", "新模型先以候选身份上车试跑，确认表现后方可采用，否则一键回滚至保底版本。"],
+    ["工程规范", "版本只增不覆盖、保底版永久保留、采集与训练预处理严格一致——模型管理的基本纪律。"]],
+    "现场演示一次回滚：用表现不佳的候选模型跑一段，再一键切回保底版本。",
+    figPipeline, "采集 → 训练 → 候选 → 试跑 → 采用 / 回滚"),
+  slide("05 · 工程能力", "自研范围：从结构件到系统", [
+    ["硬件", "结构件自主建模并 3D 打印，驱动板固件自行开发，计时装置为自研的 ESP32 视觉计圈盒。"],
+    ["软件", "车端定位与决策、网页驾驶舱、微信小程序、赛场大屏，全链路自主实现。"],
+    ["逆向与集成", "外购底盘未公开通信协议时，通过候选指令格式自动扫描完成协议还原并接入。"],
+    ["教学团队构成", "课程由参与研发的工程师直接讲授——研发者即教学者。"]],
+    "翻到此页时将自研件在桌面依次陈列：结构件、驱动板、计圈盒，配合实物讲解。",
+    figMade, "结构 · 固件 · 算法 · 应用层 — 全链路自主实现"),
+  slide("06 · 规则", "比赛规则", [
+    ["三组轮换", "每组约 18 分钟：跑基准圈 → 指挥 AI 调校 → 发车验证 → 再调一轮——两轮迭代足够看到进步。"],
+    ["3 圈正赛制", "取最快单圈上榜；触发任何安全保护停车 = 本场成绩无效——规则和真实赛车一样冷酷。"],
+    ["两个奖", "最快单圈奖之外还有『预测最准奖』——|预测−实测| 最小的组。快是本事，准也是本事。"],
+    ["纪律", "车辆行驶期间，所有人在围栏外。这不是客套，是七层防护之外的第八层。"]],
+    "宣布完规则立刻分组，别让气氛冷下来。",
+    figRules, "18 分钟 × 3 组 · 双奖项"),
+  slide("尾声", "从今天到五天营", [
+    ["今天你们做了什么", "指挥一台真正的自动驾驶赛车、用科学方法迭代方案、和 AI 工程师协作——这些都不是模拟。"],
+    ["五天营", "从拧螺丝装整车开始：雷达建图、设计赛车线、亲手触发安全系统、直到你的车第一次自主发车。"],
+    ["带走的不是奖状", "是一个习惯：先预测，再实验，让数据说最后一句话。"]],
+    "翻到这页时把报名二维码贴在教室门口。",
+    figCamp, "五天点亮一台自动驾驶赛车"),
+  {hero: true, html: `
+    <div class="bgtrack">${figTrack()}</div>
+    <h1>纪录 <span>53.89s</span><br>在那里，等你破。</h1>
+    <div class="sub">AI·GP · 圈速即实力</div>
+    <div class="demo tip"><b>散场前</b> 扫码上车，头像上榜——下次来，从你自己的名字开始。</div>`},
+];
+
+/* ══════════ 渲染 + 导航 ══════════ */
+const deckEl = document.getElementById("deck");
+DECK.forEach((d, i) => {
+  const sec = document.createElement("section");
+  if (d.hero) { sec.className = "slide hero"; sec.innerHTML = d.html; }
+  else {
+    sec.className = "slide";
+    const figHtml = typeof d.fig === "function" ? d.fig() : d.fig;
+    const isRaw = figHtml.trim().startsWith("<div");
+    sec.innerHTML = `
+      <div class="txt">
+        <div class="kick">${d.kick}</div><h2>${d.title}</h2><div class="bar"></div>
+        <ul>${d.bullets.map(b => `<li><b>${b[0]}</b><span>${b[1]}</span></li>`).join("")}</ul>
+        ${d.demo ? `<div class="demo"><b>🎬 现场看点</b> · ${d.demo}</div>` : ""}
+      </div>
+      <div class="fig">${isRaw ? figHtml : `<div class="figbox">${figHtml}</div>`}
+        ${d.cap ? `<div class="figcap">${d.cap}</div>` : ""}</div>`;
+  }
+  deckEl.appendChild(sec);
+});
+const slides = [...document.querySelectorAll(".slide")];
+let cur = Math.min(Math.max((parseInt(location.hash.slice(1)) || 1) - 1, 0), slides.length - 1);
+function show(i) {
+  cur = Math.min(Math.max(i, 0), slides.length - 1);
+  slides.forEach((s, j) => s.classList.toggle("on", j === cur));
+  document.getElementById("nav").textContent = (cur + 1) + " / " + slides.length;
+  location.hash = cur + 1;
+}
+addEventListener("keydown", e => {
+  if (["ArrowRight", "ArrowDown", "PageDown", " "].includes(e.key)) { e.preventDefault(); show(cur + 1); }
+  if (["ArrowLeft", "ArrowUp", "PageUp"].includes(e.key)) { e.preventDefault(); show(cur - 1); }
+  if (e.key === "Home") show(0);
+  if (e.key === "End") show(slides.length - 1);
+});
+document.getElementById("aR").onclick = () => show(cur + 1);
+document.getElementById("aL").onclick = () => show(cur - 1);
+show(cur);
+</script>
+</body>
+</html>
