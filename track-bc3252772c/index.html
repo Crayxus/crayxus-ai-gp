@@ -105,6 +105,7 @@ footer img{width:180px;max-width:56%;border-radius:14px;opacity:.85;margin:0 aut
 <div class="sec">🔴 LIVE BOARD · 实时盯盘 <span id="pooln" style="color:var(--green)"></span>
 <span style="float:right;font-size:9px;letter-spacing:.05em;color:var(--dim)">🟢符合 🟡监控中 🔴未达标</span></div><div class="board" id="board"></div>
 <div class="sec" style="margin-top:22px">📈 SIGNALS · 正式信号</div><div id="list"></div>
+<div class="sec" style="margin-top:22px">🕵️ DETECTOR · 探测器实验通道 <span id="dqxstats" style="letter-spacing:0;font-family:var(--mono)"></span></div><div id="dqxlist"></div>
 <div id="scanwrap" style="display:none"><div class="sec" style="margin-top:22px">近期评估</div><div id="scanlist"></div></div>
 <footer><img src="https://crayxus.com.au/og-track.jpg" alt="Crayxus">
 CRAYXUS SPORTS INTELLIGENCE · 实盘信号自动记录<br>仅供合作方参考 · 不构成任何投注建议</footer>
@@ -159,6 +160,19 @@ async function sync(){try{
     else b='<span class="badge bp">'+x.res+'</span>';
     var sc=x.sc?'<span class="pill" style="color:var(--cyan)">'+x.sc+'</span>':'';
     return '<div class="sig"><div class="top"><span class="tag">'+x.lg+'</span><span class="tm">'+x.t+'</span></div><div class="match">'+x.m+'</div><div class="bot"><span class="pill">'+x.px+'</span>'+sc+b+'</div></div>';}).join("");}
+  var DQ=d.dqx||{};var DS=DQ.stats||{};
+  var dqel=document.getElementById("dqxstats"),dql=document.getElementById("dqxlist");
+  if(dqel){dqel.textContent=DS.settled?(" "+DS.wins+"胜"+DS.losses+"负 · "+(DS.rate===null?"—":DS.rate+"%")+" · 净"+(DS.net>=0?"+":"")+DS.net.toFixed(2)):" 影子验证中·自动结算";}
+  if(dql){
+    if(!(DQ.rows||[]).length){dql.innerHTML='<div class="empty">探测器持续扫描全市场 · 信号出现即显示<br><span style="font-size:9px">基于资金指纹判据 · 实验通道·独立于正式信号</span></div>';}
+    else{dql.innerHTML=DQ.rows.map(function(x){var b;
+      if(x.pnl===null)b='<span class="badge bp">⏳ 进行中</span>';
+      else if(x.pnl>0)b='<span class="badge bw">'+x.res+' +'+x.pnl.toFixed(2)+'</span>';
+      else if(x.pnl<0)b='<span class="badge bl">'+x.res+' '+x.pnl.toFixed(2)+'</span>';
+      else b='<span class="badge bp">'+x.res+'</span>';
+      var sc=x.sc?'<span class="pill" style="color:var(--cyan)">'+x.sc+'</span>':'';
+      return '<div class="sig" style="border-color:rgba(255,180,84,.25)"><div class="top"><span class="tag" style="color:#ffb454;border-color:rgba(255,180,84,.35)">'+x.lg+'</span><span class="tm">'+x.t+'</span></div><div class="match">'+x.m+'</div><div class="bot"><span class="pill">'+x.px+'</span>'+sc+b+'</div></div>';}).join("");}
+  }
   var td=(d.updated||"").slice(0,5);
   var recent=(d.scan||[]).filter(function(x){return x.t.slice(0,5)===td;});
   var SL=document.getElementById("scanlist"),SW=document.getElementById("scanwrap");
