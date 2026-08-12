@@ -84,7 +84,7 @@ footer img{width:180px;max-width:56%;border-radius:14px;opacity:.85;margin:0 aut
 </style></head><body>
 <header><div class="brand">CRAYXUS<small>SPORTS&nbsp;INTELLIGENCE</small></div>
 <div class="live"><span class="dot"></span><span id="up">筛选中</span></div></header>
-<div class="sec" style="margin-top:2px">🧲 HALF-TIME · 中场0-0主打通道 <span class="dot" style="display:inline-block;vertical-align:middle;margin:0 2px 0 6px"></span><span id="htxstats" style="letter-spacing:0;font-family:var(--mono);color:#2ee6a8;font-size:11px"></span></div>
+<div class="sec" style="margin-top:2px">🧲 CLASSIC · 原版策略 (07-19起实录) <span class="dot" style="display:inline-block;vertical-align:middle;margin:0 2px 0 6px"></span><span id="htxstats" style="letter-spacing:0;font-family:var(--mono);color:#2ee6a8;font-size:11px"></span></div>
 <div class="hero">
   <div class="hrow">
     <div class="ring" id="ring" style="--v:0"><b id="rate">—</b><small>命中率</small></div>
@@ -125,7 +125,7 @@ async function sync(){try{
   document.getElementById("ring").style.setProperty("--v",cr===null?0:cr);
   document.getElementById("rate").textContent=cr===null?"—":cr+"%";
   const n=document.getElementById("net");n.textContent=(cn>=0?"+":"")+cn.toFixed(2);n.style.color=cn>=0?"var(--green)":"var(--red)";
-  document.getElementById("rec").textContent=cw+" 胜 "+cl+" 负 · 已结算 "+cs+(HS0.settled?" (含实盘"+HS0.settled+")":" · 回放起步");
+  document.getElementById("rec").textContent=cw+" 胜 "+cl+" 负 · 已结算 "+cs+(HS0.settled?" (含实盘"+HS0.settled+")":" · 原版实录起步");
   var v4el=document.getElementById("v4stats");
   if(v4el){v4el.textContent=" "+s.wins+"胜"+s.losses+"负 · "+(s.rate===null?"—":s.rate+"%")+" · 净"+(s.net>=0?"+":"")+s.net.toFixed(2)+" · 已结算"+s.settled;}
   document.getElementById("scanned").textContent=(s.scanned||0).toLocaleString();
@@ -174,9 +174,9 @@ async function sync(){try{
   var htel=document.getElementById("htxstats"),htsub=document.getElementById("htxsub"),htl=document.getElementById("htxlist");
   var RP=HT.replay||{};
   if(htel){var _lv=HS.settled?(HS.wins+"胜"+HS.losses+"负 净"+(HS.net>=0?"+":"")+HS.net.toFixed(2)):"实盘账开跑";
-    var _rp=RP.settled?("回放 "+RP.wins+"胜"+RP.losses+"负 净"+(RP.net>=0?"+":"")+RP.net.toFixed(2)):"";
+    var _rp=RP.settled?("历史 "+RP.wins+"胜"+RP.losses+"负 净"+(RP.net>=0?"+":"")+RP.net.toFixed(2)):"";
     htel.textContent=" "+_rp+(_rp?" · ":"")+_lv;}
-  if(htsub){htsub.textContent=(H2.settled?("重开实价口径: "+H2.wins+"胜"+H2.losses+"负 净"+(H2.net>=0?"+":"")+H2.net.toFixed(2)+" · "):"")+"双价并行: 冻结价(45分前末价)+下半场重开实价 · 回放=历史回测·实盘账独立累计";}
+  if(htsub){htsub.textContent=(H2.settled?("重开实价口径: "+H2.wins+"胜"+H2.losses+"负 净"+(H2.net>=0?"+":"")+H2.net.toFixed(2)+" · "):"")+"历史=原版B-ML(百万场回测·45分窗)07-19起全部实录 · 新单=同口径经典影子续记 · 独立累计";}
   if(htl){
     if(!(HT.rows||[]).length){htl.innerHTML='<div class="empty">等待今日首个中场0-0场景 · 条件即达自动入场</div>';}
     else{htl.innerHTML=HT.rows.map(function(x){var b;
@@ -187,7 +187,7 @@ async function sync(){try{
       var b2=(x.pnl2!==null&&x.pnl2!==undefined)?'<span class="badge '+(x.pnl2>0?"bw":(x.pnl2<0?"bl":"bp"))+'" style="opacity:.75">开:'+(x.pnl2>0?"+":"")+x.pnl2.toFixed(2)+'</span>':'';
       var sc=x.sc?'<span class="pill" style="color:var(--cyan)">'+x.sc+'</span>':'';
       var rk=x.rk?'<span class="pill" style="opacity:.7">开 '+x.rk+'</span>':'';
-      var rp=x.rp?'<span class="tag" style="color:var(--dim);border-color:rgba(120,150,255,.25);margin-left:4px">回放</span>':'';
+      var rp=x.rp?'<span class="tag" style="color:var(--dim);border-color:rgba(120,150,255,.25);margin-left:4px">实录</span>':'';
       return '<div class="sig" style="border-color:rgba(46,230,168,.32)'+(x.rp?';opacity:.82':'')+'"><div class="top"><span class="tag" style="color:#2ee6a8;border-color:rgba(46,230,168,.4)">'+x.lg+'</span>'+rp+'<span class="tm">'+x.t+'</span></div><div class="match">'+x.m+'</div><div class="bot"><span class="pill">冻 '+(x.fz||"—")+'</span>'+rk+sc+b+b2+'</div></div>';}).join("");}
   }
   var DQ=d.dqx||{};var DS=DQ.stats||{};var DR=DQ.run||{};
