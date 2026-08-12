@@ -108,6 +108,7 @@ footer img{width:180px;max-width:56%;border-radius:14px;opacity:.85;margin:0 aut
 <div class="sec">🔴 LIVE BOARD · 实时盯盘 <span id="pooln" style="color:var(--green)"></span>
 <span style="float:right;font-size:9px;letter-spacing:.05em;color:var(--dim)">🟢符合 🟡监控中 🔴未达标</span></div><div class="board" id="board"></div>
 <div class="sec" style="margin-top:22px">📈 SIGNALS · 正式信号 <span id="v4stats" style="letter-spacing:0;font-family:var(--mono);color:var(--dim);font-size:10.5px"></span></div><div id="list"></div>
+<div class="sec" style="margin-top:22px">🧲 CLASSIC · 原版B-ML实录 <span id="clstats" style="letter-spacing:0;font-family:var(--mono);color:var(--dim);font-size:10.5px"></span></div><div id="cllist"></div>
 <div class="sec" style="margin-top:22px">🕵️ DETECTOR · 探测器实验通道 <span class="dot" style="display:inline-block;vertical-align:middle;margin:0 2px 0 6px"></span><span id="dqxstats" style="letter-spacing:0;font-family:var(--mono);color:#ffb454"></span></div><div id="dqxlist"></div>
 <div id="scanwrap" style="display:none"><div class="sec" style="margin-top:22px">近期评估</div><div id="scanlist"></div></div>
 <footer><img src="https://crayxus.com.au/og-track.jpg" alt="Crayxus">
@@ -190,6 +191,15 @@ async function sync(){try{
       var rp=x.rp?'<span class="tag" style="color:var(--dim);border-color:rgba(120,150,255,.25);margin-left:4px">实录</span>':'';
       return '<div class="sig" style="border-color:rgba(46,230,168,.32)'+(x.rp?';opacity:.82':'')+'"><div class="top"><span class="tag" style="color:#2ee6a8;border-color:rgba(46,230,168,.4)">'+x.lg+'</span>'+rp+'<span class="tm">'+x.t+'</span></div><div class="match">'+x.m+'</div><div class="bot"><span class="pill">冻 '+(x.fz||"—")+'</span>'+rk+sc+b+b2+'</div></div>';}).join("");}
   }
+  var CL=(d.htx||{}).classic||{};var CS=CL.stats||{};
+  var clel=document.getElementById("clstats"),cll=document.getElementById("cllist");
+  if(clel){clel.textContent=CS.settled?(" "+CS.wins+"胜"+CS.losses+"负 · 净"+(CS.net>=0?"+":"")+CS.net.toFixed(2)+" · 已归档"+CS.settled+"场(07-19~08-08)"):"";}
+  if(cll&&(CL.rows||[]).length){cll.innerHTML=CL.rows.map(function(x){var b;
+    if(x.pnl>0)b='<span class="badge bw">'+x.res+' +'+x.pnl.toFixed(2)+'</span>';
+    else if(x.pnl<0)b='<span class="badge bl">'+x.res+' '+x.pnl.toFixed(2)+'</span>';
+    else b='<span class="badge bp">'+x.res+'</span>';
+    var sc=x.sc?'<span class="pill" style="color:var(--cyan)">'+x.sc+'</span>':'';
+    return '<div class="sig" style="opacity:.85"><div class="top"><span class="tag">'+x.lg+'</span><span class="tag" style="color:var(--dim);border-color:rgba(120,150,255,.25);margin-left:4px">实录</span><span class="tm">'+x.t+'</span></div><div class="match">'+x.m+'</div><div class="bot"><span class="pill">'+x.px+'</span>'+sc+b+'</div></div>';}).join("");}
   var DQ=d.dqx||{};var DS=DQ.stats||{};var DR=DQ.run||{};
   var dqel=document.getElementById("dqxstats"),dql=document.getElementById("dqxlist");
   if(dqel){var _rec=DS.settled?(DS.wins+"胜"+DS.losses+"负 "+(DS.rate===null?"—":DS.rate+"%")+" 净"+(DS.net>=0?"+":"")+DS.net.toFixed(2)+" · "):"";
