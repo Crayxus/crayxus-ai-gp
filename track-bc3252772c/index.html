@@ -84,6 +84,9 @@ footer img{width:180px;max-width:56%;border-radius:14px;opacity:.85;margin:0 aut
 </style></head><body>
 <header><div class="brand">CRAYXUS<small>SPORTS&nbsp;INTELLIGENCE</small></div>
 <div class="live"><span class="dot"></span><span id="up">筛选中</span></div></header>
+<div class="sec" style="margin-top:2px">🧲 HALF-TIME · 中场0-0主打通道 <span class="dot" style="display:inline-block;vertical-align:middle;margin:0 2px 0 6px"></span><span id="htxstats" style="letter-spacing:0;font-family:var(--mono);color:#2ee6a8;font-size:11px"></span></div>
+<div id="htxsub" style="font-family:var(--mono);font-size:9.5px;color:var(--dim);margin:2px 2px 8px"></div>
+<div id="htxlist" style="margin-bottom:16px"></div>
 <div class="hero">
   <div class="hrow">
     <div class="ring" id="ring" style="--v:0"><b id="rate">—</b><small>命中率</small></div>
@@ -160,6 +163,26 @@ async function sync(){try{
     else b='<span class="badge bp">'+x.res+'</span>';
     var sc=x.sc?'<span class="pill" style="color:var(--cyan)">'+x.sc+'</span>':'';
     return '<div class="sig"><div class="top"><span class="tag">'+x.lg+'</span><span class="tm">'+x.t+'</span></div><div class="match">'+x.m+'</div><div class="bot"><span class="pill">'+x.px+'</span>'+sc+b+'</div></div>';}).join("");}
+  var HT=d.htx||{};var HS=HT.stats||{};var H2=HT.stats2||{};
+  var htel=document.getElementById("htxstats"),htsub=document.getElementById("htxsub"),htl=document.getElementById("htxlist");
+  var RP=HT.replay||{};
+  if(htel){var _lv=HS.settled?(HS.wins+"胜"+HS.losses+"负 净"+(HS.net>=0?"+":"")+HS.net.toFixed(2)):"实盘账开跑";
+    var _rp=RP.settled?("回放 "+RP.wins+"胜"+RP.losses+"负 净"+(RP.net>=0?"+":"")+RP.net.toFixed(2)):"";
+    htel.textContent=" "+_rp+(_rp?" · ":"")+_lv;}
+  if(htsub){htsub.textContent=(H2.settled?("重开实价口径: "+H2.wins+"胜"+H2.losses+"负 净"+(H2.net>=0?"+":"")+H2.net.toFixed(2)+" · "):"")+"双价并行: 冻结价(45分前末价)+下半场重开实价 · 回放=历史回测·实盘账独立累计";}
+  if(htl){
+    if(!(HT.rows||[]).length){htl.innerHTML='<div class="empty">等待今日首个中场0-0场景 · 条件即达自动入场</div>';}
+    else{htl.innerHTML=HT.rows.map(function(x){var b;
+      if(x.pnl===null)b='<span class="badge bp">⏳ 进行中</span>';
+      else if(x.pnl>0)b='<span class="badge bw">'+x.res+' +'+x.pnl.toFixed(2)+'</span>';
+      else if(x.pnl<0)b='<span class="badge bl">'+x.res+' '+x.pnl.toFixed(2)+'</span>';
+      else b='<span class="badge bp">'+x.res+'</span>';
+      var b2=(x.pnl2!==null&&x.pnl2!==undefined)?'<span class="badge '+(x.pnl2>0?"bw":(x.pnl2<0?"bl":"bp"))+'" style="opacity:.75">开:'+(x.pnl2>0?"+":"")+x.pnl2.toFixed(2)+'</span>':'';
+      var sc=x.sc?'<span class="pill" style="color:var(--cyan)">'+x.sc+'</span>':'';
+      var rk=x.rk?'<span class="pill" style="opacity:.7">开 '+x.rk+'</span>':'';
+      var rp=x.rp?'<span class="tag" style="color:var(--dim);border-color:rgba(120,150,255,.25);margin-left:4px">回放</span>':'';
+      return '<div class="sig" style="border-color:rgba(46,230,168,.32)'+(x.rp?';opacity:.82':'')+'"><div class="top"><span class="tag" style="color:#2ee6a8;border-color:rgba(46,230,168,.4)">'+x.lg+'</span>'+rp+'<span class="tm">'+x.t+'</span></div><div class="match">'+x.m+'</div><div class="bot"><span class="pill">冻 '+(x.fz||"—")+'</span>'+rk+sc+b+b2+'</div></div>';}).join("");}
+  }
   var DQ=d.dqx||{};var DS=DQ.stats||{};var DR=DQ.run||{};
   var dqel=document.getElementById("dqxstats"),dql=document.getElementById("dqxlist");
   if(dqel){var _rec=DS.settled?(DS.wins+"胜"+DS.losses+"负 "+(DS.rate===null?"—":DS.rate+"%")+" 净"+(DS.net>=0?"+":"")+DS.net.toFixed(2)+" · "):"";
