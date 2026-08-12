@@ -84,7 +84,7 @@ footer img{width:180px;max-width:56%;border-radius:14px;opacity:.85;margin:0 aut
 </style></head><body>
 <header><div class="brand">CRAYXUS<small>SPORTS&nbsp;INTELLIGENCE</small></div>
 <div class="live"><span class="dot"></span><span id="up">筛选中</span></div></header>
-<div class="sec" style="margin-top:2px">🌊 MARKET · 全市场协同探测 <span class="dot" style="display:inline-block;vertical-align:middle;margin:0 2px 0 6px"></span><span id="htxstats" style="letter-spacing:0;font-family:var(--mono);color:#2ee6a8;font-size:11px"></span></div>
+<div class="sec" style="margin-top:2px">🧲 CLASSIC · 原版B-ML (07-19起实录+经典影子续记) <span class="dot" style="display:inline-block;vertical-align:middle;margin:0 2px 0 6px"></span><span id="htxstats" style="letter-spacing:0;font-family:var(--mono);color:#2ee6a8;font-size:11px"></span></div>
 <div class="hero">
   <div class="hrow">
     <div class="ring" id="ring" style="--v:0"><b id="rate">—</b><small>命中率</small></div>
@@ -108,7 +108,7 @@ footer img{width:180px;max-width:56%;border-radius:14px;opacity:.85;margin:0 aut
 <div class="sec">🔴 LIVE BOARD · 实时盯盘 <span id="pooln" style="color:var(--green)"></span>
 <span style="float:right;font-size:9px;letter-spacing:.05em;color:var(--dim)">🟢符合 🟡监控中 🔴未达标</span></div><div class="board" id="board"></div>
 <div class="sec" style="margin-top:22px">📈 SIGNALS · 正式信号 <span id="v4stats" style="letter-spacing:0;font-family:var(--mono);color:var(--dim);font-size:10.5px"></span></div><div id="list"></div>
-<div class="sec" style="margin-top:22px">🧲 CLASSIC · 原版B-ML实录 <span id="clstats" style="letter-spacing:0;font-family:var(--mono);color:var(--dim);font-size:10.5px"></span></div><div id="cllist"></div>
+<div class="sec" style="margin-top:22px">🌊 MARKET · 全市场协同探测 <span style="color:#ffb454;font-size:9px">TRACK-3实验位</span> <span id="clstats" style="letter-spacing:0;font-family:var(--mono);color:var(--dim);font-size:10.5px"></span></div><div id="cllist"></div>
 <div class="sec" style="margin-top:22px">🕵️ DETECTOR · 探测器实验通道 <span class="dot" style="display:inline-block;vertical-align:middle;margin:0 2px 0 6px"></span><span id="dqxstats" style="letter-spacing:0;font-family:var(--mono);color:#ffb454"></span></div><div id="dqxlist"></div>
 <div id="scanwrap" style="display:none"><div class="sec" style="margin-top:22px">近期评估</div><div id="scanlist"></div></div>
 <footer><img src="https://crayxus.com.au/og-track.jpg" alt="Crayxus">
@@ -175,11 +175,11 @@ async function sync(){try{
   var htel=document.getElementById("htxstats"),htsub=document.getElementById("htxsub"),htl=document.getElementById("htxlist");
   var RP=HT.replay||{};
   if(htel){var _lv=HS.settled?(HS.wins+"胜"+HS.losses+"负 净"+(HS.net>=0?"+":"")+HS.net.toFixed(2)):"实盘账开跑";
-    var _rp="";
-    htel.textContent=" "+(HS.settled?_lv:"影子账启动中·扫描时全市场协同即入");}
-  if(htsub){htsub.textContent=(H2.settled?("重开实价口径: "+H2.wins+"胜"+H2.losses+"负 净"+(H2.net>=0?"+":"")+H2.net.toFixed(2)+" · "):"")+"判据=0-15分内峰值≥4家盘口同时推大球(全市场协同=真出货). 案例分离样本内100%(数据待实盘验). 影子账实时累计";}
+    var _rp=RP.settled?("历史 "+RP.wins+"胜"+RP.losses+"负 净"+(RP.net>=0?"+":"")+RP.net.toFixed(2)):"";
+    htel.textContent=" "+_rp+(_rp?" · ":"")+_lv;}
+  if(htsub){htsub.textContent=(H2.settled?("重开实价口径: "+H2.wins+"胜"+H2.losses+"负 净"+(H2.net>=0?"+":"")+H2.net.toFixed(2)+" · "):"")+"历史=原版B-ML(百万场回测·45分窗)07-19起全部实录 · 新单=同口径经典影子续记 · 独立累计";}
   if(htl){
-    if(!(HT.rows||[]).length){htl.innerHTML='<div class="empty">🌊 实时监测全市场协同度 · 峰值≥4家同推大球即入场<br><span style="font-size:9px">出货完毕信号·影子验证·独立于正式通道</span></div>';}
+    if(!(HT.rows||[]).length){htl.innerHTML='<div class="empty">原版逻辑影子续记运行中 · 触发即入</div>';}
     else{htl.innerHTML=HT.rows.map(function(x){var b;
       if(x.pnl===null)b='<span class="badge bp">⏳ 进行中</span>';
       else if(x.pnl>0)b='<span class="badge bw">'+x.res+' +'+x.pnl.toFixed(2)+'</span>';
@@ -188,14 +188,15 @@ async function sync(){try{
       var b2=(x.pnl2!==null&&x.pnl2!==undefined)?'<span class="badge '+(x.pnl2>0?"bw":(x.pnl2<0?"bl":"bp"))+'" style="opacity:.75">开:'+(x.pnl2>0?"+":"")+x.pnl2.toFixed(2)+'</span>':'';
       var sc=x.sc?'<span class="pill" style="color:var(--cyan)">'+x.sc+'</span>':'';
       var rk=x.rk?'<span class="pill" style="opacity:.7">开 '+x.rk+'</span>':'';
-      var rp=x.rp?'<span class="tag" style="color:var(--dim);border-color:rgba(120,150,255,.25);margin-left:4px">实录</span>':'';
+      var rp=x.rp?'<span class="tag" style="color:#ffb454;border-color:rgba(255,180,84,.3);margin-left:4px">协同</span>':'';
       return '<div class="sig" style="border-color:rgba(46,230,168,.32)'+(x.rp?';opacity:.82':'')+'"><div class="top"><span class="tag" style="color:#2ee6a8;border-color:rgba(46,230,168,.4)">'+x.lg+'</span>'+rp+'<span class="tm">'+x.t+'</span></div><div class="match">'+x.m+'</div><div class="bot"><span class="pill">冻 '+(x.fz||"—")+'</span>'+rk+sc+b+b2+'</div></div>';}).join("");}
   }
-  var CL=(d.htx||{}).classic||{};var CS=CL.stats||{};
+  var CL=(d.htx||{}).mkt||{};var CS=CL.stats||{};
   var clel=document.getElementById("clstats"),cll=document.getElementById("cllist");
-  if(clel){clel.textContent=CS.settled?(" "+CS.wins+"胜"+CS.losses+"负 · 净"+(CS.net>=0?"+":"")+CS.net.toFixed(2)+" · 已归档"+CS.settled+"场(07-19~08-08)"):"";}
+  if(clel){clel.textContent=CS.settled?(" "+CS.wins+"胜"+CS.losses+"负 · 净"+(CS.net>=0?"+":"")+CS.net.toFixed(2)):" 峰值≥6家协同即入 · 影子累计中";}
   if(cll&&(CL.rows||[]).length){cll.innerHTML=CL.rows.map(function(x){var b;
-    if(x.pnl>0)b='<span class="badge bw">'+x.res+' +'+x.pnl.toFixed(2)+'</span>';
+    if(x.pnl===null||x.pnl===undefined)b='<span class="badge bp">⏳ 进行中</span>';
+    else if(x.pnl>0)b='<span class="badge bw">'+x.res+' +'+x.pnl.toFixed(2)+'</span>';
     else if(x.pnl<0)b='<span class="badge bl">'+x.res+' '+x.pnl.toFixed(2)+'</span>';
     else b='<span class="badge bp">'+x.res+'</span>';
     var sc=x.sc?'<span class="pill" style="color:var(--cyan)">'+x.sc+'</span>':'';
