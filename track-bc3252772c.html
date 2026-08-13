@@ -122,7 +122,7 @@ async function sync(){try{
   var HT0=d.htx||{};var HS0=HT0.stats||{};var RP0=HT0.replay||{};
   var cw=(RP0.wins||0)+(HS0.wins||0),cl=(RP0.losses||0)+(HS0.losses||0);
   var cs=(RP0.settled||0)+(HS0.settled||0),cn=(RP0.net||0)+(HS0.net||0);
-  var cr=cs?Math.round(cw/cs*1000)/10:null;
+  var cr=(cw+cl)?Math.round(cw/(cw+cl)*1000)/10:null;
   document.getElementById("ring").style.setProperty("--v",cr===null?0:cr);
   document.getElementById("rate").textContent=cr===null?"—":cr+"%";
   const n=document.getElementById("net");n.textContent=(cn>=0?"+":"")+cn.toFixed(2);n.style.color=cn>=0?"var(--green)":"var(--red)";
