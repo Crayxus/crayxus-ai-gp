@@ -78,6 +78,9 @@ h2{font-size:clamp(28px,5vw,50px);line-height:1.16;margin:0 0 20px;
   letter-spacing:.2em;color:var(--hero-mute)}
 .nav a{color:var(--hero-mute);text-decoration:none;margin-left:26px;transition:color .2s}
 .nav a:hover{color:var(--hero-fg)}
+.nav a.lg{border:1px solid #2A3D47;border-radius:999px;padding:6px 16px;
+  margin-left:20px;color:var(--hero-fg)}
+.nav a.lg:hover{border-color:var(--verd);color:var(--verd)}
 @media(max-width:640px){.nav a:not(.key){display:none}.nav a.key{margin-left:16px}}
 
 .hstage{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;
@@ -206,7 +209,7 @@ footer{background:var(--deep);color:var(--mute);padding:30px 0 40px;
   <div class=nav>
     <div class=brand><b>SITAS</b><span>TRUSTED&nbsp;IMAGE&nbsp;ARCHIVING</span></div>
     <div class=links><a href="#problem">它解决什么</a><a class=key href="#evidence">实测结果</a>
-      <a href="#compliance">法规符合</a><a class=key href="#pricing">价格</a></div>
+      <a href="#compliance">法规符合</a><a class=key href="#pricing">价格</a><a class="key lg" href="login.html">客户登录</a></div>
   </div>
 
   <div class=hstage>

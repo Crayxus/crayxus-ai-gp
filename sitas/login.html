@@ -1,0 +1,62 @@
+<!doctype html><html lang=zh-CN><head><meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>登录 · SITAS</title><style>
+:root{--ink:#0B1216;--deep:#060A0D;--card:#fff;--line:#E3E8E5;--steel:#5C6D78;
+--mute:#8A99A2;--verd:#2E8B72;--sub:#F1F4F2;--glow:rgba(46,139,114,.2)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){
+--ink:#EAF0ED;--deep:#04080A;--card:#101A1F;--line:#1F2C33;--steel:#93A6AF;
+--mute:#75868F;--verd:#4FC5A3;--sub:#0D161A;--glow:rgba(79,197,163,.15)}}
+:root[data-theme=dark]{--ink:#EAF0ED;--deep:#04080A;--card:#101A1F;--line:#1F2C33;
+--steel:#93A6AF;--mute:#75868F;--verd:#4FC5A3;--sub:#0D161A;--glow:rgba(79,197,163,.15)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--deep);color:var(--ink);
+display:grid;place-items:center;padding:24px;position:relative;overflow:hidden;
+font-family:"PingFang SC","Microsoft YaHei",sans-serif}
+body::before{content:"";position:absolute;inset:-40% 20% auto -10%;height:130%;
+background:radial-gradient(closest-side,var(--glow),transparent 70%)}
+.box{position:relative;width:100%;max-width:390px;background:var(--card);
+border:1px solid var(--line);border-radius:18px;padding:40px 36px;
+box-shadow:0 30px 70px rgba(0,0,0,.45)}
+.bd{text-align:center;margin-bottom:30px}
+.bd b{font-size:26px;letter-spacing:.12em;display:block}
+.bd span{font-family:ui-monospace,Consolas,monospace;font-size:9.5px;
+letter-spacing:.2em;color:var(--mute)}
+label{display:block;font-size:12px;color:var(--steel);margin:0 0 6px;
+letter-spacing:.04em}
+input{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:9px;
+background:var(--sub);color:var(--ink);font-size:15px;font-family:inherit;
+margin-bottom:16px;transition:border-color .18s}
+input:focus{outline:none;border-color:var(--verd)}
+button{width:100%;padding:13px;border:0;border-radius:999px;background:var(--verd);
+color:#03130E;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;
+transition:transform .18s}
+button:hover{transform:translateY(-1px)}
+button:disabled{opacity:.55;cursor:wait;transform:none}
+.err{background:rgba(192,67,47,.12);border:1px solid #C0432F;color:#E88571;
+border-radius:8px;padding:9px 13px;font-size:13px;margin-bottom:14px;display:none}
+.hint{margin-top:22px;padding-top:18px;border-top:1px solid var(--line);
+font-size:12px;color:var(--mute);text-align:center;line-height:1.9}
+.hint code{font-family:ui-monospace,Consolas,monospace;color:var(--verd)}
+</style></head><body>
+<form class=box id=f>
+  <div class=bd><b>SITAS</b><span>TRUSTED&nbsp;IMAGE&nbsp;ARCHIVING</span></div>
+  <div class=err id=e></div>
+  <label for=em>邮箱</label>
+  <input id=em type=email autocomplete=username required autofocus>
+  <label for=pw>口令</label>
+  <input id=pw type=password autocomplete=current-password required>
+  <button id=b type=submit>登 录</button>
+  <div class=hint>演示环境　<code>qa@demo.lab</code> / <code>sitas2026</code><br><a href="./" style="color:var(--mute)">← 返回产品介绍</a></div>
+</form>
+<script>
+const f=document.getElementById('f'),e=document.getElementById('e'),b=document.getElementById('b');
+f.onsubmit=async ev=>{
+  ev.preventDefault(); e.style.display='none'; b.disabled=true; b.textContent='验证中…';
+  await new Promise(r=>setTimeout(r,420));
+  if(em.value.trim().toLowerCase()==='qa@demo.lab' && pw.value==='sitas2026'){
+    location.href='console/'; return;
+  }
+  e.textContent='演示环境请使用下方账号登录'; e.style.display='block';
+  b.disabled=false; b.textContent='登 录';
+};
+</script></body></html>

@@ -1,0 +1,211 @@
+<!doctype html><html lang=zh-CN><head><meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>控制台演示 · SITAS</title><style>
+:root{--ink:#0B1216;--deep:#060A0D;--paper:#FAFBFA;--card:#fff;--line:#E3E8E5;
+--steel:#5C6D78;--mute:#8A99A2;--verd:#2E8B72;--verd-soft:#E9F4F0;
+--brass:#8A6420;--brass-soft:#FAF3E4;--sub:#F1F4F2;--glow:rgba(46,139,114,.18)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){
+--ink:#EAF0ED;--deep:#04080A;--paper:#080D10;--card:#101A1F;--line:#1F2C33;
+--steel:#93A6AF;--mute:#75868F;--verd:#4FC5A3;--verd-soft:#0E211C;
+--brass:#D8AC52;--brass-soft:#241E11;--sub:#0D161A;--glow:rgba(79,197,163,.13)}}
+:root[data-theme=dark]{--ink:#EAF0ED;--deep:#04080A;--paper:#080D10;--card:#101A1F;
+--line:#1F2C33;--steel:#93A6AF;--mute:#75868F;--verd:#4FC5A3;--verd-soft:#0E211C;
+--brass:#D8AC52;--brass-soft:#241E11;--sub:#0D161A;--glow:rgba(79,197,163,.13)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);line-height:1.6;
+font-family:"PingFang SC","Microsoft YaHei",sans-serif}
+.m{font-family:ui-monospace,"SF Mono",Consolas,monospace;font-variant-numeric:tabular-nums}
+.top{background:var(--deep);color:#F2F6F4;padding:0 24px;position:sticky;top:0;z-index:9}
+.tin{max-width:1200px;margin:0 auto;display:flex;align-items:center;
+justify-content:space-between;height:60px;gap:16px}
+.bd b{font-size:18px;letter-spacing:.12em}
+.bd span{font-family:ui-monospace,Consolas,monospace;font-size:9px;
+letter-spacing:.18em;color:#8FA6B0;margin-left:9px}
+.who{display:flex;align-items:center;gap:14px;font-size:13px;color:#8FA6B0}
+.who b{color:#F2F6F4}
+.who a{color:#8FA6B0;text-decoration:none;border:1px solid #22333E;
+border-radius:999px;padding:5px 14px;font-size:12.5px;transition:.18s}
+.who a:hover{color:#F2F6F4;border-color:#3A5361}
+.wrap{max-width:1200px;margin:0 auto;padding:28px 24px 70px}
+.demo{background:var(--brass-soft);border:1px solid var(--brass);color:var(--brass);
+border-radius:10px;padding:11px 18px;font-size:13px;margin-bottom:16px}
+
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:14px;margin-bottom:16px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+.kpi .l{font-size:11.5px;color:var(--steel);letter-spacing:.05em}
+.kpi .v{font-size:30px;font-weight:700;letter-spacing:-.03em;margin-top:4px}
+.kpi .s{font-size:12px;color:var(--mute);margin-top:2px}
+.kpi.warn .v{color:var(--brass)}
+
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;
+margin-bottom:16px;overflow:hidden}
+.ph{display:flex;align-items:center;justify-content:space-between;gap:12px;
+padding:16px 22px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.ph h2{margin:0;font-size:15.5px}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+input,select{padding:8px 12px;border:1px solid var(--line);border-radius:8px;
+background:var(--sub);color:var(--ink);font-size:13px;font-family:inherit}
+input:focus,select:focus{outline:none;border-color:var(--verd)}
+.btn{padding:8px 16px;border-radius:999px;border:1px solid var(--line);
+background:var(--card);color:var(--ink);font-size:13px;cursor:pointer;
+font-family:inherit;text-decoration:none;display:inline-block;transition:.18s}
+.btn:hover{border-color:var(--verd);color:var(--verd)}
+.btn.p{background:var(--verd);border-color:var(--verd);color:#03130E;font-weight:600}
+.btn.p:hover{color:#03130E;transform:translateY(-1px)}
+
+.spark{display:flex;align-items:flex-end;gap:3px;height:56px;padding:16px 22px 10px}
+.spark i{flex:1;background:var(--verd);border-radius:2px 2px 0 0;min-height:2px;
+opacity:.72;transition:opacity .2s}
+.spark i:hover{opacity:1}
+.sparkl{padding:0 22px 14px;font-size:11.5px;color:var(--mute);
+display:flex;justify-content:space-between}
+
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:760px}
+th,td{text-align:left;padding:11px 22px;border-bottom:1px solid var(--line);
+white-space:nowrap}
+thead th{background:var(--sub);font-size:11px;color:var(--steel);
+letter-spacing:.09em;text-transform:uppercase;font-weight:600;position:sticky;top:60px}
+tbody tr:hover{background:var(--sub)}
+tbody tr:last-child td{border-bottom:0}
+.pill{font-family:ui-monospace,Consolas,monospace;font-size:10.5px;
+padding:2px 9px;border-radius:999px;border:1px solid}
+.p-ok{color:var(--verd);border-color:var(--verd);background:var(--verd-soft)}
+.p-wn{color:var(--brass);border-color:var(--brass);background:var(--brass-soft)}
+.empty{padding:44px;text-align:center;color:var(--mute);font-size:13.5px}
+.foot{padding:12px 22px;font-size:12px;color:var(--mute);border-top:1px solid var(--line)}
+@media(max-width:640px){.wrap{padding:20px 14px 50px}.who b{display:none}}
+</style></head><body>
+
+<div class=top><div class=tin>
+  <div class=bd><b>SITAS</b><span>控制台 · 演示环境</span></div>
+  <div class=who>
+    <span id=org></span><b id=nm></b>
+    <a href="../">返回官网</a>
+  </div>
+</div></div>
+
+<div class=wrap>
+  <div class=demo>演示环境 · 数据为示例，非真实实验数据。正式部署可置于贵单位内网，数据不出机构。</div>
+  <div class=kpis id=kpis></div>
+
+  <div class=panel>
+    <div class=ph><h2>近 14 天存证量</h2>
+      <div class=tools><a class="btn p" href="report.html" target=_blank>导出合规报告</a></div>
+    </div>
+    <div class=spark id=spark></div>
+    <div class=sparkl><span>14 天前</span><span>今天</span></div>
+  </div>
+
+  <div class=panel>
+    <div class=ph><h2>采集工位</h2>
+      <div class=tools>
+        <input id=nd placeholder="新工位标识，如 SITAS-WS-03" style="min-width:210px">
+        <input id=nl placeholder="备注" style="min-width:140px">
+        <button class=btn onclick=addDev()>添加工位</button>
+      </div>
+    </div>
+    <div class=tw><table><thead><tr>
+      <th>工位标识</th><th>备注</th><th>状态</th><th>存证数</th><th>登记时间</th>
+    </tr></thead><tbody id=devs></tbody></table></div>
+    <div class=foot id=seats></div>
+  </div>
+
+  <div class=panel>
+    <div class=ph><h2>存证记录</h2>
+      <div class=tools>
+        <select id=fd onchange=load()><option value="">全部工位</option></select>
+        <input id=fq placeholder="操作者 / 项目 / 文件名" oninput=deb()>
+      </div>
+    </div>
+    <div class=tw><table><thead><tr>
+      <th>影像文件</th><th>存证时间</th><th>操作者</th><th>项目</th>
+      <th>工位</th><th>指纹</th><th>时间戳</th>
+    </tr></thead><tbody id=recs></tbody></table></div>
+    <div class=foot id=cnt></div>
+  </div>
+</div>
+
+<script>
+const DEMO={"me":{"name":"QA 负责人","email":"qa@demo.lab","role":"owner","org":"示范生物医药研究院","plan":"standard","seats":8,"expires_at":1811654048,"days_left":287},"stats":{"total":120,"last30":120,"devices":3,"untrusted":18,"series":[0,0,0,0,0,0,0,0,9,22,23,21,23,22]},"devices":{"rows":[{"device_id":"SITAS-WS-01","label":"共聚焦显微镜工位","status":"active","created_at":1781500448,"n":35},{"device_id":"SITAS-WS-02","label":"倒置显微镜工位","status":"active","created_at":1782710048,"n":44},{"device_id":"SITAS-CAM-01","label":"便携存证终端","status":"active","created_at":1785388448,"n":41}],"seats":8},"records":{"total":120,"rows":[{"device_id":"SITAS-CAM-01","operator":"陈昊","project":"PK-2026-019","file_name":"IMG_3200.TIF","sha256":"0ad52e338662c923b15fd45a73c6e97336efccf28a7aef9449443cc6dd7415fb","captured_at":"2026-08-16T04:43:16+00:00","tsa_trusted":0,"created_at":1786855396},{"device_id":"SITAS-CAM-01","operator":"李文","project":"GLP-TOX-0442","file_name":"IMG_3201.TIF","sha256":"8b53639f152c8fc6ef30802fde462ba0be9cf085f7580dc69efd72e002abbb35","captured_at":"2026-08-16T03:34:28+00:00","tsa_trusted":1,"created_at":1786851268},{"device_id":"SITAS-WS-02","operator":"李文","project":"NSFC-2026-1183","file_name":"IMG_3202.TIF","sha256":"e788103ee15318fcd2af9b73b4ebbb33a903b020de7b307d71f5fed0f433e548","captured_at":"2026-08-16T02:29:12+00:00","tsa_trusted":1,"created_at":1786847352},{"device_id":"SITAS-WS-02","operator":"李文","project":"NSFC-2026-1183","file_name":"IMG_3203.TIF","sha256":"f451a61749c611ba0fa0e16c61831db44f38c611dff25879cf271a24c81a88b6","captured_at":"2026-08-16T01:28:39+00:00","tsa_trusted":1,"created_at":1786843719},{"device_id":"SITAS-CAM-01","operator":"张捷","project":"PK-2026-019","file_name":"IMG_3204.TIF","sha256":"af327a6478537246e0d9f0c589986d5f067d2e2351a1ca5a0a4962424da0e408","captured_at":"2026-08-16T00:17:22+00:00","tsa_trusted":1,"created_at":1786839442},{"device_id":"SITAS-CAM-01","operator":"李文","project":"NSFC-2026-1183","file_name":"IMG_3205.TIF","sha256":"25f682044b5badaff8b296bf6fd676214968b238fcff5559e64f38c88bb9790f","captured_at":"2026-08-15T23:18:13+00:00","tsa_trusted":1,"created_at":1786835893},{"device_id":"SITAS-WS-01","operator":"张捷","project":"NSFC-2026-1183","file_name":"IMG_3206.TIF","sha256":"79b98f273c175489f40b682a0e43f0b22aa3cc9cf2a578e163f291f13fc9f912","captured_at":"2026-08-15T22:08:04+00:00","tsa_trusted":1,"created_at":1786831684},{"device_id":"SITAS-WS-01","operator":"张捷","project":"PK-2026-019","file_name":"IMG_3207.TIF","sha256":"82396aa34d3d216d4a545cf6f34c62f84985d669d5384686caa9a5de4bc2ef3e","captured_at":"2026-08-15T21:26:09+00:00","tsa_trusted":0,"created_at":1786829169},{"device_id":"SITAS-WS-02","operator":"李文","project":"GLP-TOX-0442","file_name":"IMG_3208.TIF","sha256":"56f8921507e0f67c48d43947aedb1470fd561233db3c6daea747f8894ef412cc","captured_at":"2026-08-15T20:11:52+00:00","tsa_trusted":1,"created_at":1786824712},{"device_id":"SITAS-WS-02","operator":"张捷","project":"NSFC-2026-1183","file_name":"IMG_3209.TIF","sha256":"f0b8e894c1e3d99ab31459d3e0398a19918cca6da124ddcd3d948aef901f2ca6","captured_at":"2026-08-15T19:09:04+00:00","tsa_trusted":1,"created_at":1786820944},{"device_id":"SITAS-CAM-01","operator":"王蕊","project":"PK-2026-019","file_name":"IMG_3210.TIF","sha256":"ce66af0c0480b94c19a808b6b44d6617ff856b0e3d3a09bbc26af4da3f70a7c9","captured_at":"2026-08-15T17:52:55+00:00","tsa_trusted":1,"created_at":1786816375},{"device_id":"SITAS-WS-01","operator":"王蕊","project":"STAB-2026-07","file_name":"IMG_3211.TIF","sha256":"cc89a056daf108c4f9f15b2ab8e1b6c7d348fe351b1ec89b5af3d15faba866e6","captured_at":"2026-08-15T16:41:31+00:00","tsa_trusted":1,"created_at":1786812091},{"device_id":"SITAS-CAM-01","operator":"王蕊","project":"NSFC-2026-1183","file_name":"IMG_3212.TIF","sha256":"6aa0030b7b602c9a7a3f5c2ee46db8b00f1c456bda364a4ffae2304b89504072","captured_at":"2026-08-15T15:58:28+00:00","tsa_trusted":1,"created_at":1786809508},{"device_id":"SITAS-CAM-01","operator":"张捷","project":"PK-2026-019","file_name":"IMG_3213.TIF","sha256":"7f175c41383cb7048318505d92e8e9da2b6eba97cd2607c079007659d21a724f","captured_at":"2026-08-15T15:04:21+00:00","tsa_trusted":1,"created_at":1786806261},{"device_id":"SITAS-WS-02","operator":"陈昊","project":"NSFC-2026-1183","file_name":"IMG_3214.TIF","sha256":"b8ec9f063a9651bf9be42e05fc812b3171f77439a8f2828c5729c530a6f2cd00","captured_at":"2026-08-15T13:56:47+00:00","tsa_trusted":0,"created_at":1786802207},{"device_id":"SITAS-CAM-01","operator":"张捷","project":"GLP-TOX-0442","file_name":"IMG_3215.TIF","sha256":"d7c96f31eacb157534cd01d7292f96135b81f7a58d5618ae8af4122c678bf233","captured_at":"2026-08-15T12:57:59+00:00","tsa_trusted":1,"created_at":1786798679},{"device_id":"SITAS-WS-01","operator":"陈昊","project":"PK-2026-019","file_name":"IMG_3216.TIF","sha256":"4450e6ef1f28ea072128a3a0e91fe87de041a701c9020db69dd1bcb03bc7ca5e","captured_at":"2026-08-15T11:39:49+00:00","tsa_trusted":1,"created_at":1786793989},{"device_id":"SITAS-WS-02","operator":"张捷","project":"GLP-TOX-0442","file_name":"IMG_3217.TIF","sha256":"8bfb2fa5f98fad81d47f405edef0c6dd584c43a88adc58370827f3ff46653e86","captured_at":"2026-08-15T10:22:01+00:00","tsa_trusted":1,"created_at":1786789321},{"device_id":"SITAS-WS-02","operator":"张捷","project":"STAB-2026-07","file_name":"IMG_3218.TIF","sha256":"713a5cb599d2a90bdfa687b75affecc66973029fb92471276ebc0acd9468d647","captured_at":"2026-08-15T09:25:43+00:00","tsa_trusted":1,"created_at":1786785943},{"device_id":"SITAS-WS-01","operator":"陈昊","project":"NSFC-2026-1183","file_name":"IMG_3219.TIF","sha256":"e44365d1bd2a209057c582ff92fdf302efac85f289f591c75604ac3836a5449b","captured_at":"2026-08-15T08:16:26+00:00","tsa_trusted":1,"created_at":1786781786},{"device_id":"SITAS-WS-01","operator":"张捷","project":"NSFC-2026-1183","file_name":"IMG_3220.TIF","sha256":"53ee14622490b9d5244afc4a386428ea0004ddb283b2a088bd4a387d664cf67b","captured_at":"2026-08-15T07:24:57+00:00","tsa_trusted":1,"created_at":1786778697},{"device_id":"SITAS-WS-02","operator":"陈昊","project":"GLP-TOX-0442","file_name":"IMG_3221.TIF","sha256":"fde37047f95c8f6f229e54648b03c2d413cf8cd08f9a8fbcb37440bdd8aa0cb0","captured_at":"2026-08-15T06:25:03+00:00","tsa_trusted":0,"created_at":1786775103},{"device_id":"SITAS-WS-01","operator":"陈昊","project":"GLP-TOX-0442","file_name":"IMG_3222.TIF","sha256":"780f56d7749bcb211bbd8ef497d46a3d0b7ad68a5d6c3f16bdca594c348a459b","captured_at":"2026-08-15T04:45:58+00:00","tsa_trusted":1,"created_at":1786769158},{"device_id":"SITAS-WS-02","operator":"陈昊","project":"NSFC-2026-1183","file_name":"IMG_3223.TIF","sha256":"4ec9207816fb120473e86d717bf508a55eb7417c7804018bf5045ef330454e47","captured_at":"2026-08-15T04:10:12+00:00","tsa_trusted":1,"created_at":1786767012},{"device_id":"SITAS-WS-02","operator":"李文","project":"NSFC-2026-1183","file_name":"IMG_3224.TIF","sha256":"bd1b0c65645c06249f1e1ea9b63894e44942e246fb6f97009da2bc74abf138ce","captured_at":"2026-08-15T02:47:11+00:00","tsa_trusted":1,"created_at":1786762031},{"device_id":"SITAS-CAM-01","operator":"王蕊","project":"NSFC-2026-1183","file_name":"IMG_3225.TIF","sha256":"9a4678252c717c1662e5feb1a176e815d740bde93c9dc2a7d9c00242b0a9b514","captured_at":"2026-08-15T01:50:43+00:00","tsa_trusted":1,"created_at":1786758643},{"device_id":"SITAS-WS-01","operator":"陈昊","project":"NSFC-2026-1183","file_name":"IMG_3226.TIF","sha256":"d3495f7d9d1ae5b4c2e7b2bcd1960d3a59fd69f1f23e46e7e80b1f752c0d7e47","captured_at":"2026-08-15T00:49:45+00:00","tsa_trusted":1,"created_at":1786754985},{"device_id":"SITAS-WS-01","operator":"李文","project":"PK-2026-019","file_name":"IMG_3227.TIF","sha256":"54c1c173630826e3bc679de69351a3d7eed977433bd9178b8875d3a6df834826","captured_at":"2026-08-14T23:56:16+00:00","tsa_trusted":1,"created_at":1786751776},{"device_id":"SITAS-WS-01","operator":"王蕊","project":"STAB-2026-07","file_name":"IMG_3228.TIF","sha256":"f73ccca5d41085f64ecdcd366f0715c554c293e24f3290afc326712938b8c5ba","captured_at":"2026-08-14T22:36:31+00:00","tsa_trusted":0,"created_at":1786746991},{"device_id":"SITAS-WS-01","operator":"张捷","project":"NSFC-2026-1183","file_name":"IMG_3229.TIF","sha256":"bee1fbde6117aab188f95f35e75d7612881bc63db7e2acfda1163095c3b50656","captured_at":"2026-08-14T21:22:47+00:00","tsa_trusted":1,"created_at":1786742567},{"device_id":"SITAS-CAM-01","operator":"李文","project":"NSFC-2026-1183","file_name":"IMG_3230.TIF","sha256":"eec4d1b9858febe13b6574b740026ed300e9285a6ea1affbf98a35757327f84d","captured_at":"2026-08-14T20:29:54+00:00","tsa_trusted":1,"created_at":1786739394},{"device_id":"SITAS-WS-02","operator":"王蕊","project":"PK-2026-019","file_name":"IMG_3231.TIF","sha256":"61347f185ac7257dc66e8015c59b779847840545ed493de54581398930c7fb1b","captured_at":"2026-08-14T18:58:06+00:00","tsa_trusted":1,"created_at":1786733886},{"device_id":"SITAS-CAM-01","operator":"陈昊","project":"GLP-TOX-0442","file_name":"IMG_3232.TIF","sha256":"ca81b09a6101f875ab97babd62331773ee78f226b1796a71c1bbdd7ab3a4bba7","captured_at":"2026-08-14T18:25:27+00:00","tsa_trusted":1,"created_at":1786731927},{"device_id":"SITAS-WS-01","operator":"李文","project":"STAB-2026-07","file_name":"IMG_3233.TIF","sha256":"8beba31a7b05b5ae63e624b9bea0e317e2ca2a3db44dd4b6f6a98dfa0b5e4c2b","captured_at":"2026-08-14T17:02:47+00:00","tsa_trusted":1,"created_at":1786726967},{"device_id":"SITAS-CAM-01","operator":"李文","project":"GLP-TOX-0442","file_name":"IMG_3234.TIF","sha256":"1360a90965062b0a69db6d43e467be09c18c71c2e614959ec7bc6c983f6c327b","captured_at":"2026-08-14T16:08:33+00:00","tsa_trusted":1,"created_at":1786723713},{"device_id":"SITAS-CAM-01","operator":"李文","project":"PK-2026-019","file_name":"IMG_3235.TIF","sha256":"59c721961fb33c0873536316e04f37be5aa0d02e98cd46c46153d3944f38ecbf","captured_at":"2026-08-14T15:08:19+00:00","tsa_trusted":0,"created_at":1786720099},{"device_id":"SITAS-CAM-01","operator":"张捷","project":"PK-2026-019","file_name":"IMG_3236.TIF","sha256":"5fe01de37f407acf2ce078eee6d56c9b678e9d16828978f983bf7f4d8d83517d","captured_at":"2026-08-14T13:41:12+00:00","tsa_trusted":1,"created_at":1786714872},{"device_id":"SITAS-WS-01","operator":"张捷","project":"NSFC-2026-1183","file_name":"IMG_3237.TIF","sha256":"9857d4cca0bc27beb23ec1698d00fbccea6c0fd05b481289b43923e04abb5708","captured_at":"2026-08-14T13:05:54+00:00","tsa_trusted":1,"created_at":1786712754},{"device_id":"SITAS-WS-02","operator":"李文","project":"PK-2026-019","file_name":"IMG_3238.TIF","sha256":"3c112dd88f3ef7e377bcebbea6cc2ce5a9f9bfb4851dc1cf841b296851dfa786","captured_at":"2026-08-14T11:29:10+00:00","tsa_trusted":1,"created_at":1786706950},{"device_id":"SITAS-WS-02","operator":"陈昊","project":"STAB-2026-07","file_name":"IMG_3239.TIF","sha256":"e2e56d91851b4ec40d2c286928d4c83d20a088097a44223314f65137b0dbaf23","captured_at":"2026-08-14T10:41:36+00:00","tsa_trusted":1,"created_at":1786704096},{"device_id":"SITAS-WS-01","operator":"张捷","project":"GLP-TOX-0442","file_name":"IMG_3240.TIF","sha256":"f412456f5915e0af6ad8dbc3521d8c8f1dbeee124e8cfafb68dbc0801bffceb8","captured_at":"2026-08-14T09:18:38+00:00","tsa_trusted":1,"created_at":1786699118},{"device_id":"SITAS-WS-02","operator":"张捷","project":"STAB-2026-07","file_name":"IMG_3241.TIF","sha256":"315c38f501ad964f329e96e03353e2097228cd3684bb58f402975b8d69ec0712","captured_at":"2026-08-14T08:33:33+00:00","tsa_trusted":1,"created_at":1786696413},{"device_id":"SITAS-WS-01","operator":"张捷","project":"NSFC-2026-1183","file_name":"IMG_3242.TIF","sha256":"fea809a3679643a78a3a8f7ed6aaf1ec08198ef3ca15763f9e85423080e284e5","captured_at":"2026-08-14T07:29:39+00:00","tsa_trusted":0,"created_at":1786692579},{"device_id":"SITAS-WS-02","operator":"陈昊","project":"GLP-TOX-0442","file_name":"IMG_3243.TIF","sha256":"3c52e349a3a812e0e8354ae0028e31b73d0224c2da9058b489eb799159fb545b","captured_at":"2026-08-14T06:20:46+00:00","tsa_trusted":1,"created_at":1786688446},{"device_id":"SITAS-WS-01","operator":"李文","project":"STAB-2026-07","file_name":"IMG_3244.TIF","sha256":"a88b22fece4e60a5a21933465b1519a65cec4978d84548d9aef3c1bfd0df8b17","captured_at":"2026-08-14T05:30:01+00:00","tsa_trusted":1,"created_at":1786685401},{"device_id":"SITAS-CAM-01","operator":"李文","project":"NSFC-2026-1183","file_name":"IMG_3245.TIF","sha256":"ef82cf7d28eb3792c3fb6e1e365babfdb5f049a7dc295a2089ec49e83affb318","captured_at":"2026-08-14T04:03:58+00:00","tsa_trusted":1,"created_at":1786680238},{"device_id":"SITAS-WS-01","operator":"陈昊","project":"STAB-2026-07","file_name":"IMG_3246.TIF","sha256":"8f694c737552bc2afed13eb6e2a505691359da6cc3d622eb5cd5be0782537f6f","captured_at":"2026-08-14T02:59:25+00:00","tsa_trusted":1,"created_at":1786676365},{"device_id":"SITAS-CAM-01","operator":"李文","project":"NSFC-2026-1183","file_name":"IMG_3247.TIF","sha256":"b44f53eb47ea6e52de0c6bfd297267ab3ee98e9c2fae2e293fc81e3b961e33e8","captured_at":"2026-08-14T01:43:31+00:00","tsa_trusted":1,"created_at":1786671811},{"device_id":"SITAS-WS-02","operator":"王蕊","project":"STAB-2026-07","file_name":"IMG_3248.TIF","sha256":"efb1e07925ae7a7845000251cdb76334018efef92e7f74c7dda36cf584ba1988","captured_at":"2026-08-14T01:12:55+00:00","tsa_trusted":1,"created_at":1786669975},{"device_id":"SITAS-WS-01","operator":"张捷","project":"PK-2026-019","file_name":"IMG_3249.TIF","sha256":"605dd1891bb46c4c5c7f4097d35aec803ccb1371bd9676781b99215d452eb95f","captured_at":"2026-08-14T00:06:51+00:00","tsa_trusted":0,"created_at":1786666011},{"device_id":"SITAS-CAM-01","operator":"王蕊","project":"STAB-2026-07","file_name":"IMG_3250.TIF","sha256":"856a7dd3191d1fdebc6fb9904535e36d1c415ca8be8bc17bf06ad1d185f3fdfd","captured_at":"2026-08-13T22:59:33+00:00","tsa_trusted":1,"created_at":1786661973},{"device_id":"SITAS-WS-01","operator":"张捷","project":"PK-2026-019","file_name":"IMG_3251.TIF","sha256":"fea2e14c0912c45fadf26d873bfc2ce7d7b814e3c21d9c77ef8bc4ccced4afb1","captured_at":"2026-08-13T21:49:49+00:00","tsa_trusted":1,"created_at":1786657789},{"device_id":"SITAS-WS-02","operator":"张捷","project":"GLP-TOX-0442","file_name":"IMG_3252.TIF","sha256":"f3b99d505afdd427f6f53f9a4ce444ed2ae293ebb370d4b5af8a0c5fdc2c41c5","captured_at":"2026-08-13T20:16:52+00:00","tsa_trusted":1,"created_at":1786652212},{"device_id":"SITAS-WS-02","operator":"张捷","project":"PK-2026-019","file_name":"IMG_3253.TIF","sha256":"b64562b1792603acc691d9b11b03d1d84830329ab6e5c745849da3d71b0dd66b","captured_at":"2026-08-13T19:25:49+00:00","tsa_trusted":1,"created_at":1786649149},{"device_id":"SITAS-WS-02","operator":"张捷","project":"PK-2026-019","file_name":"IMG_3254.TIF","sha256":"ef8cfe880571c2aadd7ac5e5ceda590dfae6e07a9f06a2918c51350c95a7dfba","captured_at":"2026-08-13T18:38:50+00:00","tsa_trusted":1,"created_at":1786646330},{"device_id":"SITAS-WS-01","operator":"陈昊","project":"PK-2026-019","file_name":"IMG_3255.TIF","sha256":"0f220083030ec815573667f6bae88cf86715f04b6708224776501d72b17ad44d","captured_at":"2026-08-13T17:00:02+00:00","tsa_trusted":1,"created_at":1786640402},{"device_id":"SITAS-WS-01","operator":"张捷","project":"NSFC-2026-1183","file_name":"IMG_3256.TIF","sha256":"7550d56f2ec7ba5b9e57153db4a82b67c400f124bc51db738a93ef1c539eaf5d","captured_at":"2026-08-13T15:54:22+00:00","tsa_trusted":0,"created_at":1786636462},{"device_id":"SITAS-CAM-01","operator":"张捷","project":"STAB-2026-07","file_name":"IMG_3257.TIF","sha256":"60543e4458e529c24502ca1a1800911f5b7b2490caca98ac77feb8342bb176ff","captured_at":"2026-08-13T15:22:57+00:00","tsa_trusted":1,"created_at":1786634577},{"device_id":"SITAS-CAM-01","operator":"王蕊","project":"PK-2026-019","file_name":"IMG_3258.TIF","sha256":"2749c0ece14e7d464f68c49815c1edbf9aa62e41338c13a3800f22f4bd8095c9","captured_at":"2026-08-13T13:55:44+00:00","tsa_trusted":1,"created_at":1786629344},{"device_id":"SITAS-WS-02","operator":"陈昊","project":"PK-2026-019","file_name":"IMG_3259.TIF","sha256":"52985e023c8508d90e73f04c5c82a26131bd31ce03c62730dc5bfe677f28f06a","captured_at":"2026-08-13T12:39:29+00:00","tsa_trusted":1,"created_at":1786624769},{"device_id":"SITAS-WS-01","operator":"张捷","project":"STAB-2026-07","file_name":"IMG_3260.TIF","sha256":"a7527f7e628582f190420e05d2b9390017cc6f7c3861e71d4c4d2c8495aa61cb","captured_at":"2026-08-13T11:37:12+00:00","tsa_trusted":1,"created_at":1786621032},{"device_id":"SITAS-WS-01","operator":"陈昊","project":"NSFC-2026-1183","file_name":"IMG_3261.TIF","sha256":"5a60be440769333a300ec8970632048eff3d8d82a23e82e15ef0e63e5f4cb4ce","captured_at":"2026-08-13T10:28:06+00:00","tsa_trusted":1,"created_at":1786616886},{"device_id":"SITAS-CAM-01","operator":"张捷","project":"PK-2026-019","file_name":"IMG_3262.TIF","sha256":"a89898cd2777e3b53fc57b0ed72433f13f7a3d987fe95537c72b4cc9d494a579","captured_at":"2026-08-13T09:48:26+00:00","tsa_trusted":1,"created_at":1786614506},{"device_id":"SITAS-CAM-01","operator":"陈昊","project":"STAB-2026-07","file_name":"IMG_3263.TIF","sha256":"ce9dd2b29c2392d624f6f5afe07c6b3e4dce97dacfb67c1ccacef4c3d889016c","captured_at":"2026-08-13T08:17:11+00:00","tsa_trusted":0,"created_at":1786609031},{"device_id":"SITAS-WS-02","operator":"王蕊","project":"GLP-TOX-0442","file_name":"IMG_3264.TIF","sha256":"2394d5b2d1c376bd9c9fd139118caf5201f22921cc3b0f5e47d2057d34369dd6","captured_at":"2026-08-13T07:53:22+00:00","tsa_trusted":1,"created_at":1786607602},{"device_id":"SITAS-WS-01","operator":"李文","project":"STAB-2026-07","file_name":"IMG_3265.TIF","sha256":"9c4d6830152916110f4abd2ef34fa742739633328317bd6c40bb94da0db444e4","captured_at":"2026-08-13T06:07:23+00:00","tsa_trusted":1,"created_at":1786601243},{"device_id":"SITAS-WS-02","operator":"李文","project":"STAB-2026-07","file_name":"IMG_3266.TIF","sha256":"e79fcb47d832f3dec58d14eb95b33264332d2b3027c587b09825acd2eabc8e64","captured_at":"2026-08-13T05:13:58+00:00","tsa_trusted":1,"created_at":1786598038},{"device_id":"SITAS-CAM-01","operator":"王蕊","project":"GLP-TOX-0442","file_name":"IMG_3267.TIF","sha256":"73e4f4f6606fd45c97d4fa73345ae406868c2431c244ef1e6c81d9de78a1b570","captured_at":"2026-08-13T04:11:31+00:00","tsa_trusted":1,"created_at":1786594291},{"device_id":"SITAS-WS-02","operator":"李文","project":"GLP-TOX-0442","file_name":"IMG_3268.TIF","sha256":"9e8291d0a9dccb9b38501c69ef4950228c8f583d1104e1509bbef5cede9d7b55","captured_at":"2026-08-13T02:50:51+00:00","tsa_trusted":1,"created_at":1786589451},{"device_id":"SITAS-WS-01","operator":"王蕊","project":"GLP-TOX-0442","file_name":"IMG_3269.TIF","sha256":"fe6fe71debfe3e5762563724ee07d4e7e8082cf7019580fe7316eab44194aebd","captured_at":"2026-08-13T02:02:54+00:00","tsa_trusted":1,"created_at":1786586574},{"device_id":"SITAS-WS-01","operator":"陈昊","project":"STAB-2026-07","file_name":"IMG_3270.TIF","sha256":"e4672c44b9a4a03901c714f07cec7b514c90f9d65482121af265b7d0d37d6cc3","captured_at":"2026-08-13T01:14:51+00:00","tsa_trusted":0,"created_at":1786583691},{"device_id":"SITAS-CAM-01","operator":"张捷","project":"STAB-2026-07","file_name":"IMG_3271.TIF","sha256":"3fcda2f545c3f7b7923b1a56dd3e2b9a67d044d92b382f933b3d40c5eea92788","captured_at":"2026-08-13T00:16:22+00:00","tsa_trusted":1,"created_at":1786580182},{"device_id":"SITAS-WS-01","operator":"陈昊","project":"PK-2026-019","file_name":"IMG_3272.TIF","sha256":"0ba6ed7a4f47780cdc67925637946bb573422f270639507be1c30a082976148b","captured_at":"2026-08-12T23:02:36+00:00","tsa_trusted":1,"created_at":1786575756},{"device_id":"SITAS-WS-01","operator":"陈昊","project":"PK-2026-019","file_name":"IMG_3273.TIF","sha256":"ce8f5c29faf69954a5dfc9070b0978fe2bd5fda1609343ebb651b0a0ab3a76b6","captured_at":"2026-08-12T21:50:21+00:00","tsa_trusted":1,"created_at":1786571421},{"device_id":"SITAS-CAM-01","operator":"陈昊","project":"STAB-2026-07","file_name":"IMG_3274.TIF","sha256":"3da20b26baebc86fed513a36230d41a5e596e36c4122cfaca9ff79112ddca013","captured_at":"2026-08-12T20:21:25+00:00","tsa_trusted":1,"created_at":1786566085},{"device_id":"SITAS-WS-02","operator":"王蕊","project":"NSFC-2026-1183","file_name":"IMG_3275.TIF","sha256":"654e0dbe63d2c5c99330daadca500c14461fd6cf1df52f26ae57dd0b2946c6e4","captured_at":"2026-08-12T19:16:29+00:00","tsa_trusted":1,"created_at":1786562189},{"device_id":"SITAS-WS-02","operator":"张捷","project":"STAB-2026-07","file_name":"IMG_3276.TIF","sha256":"c5c7fe2a31e1d0a8fb9249312ca0345fd742cf6e2d1cb3b7a0176bfdab97d657","captured_at":"2026-08-12T18:52:00+00:00","tsa_trusted":1,"created_at":1786560720},{"device_id":"SITAS-WS-02","operator":"王蕊","project":"NSFC-2026-1183","file_name":"IMG_3277.TIF","sha256":"fe5fadc2d69c015fb14600a6a9bad4c09ca337b5a9dcb30e569ecc8cd0f9562f","captured_at":"2026-08-12T17:10:11+00:00","tsa_trusted":0,"created_at":1786554611},{"device_id":"SITAS-WS-02","operator":"陈昊","project":"GLP-TOX-0442","file_name":"IMG_3278.TIF","sha256":"cc7b4360197ea57da78848b7240cba48d8c2215b3f7cffa479ce3af081d8d05c","captured_at":"2026-08-12T16:34:52+00:00","tsa_trusted":1,"created_at":1786552492},{"device_id":"SITAS-WS-02","operator":"李文","project":"GLP-TOX-0442","file_name":"IMG_3279.TIF","sha256":"a3c1125fd26c086dbb56cf2461b90e43c6a1d448c11084004db043479e5ad58b","captured_at":"2026-08-12T15:37:27+00:00","tsa_trusted":1,"created_at":1786549047},{"device_id":"SITAS-CAM-01","operator":"张捷","project":"PK-2026-019","file_name":"IMG_3280.TIF","sha256":"82e552608b464a101cc3ffd3f1b70ae03d7c040e65f76ab3b1242cd1910725ea","captured_at":"2026-08-12T14:30:56+00:00","tsa_trusted":1,"created_at":1786545056},{"device_id":"SITAS-CAM-01","operator":"王蕊","project":"NSFC-2026-1183","file_name":"IMG_3281.TIF","sha256":"0f35685330a22e922b8d9dcf1fbbb45ac1699f200f130592aa1724361d4397e0","captured_at":"2026-08-12T13:21:42+00:00","tsa_trusted":1,"created_at":1786540902},{"device_id":"SITAS-WS-01","operator":"陈昊","project":"STAB-2026-07","file_name":"IMG_3282.TIF","sha256":"41541c9ce163fb338a629568898ecedcee2a05b41e39c467565657c30a54c32e","captured_at":"2026-08-12T12:10:37+00:00","tsa_trusted":1,"created_at":1786536637},{"device_id":"SITAS-CAM-01","operator":"张捷","project":"PK-2026-019","file_name":"IMG_3283.TIF","sha256":"d836410d80364b51d6e858f4a5fb34b3b4cbe738841328ffa7feb92666c68e99","captured_at":"2026-08-12T11:06:57+00:00","tsa_trusted":1,"created_at":1786532817},{"device_id":"SITAS-CAM-01","operator":"张捷","project":"GLP-TOX-0442","file_name":"IMG_3284.TIF","sha256":"7b8745f70996fa0c42fc40c58b00af69166dce3cfd3320df43b6ea9eaa2bc875","captured_at":"2026-08-12T09:37:38+00:00","tsa_trusted":0,"created_at":1786527458},{"device_id":"SITAS-WS-02","operator":"王蕊","project":"GLP-TOX-0442","file_name":"IMG_3285.TIF","sha256":"6988b38773796c4ce4be12a458dd8ff5882e53b7fa5aa348a36dc6a5b13e612c","captured_at":"2026-08-12T08:53:41+00:00","tsa_trusted":1,"created_at":1786524821},{"device_id":"SITAS-CAM-01","operator":"李文","project":"NSFC-2026-1183","file_name":"IMG_3286.TIF","sha256":"42d4343ed0eb1dee19cd71845e63422e3bda8b0646a8973586b90039a4bfdae2","captured_at":"2026-08-12T07:37:17+00:00","tsa_trusted":1,"created_at":1786520237},{"device_id":"SITAS-CAM-01","operator":"陈昊","project":"GLP-TOX-0442","file_name":"IMG_3287.TIF","sha256":"7ee15df8303b99ba6cf8f67cdf4b0cf9260ab137256a842bb40bbd0e81f301d8","captured_at":"2026-08-12T06:31:07+00:00","tsa_trusted":1,"created_at":1786516267},{"device_id":"SITAS-WS-02","operator":"李文","project":"NSFC-2026-1183","file_name":"IMG_3288.TIF","sha256":"b96594662fdccdb2c6442e47e1843b37423e723685d25fc2487842be117aabfe","captured_at":"2026-08-12T05:23:23+00:00","tsa_trusted":1,"created_at":1786512203},{"device_id":"SITAS-CAM-01","operator":"王蕊","project":"PK-2026-019","file_name":"IMG_3289.TIF","sha256":"559d0ecc5e3d6bfdea98813cb5a786de7f0555c1dec8068223a7d18f9ad867c6","captured_at":"2026-08-12T04:23:25+00:00","tsa_trusted":1,"created_at":1786508605},{"device_id":"SITAS-CAM-01","operator":"李文","project":"NSFC-2026-1183","file_name":"IMG_3290.TIF","sha256":"7b8a97b74ca5e73697a5b3952fdd38077b2f40cb084f15d7e1543845537d7361","captured_at":"2026-08-12T03:21:51+00:00","tsa_trusted":1,"created_at":1786504911},{"device_id":"SITAS-WS-01","operator":"李文","project":"PK-2026-019","file_name":"IMG_3291.TIF","sha256":"37bfb63007e5630a83b9d83e44008030ec9db627496a12ad0d6646b4d096a198","captured_at":"2026-08-12T02:30:43+00:00","tsa_trusted":0,"created_at":1786501843},{"device_id":"SITAS-WS-02","operator":"王蕊","project":"STAB-2026-07","file_name":"IMG_3292.TIF","sha256":"ac44206a8b292355267ead43191d7e7f57cf25e455967c3a0f25e8dad1556a1e","captured_at":"2026-08-12T01:28:09+00:00","tsa_trusted":1,"created_at":1786498089},{"device_id":"SITAS-WS-02","operator":"张捷","project":"NSFC-2026-1183","file_name":"IMG_3293.TIF","sha256":"9584069f2a9027dc8dd10b90881caa1e3514da2763e2eeac96fa0b2549dd19d0","captured_at":"2026-08-12T00:28:04+00:00","tsa_trusted":1,"created_at":1786494484},{"device_id":"SITAS-WS-02","operator":"陈昊","project":"STAB-2026-07","file_name":"IMG_3294.TIF","sha256":"4d322d4a394894944bfd0d6647233c02aeeec03054c065090d64fb04e56c1d56","captured_at":"2026-08-11T22:54:03+00:00","tsa_trusted":1,"created_at":1786488843},{"device_id":"SITAS-WS-01","operator":"李文","project":"NSFC-2026-1183","file_name":"IMG_3295.TIF","sha256":"34276bcc576872724590f12f56561116c94679a0eb5fc21a965f91bbb7daeedf","captured_at":"2026-08-11T21:45:52+00:00","tsa_trusted":1,"created_at":1786484752},{"device_id":"SITAS-WS-01","operator":"李文","project":"STAB-2026-07","file_name":"IMG_3296.TIF","sha256":"6601517f57f71744c0518856c5ce8eb2703f8509a3e966624c876ece0041679e","captured_at":"2026-08-11T20:44:52+00:00","tsa_trusted":1,"created_at":1786481092},{"device_id":"SITAS-WS-02","operator":"李文","project":"PK-2026-019","file_name":"IMG_3297.TIF","sha256":"c05f0c30eed3214f5313416b71e622d212d9867f6beb51f2b2fc487d28f9e56e","captured_at":"2026-08-11T19:59:33+00:00","tsa_trusted":1,"created_at":1786478373},{"device_id":"SITAS-CAM-01","operator":"张捷","project":"GLP-TOX-0442","file_name":"IMG_3298.TIF","sha256":"66cbdbf3544abe49fb2eae51ebc71527f36edaafa19550300c67d426467159a6","captured_at":"2026-08-11T18:30:31+00:00","tsa_trusted":0,"created_at":1786473031},{"device_id":"SITAS-CAM-01","operator":"王蕊","project":"GLP-TOX-0442","file_name":"IMG_3299.TIF","sha256":"62b220d9947fe5294c427804fdfcdef2cffb14905db5c9decf1ab622b7c37e5c","captured_at":"2026-08-11T17:29:09+00:00","tsa_trusted":1,"created_at":1786469349},{"device_id":"SITAS-CAM-01","operator":"王蕊","project":"STAB-2026-07","file_name":"IMG_3300.TIF","sha256":"b28e8cdab68e51718e6631de6f14f777612c95a7c2561d2b87f2440c53076b39","captured_at":"2026-08-11T16:18:27+00:00","tsa_trusted":1,"created_at":1786465107},{"device_id":"SITAS-CAM-01","operator":"李文","project":"STAB-2026-07","file_name":"IMG_3301.TIF","sha256":"782a22eb1ab7cb98a31c38e070151a600514484a71379f4077e021604b992e15","captured_at":"2026-08-11T15:23:07+00:00","tsa_trusted":1,"created_at":1786461787},{"device_id":"SITAS-CAM-01","operator":"王蕊","project":"PK-2026-019","file_name":"IMG_3302.TIF","sha256":"23f1ed4d3c9df6b311103bcb52aae27598704e97308ee89af61d2b7055f45511","captured_at":"2026-08-11T14:34:30+00:00","tsa_trusted":1,"created_at":1786458870},{"device_id":"SITAS-WS-02","operator":"张捷","project":"NSFC-2026-1183","file_name":"IMG_3303.TIF","sha256":"820f2320eb7b374a60e501c362804753a5a42ae7f16e0218e4a4bf5ba61ec7a0","captured_at":"2026-08-11T13:25:25+00:00","tsa_trusted":1,"created_at":1786454725},{"device_id":"SITAS-WS-02","operator":"张捷","project":"NSFC-2026-1183","file_name":"IMG_3304.TIF","sha256":"aa6b2c4fd82a85369e1fd322e673ac8b7a1119ad9cf8cf0f49dbc53e193121b1","captured_at":"2026-08-11T11:52:49+00:00","tsa_trusted":1,"created_at":1786449169},{"device_id":"SITAS-WS-02","operator":"张捷","project":"PK-2026-019","file_name":"IMG_3305.TIF","sha256":"1275d2fc9fb3dc5433a6c3c2bdc90d6bb6a06266dda57632771fb22163d73a5b","captured_at":"2026-08-11T10:53:55+00:00","tsa_trusted":0,"created_at":1786445635},{"device_id":"SITAS-CAM-01","operator":"李文","project":"NSFC-2026-1183","file_name":"IMG_3306.TIF","sha256":"644b7a611a0638d61d72aa23cb2d0872eb49840eea5297ee4605f7327988c406","captured_at":"2026-08-11T10:17:47+00:00","tsa_trusted":1,"created_at":1786443467},{"device_id":"SITAS-WS-02","operator":"陈昊","project":"PK-2026-019","file_name":"IMG_3307.TIF","sha256":"9b4d14576fb34e7ae81f05eb3399373a64b9c75b31e3f6fa5b79b94813a175d1","captured_at":"2026-08-11T08:42:22+00:00","tsa_trusted":1,"created_at":1786437742},{"device_id":"SITAS-WS-01","operator":"陈昊","project":"PK-2026-019","file_name":"IMG_3308.TIF","sha256":"0e4f08330ab9258bc8385671c779234a4e16d1eca55eca9f27e1056e6c541a3f","captured_at":"2026-08-11T07:55:46+00:00","tsa_trusted":1,"created_at":1786434946},{"device_id":"SITAS-WS-02","operator":"陈昊","project":"PK-2026-019","file_name":"IMG_3309.TIF","sha256":"16d9cd57b058151bc33d9776a9e66d56318da6818f6546bef665953b462ba3c8","captured_at":"2026-08-11T07:00:28+00:00","tsa_trusted":1,"created_at":1786431628},{"device_id":"SITAS-WS-02","operator":"张捷","project":"GLP-TOX-0442","file_name":"IMG_3310.TIF","sha256":"1cd90691bef22331a7a1d91d654a01eebb610f77cc5ce0c02fce47414df67bd2","captured_at":"2026-08-11T05:28:18+00:00","tsa_trusted":1,"created_at":1786426098},{"device_id":"SITAS-CAM-01","operator":"张捷","project":"STAB-2026-07","file_name":"IMG_3311.TIF","sha256":"ccf64b38421d6e13f4ecf9c93d257a2636411694a3edc33e2a7946ff80c0bd50","captured_at":"2026-08-11T04:30:30+00:00","tsa_trusted":1,"created_at":1786422630},{"device_id":"SITAS-CAM-01","operator":"张捷","project":"NSFC-2026-1183","file_name":"IMG_3312.TIF","sha256":"ceccdba581e3f0147c59be64d19802c21bcced7448482a438f0a8abbbc556d0c","captured_at":"2026-08-11T03:45:18+00:00","tsa_trusted":0,"created_at":1786419918},{"device_id":"SITAS-WS-01","operator":"李文","project":"NSFC-2026-1183","file_name":"IMG_3313.TIF","sha256":"8b13d8418d566112d0ff4c4f3bd20adcdc69b92607621562f5f17ffd8cfe6df3","captured_at":"2026-08-11T02:35:53+00:00","tsa_trusted":1,"created_at":1786415753},{"device_id":"SITAS-WS-02","operator":"王蕊","project":"GLP-TOX-0442","file_name":"IMG_3314.TIF","sha256":"c2959c73331f4794c7ffea92ce884ace43546c5594fa25d4498e250b03ef0fdc","captured_at":"2026-08-11T01:24:45+00:00","tsa_trusted":1,"created_at":1786411485},{"device_id":"SITAS-WS-02","operator":"张捷","project":"PK-2026-019","file_name":"IMG_3315.TIF","sha256":"836b4333134ab466fbc6cfe390df79e51177bc9863ea4374a39070bd4e115f89","captured_at":"2026-08-10T23:56:50+00:00","tsa_trusted":1,"created_at":1786406210},{"device_id":"SITAS-WS-01","operator":"王蕊","project":"GLP-TOX-0442","file_name":"IMG_3316.TIF","sha256":"75d6f906aee81821334f10896597131305f5226e8e58585bf7bd13142d830216","captured_at":"2026-08-10T22:54:24+00:00","tsa_trusted":1,"created_at":1786402464},{"device_id":"SITAS-WS-02","operator":"张捷","project":"PK-2026-019","file_name":"IMG_3317.TIF","sha256":"19f5e24f8e8557cfa67abe421cb34de747286e2e0283ec11c7e7a39b894b712b","captured_at":"2026-08-10T21:52:56+00:00","tsa_trusted":1,"created_at":1786398776},{"device_id":"SITAS-WS-02","operator":"李文","project":"GLP-TOX-0442","file_name":"IMG_3318.TIF","sha256":"240e3a7511b56f556aceb46a2299a8c72ce05fa185f8d1f6fe5f1c36cbc2908a","captured_at":"2026-08-10T20:40:56+00:00","tsa_trusted":1,"created_at":1786394456},{"device_id":"SITAS-CAM-01","operator":"李文","project":"GLP-TOX-0442","file_name":"IMG_3319.TIF","sha256":"6a2631b4e0817fe65a84429bffbd08751a37e4f56c18baeddb4267ed40b966cc","captured_at":"2026-08-10T19:36:03+00:00","tsa_trusted":0,"created_at":1786390563}]}};
+// 演示版: 拦截 fetch, 用内置数据应答 —— UI 与真实后台完全一致
+window.fetch=async(u)=>{
+  const p=String(u).split('?')[0].replace('/api/','');
+  let d=DEMO[p.split('?')[0]]||DEMO.records;
+  if(p==='records'){
+    const q=new URLSearchParams(String(u).split('?')[1]||'');
+    let rows=DEMO.records.rows;
+    const dv=q.get('device'), kw=(q.get('q')||'').trim();
+    if(dv) rows=rows.filter(r=>r.device_id===dv);
+    if(kw) rows=rows.filter(r=>(r.operator+r.project+r.file_name).includes(kw));
+    d={total:rows.length,rows:rows.slice(0,200)};
+  }
+  await new Promise(r=>setTimeout(r,90));
+  return {json:async()=>d};
+};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
+const fmt=t=>new Date(t*1000).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',
+  hour:'2-digit',minute:'2-digit'});
+
+async function me(){
+  const j=await (await fetch('/api/me')).json();
+  if(j.error){location.href='/login';return}
+  $('org').textContent=j.org; $('nm').textContent=j.name;
+  window.SEATS=j.seats; window.PLAN=j;
+}
+async function stats(){
+  const j=await (await fetch('/api/stats')).json();
+  $('kpis').innerHTML=`
+   <div class=kpi><div class=l>存证总数</div><div class="v m">${j.total}</div>
+     <div class=s>近30天 ${j.last30} 条</div></div>
+   <div class=kpi><div class=l>在用工位</div><div class="v m">${j.devices} / ${PLAN.seats}</div>
+     <div class=s>${PLAN.plan} 授权</div></div>
+   <div class=kpi${j.untrusted?' class=kpi warn':''}><div class=l>待补可信时间戳</div>
+     <div class="v m">${j.untrusted}</div>
+     <div class=s>${j.untrusted?'建议接入第三方 TSA':'全部已加盖'}</div></div>
+   <div class=kpi><div class=l>授权剩余</div><div class="v m">${PLAN.days_left}</div>
+     <div class=s>天</div></div>`;
+  const mx=Math.max(1,...j.series);
+  $('spark').innerHTML=j.series.map(n=>
+    `<i style="height:${Math.max(2,n/mx*100)}%" title="${n} 条"></i>`).join('');
+}
+async function devices(){
+  const j=await (await fetch('/api/devices')).json();
+  $('devs').innerHTML=j.rows.length?j.rows.map(r=>`<tr>
+    <td class=m>${esc(r.device_id)}</td><td>${esc(r.label)||'—'}</td>
+    <td><span class="pill ${r.status==='active'?'p-ok':'p-wn'}">
+      ${r.status==='active'?'启用':'停用'}</span></td>
+    <td class=m>${r.n}</td><td class=m>${fmt(r.created_at)}</td></tr>`).join('')
+    :'<tr><td colspan=5 class=empty>还没有登记工位</td></tr>';
+  $('seats').textContent=`已用 ${j.rows.filter(r=>r.status==='active').length} / ${j.seats} 个授权工位`;
+  $('fd').innerHTML='<option value="">全部工位</option>'+
+    j.rows.map(r=>`<option>${esc(r.device_id)}</option>`).join('');
+}
+async function load(){
+  const q=new URLSearchParams({device:$('fd').value,q:$('fq').value,limit:200});
+  const j=await (await fetch('/api/records?'+q)).json();
+  $('recs').innerHTML=j.rows.length?j.rows.map(r=>`<tr>
+    <td>${esc(r.file_name)}</td><td class=m>${esc(r.captured_at).replace('T',' ').replace('+00:00',' UTC')}</td>
+    <td>${esc(r.operator)}</td><td class=m>${esc(r.project)}</td>
+    <td class=m>${esc(r.device_id)}</td>
+    <td class=m title="${esc(r.sha256)}">${esc(r.sha256).slice(0,14)}…</td>
+    <td><span class="pill ${r.tsa_trusted?'p-ok':'p-wn'}">
+      ${r.tsa_trusted?'第三方':'本地时钟'}</span></td></tr>`).join('')
+    :'<tr><td colspan=7 class=empty>没有匹配的记录</td></tr>';
+  $('cnt').textContent=`共 ${j.total} 条，显示最近 ${j.rows.length} 条`;
+}
+let t; const deb=()=>{clearTimeout(t);t=setTimeout(load,260)};
+async function addDev(){
+  const d=$('nd').value.trim(); if(!d)return;
+  alert('演示环境不支持写入。正式版可添加工位，超出授权数会提示扩容。'); return;
+  const r=await fetch('/api/devices',{method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({device_id:d,label:$('nl').value.trim()})});
+  const j=await r.json();
+  if(j.error)return alert(j.error);
+  $('nd').value=$('nl').value=''; devices(); stats();
+}
+(async()=>{await me(); await Promise.all([stats(),devices(),load()])})();
+</script></body></html>
