@@ -164,7 +164,7 @@ async function stats(){
      <div class=s>${PLAN.plan} 授权</div></div>
    <div class=kpi${j.untrusted?' class=kpi warn':''}><div class=l>待补可信时间戳</div>
      <div class="v m">${j.untrusted}</div>
-     <div class=s>${j.untrusted?'建议接入第三方 TSA':'全部已加盖'}</div></div>
+     <div class=s>${j.untrusted?'待补第三方时间戳':'全部已加盖'}</div></div>
    <div class=kpi><div class=l>授权剩余</div><div class="v m">${PLAN.days_left}</div>
      <div class=s>天</div></div>`;
   const mx=Math.max(1,...j.series);
@@ -192,7 +192,7 @@ async function load(){
     <td class=m>${esc(r.device_id)}</td>
     <td class=m title="${esc(r.sha256)}">${esc(r.sha256).slice(0,14)}…</td>
     <td><span class="pill ${r.tsa_trusted?'p-ok':'p-wn'}">
-      ${r.tsa_trusted?'第三方':'本地时钟'}</span></td></tr>`).join('')
+      ${r.tsa_trusted?'DigiCert':'本地时钟'}</span></td></tr>`).join('')
     :'<tr><td colspan=7 class=empty>没有匹配的记录</td></tr>';
   $('cnt').textContent=`共 ${j.total} 条，显示最近 ${j.rows.length} 条`;
 }
