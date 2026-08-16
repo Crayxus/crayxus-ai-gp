@@ -84,18 +84,17 @@ footer img{width:180px;max-width:56%;border-radius:14px;opacity:.85;margin:0 aut
 </style></head><body>
 <header><div class="brand">CRAYXUS<small>SPORTS&nbsp;INTELLIGENCE</small></div>
 <div class="live"><span class="dot"></span><span id="up">筛选中</span></div></header>
-<div class="sec" style="margin-top:2px">🧲 CLASSIC · 原版B-ML (07-19起实录+经典影子续记) <span class="dot" style="display:inline-block;vertical-align:middle;margin:0 2px 0 6px"></span><span id="htxstats" style="letter-spacing:0;font-family:var(--mono);color:#2ee6a8;font-size:11px"></span></div>
+<div class="sec" style="margin-top:2px">🕵️ DETECTOR · 协议球探测器 <span class="dot" style="display:inline-block;vertical-align:middle;margin:0 2px 0 6px"></span><span id="dqxstats" style="letter-spacing:0;font-family:var(--mono);color:#ffb454;font-size:11px"></span></div>
 <div class="hero">
   <div class="hrow">
     <div class="ring" id="ring" style="--v:0"><b id="rate">—</b><small>命中率</small></div>
-    <div class="hmain"><small>HALF-TIME&nbsp;·&nbsp;NET&nbsp;PROFIT&nbsp;·&nbsp;单位</small>
+    <div class="hmain"><small>DETECTOR&nbsp;·&nbsp;NET&nbsp;PROFIT&nbsp;·&nbsp;单位</small>
       <div class="hnet" id="net">0.00</div><div class="hsub" id="rec">0 胜 0 负 · 已结算 0</div></div>
   </div>
   <div class="scanbar">系统已深度筛选 <b id="scanned">—</b> 场 · 实时不间断扫描全球赛事</div>
   <div class="sincebar" id="sincebar">实盘验证系统就绪 · 数据自 2026-07-13 起收集</div>
 </div>
-<div id="htxsub" style="font-family:var(--mono);font-size:9.5px;color:var(--dim);margin:-8px 2px 8px"></div>
-<div id="htxlist" style="margin-bottom:16px"></div>
+<div id="dqxlist" style="margin:10px 0 16px"></div>
 <div class="chips">
   <div class="chip"><small>今日候选</small><b id="cand" style="color:var(--cyan)">—</b></div>
   <div class="chip"><small>未过模型筛选</small><b id="rej" style="color:var(--amber)">—</b></div>
@@ -107,9 +106,6 @@ footer img{width:180px;max-width:56%;border-radius:14px;opacity:.85;margin:0 aut
 <div class="sec">📅 每日活跃度</div><div id="daily" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:16px"></div>
 <div class="sec">🔴 LIVE BOARD · 实时盯盘 <span id="pooln" style="color:var(--green)"></span>
 <span style="float:right;font-size:9px;letter-spacing:.05em;color:var(--dim)">🟢符合 🟡监控中 🔴未达标</span></div><div class="board" id="board"></div>
-<div class="sec" style="margin-top:22px">📈 SIGNALS · 正式信号 <span id="v4stats" style="letter-spacing:0;font-family:var(--mono);color:var(--dim);font-size:10.5px"></span></div><div id="list"></div>
-<div class="sec" style="margin-top:22px">🌊 MARKET · 全市场协同探测 <span style="color:#ffb454;font-size:9px">TRACK-3实验位</span> <span id="clstats" style="letter-spacing:0;font-family:var(--mono);color:var(--dim);font-size:10.5px"></span></div><div id="cllist"></div>
-<div class="sec" style="margin-top:22px">🕵️ DETECTOR · 探测器实验通道 <span class="dot" style="display:inline-block;vertical-align:middle;margin:0 2px 0 6px"></span><span id="dqxstats" style="letter-spacing:0;font-family:var(--mono);color:#ffb454"></span></div><div id="dqxlist"></div>
 <div id="scanwrap" style="display:none"><div class="sec" style="margin-top:22px">近期评估</div><div id="scanlist"></div></div>
 <footer><img src="https://crayxus.com.au/og-track.jpg" alt="Crayxus">
 CRAYXUS SPORTS INTELLIGENCE · 实盘信号自动记录<br>仅供合作方参考 · 不构成任何投注建议</footer>
@@ -119,14 +115,14 @@ async function sync(){try{
   document.getElementById("up").textContent="筛选中 "+(d.updated||"").slice(0,11);
   const s=d.stats;
   // 头版饼图环=🧲HTX合计账(回放+实盘冻结价) — 2026-08-12 用户令
-  var HT0=d.htx||{};var HS0=HT0.stats||{};var RP0=HT0.replay||{};
-  var cw=(RP0.wins||0)+(HS0.wins||0),cl=(RP0.losses||0)+(HS0.losses||0);
-  var cs=(RP0.settled||0)+(HS0.settled||0),cn=(RP0.net||0)+(HS0.net||0);
+  var DQ0=d.dqx||{};var QS0=DQ0.stats||{};
+  var cw=QS0.wins||0,cl=QS0.losses||0;
+  var cs=QS0.settled||0,cn=QS0.net||0;
   var cr=(cw+cl)?Math.round(cw/(cw+cl)*1000)/10:null;
   document.getElementById("ring").style.setProperty("--v",cr===null?0:cr);
   document.getElementById("rate").textContent=cr===null?"—":cr+"%";
   const n=document.getElementById("net");n.textContent=(cn>=0?"+":"")+cn.toFixed(2);n.style.color=cn>=0?"var(--green)":"var(--red)";
-  document.getElementById("rec").textContent=cw+" 胜 "+cl+" 负 · 已结算 "+cs+(HS0.settled?" (含实盘"+HS0.settled+")":" · 影子账起步");
+  document.getElementById("rec").textContent=cw+" 胜 "+cl+" 负 · 已结算 "+cs+" · 全实盘影子·自动结算";
   var v4el=document.getElementById("v4stats");
   if(v4el){v4el.textContent=" "+s.wins+"胜"+s.losses+"负 · "+(s.rate===null?"—":s.rate+"%")+" · 净"+(s.net>=0?"+":"")+s.net.toFixed(2)+" · 已结算"+s.settled;}
   document.getElementById("scanned").textContent=(s.scanned||0).toLocaleString();
