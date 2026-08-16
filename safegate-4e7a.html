@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SafeGate · 模块化 LLM API 安全网关 — 在线演示</title>
+<meta name="robots" content="noindex,nofollow">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SafeGate">
+<meta property="og:title" content="SafeGate · 模块化 LLM API 安全网关">
+<meta property="og:description" content="OpenAI 兼容网关：澳洲敏感信息可逆脱敏（TFN/ABN/Medicare）、多供应商动态路由、角色 Prompt 管理。点击进入在线演示。">
+<meta property="og:image" content="https://crayxus.com.au/safegate-cover-4e7a.jpg?v=1">
+<meta property="og:image:secure_url" content="https://crayxus.com.au/safegate-cover-4e7a.jpg?v=1">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="800">
+<meta property="og:image:height" content="800">
+<meta property="og:image:alt" content="SafeGate · 模块化 LLM API 安全网关">
+<meta property="og:url" content="https://crayxus.com.au/safegate-4e7a.html">
+<meta property="og:locale" content="zh_CN">
+<meta itemprop="image" content="https://crayxus.com.au/safegate-cover-4e7a.jpg?v=1">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SafeGate · 模块化 LLM API 安全网关">
+<meta name="twitter:image" content="https://crayxus.com.au/safegate-cover-4e7a.jpg?v=1">
+<style>
+:root{--bg:#0d1117;--panel:#161b22;--line:#30363d;--txt:#e6edf3;--dim:#8b949e;--acc:#2f81f7;--ok:#3fb950}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font:16px/1.7 "Segoe UI","Microsoft YaHei",sans-serif}
+main{max-width:640px;margin:0 auto;padding:36px 20px 70px}
+.cover{width:100%;max-width:420px;display:block;margin:0 auto 28px;border-radius:14px;border:1px solid var(--line)}
+h1{font-size:24px;text-align:center;margin-bottom:8px}
+.sub{text-align:center;color:var(--dim);font-size:14.5px;margin-bottom:30px}
+.cta{display:block;background:var(--acc);color:#fff;text-decoration:none;text-align:center;
+font-size:17px;font-weight:600;border-radius:12px;padding:16px;margin-bottom:10px}
+.cta.ghost{background:transparent;border:1px solid var(--line);color:var(--dim);font-weight:400;font-size:14.5px}
+.hint{text-align:center;color:var(--dim);font-size:13px;margin:6px 0 34px}
+.hint b{color:var(--ok)}
+.feat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:12px}
+.feat b{display:block;font-size:15px;margin-bottom:4px}
+.feat span{color:var(--dim);font-size:13.5px}
+.feat.f1 b{color:var(--ok)} .feat.f2 b{color:#d29922} .feat.f3 b{color:#bc8cff} .feat.f0 b{color:var(--acc)}
+.creds{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 20px;
+margin-top:22px;font-size:13.5px;color:var(--dim)}
+.creds code{color:#9cc4ff;font-family:Consolas,monospace}
+footer{text-align:center;color:#484f58;font-size:12px;margin-top:40px}
+</style>
+</head>
+<body>
+<main>
+  <img class="cover" src="https://crayxus.com.au/safegate-cover-4e7a.jpg?v=1" alt="SafeGate">
+  <h1>SafeGate · 模块化 LLM API 安全网关</h1>
+  <p class="sub">OpenAI 兼容 · 核心底座与中间件彻底解耦 · 面向金融 / 法务 / 教育 / 企业 IT</p>
+
+  <a class="cta" id="go" href="https://safegate-2rw7.onrender.com/">进入在线演示</a>
+  <a class="cta ghost" href="https://safegate-2rw7.onrender.com/admin">管理后台（脱敏日志 · 计费 · 角色发布）</a>
+  <p class="hint" id="warm">演示环境启动中，请稍候…</p>
+
+  <div class="feat f0"><b>核心底座 Core</b><span>OpenAI 兼容 API、鉴权、限流、统一计费——任何现成 SDK 换个 base_url 即接入</span></div>
+  <div class="feat f1"><b>插块 1 · 脱敏中间件</b><span>TFN / ABN / Medicare / 银行卡先过校验位算法再脱敏，占位符可逆还原：模型看不到真实数据，用户体验无损</span></div>
+  <div class="feat f2"><b>插块 2 · 大模型动态路由</b><span>多供应商优先级调度、错峰半价窗口、响应缓存、故障自动降级</span></div>
+  <div class="feat f3"><b>插块 3 · 角色 Prompt 管理</b><span>系统提示词后台动态配置发布，客户端零改动即时生效</span></div>
+
+  <div class="creds">
+    演示入口：首页三栏展示「用户原文 → 实际出网内容 → 还原后回复」，可一键填入含敏感信息的示例。<br>
+    管理后台密码 <code>crayxus</code> · API 演示 Key <code>sg-demo-2026</code><br>
+    演示环境为免费实例，闲置后首次访问需约 30 秒唤醒（打开本页即自动预热）。
+  </div>
+  <footer>SafeGate Demo · Crayxus</footer>
+</main>
+<script>
+(function(){
+  var h=document.getElementById('warm'), t0=Date.now();
+  function ping(){
+    fetch('https://safegate-2rw7.onrender.com/healthz',{mode:'no-cors',cache:'no-store'})
+      .then(function(){h.innerHTML='演示环境 <b>已就绪</b>，可直接进入';})
+      .catch(function(){
+        if(Date.now()-t0<90000){setTimeout(ping,4000);}
+        else{h.textContent='首次打开约需 30 秒唤醒，点击按钮后请稍候';}
+      });
+  }
+  ping();
+})();
+</script>
+</body>
+</html>
