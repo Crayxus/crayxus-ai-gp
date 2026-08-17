@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>COOKO 成本与选型决策</title>
+<meta name="description" content="从 BOM ¥305–481 到 ¥201–324 的降本决策记录：三档方案对比、主控选型修正、高级感的取舍逻辑与分批采购。">
+<meta name="robots" content="noindex,nofollow">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="COOKO 内部决策文档">
+<meta property="og:title" content="COOKO 成本与选型决策">
+<meta property="og:description" content="砍算力与分辨率，保工艺与材质——BOM 从 ¥305–481 压到 ¥201–324 的完整决策记录。">
+<meta property="og:image" content="https://crayxus.com.au/og-cooko.jpg?v=1">
+<meta property="og:image:secure_url" content="https://crayxus.com.au/og-cooko.jpg?v=1">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="800">
+<meta property="og:image:height" content="800">
+<meta property="og:image:alt" content="COOKO AI 智能冰箱贴">
+<meta property="og:url" content="https://crayxus.com.au/cooko-plan-7b3e9f21.html">
+<meta property="og:locale" content="zh_CN">
+<meta itemprop="image" content="https://crayxus.com.au/og-cooko.jpg?v=1">
+<meta name="image" content="https://crayxus.com.au/og-cooko.jpg?v=1">
+<link rel="image_src" href="https://crayxus.com.au/og-cooko.jpg?v=1">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://crayxus.com.au/og-cooko.jpg?v=1">
+
+<style>
+:root{
+  --paper:#FBF8F3; --card:#FFFFFF; --ink:#191411; --sub:#F3EEE6;
+  --line:#E7DFD3; --warm:#7C6E62; --mute:#A2958A;
+  --amber:#D9552F; --amber-soft:#FCEDE6;
+  --green:#2E7D5B; --green-soft:#E8F3ED;
+  --deep:#17120F; --deep-fg:#F6F1E9; --deep-mute:#A79A8C; --deep-line:#2C241E;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){
+  --paper:#0F0C0A; --card:#181310; --ink:#F0EAE2; --sub:#141010;
+  --line:#2A221C; --warm:#A8998B; --mute:#7E7166;
+  --amber:#F0764C; --amber-soft:#231411;
+  --green:#5FBF92; --green-soft:#0F1F18;
+  --deep:#0A0807; --deep-fg:#F0EAE2; --deep-mute:#96887B; --deep-line:#241C17;
+}}
+:root[data-theme=dark]{
+  --paper:#0F0C0A; --card:#181310; --ink:#F0EAE2; --sub:#141010;
+  --line:#2A221C; --warm:#A8998B; --mute:#7E7166;
+  --amber:#F0764C; --amber-soft:#231411;
+  --green:#5FBF92; --green-soft:#0F1F18;
+  --deep:#0A0807; --deep-fg:#F0EAE2; --deep-mute:#96887B; --deep-line:#241C17;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:"PingFang SC","Microsoft YaHei","Source Han Sans SC",sans-serif;
+  line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{max-width:100%;display:block}
+.wrap{max-width:1000px;margin:0 auto;padding:0 24px}
+section{padding:76px 0;border-top:1px solid var(--line)}
+@media(max-width:760px){section{padding:52px 0}}
+
+.mono{font-family:ui-monospace,"SF Mono","Cascadia Mono",Consolas,monospace;
+  font-variant-numeric:tabular-nums}
+.eyebrow{font-family:ui-monospace,Consolas,monospace;font-size:11px;
+  letter-spacing:.24em;text-transform:uppercase;color:var(--amber);margin:0 0 16px}
+h1{font-size:clamp(30px,5.4vw,54px);line-height:1.12;margin:0 0 20px;
+  letter-spacing:-.035em;font-weight:750;text-wrap:balance}
+h2{font-size:clamp(23px,3.8vw,38px);line-height:1.2;margin:0 0 14px;
+  letter-spacing:-.03em;font-weight:700;text-wrap:balance}
+h3{font-size:clamp(17px,2.1vw,21px);margin:28px 0 10px;font-weight:650}
+p{margin:0 0 15px;max-width:70ch}
+.lede{color:var(--warm);font-size:clamp(15px,1.7vw,18px);max-width:62ch}
+.small{font-size:14px;color:var(--mute)}
+strong{font-weight:650}
+
+/* hero */
+.hero{background:var(--deep);color:var(--deep-fg);padding:64px 0 72px;border:0}
+.hero .lede{color:var(--deep-mute)}
+.stamp{display:inline-block;font-family:ui-monospace,Consolas,monospace;font-size:11px;
+  letter-spacing:.18em;padding:6px 12px;border-radius:100px;
+  border:1px solid var(--deep-line);color:var(--deep-mute);margin-bottom:28px}
+.brandrow{display:flex;align-items:baseline;gap:12px;margin-bottom:36px}
+.brandrow b{font-size:18px;letter-spacing:.16em}
+.brandrow span{font-size:12px;color:var(--deep-mute)}
+
+/* 结论卡 */
+.verdict{background:var(--card);border:1px solid var(--line);border-radius:18px;
+  padding:30px 28px;margin:32px 0}
+.verdict .k{font-family:ui-monospace,Consolas,monospace;font-size:11px;
+  letter-spacing:.2em;color:var(--green);margin-bottom:12px}
+.bignum{font-size:clamp(30px,5.2vw,46px);font-weight:750;letter-spacing:-.03em;
+  line-height:1.1;margin:0 0 8px}
+.bignum s{color:var(--mute);font-weight:400;font-size:.5em;margin-right:14px;
+  letter-spacing:0}
+
+/* 表 */
+.tablewrap{overflow-x:auto;margin:22px 0;border:1px solid var(--line);border-radius:14px}
+table{width:100%;border-collapse:collapse;font-size:14.5px;min-width:520px;background:var(--card)}
+th,td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--sub);font-weight:650;font-size:13px;letter-spacing:.02em;
+  white-space:nowrap}
+tbody tr:last-child td{border-bottom:none}
+td.num,th.num{text-align:right;font-family:ui-monospace,Consolas,monospace;
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+tfoot td{background:var(--sub);font-weight:700;border-top:2px solid var(--line)}
+.was{color:var(--mute);text-decoration:line-through}
+.pick{background:var(--green-soft)}
+.pick td{font-weight:600}
+
+/* 双栏对照 */
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0}
+@media(max-width:720px){.duo{grid-template-columns:1fr}}
+.duo>div{border:1px solid var(--line);border-radius:14px;padding:22px;background:var(--card)}
+.duo h4{margin:0 0 12px;font-size:15px;letter-spacing:.01em}
+.duo ul{margin:0;padding-left:18px;color:var(--warm);font-size:14.5px}
+.duo li{margin-bottom:9px}
+.keep h4{color:var(--green)}
+.cut h4{color:var(--mute)}
+
+/* 提示块 */
+.callout{border-left:3px solid var(--amber);background:var(--amber-soft);
+  padding:18px 22px;border-radius:0 12px 12px 0;margin:24px 0}
+.callout .lbl{font-family:ui-monospace,Consolas,monospace;font-size:11px;
+  letter-spacing:.2em;color:var(--amber);display:block;margin-bottom:8px}
+.callout p{margin:0;max-width:none}
+.callout p+p{margin-top:10px}
+
+.note{border:1px dashed var(--line);border-radius:12px;padding:18px 22px;
+  margin:22px 0;color:var(--warm);font-size:14.5px}
+.note p{margin:0;max-width:none}
+.note p+p{margin-top:10px}
+
+/* 批次 */
+.batch{border:1px solid var(--line);border-radius:14px;padding:22px 24px;
+  margin-bottom:14px;background:var(--card)}
+.batch .hd{display:flex;justify-content:space-between;align-items:baseline;
+  gap:14px;flex-wrap:wrap;margin-bottom:8px}
+.batch h4{margin:0;font-size:17px}
+.batch .price{font-family:ui-monospace,Consolas,monospace;font-weight:700;
+  font-size:17px;color:var(--amber)}
+.batch p{margin:0;color:var(--warm);font-size:14.5px;max-width:none}
+
+footer{border-top:1px solid var(--line);padding:44px 0 60px;color:var(--mute);font-size:13px}
+.footline{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="brandrow"><b>COOKO</b><span>AI 智能冰箱贴</span></div>
+    <span class="stamp">内部决策文档 · 含成本数据 · 请勿外传</span>
+    <p class="eyebrow">2026-08-17 · 成本与选型</p>
+    <h1>砍算力与分辨率<br>保工艺与材质</h1>
+    <p class="lede">COOKO 是一块贴在冰箱门上的小屏设备：开门主动提醒什么快过期，
+      买回来举一下就入库，说一声就核销，缺什么自动进购物清单。
+      配微信小程序做离开厨房之后的管理。</p>
+    <p class="lede">这份文档是一次降本决策的完整记录。起因是一句话——<strong>一个冰箱才多少钱</strong>。
+      顺着它把 BOM 重算了一遍，结论是原方案在价格上确实站不住；
+      但降本不必以牺牲质感为代价，前提是省对地方。</p>
+  </div>
+</header>
+
+<!-- 00 结论 -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow">00 ／ 结论先行</p>
+    <h2>选精简档，且高级感一分不降</h2>
+
+    <div class="verdict">
+      <div class="k">最终 BOM · 小批量试产口径</div>
+      <p class="bignum"><s>¥305–481</s>¥201–324</p>
+      <p class="small mono">量产 5K+ 估 ¥140–220　·　建议零售 ¥499–599</p>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <tbody>
+          <tr><th>主控</th><td><span class="was">ESP32-P4 + C6 双芯</span> → <strong>ESP32-S3</strong>（8MB PSRAM）</td></tr>
+          <tr><th>显示</th><td><span class="was">3.4" 800×800 MIPI-DSI</span> → <strong>2.8" 480×480 IPS 全贴合 QSPI</strong></td></tr>
+          <tr><th>摄像头</th><td><span class="was">MIPI-CSI</span> → <strong>OV3660 DVP</strong></td></tr>
+          <tr><th>主机尺寸</th><td><span class="was">92 × 106 × 20 mm</span> → <strong>68 × 78 × 18 mm</strong></td></tr>
+          <tr><th>电池</th><td><span class="was">2000 mAh</span> → <strong>1500 mAh</strong></td></tr>
+          <tr><th>屏 / 摄像头 / 麦克风</th><td><strong>一个没砍</strong>。砍的是规格与并发能力，不是功能</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 01 倒推 -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow">01 ／ 成本倒推</p>
+    <h2>为什么原方案站不住</h2>
+    <p class="lede">这笔账该倒过来算：不是"做出来要多少钱"，而是"市场允许它卖多少钱"。</p>
+
+    <div class="tablewrap">
+      <table>
+        <tbody>
+          <tr><td>主流三四门冰箱售价</td><td class="num">¥2,000 – 4,000</td></tr>
+          <tr><td>挂在门上的配件，占冰箱价的天花板</td><td class="num">10 – 20%</td></tr>
+          <tr><td>→ 零售价上限</td><td class="num">¥300 – 600</td></tr>
+          <tr><td>家电配件常规倍率（BOM → 零售）</td><td class="num">3 – 4×</td></tr>
+          <tr class="pick"><td>→ <strong>BOM 目标</strong></td><td class="num"><strong>¥100 – 180</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>原方案 BOM ¥305–481，零售需要开到 <strong>¥1,200–1,900</strong>——
+      等于半台冰箱。这个价格带上，消费者的比较对象不再是"要不要买这个配件"，
+      而是"不如加点钱换台带屏冰箱"。</p>
+
+    <div class="note">
+      <p><strong>需要说明的是：</strong>¥305–481 是小批量试产口径，量产本来就能降到 ¥200–320。
+        所以原方案并非没救，只是即便量产也仍够不到 ¥100–180 的目标区间。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 三档 -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow">02 ／ 三档方案</p>
+    <h2>可选项与各自的代价</h2>
+
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>档位</th><th>主控</th><th>屏</th><th>电池 / 底座</th><th class="num">BOM</th><th class="num">量产估</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>原方案</td><td>P4 + C6 双芯</td><td>3.4" 800×800 MIPI 触控</td><td>有</td>
+            <td class="num">¥305–481</td><td class="num">¥200–320</td>
+          </tr>
+          <tr class="pick">
+            <td><strong>精简 ✓</strong></td><td>ESP32-S3</td><td>2.8" 480×480 全贴合</td><td>有</td>
+            <td class="num">¥201–324</td><td class="num">¥140–220</td>
+          </tr>
+          <tr>
+            <td>极简</td><td>ESP32-S3</td><td>2.4" SPI 或 2.9" 墨水屏</td><td>无电池，USB-C 直供</td>
+            <td class="num">¥105–175</td><td class="num">¥75–120</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>为什么不选极简档</h3>
+    <p>极简档要放弃"取下来带走"——而主机加底座这套两件套形态，
+      本来就是为了一次解决功耗、承托、充电三件事而设计的，
+      "放回去就是充电"正是"零学习成本"这个卖点真正成立的地方。
+      为省 ¥100 拆掉产品叙事的支点，不划算。</p>
+
+    <h3>精简档的两项真实损失</h3>
+    <p>一是屏幕像素密度下降；二是扫描与对话切换时会有约 0.5 秒停顿。
+      前者下一节说明为何几乎不影响观感，后者在这条动线里可以接受——
+      举起商品、扫描、放下、再开口，这几个动作之间本来就有间隔。</p>
+  </div>
+</section>
+
+<!-- 03 修正 -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow">03 ／ 关键修正</p>
+    <h2>P4 是为一个不需要的能力买的单</h2>
+
+    <div class="callout">
+      <span class="lbl">修正此前的判断</span>
+      <p>此前的结论是："S3 上摄像头与麦克风抢同一套 I2S/DMA，是硬件级资源争用，写代码绕不过去。"</p>
+      <p>这句话<strong>只在同时使用时成立</strong>。</p>
+    </div>
+
+    <p>产品的实际动线是分时的：</p>
+
+    <div class="note mono">
+      <p>举起商品 → 扫描（此时不说话）→ 放下 → 对话（此时不取流）</p>
+    </div>
+
+    <p>冲突只发生在"同时"。分时复用只需在切换时重新初始化外设，
+      代价是几百毫秒停顿与固件复杂度上升，两者在这条动线里都可接受。</p>
+
+    <p>换句话说，<strong>P4 + C6 这套双芯，是在为一个产品实际不需要的并发能力买单</strong>；
+      而它又反过来要求高速 MIPI 屏与更强供电，把整条物料线都抬贵了一档。
+      这是本次降本里最大的一笔，也是唯一一处推翻了先前技术判断的地方。</p>
+  </div>
+</section>
+
+<!-- 04 高级感 -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow">04 ／ 高级感</p>
+    <h2>它几乎不来自分辨率</h2>
+    <p class="lede">2.8 寸屏在 40cm 视距下，480×480 与 800×800 肉眼分不出；
+      但屏是不是全贴合，一眼就看得出。所以钱要花在后者。</p>
+
+    <div class="duo">
+      <div class="keep">
+        <h4>看得见 · 一分不省</h4>
+        <ul>
+          <li><strong>全贴合工艺</strong>——非全贴合有空气层，观感发灰、屏像浮在框里</li>
+          <li>2.5D 玻璃盖板 + AF 疏油镀层</li>
+          <li>窄黑边</li>
+          <li>外壳哑面细纹与模具精度</li>
+          <li>滑盖的段落感、交互响应速度</li>
+        </ul>
+      </div>
+      <div class="cut">
+        <h4>看不见 · 该省</h4>
+        <ul>
+          <li>分辨率 800×800 → 480×480</li>
+          <li>主控算力 P4 → S3</li>
+          <li>三路并发能力（动线本是分时的）</li>
+          <li>MIPI 高速接口</li>
+          <li>电池容量 2000 → 1500 mAh</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout">
+      <span class="lbl">连锁收益</span>
+      <p>屏从 3.4" 缩到 2.8"，机身从 92×106×20 缩到 <strong>68×78×18</strong>，
+        整机目标重量从 250g 降到 160g。更小、更轻，反而更像一件精致的冰箱贴，
+        而不是一块挂上去的平板。</p>
+      <p><strong>"相当于挂个智能手机上去"这个观感，恰恰是 3.4 寸大屏造成的。</strong>
+        缩小尺寸在解决成本的同时，也在解决这个认知问题。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 BOM -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow">05 ／ 新 BOM 明细</p>
+    <h2>小批量试产口径</h2>
+
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>项目</th><th>选型</th><th class="num">单价（元）</th></tr></thead>
+        <tbody>
+          <tr><td>主控</td><td>ESP32-S3 模组，8MB PSRAM + 16MB Flash</td><td class="num">18–28</td></tr>
+          <tr><td>显示</td><td>2.8" 480×480 IPS <strong>全贴合</strong> QSPI + 电容触摸</td><td class="num">45–75</td></tr>
+          <tr><td>盖板</td><td>2.5D 玻璃 + AF 疏油镀层</td><td class="num">8–15</td></tr>
+          <tr><td>摄像头</td><td>OV3660 DVP + 近距定焦镜头（20–35cm）</td><td class="num">15–25</td></tr>
+          <tr><td>音频</td><td>ES8311 codec + 功放 + 双麦 + 扬声器</td><td class="num">15–25</td></tr>
+          <tr><td>电源</td><td>1500 mAh 电池 + 充电管理</td><td class="num">20–28</td></tr>
+          <tr><td>传感</td><td>DRV5032 霍尔 ×2 + 钕磁铁</td><td class="num">5</td></tr>
+          <tr><td>补光</td><td>白光 LED + 恒流驱动</td><td class="num">3–8</td></tr>
+          <tr><td>底座</td><td>硬金 Pogo pin + 强磁 + 外壳 + USB-C</td><td class="num">22–35</td></tr>
+          <tr><td>结构</td><td>哑面细纹外壳 + PCB + 组装</td><td class="num">50–80</td></tr>
+        </tbody>
+        <tfoot><tr><td colspan="2">合计</td><td class="num">201–324</td></tr></tfoot>
+      </table>
+    </div>
+
+    <p class="small">量产 5K+ 估 ¥140–220，正好压进 ¥100–180 目标区间的上沿。</p>
+  </div>
+</section>
+
+<!-- 06 采购 -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow">06 ／ 采购节奏</p>
+    <h2>分三批，不一次买齐</h2>
+    <p class="lede">一次买齐的问题不只是贵，是顺序错了——
+      最该先验证的一项根本不需要硬件，而它不通过的话，后面的钱就是白花。</p>
+
+    <div class="batch">
+      <div class="hd"><h4>第 0 批 · 识别准确率验证</h4><span class="price">¥0</span></div>
+      <p>用手机在 20–35cm 拍真实样本（常见包装 / 散装生鲜 / 逆光 / 夜间弱光），接视觉模型跑一遍。
+        通过线：常见品类 ≥90%、保质期文字可读 ≥70%。<strong>不通过，下面两批都不用买。</strong></p>
+    </div>
+
+    <div class="batch">
+      <div class="hd"><h4>第 1 批 · 最小验证集</h4><span class="price">¥420–900</span></div>
+      <p>S3 触摸屏开发板、全贴合样屏、两种焦距摄像头、电流表、电池、霍尔与磁铁、
+        硬金 Pogo、PETG 耗材。砍掉全部备份件与精密仪器。</p>
+    </div>
+
+    <div class="batch">
+      <div class="hd"><h4>第 2 批 · 按需补</h4><span class="price">—</span></div>
+      <p>第二块开发板（真烧了才买）、带记录的功率计、更多焦距镜头、多轮打样的耗材与结构件。</p>
+    </div>
+
+    <h3>三样别省</h3>
+    <div class="tablewrap">
+      <table>
+        <tbody>
+          <tr><td><strong>全贴合样屏</strong></td><td>高级感的第一决定项，也是打样前唯一能用眼睛确认它还在不在的办法</td></tr>
+          <tr><td><strong>Pogo 硬金镀层 ≥0.8μm</strong></td><td>厨房油雾环境，普通镀镍半年氧化打火，会被误判成"软件不稳定"，排查成本远超差价</td></tr>
+          <tr><td><strong>PETG 不退回 PLA</strong></td><td>靠近灶台的环境温度足以让 PLA 软化变形，样件会失真</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 07 待决 -->
+<section>
+  <div class="wrap">
+    <p class="eyebrow">07 ／ 未解决</p>
+    <h2>降本解决了价格，没解决定位</h2>
+
+    <p>硬件层面，这台设备确实接近一部功能受限的手机。
+      带屏智能音箱（小度在家、天猫精灵 CC）本质上也是"阉割版平板"，照样成了品类——
+      它们赢的不是硬件，是三件手机做不到的事：开冰箱门自动醒（手机没有门磁）、
+      全家共用而没有隐私负担、实体镜头盖与硬件断麦。</p>
+
+    <div class="callout">
+      <span class="lbl">真正的风险在定价锚点</span>
+      <p>一旦消费者把它归类成"带屏音箱"，价格带就被那个品类钉死——
+        而那些产品的硬件本来就不指望赚钱，靠内容与生态回收。</p>
+    </div>
+
+    <h3>待决：它在用户心里是哪一类</h3>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>归类</th><th>后果</th></tr></thead>
+        <tbody>
+          <tr><td>厨房里的智能屏</td><td>与小度比价，硬件必然贴钱卖，得靠订阅或服务回本</td></tr>
+          <tr><td>冰箱的一个功能部件</td><td>跳出比价，但渠道要走家电而非 3C</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>这一条比云端成本更前置——<strong>它决定云端成本最后由谁承担。</strong></p>
+  </div>
+</section>
+
+<!-- 08 征求意见 -->
+<section style="background:var(--sub)">
+  <div class="wrap">
+    <p class="eyebrow">08 ／ 想听你的判断</p>
+    <h2>三个我们自己定不下来的问题</h2>
+    <p class="lede">前面七节是已经想清楚的部分。下面这三条是真拿不准的，
+      它们的答案会往回改产品形态和商业结构，不只是改参数。</p>
+
+    <div class="batch">
+      <div class="hd"><h4>一、它该被归成哪一类产品</h4><span class="price">最要紧</span></div>
+      <p>归成"厨房智能屏"，就要和小度在家比价，硬件贴钱卖、靠订阅回本；
+        归成"冰箱的一个功能部件"，才能跳出比价，但渠道得走家电而不是 3C。
+        这条决定了定价上限，也决定了云端成本最后由谁承担。</p>
+    </div>
+
+    <div class="batch">
+      <div class="hd"><h4>二、¥499–599 这个价位站不站得住</h4><span class="price">定价</span></div>
+      <p>按冰箱价 10–20% 倒推出来的。你更了解渠道，这个数是偏高还是偏保守？
+        如果要压到 ¥399，就得回头再砍一轮，那时候"高级感不降"这条守不住了。</p>
+    </div>
+
+    <div class="batch">
+      <div class="hd"><h4>三、两项损失能不能接受</h4><span class="price">体验</span></div>
+      <p>精简档换来的代价：屏幕像素密度下降（我判断 40cm 视距下看不出，但这是我的判断）；
+        扫描与对话切换有约 0.5 秒停顿。如果你觉得第二条会伤体验，
+        那就得退回 P4 方案，成本回到 ¥305–481。</p>
+    </div>
+
+    <div class="note">
+      <p><strong>另有一条已知但未算的账：</strong>实时语音加视觉识别，每天多次触发，
+        硬件只卖一次而云端成本是终身的。单用户月成本尚未测算——
+        若每台每月 ¥20–50，订阅制还是预付几年必须尽早定，否则卖得越多亏得越多。
+        这条与问题一直接相关。</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footline">
+    <span>COOKO · 成本与选型决策 · 2026-08-17</span>
+    <span>内部文档，请勿外传</span>
+  </div>
+</footer>
+
+</body>
+</html>
