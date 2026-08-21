@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI 智能消防头盔 · 产品介绍</title>
+<!-- Open Graph · 微信分享卡片(避免空白方块:绝对URL + 方形JPG小图 + 多重声明) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CRAYXUS 智慧应急装备">
+<meta property="og:title" content="AI 智能消防头盔 · 产品介绍">
+<meta property="og:description" content="热成像×AI:透烟视觉、边缘AI识别、全像素量化预警、AR目镜、指挥部态势回传。让每一名消防员带着参谋进火场。">
+<meta property="og:image" content="https://crayxus.com.au/helmet-share.jpg?v=1">
+<meta property="og:image:secure_url" content="https://crayxus.com.au/helmet-share.jpg?v=1">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="800">
+<meta property="og:image:height" content="800">
+<meta property="og:image:alt" content="AI 智能消防头盔">
+<meta property="og:url" content="https://crayxus.com.au/helmet-3f8e.html">
+<meta property="og:locale" content="zh_CN">
+<meta itemprop="image" content="https://crayxus.com.au/helmet-share.jpg?v=1">
+<meta name="image" content="https://crayxus.com.au/helmet-share.jpg?v=1">
+<link rel="image_src" href="https://crayxus.com.au/helmet-share.jpg?v=1">
+<style>
+:root{
+  --bg:#fbfaf9; --ink:#15120e; --body:#4b453d; --dim:#8d857a;
+  --line:#e7e1d9; --hot:#cf4f19; --soft:#f6f2ed; --ok:#3f7d4e; --no:#b8493a;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1011; --ink:#f2eee9; --body:#a9a39b; --dim:#756e66;
+    --line:#26282a; --hot:#f57a4c; --soft:#191a1c; --ok:#6bb37d; --no:#e0705f;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1011; --ink:#f2eee9; --body:#a9a39b; --dim:#756e66;
+  --line:#26282a; --hot:#f57a4c; --soft:#191a1c; --ok:#6bb37d; --no:#e0705f;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--body);
+  font-family:"Source Han Sans SC","Microsoft YaHei","PingFang SC",system-ui,sans-serif;
+  font-size:17px;line-height:1.9;-webkit-font-smoothing:antialiased}
+.wrap{max-width:720px;margin:0 auto;padding:0 22px 80px}
+
+/* 头部 */
+header{padding:58px 0 34px;border-bottom:2px solid var(--ink)}
+.kicker{font-size:12.5px;letter-spacing:.32em;color:var(--hot);font-weight:700;margin-bottom:18px}
+h1{font-size:clamp(30px,7.2vw,42px);color:var(--ink);font-weight:800;
+  line-height:1.3;letter-spacing:-.01em;text-wrap:balance}
+.tagline{margin-top:16px;font-size:17.5px;color:var(--body)}
+.tagline b{color:var(--hot);font-weight:700}
+
+/* 主视觉插槽: 拿到渲染图后, 与本文件同目录放 helmet-hero.jpg 即自动显示 */
+.hero{margin:30px 0 0}
+.hero img{width:100%;border-radius:10px;display:block}
+
+/* 章节 */
+h2{font-size:13px;letter-spacing:.28em;color:var(--dim);font-weight:700;
+  margin:58px 0 6px;display:flex;align-items:center;gap:14px}
+h2::after{content:"";flex:1;height:1px;background:var(--line)}
+.lead{font-size:clamp(20px,4.6vw,25px);color:var(--ink);font-weight:700;
+  line-height:1.55;margin:10px 0 22px;text-wrap:balance}
+p+p{margin-top:14px}
+
+/* 定位宣言 */
+.claim{background:var(--soft);border-left:4px solid var(--hot);
+  padding:20px 22px;margin:24px 0;border-radius:0 8px 8px 0}
+.claim p{font-size:18px;color:var(--ink);font-weight:600;line-height:1.8}
+
+/* 能力卡 */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}
+@media (max-width:560px){.grid{grid-template-columns:1fr}}
+.card{border:1px solid var(--line);border-radius:10px;padding:18px 18px 16px;background:var(--bg)}
+.card .no{font-size:11px;letter-spacing:.2em;color:var(--hot);font-weight:700}
+.card h3{font-size:17.5px;color:var(--ink);margin:6px 0 8px;font-weight:700}
+.card p{font-size:14.5px;line-height:1.75;color:var(--body)}
+
+/* 对比表 */
+.tblbox{overflow-x:auto;margin-top:22px;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:14px}
+th,td{padding:11px 12px;text-align:center;border-bottom:1px solid var(--line);white-space:nowrap}
+th{background:var(--soft);color:var(--ink);font-weight:700;font-size:13.5px}
+td:first-child,th:first-child{text-align:left;color:var(--ink);font-weight:600}
+tr:last-child td{border-bottom:none}
+.y{color:var(--ok);font-weight:700}
+.n{color:var(--no)}
+.us{background:var(--soft)}
+.tnote{font-size:12.5px;color:var(--dim);margin-top:10px}
+
+/* 场景 */
+.scene{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--line)}
+.scene:last-of-type{border-bottom:none}
+.scene .ic{flex:none;width:40px;height:40px;border-radius:9px;background:var(--soft);
+  display:flex;align-items:center;justify-content:center;font-size:19px}
+.scene h3{font-size:16.5px;color:var(--ink);font-weight:700;margin-bottom:3px}
+.scene p{font-size:14.5px;line-height:1.75}
+
+/* 指标条 */
+.specs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:22px}
+@media (max-width:560px){.specs{grid-template-columns:repeat(2,1fr)}}
+.spec{background:var(--soft);border-radius:10px;padding:15px 14px;text-align:center}
+.spec b{display:block;font-size:21px;color:var(--ink);font-weight:800;letter-spacing:-.01em}
+.spec span{font-size:12.5px;color:var(--dim)}
+
+/* 模组图库 */
+img{max-width:100%}
+.figs{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px}
+@media (max-width:560px){.figs{grid-template-columns:1fr}}
+.figs figure{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--soft)}
+.figs img{width:100%;display:block;aspect-ratio:4/3;object-fit:cover}
+.figs figcaption{padding:10px 14px;font-size:13.5px;color:var(--body)}
+.figs figcaption b{color:var(--ink)}
+.fignote{font-size:12.5px;color:var(--dim);margin-top:10px}
+
+/* 移动端 */
+html{-webkit-text-size-adjust:100%}
+@media (max-width:560px){
+  body{font-size:16px}
+  header{padding:40px 0 26px}
+  h2{margin-top:44px}
+  .wrap{padding:0 18px 60px}
+}
+
+/* 尾部 */
+footer{margin-top:64px;padding-top:22px;border-top:2px solid var(--ink);
+  font-size:13px;color:var(--dim);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">CRAYXUS · 智慧应急装备</div>
+  <h1>AI 智能消防头盔</h1>
+  <p class="tagline">热成像让消防员<b>看穿浓烟</b>，AI 让每一名队员<b>带着参谋进火场</b>。</p>
+  <div class="hero"><img src="https://crayxus.com.au/helmet-hero.jpg" alt="" onerror="this.parentElement.style.display='none'"></div>
+</header>
+
+<h2>产品定位</h2>
+<p class="lead">市面上的热成像头盔，只做了这件事的前一半。</p>
+<p>现有产品把热成像画面推到消防员眼前，就到此为止——判断火点、评估结构、寻找被困者，仍然全靠人在高温浓烟与体力极限下完成。</p>
+<div class="claim">
+  <p>别人的热成像是给消防员看的。<br>我们的热成像是给 AI 看的——AI 再给消防员当参谋。</p>
+</div>
+<p>这不是加装一块屏幕，而是把头盔升级为火场里的<b>智能感知终端</b>：现场实时识别与预警、数据回传指挥部、全程留档可复盘，三件事在同一顶头盔上完成。</p>
+
+<h2>核心能力</h2>
+<div class="grid">
+  <div class="card"><div class="no">01</div><h3>透烟热成像</h3>
+    <p>红外热成像模组一体化嵌入，浓烟、黑暗、强光环境下持续成像，工业级无快门方案保证画面不断流。</p></div>
+  <div class="card"><div class="no">02</div><h3>AI 边缘计算</h3>
+    <p>盔内嵌入式 AI 模组本地运算：人体识别、火点侦测、温度异常判断——不依赖网络，火场断网照常工作。</p></div>
+  <div class="card"><div class="no">03</div><h3>数字测温，不是看图</h3>
+    <p>AI 读取的是每个像素的原始测温数据，而非视频画面。「三点钟方向 87 度，正在爬升」这样的量化预警由此而来。</p></div>
+  <div class="card"><div class="no">04</div><h3>AR 目镜显示</h3>
+    <p>盔内微型光学显示，关键信息悬浮于自然视野内，不遮挡视线、不占用双手。</p></div>
+  <div class="card"><div class="no">05</div><h3>体征监测 · 回传指挥</h3>
+    <p>实时监测队员心率、体温与空呼压力，连同现场视角与温度态势回传指挥部——前方每一顶头盔都是指挥员的传感器。</p></div>
+  <div class="card"><div class="no">06</div><h3>防护与续航</h3>
+    <p>凯夫拉复合盔体、防火阻燃涂层，防烟护目镜与防火披肩齐备；供电模组可拆卸热插拔，连续作业不中断。</p></div>
+</div>
+
+<div class="specs">
+  <div class="spec"><b>≥45 min</b><span>防火阻燃</span></div>
+  <div class="spec"><b>≥6 h</b><span>整机续航</span></div>
+  <div class="spec"><b>≈3 s</b><span>成像恢复(无快门)</span></div>
+  <div class="spec"><b>全离线</b><span>AI 本地运算</span></div>
+  <div class="spec"><b>热插拔</b><span>可拆卸电源</span></div>
+  <div class="spec"><b>全程留档</b><span>行动可复盘</span></div>
+</div>
+
+<h2>核心模组</h2>
+<div class="figs">
+  <figure><img src="https://crayxus.com.au/helmet-thermal.jpg" alt="红外热成像机芯">
+    <figcaption><b>红外热成像机芯</b> · 工业级无快门方案，一体化嵌入盔体</figcaption></figure>
+  <figure><img src="https://crayxus.com.au/helmet-chip.jpg" alt="边缘计算芯片">
+    <figcaption><b>边缘 AI 计算平台</b> · 国产瑞芯微 RK 系列，NPU 本地推理</figcaption></figure>
+  <figure><img src="https://crayxus.com.au/helmet-tview.jpg" alt="火场热成像画面">
+    <figcaption><b>透烟视觉</b> · 火场内部热成像画面与实时测温</figcaption></figure>
+  <figure><img src="https://crayxus.com.au/helmet-vital.jpg" alt="单兵体征监测与组网">
+    <figcaption><b>体征监测与单兵组网</b> · 心率/体温/空呼压力回传指挥部</figcaption></figure>
+</div>
+<p class="fignote">注：以上为同类器件与方案示意，用于说明技术构成，非最终产品形态。</p>
+
+<h2>与市面产品对比</h2>
+<div class="tblbox">
+<table>
+  <tr><th></th><th>普通智能安全帽</th><th>3M Scott Sight</th><th>MSA G1 iTIC</th><th>海康 AH25</th><th class="us">本产品</th></tr>
+  <tr><td>热成像显示</td><td class="n">—</td><td class="y">✓</td><td class="y">✓</td><td class="y">✓</td><td class="us y">✓</td></tr>
+  <tr><td>数字测温数据</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">部分</td><td class="us y">✓ 全像素</td></tr>
+  <tr><td>AI 现场识别</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="us y">✓ 边缘计算</td></tr>
+  <tr><td>温度阈值预警</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="us y">✓ 量化播报</td></tr>
+  <tr><td>搜救路径建议</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="us y">✓</td></tr>
+  <tr><td>指挥部态势回传</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="y">✓</td><td class="us y">✓ 含AI结论</td></tr>
+</table>
+</div>
+<p class="tnote">注：对比基于各产品公开资料整理；本产品为工程化推进中的能力规划。</p>
+
+<h2>应用场景</h2>
+<div class="scene"><div class="ic">🔥</div><div>
+  <h3>浓烟内部搜救</h3><p>零可见度环境下热成像穿透 + AI 人体识别，被困者位置直接提示到目镜，缩短黄金搜救时间。</p></div></div>
+<div class="scene"><div class="ic">⚠️</div><div>
+  <h3>轰燃风险预警</h3><p>持续监测环境温度曲线，逼近危险阈值即刻语音与目镜双通道告警，为撤离争取提前量。</p></div></div>
+<div class="scene"><div class="ic">🏭</div><div>
+  <h3>危化品与工业火灾</h3><p>高温点定位与温度场分布量化呈现，辅助处置决策，减少近距离侦察暴露。</p></div></div>
+<div class="scene"><div class="ic">🗼</div><div>
+  <h3>指挥部态势合成</h3><p>多顶头盔视角与数据汇聚，指挥员实时掌握内攻小组位置与环境风险，行动全程留档、事后可复盘可追责。</p></div></div>
+
+<h2>技术底座</h2>
+<p class="lead">头盔是第一个身体，底座是同一个大脑。</p>
+<p>本产品构建于自研「通用智能底座」：感知融合、定位导航、边缘实时计算三层能力已在自动驾驶赛车、扫地机器人等多形态设备上完整验证。热成像模组接入的每一层——数据通路、控制协议、AI 推理——均为自主掌握，不依赖单一供应商。</p>
+<p>同一底座还可延展至巡检机器人、无人机吊舱、车载终端等应急序列装备，<b>一次落地，长出一条产品线。</b></p>
+
+<h2>合作模式</h2>
+<p>项目当前处于工程化推进阶段，接口方案已完成论证，正按「接口优化 → 整机原型」两阶段推进。面向地方合作，我们提供：</p>
+<div class="grid">
+  <div class="card"><div class="no">A</div><h3>示范应用共建</h3><p>联合当地消防救援力量开展试点验证，形成示范场景与实战数据。</p></div>
+  <div class="card"><div class="no">B</div><h3>产业落地</h3><p>整机组装与产线可落地当地，带动应急装备上下游配套。</p></div>
+</div>
+
+<footer>
+  <span>CRAYXUS · AI 智能消防头盔</span>
+  <span>资料版本 2026-08 · 技术细节另附保密文档</span>
+</footer>
+
+</div>
+</body>
+</html>
