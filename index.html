@@ -250,7 +250,9 @@ async function run() {
     if (!r.ok) throw new Error(j.error || "服务繁忙");
     $("frame").srcdoc = j.html;
     $("outbox").style.display = "block";
-    $("meta").textContent = "鲁班引擎 · 今日剩余 " + j.left + " 次";
+    $("meta").textContent = j.left > 0
+      ? "鲁班引擎 · 今日剩余 " + j.left + " 次"
+      : "鲁班引擎 · 今日体验已用完，想深入聊聊？联系我们";
     st.textContent = "";
     $("outbox").scrollIntoView({behavior:"smooth", block:"start"});
   } catch (e) {
