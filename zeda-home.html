@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>择大 AI · 让 AI 在每个垂直领域比人更厉害</title>
+<meta name="description" content="择大 AI 三大金刚 — 择大 AI·GP / AlphaScore / AlphaDan。AI 不取代人类,AI 让人类成为冠军。和顶级 AI 对话调教你的 AI 车手,代码 0 基础,让 AI 超越人类。">
+
+<!-- Favicons -->
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="shortcut icon" type="image/png" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
+<!-- Open Graph · 微信分享卡片 (500x500 正方形最稳) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="择大 AI">
+<meta property="og:title" content="择大 AI · 让 AI 在每个垂直领域比人更厉害">
+<meta property="og:description" content="择大 AI 三大金刚 — 择大 AI·GP / AlphaScore / AlphaDan。和顶级 AI 对话,代码 0 基础,让 AI 车手超越人类。">
+<meta property="og:image" content="https://crayxus.com.au/share-thumb.jpg">
+<meta property="og:image:secure_url" content="https://crayxus.com.au/share-thumb.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="500">
+<meta property="og:image:height" content="500">
+<meta property="og:image:alt" content="择大 AI">
+<meta property="og:url" content="https://crayxus.com.au/">
+<meta property="og:locale" content="zh_CN">
+
+<!-- 微信内置浏览器 / 老版本兜底 -->
+<meta itemprop="image" content="https://crayxus.com.au/share-thumb.jpg">
+<meta name="image" content="https://crayxus.com.au/share-thumb.jpg">
+<link rel="image_src" href="https://crayxus.com.au/share-thumb.jpg">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="择大 AI · 让 AI 在每个垂直领域比人更厉害">
+<meta name="twitter:description" content="择大 AI 三大金刚 — 择大 AI·GP / AlphaScore / AlphaDan">
+<meta name="twitter:image" content="https://crayxus.com.au/share-thumb.jpg">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#050810;
+    --bg2:#0a1020;
+    --card:#0c1525;
+    --line:#1a2540;
+    --txt:#e7eef8;
+    --dim:#8da2bd;
+    --mute:#5a6e8e;
+    --silver:#cfd8e8;
+    --cub:#ff7a45;
+    --cub2:#ffa845;
+    --pilot:#5fa;
+    --pilot2:#8fc99c;
+    --score:#00d4ff;
+    --score2:#00ffcc;
+    --dan:#ff5fff;
+    --dan2:#ff80c8;
+  }
+  html,body{background:var(--bg);color:var(--txt);
+    font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    line-height:1.6;scroll-behavior:smooth}
+  body{overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1320px;margin:0 auto;padding:0 32px}
+
+  /* === NAV === */
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;
+    background:rgba(5,8,16,.78);backdrop-filter:blur(18px);
+    border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .logo{font-weight:800;font-size:18px;letter-spacing:2px;
+    background:linear-gradient(135deg,#fff 30%,var(--silver) 70%,#7a90b0);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .logo .a{color:var(--cub);font-weight:900}
+  .nav-links{display:flex;gap:28px;font-size:13.5px;color:var(--dim)}
+  .nav-links a{transition:color .15s}
+  .nav-links a:hover{color:#fff}
+  .nav-cta{background:linear-gradient(135deg,var(--cub),var(--cub2));
+    color:#0a0a0a;padding:9px 18px;border-radius:6px;font-size:13px;font-weight:700;
+    box-shadow:0 0 24px rgba(255,122,69,.3);transition:all .2s}
+  .nav-cta:hover{transform:translateY(-1px);box-shadow:0 0 30px rgba(255,122,69,.5)}
+
+  /* === HERO === */
+  .hero{padding:160px 0 80px;text-align:center;position:relative;overflow:hidden}
+  .hero::before{content:'';position:absolute;inset:0;background:
+    radial-gradient(ellipse at 30% 20%,rgba(255,122,69,.08),transparent 50%),
+    radial-gradient(ellipse at 70% 20%,rgba(0,212,255,.06),transparent 50%),
+    radial-gradient(ellipse at 50% 80%,rgba(255,95,255,.05),transparent 50%);
+    z-index:-1}
+  .alpha-mark{font-size:160px;font-weight:900;
+    background:linear-gradient(135deg,var(--cub) 0%,var(--score) 50%,var(--dan) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    line-height:1;margin-bottom:30px;letter-spacing:-8px;
+    animation:pulse 3s ease-in-out infinite}
+  @keyframes pulse{0%,100%{filter:drop-shadow(0 0 30px rgba(0,212,255,.3))}
+    50%{filter:drop-shadow(0 0 50px rgba(255,122,69,.4))}}
+  .hero h1{font-size:64px;font-weight:800;line-height:1.15;letter-spacing:-2px;
+    margin-bottom:24px}
+  .hero h1 .gradient{
+    background:linear-gradient(135deg,#fff 20%,var(--silver) 60%,#7a90b0);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero .sub{font-size:20px;color:var(--dim);max-width:820px;margin:0 auto 40px}
+  .hero .sub b{color:#fff}
+  .hero-meta{display:flex;justify-content:center;gap:60px;margin-top:50px;flex-wrap:wrap}
+  .hero-meta div{text-align:center}
+  .hero-meta .num{font-size:32px;font-weight:800;color:#fff}
+  .hero-meta .label{font-size:12px;color:var(--mute);text-transform:uppercase;
+    letter-spacing:2px;margin-top:4px}
+
+  /* === DASHBOARD 3 CARDS === */
+  .dashboard{padding:80px 0;position:relative}
+  .section-tag{display:inline-block;padding:5px 14px;border:1px solid var(--line);
+    border-radius:20px;font-size:11px;color:var(--dim);text-transform:uppercase;
+    letter-spacing:3px;margin-bottom:18px}
+  .section-title{font-size:46px;font-weight:800;line-height:1.2;margin-bottom:16px}
+  .section-title .accent{
+    background:linear-gradient(135deg,var(--cub),var(--score),var(--dan));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .section-sub{font-size:17px;color:var(--dim);max-width:780px;margin-bottom:60px}
+
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:30px 24px;position:relative;overflow:hidden;
+    transition:all .3s;display:flex;flex-direction:column;min-height:520px}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+    background:var(--accent,#fff);box-shadow:0 0 20px var(--accent,#fff);opacity:.8}
+  .card:hover{transform:translateY(-4px);border-color:var(--accent,#fff)}
+  .card.cub{--accent:var(--cub);--accent2:var(--cub2)}
+  .card.pilot{--accent:var(--pilot);--accent2:var(--pilot2)}
+  .card.score{--accent:var(--score);--accent2:var(--score2)}
+  .card.dan{--accent:var(--dan);--accent2:var(--dan2)}
+
+  .card-status{position:absolute;top:20px;right:20px;
+    padding:4px 10px;border-radius:12px;font-size:10px;font-weight:700;
+    letter-spacing:1px;text-transform:uppercase}
+  .status-live{background:rgba(0,255,157,.15);color:#0f8;border:1px solid rgba(0,255,157,.3)}
+  .status-beta{background:rgba(255,200,0,.15);color:#fc6;border:1px solid rgba(255,200,0,.3)}
+  .status-soon{background:rgba(0,212,255,.15);color:var(--score);border:1px solid rgba(0,212,255,.3)}
+
+  .card-icon{font-size:56px;margin-bottom:18px;line-height:1}
+  .card-name{font-size:32px;font-weight:800;margin-bottom:6px;letter-spacing:-1px}
+  .card-name .alpha-text{color:var(--accent)}
+  .card-tag{font-size:14px;color:var(--dim);margin-bottom:20px;letter-spacing:.5px}
+  .card-desc{font-size:14px;color:var(--silver);margin-bottom:24px;line-height:1.7;
+    padding:14px 16px;background:rgba(255,255,255,.02);border-radius:8px;
+    border-left:3px solid var(--accent)}
+  .card-feats{list-style:none;margin-bottom:28px}
+  .card-feats li{font-size:13.5px;color:var(--dim);padding:8px 0;
+    border-bottom:1px dashed rgba(255,255,255,.05);display:flex;gap:10px}
+  .card-feats li:last-child{border-bottom:none}
+  .card-feats li::before{content:'▸';color:var(--accent);font-weight:700;flex-shrink:0}
+  .card-kpi{margin-top:auto;margin-bottom:20px;padding:14px;
+    background:rgba(0,0,0,.3);border-radius:8px;text-align:center}
+  .card-kpi .num{font-size:24px;font-weight:800;color:var(--accent)}
+  .card-kpi .lbl{font-size:11px;color:var(--mute);text-transform:uppercase;
+    letter-spacing:1.5px;margin-top:2px}
+  .card-cta{display:block;text-align:center;padding:14px;border-radius:8px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:#0a0a0a;font-weight:700;font-size:14px;letter-spacing:.5px;
+    transition:all .2s;box-shadow:0 0 0 transparent}
+  .card-cta:hover{transform:translateY(-1px);
+    box-shadow:0 0 24px var(--accent)}
+  .card-cta.disabled{background:rgba(255,255,255,.06);color:var(--mute);
+    border:1px solid var(--line);cursor:not-allowed}
+  .card-cta.disabled:hover{transform:none;box-shadow:none}
+
+  /* === PHILOSOPHY === */
+  .philo{padding:100px 0;background:var(--bg2);border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line)}
+  .philo-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:50px}
+  .principle{padding:28px;background:var(--card);border:1px solid var(--line);
+    border-radius:12px}
+  .principle .pn{font-size:38px;font-weight:900;color:var(--score);
+    line-height:1;margin-bottom:14px}
+  .principle h4{font-size:16px;font-weight:700;margin-bottom:10px}
+  .principle p{font-size:13px;color:var(--dim);line-height:1.7}
+
+  /* === TEAM === */
+  .team{padding:100px 0}
+  .team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:50px}
+  .person{padding:28px;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;text-align:center}
+  .person .avatar{width:80px;height:80px;border-radius:50%;
+    background:linear-gradient(135deg,var(--score),var(--dan));
+    margin:0 auto 16px;display:flex;align-items:center;justify-content:center;
+    font-size:36px;font-weight:900;color:#0a0a0a;font-family:Georgia,serif}
+  .person h4{font-size:17px;font-weight:700;margin-bottom:4px}
+  .person .role{font-size:11px;color:var(--score);text-transform:uppercase;
+    letter-spacing:2px;margin-bottom:10px}
+  .person p{font-size:12.5px;color:var(--dim);line-height:1.7}
+
+  /* === MOAT === */
+  .moat{padding:100px 0;background:var(--bg2);border-top:1px solid var(--line)}
+  .moat-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:50px}
+  .stat{text-align:center;padding:28px;background:var(--card);
+    border:1px solid var(--line);border-radius:12px}
+  .stat .big{font-size:54px;font-weight:900;line-height:1;
+    background:linear-gradient(135deg,var(--cub),var(--score));
+    -webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:8px}
+  .stat .lbl{font-size:12.5px;color:var(--dim);text-transform:uppercase;letter-spacing:1.5px}
+
+  /* === CONTACT === */
+  .contact{padding:120px 0;text-align:center}
+  .contact h2{font-size:54px;font-weight:800;letter-spacing:-2px;margin-bottom:20px}
+  .contact h2 .accent{
+    background:linear-gradient(135deg,var(--cub),var(--score),var(--dan));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .contact p{font-size:18px;color:var(--dim);margin-bottom:40px;
+    max-width:600px;margin-left:auto;margin-right:auto}
+  .contact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
+    max-width:880px;margin:50px auto 0}
+  .ctc{padding:24px;background:var(--card);border:1px solid var(--line);
+    border-radius:10px;text-align:left}
+  .ctc .icn{font-size:24px;margin-bottom:10px}
+  .ctc h5{font-size:13px;text-transform:uppercase;color:var(--mute);
+    letter-spacing:1.5px;margin-bottom:6px}
+  .ctc a{font-size:15px;color:var(--silver);font-weight:600}
+  .ctc a:hover{color:var(--score)}
+
+  /* === FOOTER === */
+  footer{padding:50px 0 30px;border-top:1px solid var(--line);
+    background:var(--bg2);color:var(--mute);font-size:13px;text-align:center}
+  footer .links{display:flex;justify-content:center;gap:24px;margin-bottom:20px;
+    flex-wrap:wrap}
+  footer .links a{color:var(--dim)}
+  footer .links a:hover{color:#fff}
+  footer .alpha-family{display:flex;justify-content:center;gap:16px;margin-top:14px;
+    color:var(--silver);font-weight:600;font-size:12px;letter-spacing:1.5px}
+  footer .alpha-family span{color:var(--mute)}
+  footer .copy{margin-top:24px;color:var(--mute)}
+
+  @media(max-width:1180px){
+    .cards{grid-template-columns:repeat(2,1fr)}
+  }
+  @media(max-width:980px){
+    .philo-grid,.team-grid,.moat-stats,.contact-grid{grid-template-columns:1fr 1fr}
+    .hero h1{font-size:44px}
+    .hero .sub{font-size:17px}
+    .alpha-mark{font-size:120px}
+    .section-title,.contact h2{font-size:34px}
+    .hero{padding:120px 0 60px}
+  }
+  @media(max-width:640px){
+    .cards{grid-template-columns:1fr}
+    .philo-grid,.team-grid,.moat-stats,.contact-grid{grid-template-columns:1fr}
+    .nav-links{display:none}
+    .hero-meta{gap:30px}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav>
+  <div class="wrap">
+    <a href="#" class="logo">择大 <span class="a">α</span> AI</a>
+    <div class="nav-links">
+      <a href="#products">三大金刚</a>
+      <a href="#philo">哲学</a>
+      <a href="#team">团队</a>
+      <a href="#moat">专利</a>
+      <a href="#contact">联系</a>
+    </div>
+    <a href="#contact" class="nav-cta">商务合作 →</a>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="wrap">
+    <div class="alpha-mark">α</div>
+    <h1>AI 不取代人类。<br><span class="gradient">AI 让人类成为冠军。</span></h1>
+    <p class="sub">
+      择大不做和你抢工作的 AI —— 我们做 <b>用上就升级</b> 的 AI。<br>
+      和顶级 AI 对话,代码 0 基础,人人都能调教出超越人类的 AI 车手。<br>
+      AI 陪练成学霸,AI 对战变棋王。<b>三个赛道,让 8 到 80 岁都拥有冠军工具。</b>
+    </p>
+    <div class="hero-meta">
+      <div><div class="num">3</div><div class="label">三大金刚</div></div>
+      <div><div class="num">32</div><div class="label">专利申请</div></div>
+      <div><div class="num">K12</div><div class="label">主要用户</div></div>
+      <div><div class="num">2026</div><div class="label">Genesis 上线</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ 3 CARDS ============ -->
+<section class="dashboard" id="products">
+  <div class="wrap">
+    <span class="section-tag">▼ 三大金刚</span>
+    <h2 class="section-title">三把工具,<span class="accent">三次进化。</span></h2>
+    <p class="section-sub">
+      择大三大金刚 —— 赛车、提分、棋牌 ——
+      不是来取代人,是 <b>用上即升级</b> 的冠军工具。让每个孩子都拥有自己的 AI 车队。
+    </p>
+
+    <div class="cards">
+
+      <!-- ===== 择大 AI·GP · AI 赛车 + 机器人赛道 (AlphaCub × AlphaPilot 合并) ===== -->
+      <div class="card cub">
+        <span class="card-status status-live">🚀 旗舰发布</span>
+        <div class="card-icon">🏎️</div>
+        <h3 class="card-name"><span class="alpha-text">择大</span> AI·GP</h3>
+        <div class="card-tag">AI 赛车 + 机器人赛道 · 让 AI 车手超越人类</div>
+        <div class="card-desc">
+          世界首个 <b>让 AI 当车手</b> 的赛车赛事 —— 透明发光赛车 + 黄金流光赛道
+          + 全新白名单赛事规则。你和顶级 AI 对话调教车手,让它去打破人类最速圈。
+        </div>
+        <ul class="card-feats">
+          <li>黄金流光赛道 · 三表盘车队工程师 Dashboard</li>
+          <li>白名单赛事 · AI 车手挑战人类极限</li>
+          <li>和顶级 AI 对话调教 · 代码 0 基础上手</li>
+          <li>成果转化 · 专利 / 论文 / Common App</li>
+        </ul>
+        <div class="card-kpi">
+          <div class="num">Genesis</div>
+          <div class="lbl">¥9,800 起 · 旗舰发售中</div>
+        </div>
+        <a href="genesis.html" class="card-cta">体验 择大 AI·GP →</a>
+        <a href="hub.html" class="card-cta" style="margin-top:8px;background:transparent;color:var(--accent);border:1px solid var(--accent);box-shadow:none">🎮 在线 Demo · 拼车 / 训练 / 比赛 →</a>
+      </div>
+
+      <!-- ===== ALPHA SCORE ===== -->
+      <div class="card score">
+        <span class="card-status status-live">✅ 已上线</span>
+        <div class="card-icon">📚</div>
+        <h3 class="card-name"><span class="alpha-text">Alpha</span>Score</h3>
+        <div class="card-tag">AI 留学提分 · 取代真人家教</div>
+        <div class="card-desc">
+          AI 大模型 + 自适应算法,以真人家教 <b>1/10 的价格</b>,做到 80% 的提分效果。
+          让中产家庭也能负担顶级辅导,改变留学辅导的格局。
+        </div>
+        <ul class="card-feats">
+          <li>千人千面 · 真自适应难度</li>
+          <li>错题归因 · 直击薄弱知识</li>
+          <li>30 天平均提分 200+</li>
+          <li>SAT / TOEFL / IELTS / SSAT 全覆盖</li>
+        </ul>
+        <div class="card-kpi">
+          <div class="num">¥99/月</div>
+          <div class="lbl">vs 真人家教 ¥800/小时</div>
+        </div>
+        <a href="scoreboost/" class="card-cta">立即体验 →</a>
+      </div>
+
+      <!-- ===== ALPHA DAN ===== -->
+      <div class="card dan">
+        <span class="card-status status-live">✅ 已上线</span>
+        <div class="card-icon">🎴</div>
+        <h3 class="card-name"><span class="alpha-text">Alpha</span>Dan</h3>
+        <div class="card-tag">1v1 掼蛋 AI · 抖音直播挑战</div>
+        <div class="card-desc">
+          三档 AI 难度。开放 1v1 真人挑战,抖音 / B 站直播孵化内容 IP ——
+          让中国掼蛋有自己的 <b>AlphaGo 时刻</b>。"人类大战 AlphaDan"。
+        </div>
+        <ul class="card-feats">
+          <li>三档 AI · 普通 / 上帝 / 神级</li>
+          <li>1v1 真人挑战 · 实时对战</li>
+          <li>抖音直播 IP · 内容流量引擎</li>
+          <li>让传统智力运动有 AI 灵魂</li>
+        </ul>
+        <div class="card-kpi">
+          <div class="num">3 档</div>
+          <div class="lbl">AI 难度 · 神级胜率 70%+</div>
+        </div>
+        <a href="https://crayxus-game.onrender.com/indexrp.html" target="_blank" class="card-cta">立即对战 →</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ PHILOSOPHY ============ -->
+<section class="philo" id="philo">
+  <div class="wrap">
+    <span class="section-tag">▼ 我们的哲学</span>
+    <h2 class="section-title">不做替代者,<span class="accent">做你的副驾。</span></h2>
+    <p class="section-sub">
+      择大 AI 不和人类抢饭碗,我们做让 K12 升级成冠军的 AI —— 四个底层信仰。
+    </p>
+
+    <div class="philo-grid">
+      <div class="principle">
+        <div class="pn">01</div>
+        <h4>不和人抢,让人赢</h4>
+        <p>每个受限场景,做一个能让你成为冠军的 AI 副驾。AI 是工具,不是对手。</p>
+      </div>
+      <div class="principle">
+        <div class="pn">02</div>
+        <h4>K12 训练师</h4>
+        <p>把训练 AI 这件事变成学生的作品。学完不只是会用 AI,而是亲手造过 AI。</p>
+      </div>
+      <div class="principle">
+        <div class="pn">03</div>
+        <h4>赛事驱动</h4>
+        <p>用比赛 / 排行榜 / 直播驱动持续优化。每个用户都是迭代燃料。</p>
+      </div>
+      <div class="principle">
+        <div class="pn">04</div>
+        <h4>现金流造血</h4>
+        <p>不靠融资,靠用户收入资助下一阶段研发。增长靠口碑,不靠烧钱。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TEAM ============ -->
+<section class="team" id="team">
+  <div class="wrap">
+    <span class="section-tag">▼ 团队 · 顾问 · 合作</span>
+    <h2 class="section-title">小团队,<span class="accent">高密度。</span></h2>
+    <p class="section-sub">
+      创始人 + 学术顾问 + 战略合作伙伴 —— 三方协同把 Alpha 家族跑通。
+    </p>
+
+    <div class="team-grid">
+      <div class="person">
+        <div class="avatar" style="background:linear-gradient(135deg,#7b2cbf,#9d4edd);color:#fff;font-size:22px">ZJU</div>
+        <h4>浙江大学<br>张旭光 AI 团队</h4>
+        <div class="role">学术核心 · 算法 IP</div>
+        <p>多传感器融合、SLAM、自主驾驶决策模型。浙大机器人研究所产学研支撑,核心算法与论文输出。</p>
+      </div>
+      <div class="person">
+        <div class="avatar" style="background:linear-gradient(135deg,#012169,#E4002B);color:#fff;font-size:22px">AU</div>
+        <h4>The Newbility<br>PTY LTD</h4>
+        <div class="role">澳洲总部 · 创始主体</div>
+        <p>择大 AI (CRAYXUS) 全球总部(澳大利亚),持有品牌 IP、海外业务与国际市场。Made in Australia & China。</p>
+      </div>
+      <div class="person">
+        <div class="avatar" style="background:linear-gradient(135deg,var(--score),var(--score2));color:#0a0a0a;font-family:'PingFang SC',sans-serif">择</div>
+        <h4>择大教育咨询<br>(杭州) 有限公司</h4>
+        <div class="role">中国主体 · 商业运营</div>
+        <p>择大 AI 中国主体,负责三大金刚产品落地、教育服务、国内市场运营。杭州总部。</p>
+      </div>
+      <div class="person">
+        <div class="avatar" style="background:linear-gradient(135deg,#c9a657,#fc6);color:#0a0a0a;font-size:22px">YF</div>
+        <h4>裕丰集团<br>Yufeng Group</h4>
+        <div class="role">整体战略入股 · 渠道合作</div>
+        <p>大型产业集团整体战略入股,为择大三大金刚提供集团级渠道网络与产业资源整合。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MOAT ============ -->
+<section class="moat" id="moat">
+  <div class="wrap">
+    <span class="section-tag">▼ 专利护城河</span>
+    <h2 class="section-title">不抢市场,<span class="accent">抢话语权。</span></h2>
+    <p class="section-sub">
+      32 项 IP 矩阵分布在 AI 教育、自动驾驶、智能内容三大领域,
+      构成下一代 K12 AI 教学体系的核心专利墙。
+    </p>
+
+    <div class="moat-stats">
+      <div class="stat">
+        <div class="big">32</div>
+        <div class="lbl">已申报专利 / 软著</div>
+      </div>
+      <div class="stat">
+        <div class="big">3</div>
+        <div class="lbl">垂直 AI 产品矩阵</div>
+      </div>
+      <div class="stat">
+        <div class="big">10+</div>
+        <div class="lbl">核心算法发明</div>
+      </div>
+      <div class="stat">
+        <div class="big">100%</div>
+        <div class="lbl">自主知识产权</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section class="contact" id="contact">
+  <div class="wrap">
+    <h2>让你的孩子,<br><span class="accent">成为三个赛道的冠军。</span></h2>
+    <p>商务合作、媒体报道、加入择大 —— 找下面任一渠道,我们 48 小时内回复。</p>
+
+    <div class="contact-grid">
+      <div class="ctc">
+        <div class="icn">💼</div>
+        <h5>商务 · 战略合作</h5>
+        <a href="mailto:biz@crayxus.com.au">biz@crayxus.com.au</a>
+      </div>
+      <div class="ctc">
+        <div class="icn">📰</div>
+        <h5>媒体 · 公关</h5>
+        <a href="mailto:press@crayxus.com.au">press@crayxus.com.au</a>
+      </div>
+      <div class="ctc">
+        <div class="icn">👋</div>
+        <h5>招聘 · 加入我们</h5>
+        <a href="mailto:jobs@crayxus.com.au">jobs@crayxus.com.au</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="links">
+      <a href="#products">三大金刚</a>
+      <a href="genesis.html">择大 AI·GP</a>
+      <a href="#contact">AlphaScore</a>
+      <a href="#contact">AlphaDan</a>
+      <a href="#philo">哲学</a>
+      <a href="#team">团队</a>
+      <a href="#moat">专利</a>
+    </div>
+    <div class="alpha-family">
+      🏎️ 择大 AI·GP <span>·</span> 📚 AlphaScore <span>·</span> 🎴 AlphaDan
+    </div>
+    <div class="copy">
+      © 2026 择大 CRAYXUS · crayxus.com.au · Made in 🇦🇺 Australia &amp; 🇨🇳 China
+    </div>
+  </div>
+</footer>
+
+<script>
+// 让首屏 hero α 在鼠标移动时有视差效果
+document.addEventListener('mousemove', function(e){
+  const a = document.querySelector('.alpha-mark');
+  if(!a) return;
+  const x = (e.clientX / window.innerWidth - 0.5) * 12;
+  const y = (e.clientY / window.innerHeight - 0.5) * 12;
+  a.style.transform = `translate(${x}px,${y}px)`;
+});
+</script>
+
+</body>
+</html>
