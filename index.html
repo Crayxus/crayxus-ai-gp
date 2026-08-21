@@ -121,6 +121,28 @@ section{padding:64px 0 10px}
 .st.gov{color:var(--amber);border-color:rgba(245,166,35,.4)}
 .st.dev{color:var(--cyan);border-color:rgba(76,197,192,.4)}
 
+/* PIN 门禁(北京时间周日23:00起) */
+#gate{position:fixed;inset:0;z-index:200;background:var(--bg);display:none;
+  align-items:center;justify-content:center;padding:22px}
+#gate::before{content:"";position:absolute;inset:0;
+  background-image:linear-gradient(rgba(76,197,192,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(76,197,192,.04) 1px,transparent 1px);background-size:44px 44px}
+#gate .box{position:relative;max-width:360px;width:100%;text-align:center}
+#gate .lg{font-size:34px;font-weight:900}
+#gate .lg i{font-style:normal;color:var(--ink)}
+#gate p{color:var(--dim);font-size:14px;margin:12px 0 22px}
+#gate input{width:100%;background:var(--card);border:1px solid var(--line);border-radius:10px;
+  color:var(--txt);font-size:20px;text-align:center;letter-spacing:.4em;padding:13px;outline:none}
+#gate input:focus{border-color:var(--cyan)}
+#gate button{margin-top:12px;width:100%;background:var(--ink);color:#fff;border:none;
+  border-radius:10px;font-size:16px;font-weight:800;padding:13px;cursor:pointer;font-family:inherit}
+#gerr{color:#E8836E;font-size:13px;min-height:20px;margin-top:10px}
+
+@media(max-width:480px){
+  .row{flex-direction:column}
+  #go{padding:13px}
+}
+
 /* 理念条 */
 .belief{margin:70px 0 0;padding:34px 0;border-top:1px solid var(--line);
   border-bottom:1px solid var(--line);text-align:center}
@@ -134,6 +156,14 @@ footer{padding:42px 0 60px;font-size:13px;color:var(--mute);
 </style>
 </head>
 <body>
+
+<div id="gate"><div class="box">
+  <div class="lg">鲁<i>班</i>AI</div>
+  <p>已转入内部演示模式 · 请输入访问 PIN</p>
+  <input id="gpin" type="password" inputmode="numeric" maxlength="8" autocomplete="off">
+  <button onclick="tryPin()">进 入</button>
+  <div id="gerr"></div>
+</div></div>
 
 <nav><div class="in">
   <div class="logo">鲁<i>班</i>AI<span>LUBAN · AI</span></div>
@@ -223,6 +253,30 @@ const API = "https://safegate-2rw7.onrender.com/demo/vibecode";
 const $ = id => document.getElementById(id);
 let busy = false;
 
+// ── 定时门禁: 北京时间 2026-08-23(周日) 23:00 起需 PIN ──
+const GATE_T = Date.UTC(2026, 7, 23, 15, 0, 0);
+const GATE_HASH = "ed946f65d2c785d90e827c5ffd879ce3b49c68d4c88013074176a7e73bc58bcf";
+const gateOn = () => Date.now() >= GATE_T || location.search.indexOf("gate=1") > -1;
+if (gateOn() && sessionStorage.lbok !== "1") {
+  document.addEventListener("DOMContentLoaded", () => {
+    $("gate").style.display = "flex"; $("gpin").focus();
+    $("gpin").addEventListener("keydown", e => { if (e.key === "Enter") tryPin(); });
+  });
+}
+async function sha256(s) {
+  const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+  return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join("");
+}
+async function tryPin() {
+  const p = $("gpin").value.trim();
+  if (await sha256(p) === GATE_HASH) {
+    sessionStorage.lbok = "1"; sessionStorage.lbpin = p;
+    $("gate").style.display = "none";
+  } else {
+    $("gerr").textContent = "PIN 不对，再试试"; $("gpin").value = "";
+  }
+}
+
 // 预热后端(Render冷启动约50秒, 提前唤醒)
 fetch("https://safegate-2rw7.onrender.com/healthz", {mode:"no-cors"}).catch(()=>{});
 
@@ -244,7 +298,8 @@ async function run() {
     const r = await fetch(API, {
       method: "POST", signal: ctrl.signal,
       headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({text: idea})
+      body: JSON.stringify(sessionStorage.lbpin
+        ? {text: idea, pin: sessionStorage.lbpin} : {text: idea})
     });
     const j = await r.json();
     if (!r.ok) throw new Error(j.error || "服务繁忙");
