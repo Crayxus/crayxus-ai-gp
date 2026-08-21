@@ -172,7 +172,7 @@ footer{padding:42px 0 60px;font-size:13px;color:var(--mute);
       <button onclick="run()">↻ 重新生成</button></div>
     <iframe id="frame" sandbox=""></iframe>
   </div>
-  <p class="powered">演示由 <a href="https://safegate-2rw7.onrender.com" target="_blank" rel="noopener">SafeGate API 安全网关</a> 驱动 · 国产大模型实时生成 · 每 IP 每日限量</p>
+  <p class="powered">演示由 <a href="https://safegate-2rw7.onrender.com" target="_blank" rel="noopener">SafeGate API 安全网关</a> 驱动 · 鲁班引擎实时生成 · 每 IP 每日限量</p>
 </div>
 
 <section id="kings">
@@ -250,8 +250,7 @@ async function run() {
     if (!r.ok) throw new Error(j.error || "服务繁忙");
     $("frame").srcdoc = j.html;
     $("outbox").style.display = "block";
-    $("meta").textContent = (j.meter && j.meter.provider ? "模型: " + j.meter.provider + " · " : "")
-      + "今日剩余 " + j.left + " 次";
+    $("meta").textContent = "鲁班引擎 · 今日剩余 " + j.left + " 次";
     st.textContent = "";
     $("outbox").scrollIntoView({behavior:"smooth", block:"start"});
   } catch (e) {
