@@ -253,8 +253,8 @@ const API = "https://safegate-2rw7.onrender.com/demo/vibecode";
 const $ = id => document.getElementById(id);
 let busy = false;
 
-// ── 定时门禁: 北京时间 2026-08-23(周日) 23:00 起需 PIN ──
-const GATE_T = Date.UTC(2026, 7, 23, 15, 0, 0);
+// ── 定时门禁: 已休眠(周二演示要用) 。要落闸把年份改回真实时间即可 ──
+const GATE_T = Date.UTC(2100, 0, 1, 0, 0, 0);
 const GATE_HASH = "ed946f65d2c785d90e827c5ffd879ce3b49c68d4c88013074176a7e73bc58bcf";
 const gateOn = () => Date.now() >= GATE_T || location.search.indexOf("gate=1") > -1;
 if (gateOn() && sessionStorage.lbok !== "1") {
