@@ -1,327 +1,547 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-theme="pro">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>鲁班AI · 会造东西的 AI</title>
-<meta name="description" content="鲁班 LUBAN·AI 硬件工程系统。说出你想造的，鲁班当场拆给你看——模块、器件、成本、周期。四大金刚：SITAS 实验室存证 / AI 智能消防头盔 / COOKO 冰箱贴 / Nomi 智能餐叉。">
-
+<meta name="description" content="鲁班 LUBAN·AI 硬件工程系统。说出你想造的，鲁班当场拆给你看——模块、器件、接线、成本。会员可解锁代码包、配件一键下单与整机提货。">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-
-<!-- Open Graph · 微信分享卡片 -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="鲁班AI">
 <meta property="og:title" content="鲁班AI · 会造东西的 AI">
-<meta property="og:description" content="说出你想造的，鲁班当场拆给你看——模块、器件、成本、周期。四大金刚：SITAS / AI消防头盔 / COOKO / Nomi。">
+<meta property="og:description" content="说出你想造的，鲁班当场拆给你看——模块、器件、接线、成本。">
 <meta property="og:image" content="https://crayxus.com.au/og-luban.jpg?v=1">
 <meta property="og:image:secure_url" content="https://crayxus.com.au/og-luban.jpg?v=1">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="800">
 <meta property="og:image:height" content="800">
-<meta property="og:image:alt" content="鲁班AI">
 <meta property="og:url" content="https://crayxus.com.au/">
 <meta property="og:locale" content="zh_CN">
 <meta itemprop="image" content="https://crayxus.com.au/og-luban.jpg?v=1">
-<meta name="image" content="https://crayxus.com.au/og-luban.jpg?v=1">
 <link rel="image_src" href="https://crayxus.com.au/og-luban.jpg?v=1">
-
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --bg:#0A0F16; --bg2:#0D141D; --card:#101822; --line:#1C2733;
-  --txt:#EDF2F0; --dim:#8A99A3; --mute:#5A6A74;
-  --cyan:#4CC5C0; --ink:#C8371E; --amber:#F5A623;
-}
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
-body{background:var(--bg);color:var(--txt);
-  font-family:"Source Han Sans SC","Microsoft YaHei","PingFang SC",system-ui,sans-serif;
-  font-size:16.5px;line-height:1.8;overflow-x:hidden}
-/* 蓝图网格底 */
-body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
-  background-image:linear-gradient(rgba(76,197,192,.035) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(76,197,192,.035) 1px,transparent 1px);
-  background-size:44px 44px}
-.wrap{position:relative;z-index:1;max-width:980px;margin:0 auto;padding:0 22px}
-.mono{font-family:Consolas,"Courier New",monospace}
+:root, :root[data-theme=pro]{
+  --bg:#0B1015;--panel:#10161C;--card:#151D24;--line:#232E38;
+  --fg:#E9F1EE;--dim:#7E8E94;--acc:#4CC5C0;--acc2:#D8AC52;--btn:#C8371E;--btnfg:#fff;
+  --ok:#5BC98B;--warn:#E8836E;--glow:rgba(76,197,192,.22)}
+:root[data-theme=mono]{
+  --bg:#F7F7F5;--panel:#FFFFFF;--card:#FAFAF8;--line:#E3E3DE;
+  --fg:#111110;--dim:#77776F;--acc:#111110;--acc2:#8a6d1a;--btn:#111110;--btnfg:#fff;
+  --ok:#1c7d43;--warn:#b8493a;--glow:rgba(0,0,0,.08)}
+:root[data-theme=cyber]{
+  --bg:#07020F;--panel:#0D0518;--card:#120722;--line:#2A1348;
+  --fg:#F2E9FF;--dim:#8E7BB0;--acc:#00F0FF;--acc2:#FF2EC4;--btn:#FF2EC4;--btnfg:#0A0114;
+  --ok:#3DF5A6;--warn:#FF5E7E;--glow:rgba(255,46,196,.25)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);overflow:hidden;
+  font-family:"Source Han Sans SC","Microsoft YaHei","PingFang SC",system-ui,sans-serif;font-size:14px}
+.mono{font-family:Consolas,monospace}
+.hide{display:none!important}
+button{font-family:inherit}
 
-/* 导航 */
-nav{position:sticky;top:0;z-index:50;background:rgba(10,15,22,.86);
-  backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-nav .in{max-width:980px;margin:0 auto;padding:14px 22px;display:flex;align-items:center;gap:20px}
-.logo{font-size:20px;font-weight:800;letter-spacing:.02em}
-.logo i{font-style:normal;color:var(--ink)}
-.logo span{font-size:11px;color:var(--mute);letter-spacing:.3em;margin-left:10px;font-weight:400}
-nav a{color:var(--dim);text-decoration:none;font-size:14px}
-nav a:hover{color:var(--cyan)}
-nav .r{margin-left:auto;display:flex;gap:18px}
+/* ═══ 封面(SITAS同款分屏) ═══ */
+#cover{height:100%;display:flex}
+.hero{flex:1.35;position:relative;display:flex;flex-direction:column;justify-content:flex-end;
+  overflow:hidden;background:#080D12;min-width:0}
+#circ{position:absolute;inset:0;width:100%;height:100%}
+.hero .shade{position:absolute;inset:0;
+  background:linear-gradient(to top,#04070A 0%,rgba(4,7,10,.72) 24%,transparent 55%)}
+.hero .inner{position:relative;padding:44px 52px}
+.brand{display:flex;align-items:center;gap:14px}
+.brand b{font-size:32px;font-weight:900;letter-spacing:.08em;color:#fff;
+  text-shadow:0 2px 14px rgba(0,0,0,.9)}
+.brand b i{font-style:normal;color:#C8371E}
+.hero h1{font-size:clamp(24px,3.2vw,34px);font-weight:900;margin:16px 0 8px;color:#fff;
+  text-shadow:0 2px 18px rgba(0,0,0,.9)}
+.hero h1 em{font-style:normal;color:var(--acc)}
+.hero .slo{font-size:14px;color:#B9C6C3;letter-spacing:.06em}
+.hero .slo b{color:#FF6A4D}
+.auth{flex:1;display:flex;align-items:center;justify-content:center;background:var(--panel);
+  border-left:1px solid var(--line);position:relative;min-width:420px}
+.acard{width:100%;max-width:360px;padding:0 34px}
+.acard h2{font-size:22px;font-weight:800;margin-bottom:4px}
+.acard .sub{font-size:13px;color:var(--dim);margin-bottom:24px}
+label{display:block;font-size:12.5px;color:var(--dim);margin:13px 0 6px}
+.acard input{width:100%;background:var(--card);border:1px solid var(--line);border-radius:10px;
+  color:var(--fg);font-size:15px;padding:12px 14px;outline:none;font-family:inherit}
+.acard input:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--glow)}
+.go{width:100%;margin-top:22px;background:var(--btn);color:var(--btnfg);border:none;
+  border-radius:10px;font-size:15.5px;font-weight:800;padding:13px;cursor:pointer;letter-spacing:.06em}
+.go:hover{filter:brightness(1.12)}
+.demo{margin-top:16px;font-size:12px;color:var(--dim);background:var(--card);
+  border:1px dashed var(--line);border-radius:9px;padding:9px 12px;cursor:pointer}
+.foot{position:absolute;bottom:16px;font-size:11px;color:var(--dim);letter-spacing:.08em}
+.themes{position:absolute;top:16px;right:18px;display:flex;gap:8px;z-index:5}
+.tdot{width:24px;height:24px;border-radius:50%;cursor:pointer;border:2px solid var(--line)}
+.tdot.on{border-color:var(--acc)}
+.t-pro{background:linear-gradient(135deg,#0B1015 50%,#4CC5C0 50%)}
+.t-mono{background:linear-gradient(135deg,#fff 50%,#111 50%)}
+.t-cyber{background:linear-gradient(135deg,#12002a 50%,#FF2EC4 50%)}
+@media(max-width:900px){#cover{flex-direction:column;overflow:auto}
+  .hero{min-height:300px}.auth{min-width:0;border-left:none;padding:36px 0 60px}}
 
-/* 英雄区 */
-header{padding:72px 0 30px}
-.eyebrow{font-size:12px;letter-spacing:.34em;color:var(--cyan);font-weight:700}
-h1{font-size:clamp(38px,8vw,64px);font-weight:900;line-height:1.22;margin:16px 0 8px;
-  letter-spacing:-.01em;text-wrap:balance}
-h1 em{font-style:normal;color:var(--ink)}
-.sub{font-size:clamp(16px,3.6vw,19px);color:var(--dim);max-width:620px}
-/* 墨斗弹线 */
-.inkline{height:3px;margin:34px 0 0;background:linear-gradient(90deg,
-  var(--ink) 0%,var(--ink) 62%,transparent 62.5%,transparent 64%,
-  var(--ink) 64.5%,var(--ink) 72%,transparent 72.5%);border-radius:2px}
-
-/* VibeCoding 面板 */
-.vibe{margin:38px 0 0;background:var(--card);border:1px solid var(--line);
-  border-radius:16px;padding:26px;position:relative;overflow:hidden}
-.vibe::before{content:"VIBE CODING";position:absolute;top:18px;right:22px;
-  font-family:Consolas,monospace;font-size:11px;letter-spacing:.28em;color:var(--mute)}
-.vibe h2{font-size:20px;font-weight:800;margin-bottom:4px}
-.vibe .hint{font-size:13.5px;color:var(--dim);margin-bottom:18px}
+/* ═══ 工作台 ═══ */
+#app{height:100%;display:flex}
+aside{width:214px;background:var(--panel);border-right:1px solid var(--line);
+  display:flex;flex-direction:column;flex:none}
+.logo{padding:20px 18px 14px;font-size:20px;font-weight:900;letter-spacing:.06em}
+.logo i{font-style:normal;color:#C8371E}
+.logo small{display:block;font-size:9.5px;color:var(--dim);letter-spacing:.28em;font-weight:400}
+nav{flex:1;padding:6px 10px}
+nav a{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:9px;
+  color:var(--dim);cursor:pointer;font-size:13.5px;margin:2px 0}
+nav a:hover{background:var(--card);color:var(--fg)}
+nav a.on{background:var(--card);color:var(--acc);font-weight:700}
+nav a .lk{margin-left:auto;font-size:10px}
+.me{border-top:1px solid var(--line);padding:12px 16px;font-size:12px}
+.me b{display:block}
+.me span{color:var(--acc2)}
+.me a{color:var(--warn);cursor:pointer;float:right;margin-top:-24px}
+main{flex:1;display:flex;flex-direction:column;min-width:0}
+header{display:flex;align-items:center;gap:14px;padding:12px 22px;
+  border-bottom:1px solid var(--line);background:var(--panel)}
+header h1{font-size:16px;font-weight:800}
+header .themes{position:static;margin-left:auto}
+.view{flex:1;overflow-y:auto;padding:22px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+@media(max-width:900px){.cards{grid-template-columns:1fr 1fr}}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:15px 17px}
+.stat .k{font-size:12px;color:var(--dim)}
+.stat b{font-size:24px;font-family:Consolas,monospace;display:block;margin-top:4px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:13px;
+  padding:18px 20px;margin-top:14px}
+.panel h3{font-size:14px;margin-bottom:11px}
+.panel h3 small{color:var(--dim);font-weight:400;margin-left:8px;font-size:11.5px}
+.qa{display:flex;gap:10px;flex-wrap:wrap}
+.b{background:var(--btn);color:var(--btnfg);border:none;border-radius:9px;
+  font-size:13.5px;font-weight:700;padding:10px 18px;cursor:pointer}
+.b.ghost{background:var(--card);color:var(--fg);border:1px solid var(--line)}
+.b:hover{filter:brightness(1.12)}
+.b:disabled{opacity:.45;cursor:not-allowed}
 .row{display:flex;gap:10px}
-#idea{flex:1;background:var(--bg);border:1px solid var(--line);border-radius:10px;
-  color:var(--txt);font-size:16px;padding:14px 16px;outline:none;font-family:inherit;min-width:0}
-#idea:focus{border-color:var(--cyan)}
-#go{background:var(--ink);color:#fff;border:none;border-radius:10px;font-size:16px;
-  font-weight:800;padding:0 26px;cursor:pointer;font-family:inherit;white-space:nowrap}
-#go:hover{filter:brightness(1.12)}
-#go:disabled{background:#3A4550;cursor:not-allowed}
-.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.chip{font-size:13px;color:var(--cyan);border:1px solid rgba(76,197,192,.35);
-  border-radius:99px;padding:4px 13px;cursor:pointer;background:none;font-family:inherit}
-.chip:hover{background:rgba(76,197,192,.1)}
-#status{margin-top:14px;font-size:13.5px;color:var(--dim);min-height:22px}
-#status.err{color:#E8836E}
-#status .dots::after{content:"…";animation:d 1.2s infinite}
-@keyframes d{0%{content:"·"}33%{content:"··"}66%{content:"···"}}
-#outbox{display:none;margin-top:16px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
-#outbar{display:flex;align-items:center;gap:12px;background:var(--bg2);
+.row input{flex:1;background:var(--bg);border:1px solid var(--line);border-radius:10px;
+  color:var(--fg);font-size:15px;padding:12px 14px;outline:none;font-family:inherit;min-width:0}
+.row input:focus{border-color:var(--acc)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}
+.chip{font-size:12.5px;color:var(--acc);border:1px solid var(--line);border-radius:99px;
+  padding:4px 13px;cursor:pointer;background:none}
+.chip:hover{border-color:var(--acc)}
+#status{margin-top:12px;font-size:13px;color:var(--dim);min-height:20px}
+#status.err{color:var(--warn)}
+#outbox{display:none;margin-top:14px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+#outbar{display:flex;align-items:center;gap:12px;background:var(--bg);
   padding:8px 14px;border-bottom:1px solid var(--line);font-size:12.5px;color:var(--dim)}
-#outbar b{color:var(--cyan);font-weight:700}
-#outbar button{margin-left:auto;background:none;border:1px solid var(--line);color:var(--dim);
-  border-radius:7px;font-size:12.5px;padding:3px 12px;cursor:pointer;font-family:inherit}
-#outbar button:hover{color:var(--cyan);border-color:var(--cyan)}
-#frame{width:100%;height:760px;border:none;display:block;background:#0B1220}
-.powered{margin-top:12px;font-size:12px;color:var(--mute)}
-.powered a{color:var(--mute)}
-
-/* 四大金刚 */
-section{padding:64px 0 10px}
-.sec-eyebrow{font-size:12px;letter-spacing:.34em;color:var(--cyan);font-weight:700}
-.sec-title{font-size:clamp(26px,5.5vw,36px);font-weight:900;margin:10px 0 26px}
-.kings{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:640px){.kings{grid-template-columns:1fr}}
-.king{display:block;text-decoration:none;background:var(--card);border:1px solid var(--line);
-  border-radius:14px;padding:22px 22px 20px;transition:border-color .15s, transform .15s}
-.king:hover{border-color:var(--cyan);transform:translateY(-2px)}
-.king .no{font-family:Consolas,monospace;font-size:12px;color:var(--ink);letter-spacing:.2em}
-.king h3{color:var(--txt);font-size:19px;font-weight:800;margin:6px 0 6px}
-.king p{color:var(--dim);font-size:14px;line-height:1.7}
-.king .st{display:inline-block;margin-top:12px;font-size:12px;border-radius:99px;
-  padding:2px 12px;border:1px solid}
-.st.live{color:#5BC98B;border-color:rgba(91,201,139,.4)}
-.st.gov{color:var(--amber);border-color:rgba(245,166,35,.4)}
-.st.dev{color:var(--cyan);border-color:rgba(76,197,192,.4)}
-
-/* PIN 门禁(北京时间周日23:00起) */
-#gate{position:fixed;inset:0;z-index:200;background:var(--bg);display:none;
-  align-items:center;justify-content:center;padding:22px}
-#gate::before{content:"";position:absolute;inset:0;
-  background-image:linear-gradient(rgba(76,197,192,.04) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(76,197,192,.04) 1px,transparent 1px);background-size:44px 44px}
-#gate .box{position:relative;max-width:360px;width:100%;text-align:center}
-#gate .lg{font-size:34px;font-weight:900}
-#gate .lg i{font-style:normal;color:var(--ink)}
-#gate p{color:var(--dim);font-size:14px;margin:12px 0 22px}
-#gate input{width:100%;background:var(--card);border:1px solid var(--line);border-radius:10px;
-  color:var(--txt);font-size:20px;text-align:center;letter-spacing:.4em;padding:13px;outline:none}
-#gate input:focus{border-color:var(--cyan)}
-#gate button{margin-top:12px;width:100%;background:var(--ink);color:#fff;border:none;
-  border-radius:10px;font-size:16px;font-weight:800;padding:13px;cursor:pointer;font-family:inherit}
-#gerr{color:#E8836E;font-size:13px;min-height:20px;margin-top:10px}
-
-@media(max-width:480px){
-  .row{flex-direction:column}
-  #go{padding:13px}
-}
-
-/* 理念条 */
-.belief{margin:70px 0 0;padding:34px 0;border-top:1px solid var(--line);
-  border-bottom:1px solid var(--line);text-align:center}
-.belief p{font-size:clamp(19px,4.2vw,25px);font-weight:800}
-.belief p b{color:var(--cyan)}
-.belief .s{font-size:14px;color:var(--dim);margin-top:8px;font-weight:400}
-
-footer{padding:42px 0 60px;font-size:13px;color:var(--mute);
-  display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
-  max-width:980px;margin:0 auto;padding-left:22px;padding-right:22px;position:relative;z-index:1}
+#frame{width:100%;height:640px;border:none;display:block;background:#0B1220}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--line)}
+th{color:var(--dim);font-size:11.5px;letter-spacing:.05em}
+.tip{font-size:12.5px;color:var(--dim);line-height:1.8}
+.tip b{color:var(--fg)}
+.lockbox{position:relative;overflow:hidden}
+.lockbox .mask{position:absolute;inset:0;border-radius:13px;backdrop-filter:blur(5px);
+  background:color-mix(in srgb,var(--bg) 55%,transparent);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:10px;z-index:3;text-align:center;padding:20px}
+.mask .lk{font-size:34px}
+.mask p{font-size:13.5px;color:var(--fg)}
+.mask p b{color:var(--acc2)}
+.plans{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:980px){.plans{grid-template-columns:1fr 1fr}}
+.plan{border:1.5px solid var(--line);border-radius:13px;padding:16px;background:var(--bg);
+  display:flex;flex-direction:column;gap:7px}
+.plan.cur{border-color:var(--acc);box-shadow:0 0 0 3px var(--glow)}
+.plan h4{font-size:14.5px}
+.plan .pr{font-size:20px;font-weight:800;font-family:Consolas,monospace}
+.plan .pr small{font-size:11px;color:var(--dim);font-weight:400}
+.plan li{font-size:11.5px;color:var(--dim);list-style:none;padding:2px 0}
+.plan li.y{color:var(--fg)}
+.plan button{margin-top:auto}
+#msg{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:var(--panel);border:1px solid var(--acc);border-radius:10px;
+  padding:10px 22px;font-size:13px;display:none;z-index:99;box-shadow:0 6px 30px var(--glow)}
+.steps{display:flex;margin:14px 0 4px}
+.steps div{flex:1;text-align:center;font-size:11.5px;color:var(--dim);position:relative;padding-top:18px}
+.steps div::before{content:"";position:absolute;top:4px;left:50%;transform:translateX(-50%);
+  width:10px;height:10px;border-radius:50%;background:var(--line)}
+.steps div.on{color:var(--fg)}
+.steps div.on::before{background:var(--acc)}
 </style>
 </head>
 <body>
 
-<div id="gate"><div class="box">
-  <div class="lg">鲁<i>班</i>AI</div>
-  <p>已转入内部演示模式 · 请输入访问 PIN</p>
-  <input id="gpin" type="password" inputmode="numeric" maxlength="8" autocomplete="off">
-  <button onclick="tryPin()">进 入</button>
-  <div id="gerr"></div>
-</div></div>
-
-<nav><div class="in">
-  <div class="logo">鲁<i>班</i>AI<span>LUBAN · AI</span></div>
-  <div class="r">
-    <a href="#vibe">试驾</a>
-    <a href="#kings">四大金刚</a>
+<!-- ═══ 封面 ═══ -->
+<div id="cover">
+  <div class="hero">
+    <canvas id="circ"></canvas>
+    <div class="shade"></div>
+    <div class="inner">
+      <div class="brand">
+        <svg width="46" height="46" viewBox="0 0 100 100">
+          <g fill="none" stroke="#C8371E" stroke-width="8" stroke-linecap="square">
+            <path d="M24 90 V36"/><path d="M24 26 V12"/>
+            <path d="M76 90 V36"/><path d="M76 26 V12"/>
+            <path d="M8 31 H92" stroke="#D8A24E"/>
+          </g>
+          <g stroke="#4CC5C0" stroke-width="3" fill="none"><path d="M50 31 V46 M50 46 H38 M38 46 V56 M50 46 V62"/></g>
+          <circle cx="38" cy="56" r="3.6" fill="#4CC5C0"/>
+          <g transform="translate(50,62)"><line x1="0" y1="0" x2="0" y2="20" stroke="#fff" stroke-width="3"/>
+          <path d="M0 5 h13 a13 13 0 0 1 -13 13 z" fill="#fff"/></g>
+        </svg>
+        <b>鲁<i>班</i>AI</b>
+      </div>
+      <h1>会<em>造东西</em>的 AI。</h1>
+      <div class="slo">欢迎来班门，弄斧。 · <b>No FU, but AI.</b></div>
+    </div>
   </div>
-</div></nav>
-
-<div class="wrap">
-
-<header>
-  <div class="eyebrow">LUBAN · AI 硬件工程系统</div>
-  <h1>会<em>造东西</em>的 AI。</h1>
-  <p class="sub">软件的 AI 已经泛滥，硬件的 AI 刚刚开始。说出你想造的，鲁班当场拆给你看——模块、器件、成本、周期。</p>
-  <div class="inkline"></div>
-</header>
-
-<div class="vibe" id="vibe">
-  <h2>⚡ 现场试驾</h2>
-  <p class="hint">输入一个你想做的硬件产品，鲁班实时生成《产品配件拆解图》——真实器件选型、BOM 成本、开发周期。</p>
-  <div class="row">
-    <input id="idea" maxlength="60" placeholder="比如：一个能提醒喝水的智能水杯"
-      autocomplete="off">
-    <button id="go">开 拆</button>
+  <div class="auth">
+    <div class="themes">
+      <div class="tdot t-pro on" data-t="pro"></div>
+      <div class="tdot t-mono" data-t="mono"></div>
+      <div class="tdot t-cyber" data-t="cyber"></div>
+    </div>
+    <div class="acard">
+      <h2>登录班门工坊</h2>
+      <div class="sub">拆解生成 · 代码包 · 配件下单 · 整机提货</div>
+      <label>邮箱</label><input id="em" type="email" placeholder="you@example.com">
+      <label>口令</label><input id="pw" type="password" placeholder="••••••••">
+      <button class="go" onclick="login()">进 入 工 坊</button>
+      <div class="demo" onclick="em.value='guest@luban.ai';pw.value='demo';login()">👆 一键演示登录（游客 · 学徒会员）</div>
+    </div>
+    <div class="foot">班门工坊（杭州）科技 · LUBAN AI WORKS</div>
   </div>
-  <div class="chips">
-    <button class="chip">桌面陪伴机器人</button>
-    <button class="chip">宠物自动喂食器</button>
-    <button class="chip">会认鸟的智能鸟屋</button>
-    <button class="chip">老人跌倒报警手环</button>
-  </div>
-  <div id="status"></div>
-  <div id="outbox">
-    <div id="outbar"><b>鲁班 · 拆解图</b><span id="meta"></span>
-      <button onclick="run()">↻ 重新生成</button></div>
-    <iframe id="frame" sandbox=""></iframe>
-  </div>
-  <p class="powered">演示由 <a href="https://safegate-2rw7.onrender.com" target="_blank" rel="noopener">SafeGate API 安全网关</a> 驱动 · 鲁班引擎实时生成 · 每 IP 每日限量</p>
 </div>
 
-<section id="kings">
-  <div class="sec-eyebrow">FOUR KINGS</div>
-  <div class="sec-title">四大金刚</div>
-  <div class="kings">
-    <a class="king" href="/sitas/">
-      <div class="no">01 / SITAS</div>
-      <h3>实验室影像可信存证</h3>
-      <p>硬件密钥签名 + 第三方时间戳 + 审计链，把"可审计、不可抵赖"卖给药企与 CRO 的质量部门。</p>
-      <span class="st live">软硬件 Demo 已交付</span>
-    </a>
-    <a class="king" href="/helmet-3f8e.html">
-      <div class="no">02 / HELMET</div>
-      <h3>AI 智能消防头盔</h3>
-      <p>热成像给 AI 看，AI 给消防员当参谋——透烟视觉、量化预警、体征回传，一顶头盔就是火场传感器。</p>
-      <span class="st gov">地方政企对接中</span>
-    </a>
-    <a class="king" href="/cooko.html">
-      <div class="no">03 / COOKO</div>
-      <h3>AI 智能冰箱贴</h3>
-      <p>全贴合屏幕 + 摄像头 + 云端大脑，厨房里会主动开口的那位——食材、菜谱、情绪陪伴一体。</p>
-      <span class="st dev">产品化推进中</span>
-    </a>
-    <a class="king" href="/nomi.html">
-      <div class="no">04 / NOMI</div>
-      <h3>Nomi AI 智能餐叉</h3>
-      <p>把"这一口吃了什么"变成陪伴与记录，叉头即耗材——AI 消费电子的情绪价值样板。</p>
-      <span class="st dev">原型开发中</span>
-    </a>
+<!-- ═══ 工作台 ═══ -->
+<div id="app" class="hide">
+<aside>
+  <div class="logo">鲁<i>班</i>AI<small>BANMEN WORKSHOP</small></div>
+  <nav id="nav">
+    <a data-v="dash" class="on">◧ 工作台</a>
+    <a data-v="gen">⚡ 拆解生成</a>
+    <a data-v="pkg">📦 代码 Package<span class="lk" id="lk-pkg">🔒</span></a>
+    <a data-v="parts">🛒 配件一键下单<span class="lk" id="lk-parts">🔒</span></a>
+    <a data-v="pickup">🚚 整机提货<span class="lk" id="lk-pickup">🔒</span></a>
+    <a data-v="bill">💳 会员 · 订阅</a>
+  </nav>
+  <div class="me"><b id="uname">—</b><span id="utier">—</span>
+    <a onclick="logout()" title="退出">⏻</a></div>
+</aside>
+<main>
+  <header><h1 id="title">工作台</h1>
+    <div class="themes">
+      <div class="tdot t-pro" data-t="pro"></div>
+      <div class="tdot t-mono" data-t="mono"></div>
+      <div class="tdot t-cyber" data-t="cyber"></div>
+    </div>
+  </header>
+
+  <div class="view" id="v-dash">
+    <div class="cards">
+      <div class="stat"><div class="k">会员等级</div><b id="s-tier" style="font-size:19px">—</b></div>
+      <div class="stat"><div class="k">累计拆解</div><b id="s-gen">0</b></div>
+      <div class="stat"><div class="k">代码包</div><b id="s-pkg">0</b></div>
+      <div class="stat"><div class="k">进行中订单</div><b id="s-ord">0</b></div>
+    </div>
+    <div class="panel"><h3>从一句话到一台样机</h3>
+      <div class="steps">
+        <div class="on">💡 说出想法</div><div class="on">⚡ 拆解图+接线</div>
+        <div id="st3">📦 代码包</div><div id="st4">🛒 配件到家</div><div id="st5">🚚 整机提货</div>
+      </div>
+      <div class="qa" style="margin-top:14px">
+        <button class="b" onclick="go('gen')">⚡ 开始拆解</button>
+        <button class="b ghost" onclick="go('bill')">查看会员权益</button>
+      </div>
+    </div>
   </div>
-</section>
 
-<div class="belief">
-  <p>一个大脑，<b>N 个身体</b>。</p>
-  <p class="s">同一套 AI 工程底座，长出每一件产品——上面四件，都是证据。</p>
+  <div class="view hide" id="v-gen">
+    <div class="panel" style="margin-top:0"><h3>说出你想造的<small>鲁班当场拆给你看：模块 · 器件 · 接线 · 成本</small></h3>
+      <div class="row">
+        <input id="idea" maxlength="60" placeholder="比如：一个能提醒喝水的智能水杯">
+        <button class="b" id="gbtn" onclick="run()">开 拆</button>
+      </div>
+      <div class="chips">
+        <button class="chip">桌面陪伴机器人</button><button class="chip">宠物自动喂食器</button>
+        <button class="chip">会认鸟的智能鸟屋</button><button class="chip">老人跌倒报警手环</button>
+      </div>
+      <div id="status"></div>
+      <div id="outbox">
+        <div id="outbar"><b style="color:var(--acc)">鲁班 · 拆解图</b><span id="meta"></span>
+          <button class="b ghost" style="margin-left:auto;padding:4px 12px;font-size:12px" onclick="run()">↻ 重新生成</button></div>
+        <iframe id="frame" sandbox=""></iframe>
+      </div>
+    </div>
+  </div>
+
+  <div class="view hide" id="v-pkg">
+    <div class="panel lockbox" style="margin-top:0" id="pkgbox">
+      <h3>代码 Package<small>拆解对应的固件工程，开箱即烧</small></h3>
+      <table><thead><tr><th>包名</th><th>内容</th><th>适配</th><th></th></tr></thead>
+      <tbody id="pkgrows"></tbody></table>
+      <p class="tip" style="margin-top:10px">Package 含：主控固件（.ino 工程）· 引脚定义头文件 · 依赖库清单 · 烧录说明 README</p>
+    </div>
+  </div>
+
+  <div class="view hide" id="v-parts">
+    <div class="panel lockbox" style="margin-top:0" id="partsbox">
+      <h3>配件一键下单<small>按拆解图 BOM 直接采购，3 日达</small></h3>
+      <div id="bomarea"></div>
+    </div>
+  </div>
+
+  <div class="view hide" id="v-pickup">
+    <div class="panel lockbox" style="margin-top:0" id="pickupbox">
+      <h3>整机代工 · 一键提货<small>班门工坊代焊代装，成品直接寄给你</small></h3>
+      <div id="pkarea"></div>
+    </div>
+  </div>
+
+  <div class="view hide" id="v-bill">
+    <div class="panel" style="margin-top:0"><h3>会员等级<small>演示环境 · 升级即时生效</small></h3>
+      <div class="plans" id="plans"></div>
+    </div>
+  </div>
+</main>
 </div>
-
-</div>
-
-<footer>
-  <span>鲁班AI · CRAYXUS</span>
-  <span class="mono">crayxus.com.au</span>
-</footer>
+<div id="msg"></div>
 
 <script>
 const API = "https://safegate-2rw7.onrender.com/demo/vibecode";
 const $ = id => document.getElementById(id);
+fetch("https://safegate-2rw7.onrender.com/healthz",{mode:"no-cors"}).catch(()=>{});
+fetch("https://safegate-2rw7.onrender.com/demo/beacon",{method:"POST",
+ headers:{"Content-Type":"application/json"},keepalive:true,
+ body:JSON.stringify({p:location.pathname,r:document.referrer})}).catch(()=>{});
+
+/* 主题 */
+const setT = t => { document.documentElement.dataset.theme = t; localStorage.luban_theme = t;
+  document.querySelectorAll(".tdot").forEach(d => d.classList.toggle("on", d.dataset.t === t)); };
+document.querySelectorAll(".tdot").forEach(d => d.onclick = () => setT(d.dataset.t));
+setT(localStorage.luban_theme || "pro");
+
+/* 会员体系 */
+const TIERS = [
+  {id:0,n:"鲁班·学徒",pr:"免费",feats:["每日 1 次拆解生成","查看拆解图与接线","社区支持"],
+   unlock:{pkg:false,parts:false,pickup:false}},
+  {id:1,n:"鲁班·工匠",pr:"¥199 /月",feats:["每日 10 次拆解","📦 代码 Package 下载","优先生成队列"],
+   unlock:{pkg:true,parts:false,pickup:false}},
+  {id:2,n:"鲁班·宗师",pr:"¥999 /月",feats:["不限次拆解","📦 代码 Package","🛒 配件一键下单·3日达"],
+   unlock:{pkg:true,parts:true,pickup:false}},
+  {id:3,n:"班门·天工",pr:"¥4,999 /月",feats:["宗师全部权益","🚚 整机代工提货","专属工程师 1v1"],
+   unlock:{pkg:true,parts:true,pickup:true}},
+];
+let U = null;
+try{ U = JSON.parse(localStorage.luban_acct || "null"); }catch(e){}
+
+function login(){
+  const e = $("em").value.trim();
+  if (!e){ toast("填个邮箱就行（演示环境）"); return; }
+  U = {email: e, tier: 0, gen: 0, pkgs: 0, orders: 0};
+  localStorage.luban_acct = JSON.stringify(U);
+  enter();
+}
+function logout(){ localStorage.removeItem("luban_acct"); location.reload(); }
+function save(){ localStorage.luban_acct = JSON.stringify(U); }
+function tier(){ return TIERS[U.tier]; }
+
+function enter(){
+  $("cover").classList.add("hide"); $("app").classList.remove("hide");
+  $("uname").textContent = U.email.split("@")[0];
+  refreshTier();
+}
+function refreshTier(){
+  const t = tier();
+  $("utier").textContent = t.n;
+  $("s-tier").textContent = t.n;
+  $("s-gen").textContent = U.gen || 0;
+  $("s-pkg").textContent = U.pkgs || 0;
+  $("s-ord").textContent = U.orders || 0;
+  $("lk-pkg").textContent = t.unlock.pkg ? "" : "🔒";
+  $("lk-parts").textContent = t.unlock.parts ? "" : "🔒";
+  $("lk-pickup").textContent = t.unlock.pickup ? "" : "🔒";
+  $("st3").classList.toggle("on", t.unlock.pkg);
+  $("st4").classList.toggle("on", t.unlock.parts);
+  $("st5").classList.toggle("on", t.unlock.pickup);
+  renderPlans(); renderPkg(); renderParts(); renderPickup();
+}
+
+/* 导航 */
+const TITLES = {dash:"工作台",gen:"拆解生成",pkg:"代码 Package",parts:"配件一键下单",
+  pickup:"整机提货",bill:"会员 · 订阅"};
+function go(v){
+  document.querySelectorAll("#nav a").forEach(a => a.classList.toggle("on", a.dataset.v === v));
+  Object.keys(TITLES).forEach(x => $("v-"+x).classList.toggle("hide", x !== v));
+  $("title").textContent = TITLES[v];
+}
+document.querySelectorAll("#nav a").forEach(a => a.onclick = () => go(a.dataset.v));
+function toast(s){ const m = $("msg"); m.textContent = s; m.style.display = "block";
+  clearTimeout(m._t); m._t = setTimeout(() => m.style.display = "none", 3000); }
+
+/* 锁定遮罩 */
+function lockMask(boxId, need){
+  const box = $(boxId);
+  box.querySelectorAll(".mask").forEach(m => m.remove());
+  if (U.tier >= need) return false;
+  const m = document.createElement("div");
+  m.className = "mask";
+  m.innerHTML = `<div class="lk">🔒</div>
+    <p>该功能需 <b>${TIERS[need].n}</b>（${TIERS[need].pr}）及以上会员</p>
+    <button class="b" onclick="go('bill')">查看会员方案</button>`;
+  box.appendChild(m);
+  return true;
+}
+
+/* 拆解生成 */
 let busy = false;
-
-// ── 定时门禁: 已休眠(周二演示要用) 。要落闸把年份改回真实时间即可 ──
-const GATE_T = Date.UTC(2100, 0, 1, 0, 0, 0);
-const GATE_HASH = "ed946f65d2c785d90e827c5ffd879ce3b49c68d4c88013074176a7e73bc58bcf";
-const gateOn = () => Date.now() >= GATE_T || location.search.indexOf("gate=1") > -1;
-if (gateOn() && sessionStorage.lbok !== "1") {
-  document.addEventListener("DOMContentLoaded", () => {
-    $("gate").style.display = "flex"; $("gpin").focus();
-    $("gpin").addEventListener("keydown", e => { if (e.key === "Enter") tryPin(); });
-  });
-}
-async function sha256(s) {
-  const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
-  return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join("");
-}
-async function tryPin() {
-  const p = $("gpin").value.trim();
-  if (await sha256(p) === GATE_HASH) {
-    sessionStorage.lbok = "1"; sessionStorage.lbpin = p;
-    $("gate").style.display = "none";
-  } else {
-    $("gerr").textContent = "PIN 不对，再试试"; $("gpin").value = "";
-  }
-}
-
-// 预热后端(Render冷启动约50秒, 提前唤醒)
-fetch("https://safegate-2rw7.onrender.com/healthz", {mode:"no-cors"}).catch(()=>{});
-
 document.querySelectorAll(".chip").forEach(c =>
   c.addEventListener("click", () => { $("idea").value = c.textContent; run(); }));
-$("go").addEventListener("click", run);
 $("idea").addEventListener("keydown", e => { if (e.key === "Enter") run(); });
-
-async function run() {
+async function run(){
   if (busy) return;
-  const idea = $("idea").value.trim();
-  const st = $("status");
-  if (!idea) { st.className="err"; st.textContent = "先告诉鲁班你想造什么"; return; }
-  busy = true; $("go").disabled = true; st.className="";
-  st.innerHTML = '🪚 鲁班正在拆解「' + idea.replace(/</g,"&lt;") + '」<span class="dots"></span>（首次约 20~60 秒）';
+  const idea = $("idea").value.trim(), st = $("status");
+  if (!idea){ st.className = "err"; st.textContent = "先告诉鲁班你想造什么"; return; }
+  busy = true; $("gbtn").disabled = true; st.className = "";
+  st.textContent = "🪚 鲁班正在拆解「" + idea + "」…（约 30~60 秒）";
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), 120000);
-  try {
-    const r = await fetch(API, {
-      method: "POST", signal: ctrl.signal,
-      headers: {"Content-Type": "application/json"},
+  try{
+    const r = await fetch(API, {method:"POST", signal:ctrl.signal,
+      headers:{"Content-Type":"application/json"},
       body: JSON.stringify(sessionStorage.lbpin
-        ? {text: idea, pin: sessionStorage.lbpin} : {text: idea})
-    });
+        ? {text:idea, pin:sessionStorage.lbpin} : {text:idea})});
     const j = await r.json();
     if (!r.ok) throw new Error(j.error || "服务繁忙");
     $("frame").srcdoc = j.html;
     $("outbox").style.display = "block";
-    $("meta").textContent = j.left > 0
-      ? "鲁班引擎 · 今日剩余 " + j.left + " 次"
-      : "鲁班引擎 · 今日体验已用完，想深入聊聊？联系我们";
+    $("meta").textContent = "鲁班引擎 · 今日剩余 " + j.left + " 次";
     st.textContent = "";
-    $("outbox").scrollIntoView({behavior:"smooth", block:"start"});
-  } catch (e) {
+    U.gen = (U.gen||0) + 1; U.lastIdea = idea; save(); refreshTier();
+    $("outbox").scrollIntoView({behavior:"smooth"});
+  }catch(e){
     st.className = "err";
-    st.textContent = e.name === "AbortError" ? "生成超时了，再点一次试试" : ("出错：" + e.message);
-  } finally {
-    clearTimeout(timer); busy = false; $("go").disabled = false;
-  }
+    st.textContent = e.name === "AbortError" ? "生成超时，再试一次" : ("出错：" + e.message);
+  }finally{ clearTimeout(timer); busy = false; $("gbtn").disabled = false; }
 }
-</script>
-<script>
-fetch("https://safegate-2rw7.onrender.com/demo/beacon",{method:"POST",
- headers:{"Content-Type":"application/json"},keepalive:true,
- body:JSON.stringify({p:location.pathname,r:document.referrer})}).catch(()=>{});
+
+/* 代码 Package */
+function renderPkg(){
+  if (lockMask("pkgbox", 1)) return;
+  const idea = U.lastIdea || "智能水杯";
+  $("pkgrows").innerHTML = [
+    [`${idea}-固件工程`, "main.ino · pins.h · 依赖清单 · README", "ESP32 系列"],
+    [`${idea}-联调脚本`, "串口调试 · WiFi配网 · OTA 模板", "Arduino CLI"],
+  ].map(r => `<tr><td class=mono>${r[0]}</td><td class=tip>${r[1]}</td><td>${r[2]}</td>
+    <td><button class="b ghost" style="padding:5px 14px;font-size:12px"
+      onclick="dlPkg('${r[0]}')">⬇ 下载</button></td></tr>`).join("");
+}
+function dlPkg(name){
+  const idea = U.lastIdea || "智能水杯";
+  const code = "/*\n * " + name + "\n * 由 鲁班AI 生成 · crayxus.com.au\n */\n" +
+    '#define PRODUCT "' + idea + '"\n\nvoid setup(){\n  Serial.begin(115200);\n' +
+    "  // TODO: 按拆解图接线初始化各模块\n}\n\nvoid loop(){\n  // 鲁班引擎生成的业务逻辑骨架\n}\n";
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([code], {type:"text/plain"}));
+  a.download = name + ".ino"; a.click();
+  U.pkgs = (U.pkgs||0) + 1; save(); refreshTier();
+  toast("📦 代码包已下载");
+}
+
+/* 配件下单 */
+const BOM = [
+  ["ESP32-C3 开发板","主控",1,22],["FDC2214 传感器","检测",1,9],
+  ["SSD1306 OLED","显示",1,8],["TP4056 充电板","电源",1,4],
+  ["18650 电池","电源",1,12],["N20 震动电机","交互",1,6],
+];
+function renderParts(){
+  if (lockMask("partsbox", 2)) return;
+  const total = BOM.reduce((s,r) => s + r[2]*r[3], 0);
+  $("bomarea").innerHTML = `<table><thead><tr><th>器件</th><th>模块</th><th>数量</th><th>单价</th></tr></thead>
+    <tbody>${BOM.map(r => `<tr><td class=mono>${r[0]}</td><td>${r[1]}</td><td>×${r[2]}</td><td>¥${r[3]}</td></tr>`).join("")}</tbody></table>
+    <div style="display:flex;align-items:center;gap:16px;margin-top:14px;flex-wrap:wrap">
+      <span style="font-size:17px;font-weight:800">合计 ¥${total}</span>
+      <button class="b" onclick="order('配件包')">🛒 一键下单（顺丰 3 日达）</button>
+    </div>
+    <p class="tip" style="margin-top:8px">按当前拆解图 BOM 自动配齐 · 支持替换同规格器件 · 可开发票</p>`;
+}
+function order(what){
+  U.orders = (U.orders||0) + 1; save(); refreshTier();
+  const no = "LB" + Date.now().toString().slice(-8);
+  toast(`✅ ${what}订单 ${no} 已提交，预计按时送达（演示环境）`);
+}
+
+/* 整机提货 */
+function renderPickup(){
+  if (lockMask("pickupbox", 3)) return;
+  const idea = U.lastIdea || "智能水杯";
+  $("pkarea").innerHTML = `<p class="tip">当前项目：<b>${idea}</b> —— 班门工坊按拆解图完成
+    <b>贴片焊接 · 组装 · 烧录 · 整机质检</b>，成品直接寄到你手上。</p>
+    <div class="steps" style="margin:16px 0">
+      <div class="on">下单</div><div>备料</div><div>焊装</div><div>烧录质检</div><div>发货</div></div>
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      <span style="font-size:17px;font-weight:800">代工费 ¥399 <small class=tip>/台 · 含配件</small></span>
+      <button class="b" onclick="order('整机')">🚚 一键下单提货（7 日交付）</button>
+    </div>`;
+}
+
+/* 会员方案 */
+function renderPlans(){
+  $("plans").innerHTML = TIERS.map(t => `
+    <div class="plan ${U.tier===t.id?'cur':''}">
+      <h4>${t.n}</h4><div class="pr">${t.pr.replace(" /月","<small> /月</small>")}</div>
+      ${t.feats.map(f => `<li class="${t.id<=U.tier?'y':''}">· ${f}</li>`).join("")}
+      ${U.tier===t.id
+        ? '<button class="b ghost" disabled>当前等级</button>'
+        : t.id<U.tier
+          ? '<button class="b ghost" onclick="setTier('+t.id+')">切换</button>'
+          : '<button class="b" onclick="setTier('+t.id+')">升级</button>'}
+    </div>`).join("");
+}
+function setTier(i){
+  U.tier = i; save(); refreshTier();
+  toast(i > 0 ? `🎉 已升级为 ${TIERS[i].n}（演示环境 · 模拟支付成功）` : "已切换为免费学徒");
+}
+
+/* 封面电路动画 */
+const cv = $("circ"), cx = cv.getContext("2d");
+function csize(){ const r = cv.parentElement.getBoundingClientRect();
+  cv.width = r.width*devicePixelRatio; cv.height = r.height*devicePixelRatio; }
+addEventListener("resize", csize); csize();
+const G = 46*devicePixelRatio;
+const traces = Array.from({length:16}, () => ({
+  x: Math.random(), y: Math.random(), max: (4+Math.random()*7)|0,
+  pts: [], dir: (Math.random()*4)|0, speed: .4+Math.random()*.8, t: Math.random()*26}));
+function stepTr(tr, W, H){
+  if (!tr.pts.length) tr.pts = [[tr.x*W, tr.y*H]];
+  const [lx, ly] = tr.pts[tr.pts.length-1];
+  const d = [[G,0],[-G,0],[0,G],[0,-G]][tr.dir];
+  tr.pts.push([lx+d[0], ly+d[1]]);
+  if (Math.random() < .6) tr.dir = (tr.dir + (Math.random()<.5?1:3)) % 4;
+  if (tr.pts.length > tr.max){ tr.pts = []; tr.x = Math.random(); tr.y = Math.random(); }
+}
+function cdraw(){
+  const W = cv.width, H = cv.height;
+  const th = document.documentElement.dataset.theme;
+  cx.fillStyle = "rgba(4,8,12,.16)"; cx.fillRect(0,0,W,H);
+  cx.strokeStyle = th==="mono" ? "rgba(255,255,255,.5)"
+    : th==="cyber" ? "rgba(255,46,196,.6)" : "rgba(76,197,192,.55)";
+  cx.lineWidth = 1.6*devicePixelRatio;
+  for (const tr of traces){
+    tr.t += tr.speed;
+    if (tr.t > 26){ tr.t = 0; stepTr(tr, W, H); }
+    if (tr.pts.length > 1){
+      cx.beginPath(); cx.moveTo(tr.pts[0][0], tr.pts[0][1]);
+      tr.pts.slice(1).forEach(p => cx.lineTo(p[0], p[1])); cx.stroke();
+      const e = tr.pts[tr.pts.length-1];
+      cx.fillStyle = cx.strokeStyle;
+      cx.beginPath(); cx.arc(e[0], e[1], 3*devicePixelRatio, 0, 7); cx.fill();
+    }
+  }
+  requestAnimationFrame(cdraw);
+}
+requestAnimationFrame(cdraw);
+
+/* 启动 */
+if (U && U.email) enter();
 </script>
 </body>
 </html>
