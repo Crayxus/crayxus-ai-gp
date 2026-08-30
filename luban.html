@@ -1,0 +1,152 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>鲁班AI · 会造东西的 AI</title>
+<meta name="description" content="鲁班AI：从一句话到一台样机。拆解、代码、配件、整机，四步把想法变成产品。">
+<style>
+:root{
+  --bg:#0A0F16; --bg2:#0D141D; --card:#101822; --line:#1C2733;
+  --txt:#EDF2F0; --dim:#8A99A3; --mute:#5A6A74;
+  --cyan:#4CC5C0; --ink:#C8371E; --amber:#F5A623}
+*{box-sizing:border-box;margin:0;padding:0;overflow-wrap:break-word;min-width:0}
+body{background:var(--bg);color:var(--txt);line-height:1.8;font-size:16px;overflow-x:hidden;
+  font-family:"Source Han Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:980px;margin:0 auto;padding:0 22px}
+nav{position:sticky;top:0;z-index:50;background:rgba(10,15,22,.86);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;height:58px;gap:18px}
+.logo{font-weight:900;font-size:18px}
+.logo b{color:var(--ink)}
+nav .r{margin-left:auto;display:flex;gap:18px}
+nav a.cta{color:var(--cyan);font-weight:700}
+nav a{color:var(--dim);font-size:14px}
+nav a:hover{color:var(--cyan)}
+
+header{padding:78px 0 56px;text-align:left}
+.eyebrow{font-size:12px;letter-spacing:.34em;color:var(--cyan);font-weight:700}
+h1{font-size:clamp(34px,7.4vw,58px);font-weight:900;line-height:1.25;margin:16px 0 14px;text-wrap:balance}
+h1 i{font-style:normal;color:var(--ink)}
+.sub{font-size:clamp(15px,3.4vw,18px);color:var(--dim);max-width:620px}
+.sub b{color:var(--txt)}
+
+section{padding:54px 0}
+h2{font-size:clamp(22px,4.6vw,32px);font-weight:900;margin-bottom:8px}
+h2 i{font-style:normal;color:var(--cyan)}
+.lede{color:var(--dim);font-size:14.5px;max-width:60ch;margin-bottom:30px}
+
+/* 它是什么 */
+.what{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.w{border:1px solid var(--line);border-radius:14px;background:var(--card);padding:20px 20px}
+.w b{display:block;font-size:16px;margin-bottom:6px}
+.w p{font-size:13.5px;color:var(--dim)}
+.w .n{font-family:Consolas,monospace;color:var(--ink);font-size:12px;letter-spacing:.2em}
+
+/* 四步 */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;counter-reset:s}
+.step{position:relative;border:1px solid var(--line);border-radius:16px;background:var(--card);
+  padding:24px 20px 20px;overflow:hidden}
+.step::before{counter-increment:s;content:"0" counter(s);position:absolute;right:14px;top:8px;
+  font-family:Consolas,monospace;font-size:44px;font-weight:800;color:rgba(76,197,192,.12)}
+.step .ic{font-size:26px}
+.step b{display:block;font-size:17px;margin:10px 0 6px}
+.step p{font-size:13.5px;color:var(--dim)}
+.step small{display:block;margin-top:12px;font-size:12px;color:var(--cyan)}
+.arrowline{display:none}
+
+/* 帮助谁 */
+.who{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:700px){.who{grid-template-columns:1fr}}
+.u{border:1px solid var(--line);border-left:3px solid var(--ink);border-radius:12px;
+  background:var(--card);padding:18px 20px}
+.u b{font-size:15.5px}
+.u p{font-size:13.5px;color:var(--dim);margin-top:4px}
+.u span{display:inline-block;margin-top:10px;font-size:12px;color:var(--amber)}
+
+/* CTA */
+.final{margin:30px 0 80px;border:1.5px solid var(--cyan);border-radius:18px;
+  background:linear-gradient(180deg,rgba(76,197,192,.07),transparent);padding:38px 26px;text-align:center}
+.final h2{margin-bottom:6px}
+.final p{color:var(--dim);font-size:14px;margin-bottom:22px}
+.btn{display:inline-block;background:var(--ink);color:#fff;font-weight:800;font-size:16px;
+  border-radius:12px;padding:14px 36px}
+.btn:hover{filter:brightness(1.12)}
+
+footer{padding:36px 0 60px;font-size:13px;color:var(--mute);border-top:1px solid var(--line)}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+</style></head><body>
+
+<nav><div class="wrap">
+  <a class="logo" href="index.html">鲁班<b>AI</b></a>
+  <div class="r"><a href="index.html#kings">四大金刚</a><a class="cta" href="index.html#vibe">现场试驾 →</a></div>
+</div></nav>
+
+<header><div class="wrap">
+  <div class="eyebrow">LUBAN · AI 硬件工程系统</div>
+  <h1>说出你想造的东西，<br>剩下的交给<i>鲁班</i>。</h1>
+  <p class="sub">软件的 AI 帮你写代码，<b>鲁班 AI 帮你造实物</b>。
+    从一句话的想法，到拿在手里的样机——拆解、代码、配件、整机，一条流水线走完。</p>
+</div></header>
+
+<section><div class="wrap">
+  <h2>它是<i>什么</i></h2>
+  <p class="lede">一个懂硬件的 AI 工程师，装在网页里。它读过真实的器件库和供应链价格，说的每一个元件都买得到。</p>
+  <div class="what">
+    <div class="w"><span class="n">REAL PARTS</span><b>真器件，不是概念图</b>
+      <p>拆解结果里的主控、传感器、电源，全部是市面在售的真实型号，标着真实的价格。</p></div>
+    <div class="w"><span class="n">REAL COST</span><b>真成本，当场见底</b>
+      <p>BOM 成本、开发周期当场算清——立项之前，你就知道这东西值不值得做。</p></div>
+    <div class="w"><span class="n">REAL SPEED</span><b>真速度，秒级出图</b>
+      <p>输入一句话，几十秒内给出模块拆解、接线关系与完整清单。改需求，重来一次就是。</p></div>
+  </div>
+</div></section>
+
+<section style="background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)"><div class="wrap">
+  <h2>四步，从想法到<i>样机</i></h2>
+  <p class="lede">每一步都可以单独停下——只想看看方案，或者一路走到拿货，你说了算。</p>
+  <div class="steps">
+    <div class="step"><span class="ic">🧩</span><b>拆解</b>
+      <p>说出你想做的产品，鲁班当场生成《产品配件拆解图》：模块划分、器件选型、接线关系、BOM 成本、开发周期。</p>
+      <small>免费体验 · 主页即拆</small></div>
+    <div class="step"><span class="ic">💻</span><b>代码包</b>
+      <p>拆解方案对应的固件与驱动代码直接打包下载，烧录即跑——不用从零写一行底层。</p>
+      <small>拿到方案的骨与肉</small></div>
+    <div class="step"><span class="ic">📦</span><b>配件直达</b>
+      <p>BOM 清单一键下单，所有器件按拆解型号配齐寄到手——不用再逐个搜淘宝、怕买错型号。</p>
+      <small>零件到家，照图组装</small></div>
+    <div class="step"><span class="ic">🏭</span><b>整机代工</b>
+      <p>不想自己焊？把方案交给鲁班的代工线，贴片、组装、测试完成后，直接收到能开机的整机。</p>
+      <small>一句话，变一台机器</small></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <h2>它帮<i>谁</i></h2>
+  <p class="lede">所有"想造东西但被硬件门槛拦住"的人。</p>
+  <div class="who">
+    <div class="u"><b>🎓 学生与创客</b>
+      <p>毕设、比赛、周末项目——从选型到代码一步到位，把时间花在创意上，不是翻数据手册上。</p>
+      <span>最常拆：智能小车 · 环境监测 · 可穿戴</span></div>
+    <div class="u"><b>🚀 创业者</b>
+      <p>投资人面前需要一台真样机，不是一页 PPT。两周出 demo，成本当场算清，融资底气完全不同。</p>
+      <span>最常拆：消费电子 · 智能家居原型</span></div>
+    <div class="u"><b>🏭 中小工厂主</b>
+      <p>传统产品想加一点"智能"卖出溢价，又养不起研发团队——鲁班就是你租来的整套研发部。</p>
+      <span>最常拆：产品智能化改造 · 数字化配件</span></div>
+    <div class="u"><b>🏫 培训与孵化机构</b>
+      <p>让学员的创业想法当堂变成可演示的硬件方案，课程与孵化项目的交付质量直接上一个台阶。</p>
+      <span>最常拆：学员项目原型 · 教具设备</span></div>
+  </div>
+</div></section>
+
+<div class="wrap"><div class="final">
+  <h2>现在就<i>拆一个</i></h2>
+  <p>免费 · 无需注册 · 几十秒出结果</p>
+  <a class="btn" href="index.html#vibe">回主页 · 现场试驾 →</a>
+</div></div>
+
+<footer><div class="wrap">
+  <span>鲁班AI · LUBAN AI · 会造东西的 AI</span>
+  <span>crayxus.com.au</span>
+</div></footer>
+
+</body></html>
