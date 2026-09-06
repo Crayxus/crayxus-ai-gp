@@ -688,6 +688,32 @@ function fmtTok(n){
   if(n>=1e3) return (n/1e3).toFixed(1)+'k';
   return String(n);
 }
+/* 「剩余」专用：额度大、消耗小的时候，两位小数会把 4,995,730 舍成 5.00M，
+   看起来像一点没扣。这里保留到能看出变化的那一位。 */
+function fmtLeft(n, quota){
+  n = Math.round(n);
+  if(n < 1e6) return fmtTok(n);
+  const used = quota - n;
+  const digits = used <= 0 ? 2 : Math.min(4, Math.max(2, Math.ceil(-Math.log10(used/quota))));
+  return (n/1e6).toFixed(digits) + 'M';
+}
+/* 费用：从几厘到几百块跨了五个数量级，固定两位小数两头都不好看 */
+function fmtYuan(v){
+  if(v >= 100)  return '¥' + v.toFixed(0);
+  if(v >= 10)   return '¥' + v.toFixed(1);
+  if(v >= 1)    return '¥' + v.toFixed(2);
+  if(v >= 0.01)  return '¥' + v.toFixed(3);
+  if(v >= 0.001) return '¥' + v.toFixed(4);
+  if(v > 0)      return '<¥0.001';
+  return '¥0';
+}
+function fmtPct(p){
+  if(p <= 0) return '0%';
+  if(p < 0.01) return '<0.01%';
+  if(p < 1)  return p.toFixed(2) + '%';
+  if(p < 10) return p.toFixed(1) + '%';
+  return Math.round(p) + '%';
+}
 const sleep = ms => new Promise(r=>setTimeout(r,ms));
 
 /* ============ 状态 ============ */
@@ -754,7 +780,7 @@ function recalc(){
   const lo = Math.round(e.total*0.65), hi = Math.round(e.total*1.35);
   $('estTok').innerHTML = `${fmtTok(lo)} – ${fmtTok(hi)} <small>tokens</small>`;
   $('estTurns').textContent = `${e.turns[0]}–${e.turns[1]} 轮`;
-  $('estCost').textContent  = `¥${e.cost.toFixed(3)}`;
+  $('estCost').textContent  = fmtYuan(e.cost);
   $('estLvl').textContent   = e.lvl;
   $('estBar').style.width   = Math.min(100, e.total/120000*100) + '%';
 }
@@ -764,21 +790,27 @@ $('task').addEventListener('input', recalc);
 function renderUsage(){
   const tot = usage.hit + usage.miss + usage.out;
   const pct = Math.min(100, tot/usage.quota*100);
-  $('ringArc').style.strokeDashoffset = 238.8*(1-pct/100);
-  $('ringPct').textContent = pct.toFixed(1)+'%';
+  // 用量极少时环画不出来，给一点最小可见弧度；数字仍显示真实值
+  const arcPct = pct > 0 ? Math.max(pct, 1.2) : 0;
+  $('ringArc').style.strokeDashoffset = 238.8*(1-arcPct/100);
+  $('ringPct').textContent = fmtPct(pct);
   $('uUsed').textContent  = fmtTok(tot);
   $('uQuota').textContent = fmtTok(usage.quota);
-  $('uLeft').textContent  = fmtTok(Math.max(0,usage.quota-tot));
+  $('uLeft').textContent  = fmtLeft(Math.max(0,usage.quota-tot), usage.quota);
   $('uHit').textContent   = fmtTok(usage.hit);
   $('uMiss').textContent  = fmtTok(usage.miss);
   $('uOut').textContent   = fmtTok(usage.out);
   const cost = usage.hit/1e6*PRICE.hit + usage.miss/1e6*PRICE.miss + usage.out/1e6*PRICE.out;
-  $('uCost').textContent  = '¥'+cost.toFixed(2);
+  $('uCost').textContent  = fmtYuan(cost);
   $('uCalls').textContent = usage.calls.length+' 次';
-  const mx = Math.max(1, ...usage.calls);
+  // 火花图的基准不能只看自己：只有一次调用时 max 就是它本身，会顶满整格，
+  // 看起来像"爆了"。给一个 30k 的参考基线，单次小调用就只占一小截。
+  const mx = Math.max(30000, ...usage.calls);
   const bars = usage.calls.slice(-12);
   while(bars.length<12) bars.unshift(0);
-  $('spark').innerHTML = bars.map(v=>`<i style="height:${Math.max(3,v/mx*100)}%"></i>`).join('');
+  $('spark').innerHTML = bars.map(v=>
+    `<i style="height:${v>0?Math.max(6,Math.min(100,v/mx*100)):2}%;${v>0?'':'opacity:.35'}"></i>`
+  ).join('');
 }
 
 /* ============ 终端 ============ */
@@ -871,7 +903,7 @@ async function demoRun(task){
   }
   await sleep(400);
   tline('');
-  tline(`<span class="t-ok">✓ 完成</span>  <span class="t-dim">本次消耗</span> <span class="t-acc">${fmtTok(acc)}</span> <span class="t-dim">tokens · ¥${(acc/1e6*4.2).toFixed(3)}</span>`);
+  tline(`<span class="t-ok">✓ 完成</span>  <span class="t-dim">本次消耗</span> <span class="t-acc">${fmtTok(acc)}</span> <span class="t-dim">tokens · ${fmtYuan(acc/1e6*4.2)}</span>`);
   tline('');
   const c = tline(`<span class="t-dim">PS C:\\Users\\Jayzee&gt;</span> <span class="cursor"></span>`);
   term.scrollTop = term.scrollHeight;
