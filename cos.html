@@ -316,11 +316,14 @@ aside{display:flex;flex-direction:column;gap:16px;position:sticky;top:78px}
 .panel h3 em{font-style:normal;font-size:10px;color:var(--dim2);font-family:var(--mono)}
 
 .ring-wrap{display:flex;align-items:center;gap:16px;margin-bottom:15px}
-.ring{position:relative;width:88px;height:88px;flex:0 0 88px}
-.ring svg{transform:rotate(-90deg)}
-.ring-txt{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
-.ring-txt b{font-family:var(--mono);font-size:19px;display:block;line-height:1.1}
-.ring-txt span{font-size:9.5px;color:var(--dim2);letter-spacing:.6px}
+.ring{position:relative;width:96px;height:96px;flex:0 0 96px}
+.ring svg{transform:rotate(-90deg);display:block}
+.ring-txt{position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;line-height:1}
+.ring-txt b{font-family:var(--mono);font-size:16px;font-weight:600;letter-spacing:-.3px}
+.ring-txt u{font-family:var(--mono);font-size:11.5px;color:var(--acc);
+  text-decoration:none;margin-top:3px}
+.ring-txt span{font-size:8.5px;color:var(--dim2);letter-spacing:.7px;margin-top:5px}
 .ring-side{flex:1;font-size:11.5px;line-height:2}
 .ring-side div{display:flex;justify-content:space-between;gap:10px}
 .ring-side span{color:var(--dim2)}
@@ -449,21 +452,38 @@ footer a:hover{color:var(--acc)}
         <h3>Token 用量 <em id="usageSrc">本地</em></h3>
         <div class="ring-wrap">
           <div class="ring">
-            <svg width="88" height="88">
-              <circle cx="44" cy="44" r="38" fill="none" stroke="#1a2540" stroke-width="7"/>
-              <circle id="ringArc" cx="44" cy="44" r="38" fill="none" stroke="url(#gr)" stroke-width="7"
-                      stroke-linecap="round" stroke-dasharray="238.8" stroke-dashoffset="238.8"
+            <svg width="96" height="96" viewBox="0 0 96 96">
+              <defs>
+                <linearGradient id="gr" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#37e6c8"/><stop offset="100%" stop-color="#5b8cff"/>
+                </linearGradient>
+                <filter id="dotGlow" x="-160%" y="-160%" width="420%" height="420%">
+                  <feGaussianBlur stdDeviation="2.6" result="b"/>
+                  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+              </defs>
+              <!-- 轨道 + 起跑线刻度：弧再短也有参照，不会显得空 -->
+              <circle cx="48" cy="48" r="40" fill="none" stroke="#141d33" stroke-width="8"/>
+              <circle cx="48" cy="48" r="40" fill="none" stroke="#1d2843" stroke-width="8"
+                      stroke-dasharray="1.4 12.1" opacity=".85"/>
+              <circle id="ringArc" cx="48" cy="48" r="40" fill="none" stroke="url(#gr)" stroke-width="8"
+                      stroke-linecap="round" stroke-dasharray="251.3" stroke-dashoffset="251.3"
                       style="transition:stroke-dashoffset .9s cubic-bezier(.4,0,.2,1)"/>
-              <defs><linearGradient id="gr" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#37e6c8"/><stop offset="100%" stop-color="#5b8cff"/>
-              </linearGradient></defs>
+              <!-- 进度端点的亮头，像仪表盘指针 -->
+              <circle id="ringDot" cx="88" cy="48" r="3.4" fill="#5b8cff"
+                      filter="url(#dotGlow)" opacity="0"
+                      style="transition:all .9s cubic-bezier(.4,0,.2,1)"/>
             </svg>
-            <div class="ring-txt"><b id="ringPct">0%</b><span>本月额度</span></div>
+            <div class="ring-txt">
+              <b id="ringUsed">0</b>
+              <u id="ringPct">0%</u>
+              <span>本月已用</span>
+            </div>
           </div>
           <div class="ring-side">
-            <div><span>已用</span><b id="uUsed">0</b></div>
             <div><span>额度</span><b id="uQuota">5.0M</b></div>
             <div><span>剩余</span><b id="uLeft">5.0M</b></div>
+            <div><span>调用</span><b id="uUsed">0 次</b></div>
           </div>
         </div>
         <div class="brk">
@@ -473,7 +493,7 @@ footer a:hover{color:var(--acc)}
           <div class="row big"><span>累计费用</span><b id="uCost">¥0.00</b></div>
         </div>
         <div class="brk">
-          <div class="row" style="padding-bottom:2px"><span>近 12 次调用</span><b id="uCalls">0 次</b></div>
+          <div class="row" style="padding-bottom:2px"><span>平均每次</span><b id="uCalls">—</b></div>
           <div class="spark" id="spark"></div>
         </div>
       </div>
@@ -790,11 +810,24 @@ $('task').addEventListener('input', recalc);
 function renderUsage(){
   const tot = usage.hit + usage.miss + usage.out;
   const pct = Math.min(100, tot/usage.quota*100);
-  // 用量极少时环画不出来，给一点最小可见弧度；数字仍显示真实值
-  const arcPct = pct > 0 ? Math.max(pct, 1.2) : 0;
-  $('ringArc').style.strokeDashoffset = 238.8*(1-arcPct/100);
+  // 弧长要大于线宽，否则圆头线帽会把它压成一个孤零零的圆点。
+  // 周长 251.3、线宽 8 ⇒ 至少 3.5% 才是一段像样的弧。数字仍显示真实值。
+  const C = 251.3;
+  const arcPct = pct > 0 ? Math.max(pct, 3.5) : 0;
+  $('ringArc').style.strokeDashoffset = C*(1-arcPct/100);
+  // 进度端点的亮头：像仪表盘指针，弧再短也有个明确的"当前位置"
+  const dot = $('ringDot');
+  if(dot){
+    const th = arcPct/100 * Math.PI*2;
+    dot.setAttribute('cx', (48 + 40*Math.cos(th)).toFixed(2));
+    dot.setAttribute('cy', (48 + 40*Math.sin(th)).toFixed(2));
+    dot.style.opacity = pct > 0 ? 1 : 0;
+    dot.setAttribute('fill', pct >= 90 ? '#ff6b6b' : pct >= 70 ? '#ffd166' : '#5b8cff');
+  }
   $('ringPct').textContent = fmtPct(pct);
-  $('uUsed').textContent  = fmtTok(tot);
+  const ru = $('ringUsed');
+  if(ru) ru.textContent = fmtTok(tot);
+  $('uUsed').textContent  = usage.calls.length + ' 次';
   $('uQuota').textContent = fmtTok(usage.quota);
   $('uLeft').textContent  = fmtLeft(Math.max(0,usage.quota-tot), usage.quota);
   $('uHit').textContent   = fmtTok(usage.hit);
@@ -802,7 +835,7 @@ function renderUsage(){
   $('uOut').textContent   = fmtTok(usage.out);
   const cost = usage.hit/1e6*PRICE.hit + usage.miss/1e6*PRICE.miss + usage.out/1e6*PRICE.out;
   $('uCost').textContent  = fmtYuan(cost);
-  $('uCalls').textContent = usage.calls.length+' 次';
+  $('uCalls').textContent = usage.calls.length ? fmtTok(tot/usage.calls.length) : '—';
   // 火花图的基准不能只看自己：只有一次调用时 max 就是它本身，会顶满整格，
   // 看起来像"爆了"。给一个 30k 的参考基线，单次小调用就只占一小截。
   const mx = Math.max(30000, ...usage.calls);
