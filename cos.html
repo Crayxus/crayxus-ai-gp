@@ -348,6 +348,11 @@ footer{padding:18px 22px;border-top:1px solid var(--line);font-size:11px;color:v
 footer a{color:var(--dim);text-decoration:none}
 footer a:hover{color:var(--acc)}
 </style>
+<style>
+.plat-grp{grid-column:1/-1;margin:14px 0 2px;font-size:12.5px;letter-spacing:.12em;color:#8a99a3;display:flex;align-items:center;gap:10px}
+.plat-grp em{font-style:normal;font-family:Consolas,monospace;font-size:11px;color:#37e6c8;border:1px solid rgba(55,230,200,.35);border-radius:6px;padding:1px 7px}
+.plat-grp::after{content:"";flex:1;height:1px;background:rgba(138,153,163,.18)}
+</style>
 </head>
 <body>
 
@@ -366,7 +371,7 @@ footer a:hover{color:var(--acc)}
       <h1>一个大脑<br><b>N 个身体</b></h1>
       <p>同一套业务代码，换一块板不用重写。COS 把引脚、波特率、烧录命令这些平台差异关进驱动层，上面留给你写机器人本身。</p>
       <div class="hero-tags">
-        <i>ESP32-S3</i><i>STM32</i><i>树莓派</i><i>瑞芯微</i><i>RDK X5</i><i>Jetson</i>
+        <i>ESP32-S3</i><i>STM32</i><i>Arduino</i><i>Pico 2</i><i>XIAO</i><i>micro:bit</i><i>nRF52</i><i>Teensy</i><i>GD32</i><i>CH32V</i><i>OpenMV</i><i>K230</i><i>树莓派</i><i>瑞芯微</i><i>RDK X5</i><i>RDK S100</i><i>Jetson</i><i>UNO Q</i><i>香橙派</i><i>Radxa</i><i>Luckfox</i><i>Milk-V</i><i>BeagleBone</i><i>Coral</i><i>x86 工控机</i>
       </div>
     </div>
   </div>
@@ -651,6 +656,182 @@ const PLATFORMS = [
       {x:32,y:8,z:25,w:3,d:3,h:5,c:'#ffd166'},
       {x:0,y:8,z:20,w:4,d:6,h:3,c:'#2aa87a'},
     ]},
+  /* ── 单片机 · 串口 ── */
+  { id:'arduino', nm:'Arduino UNO / Mega', ch:'ATmega · 8-bit · 5V', via:'ser',
+    rt:'COS-MCU (裸机)', w:1.20, tool:'arduino-cli',
+    role:'教学小车', tint:'rgba(42,155,214,.24)',
+    model:[
+      {x:2,y:3,z:0,w:34,d:18,h:3,c:'#2a9bd6'},
+      {x:14,y:8,z:3,w:10,d:8,h:3,c:C.dark},
+      {x:0,y:5,z:3,w:5,d:6,h:4,c:C.metal},
+      {x:8,y:2,z:3,w:24,d:2,h:2,c:C.dark},{x:8,y:19,z:3,w:24,d:2,h:2,c:C.dark},
+      {x:30,y:10,z:3,w:2,d:2,h:2,c:'#ffd166'},
+    ]},
+  { id:'pico', nm:'树莓派 Pico 2', ch:'RP2350 · 双核 M33', via:'ser',
+    rt:'COS-MCU (MicroPython/C)', w:1.20, tool:'picotool',
+    role:'传感器节点', tint:'rgba(47,158,68,.24)',
+    model:[
+      {x:6,y:8,z:0,w:28,d:10,h:3,c:'#2f9e44'},
+      {x:16,y:11,z:3,w:8,d:5,h:2,c:C.dark},
+      {x:4,y:10,z:3,w:4,d:6,h:3,c:C.metal},
+      {x:8,y:7,z:3,w:24,d:1,h:2,c:'#ffd166'},{x:8,y:18,z:3,w:24,d:1,h:2,c:'#ffd166'},
+    ]},
+  { id:'xiao', nm:'Seeed XIAO', ch:'ESP32-S3 / nRF52 · 拇指板', via:'ser',
+    rt:'COS-MCU (FreeRTOS)', w:1.30, tool:'arduino-cli / esptool',
+    role:'智能餐叉 · AI 笔', tint:'rgba(30,111,92,.26)',
+    model:[
+      {x:0,y:19,z:0,w:38,d:3,h:3,c:'#f0f0f0'},{x:38,y:19,z:0,w:3,d:3,h:3,c:C.dark},
+      {x:12,y:6,z:0,w:14,d:10,h:3,c:'#1e6f5c'},
+      {x:10,y:9,z:3,w:3,d:4,h:2,c:C.metal},
+      {x:16,y:8,z:3,w:7,d:6,h:3,c:C.metal},
+    ]},
+  { id:'microbit', nm:'micro:bit V2', ch:'nRF52833 · BLE · 5×5 LED', via:'ser',
+    rt:'COS-MCU (MicroPython)', w:1.10, tool:'uflash',
+    role:'少儿编程 · AI 夏令营', tint:'rgba(230,57,70,.24)',
+    model:[
+      {x:6,y:4,z:0,w:26,d:20,h:3,c:'#e63946'},
+      {x:13,y:8,z:3,w:12,d:12,h:2,c:C.dark},
+      {x:15,y:10,z:5,w:2,d:2,h:1,c:'#ffd166'},{x:19,y:14,z:5,w:2,d:2,h:1,c:'#ffd166'},{x:23,y:10,z:5,w:2,d:2,h:1,c:'#ffd166'},
+      {x:8,y:12,z:3,w:3,d:3,h:2,c:C.metal},{x:27,y:12,z:3,w:3,d:3,h:2,c:C.metal},
+    ]},
+  { id:'nrf52', nm:'Nordic nRF52840', ch:'Cortex-M4 · BLE 5 · 低功耗', via:'ser',
+    rt:'COS-MCU (Zephyr)', w:1.35, tool:'nrfjprog / west',
+    role:'穿戴 · 低功耗节点', tint:'rgba(15,95,168,.24)',
+    model:[
+      {x:8,y:9,z:0,w:24,d:8,h:3,c:'#0f5fa8'},
+      {x:30,y:11,z:3,w:6,d:4,h:2,c:C.white},
+      {x:14,y:11,z:3,w:8,d:4,h:2,c:C.dark},
+      {x:6,y:11,z:3,w:3,d:4,h:2,c:C.metal},
+    ]},
+  { id:'teensy', nm:'Teensy 4.1', ch:'Cortex-M7 · 600 MHz', via:'ser',
+    rt:'COS-MCU (裸机)', w:1.30, tool:'teensy_loader_cli',
+    role:'高速电机 · 音频', tint:'rgba(43,45,66,.30)',
+    model:[
+      {x:4,y:9,z:0,w:32,d:8,h:3,c:'#2b2d42'},
+      {x:16,y:11,z:3,w:8,d:4,h:2,c:C.metal},
+      {x:30,y:10,z:3,w:5,d:6,h:2,c:C.dark},
+      {x:5,y:8,z:3,w:30,d:1,h:2,c:'#ffd166'},{x:5,y:17,z:3,w:30,d:1,h:2,c:'#ffd166'},
+    ]},
+  { id:'gd32', nm:'兆易 GD32', ch:'Cortex-M · 引脚兼容 STM32', via:'ser',
+    rt:'COS-MCU (裸机/HAL)', w:1.40, tool:'OpenOCD / GD-Link',
+    role:'国产替代 STM32', tint:'rgba(38,70,83,.30)',
+    model:[
+      {x:6,y:6,z:0,w:26,d:16,h:3,c:'#264653'},
+      {x:14,y:10,z:3,w:10,d:8,h:3,c:C.dark},
+      {x:7,y:5,z:3,w:24,d:1,h:2,c:'#ffd166'},{x:7,y:22,z:3,w:24,d:1,h:2,c:'#ffd166'},
+      {x:3,y:11,z:3,w:3,d:6,h:3,c:C.metal},
+    ]},
+  { id:'ch32', nm:'沁恒 CH32V', ch:'RISC-V MCU · 元级', via:'ser',
+    rt:'COS-MCU (裸机)', w:1.40, tool:'wchisp / wlink',
+    role:'百元级国产控制板', tint:'rgba(29,53,87,.30)',
+    model:[
+      {x:8,y:8,z:0,w:22,d:12,h:3,c:'#1d3557'},
+      {x:15,y:11,z:3,w:8,d:6,h:2,c:C.dark},
+      {x:9,y:7,z:3,w:20,d:1,h:2,c:'#ffd166'},{x:9,y:20,z:3,w:20,d:1,h:2,c:'#ffd166'},
+      {x:5,y:12,z:3,w:3,d:4,h:2,c:C.metal},
+    ]},
+  { id:'openmv', nm:'OpenMV Cam', ch:'STM32H7 · MicroPython 视觉', via:'ser',
+    rt:'COS-MCU (MicroPython)', w:1.25, tool:'openmv-ide / dfu',
+    role:'视觉小模块', tint:'rgba(20,20,20,.34)',
+    model:[
+      {x:10,y:6,z:0,w:18,d:16,h:3,c:'#111'},
+      {x:15,y:10,z:3,w:8,d:8,h:6,c:C.metal},
+      {x:17,y:12,z:9,w:4,d:4,h:2,c:'#5b8cff'},
+      {x:8,y:12,z:3,w:3,d:4,h:2,c:C.metal},
+    ]},
+  { id:'k230', nm:'嘉楠 K230 (CanMV)', ch:'RISC-V · 6 TOPS NPU', via:'ser',
+    rt:'COS-MCU + NPU (RT-Smart)', w:1.35, tool:'CanMV IDE / burn tool',
+    role:'国产视觉识别', tint:'rgba(138,79,216,.26)',
+    model:[
+      {x:6,y:5,z:0,w:26,d:18,h:3,c:'#8a4fd8'},
+      {x:14,y:9,z:3,w:10,d:10,h:4,c:C.dark},
+      {x:2,y:9,z:3,w:5,d:8,h:6,c:C.metal},{x:3,y:11,z:9,w:3,d:4,h:1,c:'#5b8cff'},
+      {x:32,y:9,z:3,w:3,d:6,h:4,c:C.metal},
+    ]},
+
+  /* ── Linux 板 · SSH ── */
+  { id:'unoq', nm:'Arduino UNO Q', ch:'Dragonwing + STM32 · 混合', via:'ssh',
+    rt:'COS Runtime + COS-MCU', w:1.20, tool:'ssh + arduino-cli',
+    role:'混合板 · 边缘 AI', tint:'rgba(42,155,214,.24)',
+    model:[
+      {x:2,y:3,z:0,w:34,d:18,h:3,c:'#2a9bd6'},
+      {x:11,y:7,z:3,w:12,d:11,h:5,c:'#3a3a3a'},
+      {x:26,y:7,z:3,w:6,d:6,h:3,c:C.dark},
+      {x:0,y:5,z:3,w:5,d:6,h:4,c:C.metal},
+      {x:8,y:20,z:3,w:24,d:2,h:2,c:C.dark},
+      {x:13,y:9,z:8,w:8,d:7,h:1,c:'#37e6c8'},
+    ]},
+  { id:'rdks', nm:'地瓜派 RDK S100', ch:'Sunrise · 80 TOPS', via:'ssh',
+    rt:'COS Runtime + BPU', w:1.15, tool:'ssh + hbdk',
+    role:'人形 · 四足大脑', tint:'rgba(55,230,200,.24)',
+    model:[
+      {x:2,y:2,z:0,w:34,d:20,h:5,c:'#37e6c8'},
+      {x:8,y:5,z:5,w:20,d:14,h:8,c:'#1f8f7d'},
+      {x:9,y:6,z:13,w:18,d:2,h:2,c:C.metal},{x:9,y:10,z:13,w:18,d:2,h:2,c:C.metal},{x:9,y:14,z:13,w:18,d:2,h:2,c:C.metal},
+      {x:31,y:6,z:5,w:4,d:12,h:5,c:'#ffd166'},
+    ]},
+  { id:'orangepi', nm:'香橙派', ch:'全志 / RK · 国产 SBC', via:'ssh',
+    rt:'COS Runtime', w:1.05, tool:'ssh + systemd',
+    role:'家用陪伴机器人', tint:'rgba(255,140,66,.24)',
+    model:[
+      {x:4,y:4,z:0,w:30,d:20,h:3,c:'#ff8c42'},
+      {x:13,y:9,z:3,w:10,d:10,h:4,c:C.dark},
+      {x:34,y:6,z:3,w:3,d:6,h:5,c:C.metal},{x:34,y:14,z:3,w:3,d:6,h:5,c:C.metal},
+      {x:5,y:8,z:3,w:4,d:12,h:2,c:'#ffd166'},
+    ]},
+  { id:'radxa', nm:'Radxa Rock 5', ch:'RK3588 · 6 TOPS', via:'ssh',
+    rt:'COS Runtime + NPU', w:1.10, tool:'ssh + rknn',
+    role:'高算力上位机', tint:'rgba(11,61,145,.26)',
+    model:[
+      {x:4,y:4,z:0,w:30,d:20,h:3,c:'#0b3d91'},
+      {x:13,y:9,z:3,w:10,d:10,h:4,c:C.dark},
+      {x:14,y:10,z:7,w:8,d:1,h:2,c:C.metal},{x:14,y:13,z:7,w:8,d:1,h:2,c:C.metal},{x:14,y:16,z:7,w:8,d:1,h:2,c:C.metal},
+      {x:34,y:8,z:3,w:3,d:8,h:5,c:C.metal},
+    ]},
+  { id:'luckfox', nm:'幸狐 Luckfox Pico', ch:'RV1106 · 0.5 TOPS · 百元 Linux', via:'ssh',
+    rt:'COS Runtime (轻量)', w:1.15, tool:'ssh / adb',
+    role:'微型视觉节点', tint:'rgba(58,125,68,.26)',
+    model:[
+      {x:12,y:9,z:0,w:16,d:9,h:3,c:'#3a7d44'},
+      {x:8,y:11,z:3,w:4,d:5,h:5,c:C.metal},{x:9,y:12,z:8,w:2,d:3,h:1,c:'#5b8cff'},
+      {x:18,y:12,z:3,w:6,d:4,h:2,c:C.dark},
+    ]},
+  { id:'milkv', nm:'Milk-V Duo', ch:'CV1800B · RISC-V Linux', via:'ssh',
+    rt:'COS Runtime (轻量)', w:1.20, tool:'ssh (USB-RNDIS)',
+    role:'微型 Linux 节点', tint:'rgba(233,196,106,.26)',
+    model:[
+      {x:12,y:9,z:0,w:16,d:8,h:3,c:'#e9c46a'},
+      {x:18,y:11,z:3,w:5,d:4,h:2,c:C.dark},
+      {x:10,y:11,z:3,w:3,d:4,h:2,c:C.metal},
+      {x:13,y:8,z:3,w:14,d:1,h:2,c:'#ffd166'},{x:13,y:17,z:3,w:14,d:1,h:2,c:'#ffd166'},
+    ]},
+  { id:'beaglebone', nm:'BeagleBone', ch:'AM335x + PRU · 工业', via:'ssh',
+    rt:'COS Runtime + PRU 实时', w:1.15, tool:'ssh',
+    role:'工业实时 IO', tint:'rgba(214,40,40,.24)',
+    model:[
+      {x:4,y:4,z:0,w:30,d:18,h:3,c:'#d62828'},
+      {x:14,y:9,z:3,w:9,d:9,h:4,c:C.dark},
+      {x:34,y:8,z:3,w:3,d:8,h:6,c:C.metal},
+      {x:5,y:3,z:3,w:28,d:1,h:2,c:C.dark},{x:5,y:22,z:3,w:28,d:1,h:2,c:C.dark},
+    ]},
+  { id:'coral', nm:'Google Coral', ch:'Edge TPU · 4 TOPS', via:'ssh',
+    rt:'COS Runtime + TPU', w:1.15, tool:'ssh + edgetpu',
+    role:'边缘视觉推理', tint:'rgba(244,162,97,.24)',
+    model:[
+      {x:4,y:4,z:0,w:30,d:20,h:3,c:'#f4a261'},
+      {x:14,y:9,z:3,w:10,d:10,h:3,c:C.white},
+      {x:16,y:11,z:6,w:6,d:6,h:1,c:'#37e6c8'},
+      {x:34,y:8,z:3,w:3,d:8,h:5,c:C.metal},
+    ]},
+  { id:'x86', nm:'x86 工控机', ch:'Intel N100 / i5 · NUC', via:'ssh',
+    rt:'COS Runtime (中控)', w:1.00, tool:'ssh + systemd / docker',
+    role:'中控 · 上位机', tint:'rgba(61,74,104,.30)',
+    model:[
+      {x:6,y:4,z:0,w:28,d:22,h:14,c:'#3d4a68'},
+      {x:6,y:4,z:14,w:28,d:22,h:2,c:C.metal},
+      {x:8,y:6,z:16,w:2,d:2,h:1,c:'#37e6c8'},
+      {x:34,y:8,z:3,w:2,d:5,h:4,c:C.dark},{x:34,y:15,z:3,w:2,d:5,h:4,c:C.dark},
+    ]},
 ];
 
 /* ============ 任务模板 ============ */
@@ -757,7 +938,10 @@ function enter(){
 
 /* ============ 渲染平台 ============ */
 function renderPlats(){
-  $('plats').innerHTML = PLATFORMS.map(p=>`
+  const GROUPS = [['单片机 · 串口烧录 · COS-MCU 微代理','ser'], ['Linux 板 · SSH 部署 · COS Runtime','ssh']];
+  $('plats').innerHTML = GROUPS.map(([title,via])=>
+    `<div class="plat-grp">${title} <em>${PLATFORMS.filter(p=>p.via===via).length} 块</em></div>` +
+    PLATFORMS.filter(p=>p.via===via).map(p=>`
     <button class="plat" data-id="${p.id}">
       <span class="via ${p.via}">${p.via==='ser'?'串口':'SSH'}</span>
       <div class="stage" style="--tint:${p.tint}">
@@ -767,7 +951,7 @@ function renderPlats(){
       <div class="nm">${p.nm}</div>
       <div class="ch">${p.ch}</div>
       <div class="role">${p.role}</div>
-    </button>`).join('');
+    </button>`).join('')).join('');
   $('plats').querySelectorAll('.plat').forEach(el=>{
     el.onclick = ()=>{
       $('plats').querySelectorAll('.plat').forEach(x=>x.classList.remove('sel'));
@@ -1088,10 +1272,12 @@ function renderHero(){
     {dx:0,   dy:0  }, {dx:74,  dy:0  }, {dx:0,   dy:74 },
     {dx:148, dy:44 }, {dx:44,  dy:148}, {dx:100, dy:100},
   ];
-  const BRAIN = {x:56, y:56, z:128, w:20, d:20, h:20, c:'#37e6c8'};
+  const _C = Math.ceil(Math.sqrt(PLATFORMS.length)), _R = Math.ceil(PLATFORMS.length/_C);
+  const BRAIN = {x:((_C-1)*74)/2+10, y:((_R-1)*74)/2+10, z:150, w:20, d:20, h:20, c:'#37e6c8'};
 
+  const COLS = Math.ceil(Math.sqrt(PLATFORMS.length)), GAP = 74;
   const units = PLATFORMS.map((p,i)=>{
-    const o = POS[i] || {dx:0,dy:0};
+    const o = {dx:(i%COLS)*GAP, dy:Math.floor(i/COLS)*GAP};
     let mx=1e9,my=1e9,Mx=-1e9,My=-1e9,Mz=-1e9;
     for(const b of p.model){
       mx=Math.min(mx,b.x); my=Math.min(my,b.y);
