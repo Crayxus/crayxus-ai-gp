@@ -125,14 +125,333 @@ def read():
                 { id:'d2', role:'关节控制',   plat:'stm32', conn:'串口 · COM60',     env:'C / HAL',  prog:'arm/main.c',     status:'已连接' } ],
       link:{ a:'视觉与规划', b:'关节控制', proto:'串口 230400', ver:'文本协议 v0.2' },
       modules:[ { nm:'六轴舵机', dev:'关节控制', st:'已配置' }, { nm:'USB 摄像头', dev:'视觉与规划', st:'已配置' } ],
-      wiring:[], chat:[], files:{ 'vision/main.py': `# 摄像头取流 → 颜色分割 → 目标位姿 → 下发关节角\n`, 'arm/main.c': `// 关节 PID + 串口文本协议\n` } },
+      wiring:[],
+      chat:[
+        { who:'me', t:'摄像头识别桌面上的红色和蓝色积木，机械臂按颜色分类抓取放到两个筐里。', ts:'今天 10:05' },
+        { who:'ai', plan:['视觉与规划：取流 → HSV 分色 → 像素坐标换算到臂坐标','关节控制：串口收目标角，六路舵机插补到位','联合测试：单色 5 次抓取成功率 ≥ 4/5 再开双色'],
+          applied:'机械臂颜色分拣', est:'整体任务预计约 18M 原始 Token' },
+      ],
+      files:{
+        'vision/main.py':
+`import cv2, json, time, serial
+import numpy as np
+from calib import pixel_to_arm
+
+# 颜色阈值(HSV)。红色跨 0/180 两段, 蓝色一段。现场光线变了先改这里, 别改算法。
+COLORS = {
+    "red":  [((0, 120, 80), (10, 255, 255)), ((170, 120, 80), (180, 255, 255))],
+    "blue": [((100, 120, 80), (125, 255, 255))],
+}
+BINS = {"red": (180, -120), "blue": (180, 120)}     # 两个筐在臂坐标系里的位置(mm)
+
+arm = serial.Serial("/dev/ttyUSB0", 230400, timeout=0.5)
+cap = cv2.VideoCapture(0)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640); cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+
+def send(cmd):
+    arm.write((cmd + "\\n").encode())
+    return arm.readline().decode().strip()          # 固件回 OK / BUSY / ERR
+
+def find(frame, color):
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    mask = None
+    for lo, hi in COLORS[color]:
+        m = cv2.inRange(hsv, np.array(lo), np.array(hi))
+        mask = m if mask is None else (mask | m)
+    cnts, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    cnts = [c for c in cnts if cv2.contourArea(c) > 600]
+    if not cnts:
+        return None
+    x, y, w, h = cv2.boundingRect(max(cnts, key=cv2.contourArea))
+    return (x + w / 2, y + h / 2)
+
+while True:
+    ok, frame = cap.read()
+    if not ok:
+        continue
+    for color in ("red", "blue"):
+        px = find(frame, color)
+        if not px:
+            continue
+        X, Y = pixel_to_arm(*px)
+        print(f"[{color}] px={px} → arm=({X:.0f},{Y:.0f})")
+        send(f"MOVE {X:.0f} {Y:.0f} 60")            # 先悬停在积木上方 60mm
+        send(f"MOVE {X:.0f} {Y:.0f} 12")
+        send("GRIP 1")
+        send(f"MOVE {X:.0f} {Y:.0f} 80")
+        bx, by = BINS[color]
+        send(f"MOVE {bx} {by} 80")
+        send("GRIP 0")
+        send("HOME")
+        time.sleep(0.5)
+        break                                       # 一次只处理一块, 抓完重新取流`,
+        'vision/calib.py':
+`import json, numpy as np, cv2
+
+# 四个标定点: 桌面上贴四个 ArUco/十字标记, 分别量出它们在臂坐标系的 mm 位置
+# 然后在画面里点出对应像素, 存进 calib.json。之后 pixel_to_arm 就是一个单应变换。
+try:
+    C = json.load(open("calib.json"))
+    H = cv2.findHomography(np.float32(C["pixels"]), np.float32(C["arm_mm"]))[0]
+except FileNotFoundError:
+    H = None
+
+def pixel_to_arm(u, v):
+    if H is None:
+        raise RuntimeError("先跑 calib: 没有 calib.json")
+    p = H @ np.array([u, v, 1.0])
+    return p[0] / p[2], p[1] / p[2]`,
+        'arm/main.c':
+`#include "main.h"
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+/* 六轴舵机机械臂 · 串口文本协议 v0.2 (230400 8N1)
+ *   MOVE x y z      笛卡尔目标(mm), 固件做逆解 + 插补
+ *   GRIP 1|0        夹爪
+ *   HOME            回零
+ *   STOP            急停(当前位置保持)
+ * 每条回 OK / BUSY / ERR <msg>
+ * 实机踩坑: 舵机 2·7 运动后偶发读超时, 靠重发 + 稀读; 3°/s 太慢, 插补步进用 15°/s */
+extern UART_HandleTypeDef huart1;
+extern TIM_HandleTypeDef  htim2, htim3;           /* 6 路 PWM, 50Hz */
+
+static float cur[6] = {90, 90, 90, 90, 90, 90};   /* 当前关节角 */
+static char  rx[64]; static int rxi = 0;
+
+static void servo_write(int j, float deg){
+    uint32_t pulse = 500 + (uint32_t)(deg * 2000.0f / 180.0f);   /* 500~2500us */
+    if(j < 3) __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1 + 4*j, pulse);
+    else      __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1 + 4*(j-3), pulse);
+}
+static void goto_joints(const float *tgt){        /* 15°/s 线性插补, 20ms 一步 */
+    for(int step = 0; step < 100; step++){
+        int done = 1;
+        for(int j = 0; j < 6; j++){
+            float d = tgt[j] - cur[j];
+            if(d >  0.3f){ cur[j] += 0.3f; done = 0; }
+            if(d < -0.3f){ cur[j] -= 0.3f; done = 0; }
+            servo_write(j, cur[j]);
+        }
+        HAL_Delay(20);
+        if(done) break;
+    }
+}
+static void reply(const char *s){ HAL_UART_Transmit(&huart1, (uint8_t*)s, strlen(s), 100); HAL_UART_Transmit(&huart1, (uint8_t*)"\\n", 1, 10); }
+
+static void handle(char *line){
+    float tgt[6];
+    if(!strncmp(line, "MOVE", 4)){
+        float x = atof(strtok(line + 5, " ")), y = atof(strtok(NULL, " ")), z = atof(strtok(NULL, " "));
+        if(!ik_solve(x, y, z, tgt)){ reply("ERR unreachable"); return; }
+        goto_joints(tgt); reply("OK");
+    }else if(!strncmp(line, "GRIP", 4)){ servo_write(5, line[5]=='1' ? 30 : 90); HAL_Delay(300); reply("OK"); }
+    else if(!strcmp(line, "HOME")){ float h[6] = {90,90,90,90,90,90}; goto_joints(h); reply("OK"); }
+    else if(!strcmp(line, "STOP")){ reply("OK"); }
+    else reply("ERR unknown");
+}
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *h){
+    if(rx[rxi] == '\\n'){ rx[rxi] = 0; handle(rx); rxi = 0; }
+    else if(rxi < 62) rxi++;
+    HAL_UART_Receive_IT(&huart1, (uint8_t*)&rx[rxi], 1);
+}
+int main(void){
+    HAL_Init(); SystemClock_Config(); MX_GPIO_Init(); MX_USART1_UART_Init(); MX_TIM2_Init(); MX_TIM3_Init();
+    HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1); /* ...其余 5 路同理 */
+    HAL_UART_Receive_IT(&huart1, (uint8_t*)&rx[0], 1);
+    for(;;){ HAL_Delay(100); }
+}`,
+        'arm/ik.c':
+`#include <math.h>
+/* 三连杆平面逆解 + 底座旋转, 单位 mm/deg。L1 L2 L3 按实物量。 */
+#define L1 105.0f
+#define L2 98.0f
+#define L3 150.0f
+int ik_solve(float x, float y, float z, float *j){
+    float base = atan2f(y, x);
+    float r = sqrtf(x*x + y*y) - L3, h = z - 80.0f;     /* 末端保持竖直向下 */
+    float d = sqrtf(r*r + h*h);
+    if(d > L1 + L2 || d < fabsf(L1 - L2)) return 0;
+    float a = acosf((L1*L1 + d*d - L2*L2) / (2*L1*d)), b = acosf((L1*L1 + L2*L2 - d*d) / (2*L1*L2));
+    j[0] = 90 + base * 57.2958f;
+    j[1] = (atan2f(h, r) + a) * 57.2958f;
+    j[2] = b * 57.2958f;
+    j[3] = 180 - j[1] - j[2];                          /* 腕保持竖直 */
+    j[4] = 90; j[5] = 90;
+    return 1;
+}`,
+        'shared/protocol.md':
+`# 视觉 ↔ 机械臂 文本协议 v0.2
+串口 230400 8N1，每条以 \\n 结尾，固件逐条应答。
+
+| 指令 | 含义 | 应答 |
+|---|---|---|
+| MOVE x y z | 末端到 (x,y,z) mm，固件逆解 + 15°/s 插补 | OK / ERR unreachable |
+| GRIP 1\\|0 | 夹爪 合/开 | OK |
+| HOME | 回零 | OK |
+| STOP | 保持当前位置 | OK |
+
+坐标系原点在底座中心，x 朝前，y 朝左，z 朝上。`,
+        'requirements.txt': `opencv-python>=4.9\nnumpy\npyserial`,
+      } },
     { id:'buddy', nm:'陪伴机器人扩展', ico:'🤖', ver:'v0.1', budget:100,
       devices:[ { id:'d1', role:'大脑', plat:'pi', conn:'网络连接 · Wi-Fi', env:'Python', prog:'buddy/main.py', status:'已连接' },
                 { id:'d2', role:'表情与舵机', plat:'xiao', conn:'USB · COM17', env:'C++ (Arduino)', prog:'face/face.ino', status:'未连接' } ],
       link:{ a:'大脑', b:'表情与舵机', proto:'串口 115200', ver:'文本协议 v0.1' },
       modules:[ { nm:'麦克风阵列', dev:'大脑', st:'已配置' }, { nm:'六路舵机', dev:'表情与舵机', st:'待确认接线' } ],
       wiring:[ { nm:'舵机总线接线', opts:['信号→D2 · 5V 独立供电','信号→D3 · 板载 5V(≤2 路)'] } ],
-      chat:[], files:{ 'buddy/main.py': `# 唤醒词 → 转头 → 对话\n` } },
+      chat:[
+        { who:'me', t:'陪伴机器人：听到叫名字就转头看人，能语音对话，没人说话时安静待机。', ts:'昨天 21:40' },
+        { who:'ai', plan:['大脑：唤醒词 → 定位人脸 → 云端对话 → 播报','表情与舵机：串口收 FACE / HEAD 指令驱动六路舵机','待机策略：3 分钟没人说话降到 IDLE，主动开口有频控'],
+          applied:'陪伴机器人状态机', est:'整体任务预计约 10M 原始 Token' },
+      ],
+      files:{
+        'buddy/main.py':
+`import time, serial, cv2
+from state import Machine, IDLE, ALERT, TALK
+from chat import ask, say, listen, heard_name
+
+face_mcu = serial.Serial("/dev/ttyACM0", 115200, timeout=0.2)
+cam = cv2.VideoCapture(0)
+detector = cv2.FaceDetectorYN.create("yunet.onnx", "", (320, 240))   # YuNet: Pi 上 ~15fps 够用
+
+def mcu(cmd):
+    face_mcu.write((cmd + "\\n").encode())
+
+def face_center():
+    ok, frame = cam.read()
+    if not ok: return None
+    frame = cv2.resize(frame, (320, 240))
+    _, faces = detector.detect(frame)
+    if faces is None: return None
+    x, y, w, h = faces[0][:4]
+    return (x + w/2) / 320, (y + h/2) / 240                 # 0..1
+
+m = Machine()
+mcu("FACE sleepy")
+while True:
+    st = m.state
+    if st == IDLE:
+        if heard_name():                                     # 唤醒词
+            m.to(ALERT); mcu("FACE curious")
+        time.sleep(0.2)
+    elif st == ALERT:                                        # 转头找人, 找到就进对话
+        c = face_center()
+        if c:
+            pan  = int(90 + (0.5 - c[0]) * 60)               # 画面偏左 → 头往左转
+            tilt = int(90 + (0.5 - c[1]) * 30)
+            mcu(f"HEAD {pan} {tilt}")
+            m.to(TALK); mcu("FACE happy")
+            say("我在。")
+        elif m.elapsed() > 4:
+            m.to(IDLE); mcu("FACE sleepy")
+    elif st == TALK:
+        text = listen(timeout=6)
+        if not text:
+            if m.elapsed() > 180:                            # 3 分钟没人说话 → 待机
+                m.to(IDLE); mcu("FACE sleepy")
+            continue
+        mcu("FACE thinking")
+        reply = ask(text)
+        mcu("FACE talk")
+        say(reply)
+        m.touch()`,
+        'buddy/state.py':
+`import time
+IDLE, ALERT, TALK = "IDLE", "ALERT", "TALK"
+
+class Machine:
+    def __init__(self):
+        self.state, self.t0 = IDLE, time.time()
+    def to(self, s):
+        print(f"[state] {self.state} → {s}")
+        self.state, self.t0 = s, time.time()
+    def touch(self):
+        self.t0 = time.time()
+    def elapsed(self):
+        return time.time() - self.t0`,
+        'buddy/chat.py':
+`import os, json, time, subprocess, urllib.request
+
+GATEWAY = os.environ.get("COS_LLM_GATEWAY", "https://safegate-2rw7.onrender.com/v1/chat/completions")
+KEY     = os.environ["COS_LLM_KEY"]                         # 不要写死在代码里
+SYSTEM  = "你是一个桌面陪伴机器人, 说话简短温和, 每次不超过两句。"
+_last_proactive = 0
+
+def ask(text):
+    body = {"model": "doubao", "temperature": 0.6, "max_tokens": 120,
+            "messages": [{"role": "system", "content": SYSTEM}, {"role": "user", "content": text}]}
+    req = urllib.request.Request(GATEWAY, data=json.dumps(body, ensure_ascii=False).encode(),
+                                 headers={"Authorization": f"Bearer {KEY}", "Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=20) as r:
+        return json.load(r)["choices"][0]["message"]["content"].strip()
+
+def say(text):                                              # 本地 TTS, 换成你喜欢的引擎
+    subprocess.run(["espeak-ng", "-v", "cmn", text])
+
+def listen(timeout=6):                                      # 录音 → 识别, 这里用 vosk 离线
+    from vosk_io import transcribe
+    return transcribe(seconds=timeout)
+
+def heard_name():
+    t = listen(timeout=2)
+    return t and ("小吉" in t or "Gibby" in t.lower())
+
+def may_speak_proactively():                                # 主动开口频控: 10 分钟最多一次
+    global _last_proactive
+    if time.time() - _last_proactive > 600:
+        _last_proactive = time.time(); return True
+    return False`,
+        'face/face.ino':
+`// XIAO ESP32-S3 · 表情 + 六路舵机
+// 编译必须带 USBMode=hwcdc, 否则 Serial 收不到任何数据(实机踩坑)
+// LEDC 最高 14 bit, 舵机用 14 bit + 50Hz
+#include <Arduino.h>
+const int SERVO_PIN[6] = {D0, D1, D2, D3, D6, D7};   // D8/D9/D10 被 SD 卡占了, 别用
+const int CH[6] = {0, 1, 2, 3, 4, 5};
+String face = "sleepy";
+
+void servoWrite(int i, int deg){
+  int us = 500 + deg * 2000 / 180;
+  ledcWrite(CH[i], (uint32_t)us * 16384 / 20000);     // 14 bit @ 50Hz → 20000us 满量程
+}
+void setFace(const String& f){                        // 眉/眼/嘴三组舵机的姿态表
+  face = f;
+  if(f == "sleepy")   { servoWrite(2, 60);  servoWrite(3, 60);  servoWrite(4, 90); }
+  if(f == "curious")  { servoWrite(2, 110); servoWrite(3, 80);  servoWrite(4, 95); }
+  if(f == "happy")    { servoWrite(2, 100); servoWrite(3, 100); servoWrite(4, 130); }
+  if(f == "thinking") { servoWrite(2, 95);  servoWrite(3, 70);  servoWrite(4, 85); }
+  if(f == "talk")     { servoWrite(4, 110); }
+}
+void setup(){
+  Serial.begin(115200);
+  for(int i = 0; i < 6; i++){ ledcSetup(CH[i], 50, 14); ledcAttachPin(SERVO_PIN[i], CH[i]); servoWrite(i, 90); }
+  setFace("sleepy");
+}
+void loop(){
+  if(!Serial.available()) return;
+  String line = Serial.readStringUntil('\\n'); line.trim();
+  if(line.startsWith("FACE ")) setFace(line.substring(5));
+  else if(line.startsWith("HEAD ")){
+    int sp = line.indexOf(' ', 5);
+    int pan = line.substring(5, sp).toInt(), tilt = line.substring(sp + 1).toInt();
+    servoWrite(0, constrain(pan, 30, 150)); servoWrite(1, constrain(tilt, 60, 120));
+  }
+  Serial.println("OK");
+}`,
+        'shared/protocol.json':
+`{
+  "version": "0.1",
+  "transport": "serial 115200",
+  "commands": {
+    "FACE <sleepy|curious|happy|thinking|talk>": "切换表情姿态",
+    "HEAD <pan 30-150> <tilt 60-120>": "转头"
+  },
+  "reply": "OK"
+}`,
+        'requirements.txt': `opencv-python>=4.9\npyserial\nvosk`,
+      } },
   ],
 
   /* 经验与模板 */
