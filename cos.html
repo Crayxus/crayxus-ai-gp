@@ -353,6 +353,15 @@ footer a:hover{color:var(--acc)}
 .plat-grp em{font-style:normal;font-family:Consolas,monospace;font-size:11px;color:#37e6c8;border:1px solid rgba(55,230,200,.35);border-radius:6px;padding:1px 7px}
 .plat-grp::after{content:"";flex:1;height:1px;background:rgba(138,153,163,.18)}
 </style>
+<style>
+.stage{position:relative}
+.stage .photo{position:absolute;inset:8px;width:calc(100% - 16px);height:calc(100% - 16px);object-fit:contain;
+  border-radius:10px;background:radial-gradient(60% 60% at 50% 45%,var(--tint),transparent 70%);
+  filter:drop-shadow(0 10px 18px rgba(0,0,0,.45))}
+#credits{max-width:1180px;margin:26px auto 40px;padding:0 24px;font-size:11.5px;color:#5a6a74;line-height:1.8}
+#credits a{color:#8a99a3;text-decoration:none}
+#credits b{color:#8a99a3;font-weight:600}
+</style>
 </head>
 <body>
 
@@ -947,6 +956,8 @@ function renderPlats(){
       <div class="stage" style="--tint:${p.tint}">
         <div class="shadow"></div>
         ${isoSVG(p.model, 118)}
+        <img class="photo" src="img/boards/${p.id}.jpg" alt="${p.nm}" loading="lazy"
+             onerror="this.remove()" onload="this.previousElementSibling.style.visibility='hidden'">
       </div>
       <div class="nm">${p.nm}</div>
       <div class="ch">${p.ch}</div>
@@ -1354,6 +1365,17 @@ async function boot(){
 
 // 登录页的主视觉不等登录，进页面就渲染
 renderHero();
+</script>
+<div id="credits" hidden></div>
+<script>
+fetch('img/boards/credits.json').then(r=>r.ok?r.json():null).then(c=>{
+  if(!c) return; const ids=Object.keys(c); if(!ids.length) return;
+  const nm=id=>(PLATFORMS.find(p=>p.id===id)||{}).nm||id;
+  document.getElementById('credits').innerHTML='<b>板卡照片</b> 来自 Wikimedia Commons，按各自授权使用：'+
+    ids.map(id=>`${nm(id)} — <a href="${c[id].page}" target="_blank" rel="noopener">${c[id].artist||'作者见链接'}</a>（${c[id].license}）`).join('；')+
+    '。其余为 COS 积木示意图。';
+  document.getElementById('credits').hidden=false;
+}).catch(()=>{});
 </script>
 </body>
 </html>
