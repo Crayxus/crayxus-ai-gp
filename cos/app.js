@@ -105,7 +105,7 @@ function route(){
   const h = location.hash.replace(/^#\/?/, '') || 'home';
   const [a, b, c] = h.split('/');
   if (a === 'project' && proj(b)) return { v: 'project', id: b, tab: c || 'chat' };
-  return { v: ['devices','diagnose','templates','store','usage'].includes(a) ? a : 'home' };
+  return { v: ['devices','diagnose','sim','templates','store','usage'].includes(a) ? a : 'home' };
 }
 function crumb(...parts){ $('#crumb').innerHTML = `<a href="#/home">⌂</a><i>›</i><span>工作空间</span>` + parts.map((x, i) => `<i>/</i>${i === parts.length - 1 ? `<b>${esc(x)}</b>` : `<span>${esc(x)}</span>`}`).join(''); }
 function renderSidebar(){
@@ -119,7 +119,7 @@ $('#newBtn').onclick = () => { location.hash = '#/home'; setTimeout(() => $('#pr
 function render(){
   renderSidebar();
   const r = route(); const v = $('#view');
-  ({ home: vHome, project: vProject, devices: vDevices, diagnose: vDiagnose, templates: vTemplates, store: vStore, usage: vUsage })[r.v](v, r);
+  ({ home: vHome, project: vProject, devices: vDevices, diagnose: vDiagnose, sim: vSim, templates: vTemplates, store: vStore, usage: vUsage })[r.v](v, r);
   window.scrollTo(0, 0);
 }
 
@@ -418,30 +418,72 @@ function vBodyDiag(v, p){
     bind();
   };
   const figure = () => {
-    const seg = (a, b) => { const A = all.find(x => x.id === a), Bq = all.find(x => x.id === b); return `<line x1="${A.x}" y1="${A.y}" x2="${Bq.x}" y2="${Bq.y}"/>`; };
-    const bones = [['J02','J03'],['J03','J04'],['J05','J06'],['J06','J07'],['J07','J08'],['J09','J10'],['J10','J11'],['J11','J12'],['J13','J14'],['J14','J15'],['J15','J16'],['J16','J17'],['J17','J18'],['J19','J20'],['J20','J21'],['J21','J22'],['J22','J23'],['J23','J24']];
-    return `<svg viewBox="0 0 300 480" style="width:100%;max-height:520px;display:block">
-      <defs><pattern id="g" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="var(--line2)" stroke-width="1"/></pattern></defs>
+    const warnJ = all.find(x => stOf(x.id) === 'warn');
+    /* 白色人形: 所有体块用 url(#sh) 渐变(浅→深)做体积, 高光用半透明白, 关节座是深一点的圆环 */
+    const body = `
+      <defs>
+        <linearGradient id="sh" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#e9edf4"/><stop offset="1" stop-color="#c9d1de"/></linearGradient>
+        <linearGradient id="shd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a3140"/><stop offset="1" stop-color="#0f1420"/></linearGradient>
+        <radialGradient id="core" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="var(--acc)" stop-opacity="1"/><stop offset="1" stop-color="var(--acc)" stop-opacity="0"/></radialGradient>
+        <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2.2"/></filter>
+        <pattern id="g" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="var(--line2)" stroke-width="1"/></pattern>
+      </defs>
       <rect width="300" height="480" fill="url(#g)"/>
-      <g fill="var(--card2)" stroke="var(--line)" stroke-width="2">
-        <circle cx="150" cy="46" r="26"/><rect x="112" y="92" width="76" height="130" rx="22"/><rect x="118" y="222" width="64" height="40" rx="14"/>
-        <rect x="64" y="112" width="30" height="110" rx="14" transform="rotate(12 79 167)"/><rect x="206" y="112" width="30" height="110" rx="14" transform="rotate(-12 221 167)"/>
-        <rect x="106" y="262" width="34" height="200" rx="16"/><rect x="160" y="262" width="34" height="200" rx="16"/>
-        <rect x="98" y="440" width="50" height="22" rx="10"/><rect x="152" y="440" width="50" height="22" rx="10"/></g>
-      <g stroke="var(--line)" stroke-width="3" stroke-linecap="round" opacity=".6">${bones.map(([a, b]) => seg(a, b)).join('')}${seg('J04','J13')}${seg('J04','J19')}${seg('J03','J05')}${seg('J03','J09')}</g>
-      <g id="joints">${all.map(x => { const st = stOf(x.id), on = x.id === sel; return `<g class="jt" data-j="${x.id}" style="cursor:pointer"><circle cx="${x.x}" cy="${x.y}" r="${on ? 11 : 8}" fill="${st === 'warn' ? 'var(--warn)' : 'var(--ok)'}" stroke="${on ? 'var(--txt)' : 'var(--card)'}" stroke-width="${on ? 2.5 : 2}"/>${st === 'warn' ? `<text x="${x.x}" y="${x.y + 4}" font-size="11" text-anchor="middle" fill="#000" font-weight="800">!</text>` : ''}</g>`; }).join('')}</g>
-      ${(() => { const w = all.find(x => stOf(x.id) === 'warn'); return w ? `<g><rect x="${w.x + 16}" y="${w.y - 14}" width="120" height="26" rx="6" fill="var(--warn-soft)" stroke="var(--warn)"/><text x="${w.x + 24}" y="${w.y + 4}" font-size="12" fill="var(--warn)" font-weight="700">${w.part.slice(0, 1)}${w.nm.slice(0, 1)} ${w.id} · 温度预警</text></g>` : ''; })()}
-    </svg>`;
+      <ellipse cx="150" cy="474" rx="70" ry="6" fill="#000" opacity=".12" filter="url(#soft)"/>
+      <g fill="url(#sh)" stroke="#b8c2d3" stroke-width="1.6" stroke-linejoin="round">
+        <!-- 手臂(后层) -->
+        <rect x="70" y="126" width="28" height="84" rx="13" transform="rotate(8 84 168)"/>
+        <rect x="202" y="126" width="28" height="84" rx="13" transform="rotate(-8 216 168)"/>
+        <rect x="62" y="226" width="26" height="76" rx="12" transform="rotate(4 75 264)"/>
+        <rect x="212" y="226" width="26" height="76" rx="12" transform="rotate(-4 225 264)"/>
+        <!-- 手 -->
+        <path d="M62 300h26a6 6 0 0 1 6 6v18a8 8 0 0 1-8 8H66a8 8 0 0 1-8-8v-18a6 6 0 0 1 4-6z"/>
+        <path d="M212 300h26a6 6 0 0 1 4 6v18a8 8 0 0 1-8 8h-22a8 8 0 0 1-8-8v-18a6 6 0 0 1 6-6z"/>
+        <!-- 腿 -->
+        <rect x="106" y="296" width="40" height="80" rx="16"/><rect x="154" y="296" width="40" height="80" rx="16"/>
+        <rect x="110" y="384" width="32" height="70" rx="13"/><rect x="158" y="384" width="32" height="70" rx="13"/>
+        <!-- 脚 -->
+        <path d="M100 456h48a8 8 0 0 1 8 8v4a6 6 0 0 1-6 6H98a6 6 0 0 1-6-6v-4a8 8 0 0 1 8-8z"/>
+        <path d="M152 456h48a8 8 0 0 1 8 8v4a6 6 0 0 1-6 6h-54a6 6 0 0 1-6-6v-4a8 8 0 0 1 8-8z"/>
+        <!-- 骨盆 / 腹部 / 胸甲 -->
+        <path d="M118 250h64a10 10 0 0 1 10 10v16a14 14 0 0 1-14 14h-56a14 14 0 0 1-14-14v-16a10 10 0 0 1 10-10z"/>
+        <rect x="126" y="212" width="48" height="42" rx="10"/>
+        <path d="M104 96h92a10 10 0 0 1 10 10v54a44 44 0 0 1-44 44h-24a44 44 0 0 1-44-44v-54a10 10 0 0 1 10-10z"/>
+        <!-- 肩甲 -->
+        <path d="M78 98a24 24 0 0 1 32 12v14H84a12 12 0 0 1-12-12v-4a12 12 0 0 1 6-10z"/>
+        <path d="M222 98a24 24 0 0 0-32 12v14h26a12 12 0 0 0 12-12v-4a12 12 0 0 0-6-10z"/>
+        <!-- 颈 / 头 -->
+        <rect x="140" y="76" width="20" height="22" rx="6"/>
+        <path d="M122 22h56a12 12 0 0 1 12 12v30a20 20 0 0 1-20 20h-40a20 20 0 0 1-20-20V34a12 12 0 0 1 12-12z"/>
+      </g>
+      <!-- 面罩 / 胸口核心 / 高光 -->
+      <rect x="128" y="40" width="44" height="22" rx="9" fill="url(#shd)"/>
+      <path d="M136 51h28" stroke="var(--acc)" stroke-width="3" stroke-linecap="round" opacity=".95"/>
+      <circle cx="150" cy="134" r="16" fill="url(#core)" opacity=".7"/><circle cx="150" cy="134" r="6" fill="var(--acc)"/>
+      <path d="M130 108q20-8 40 0" stroke="#fff" stroke-width="3" opacity=".7" fill="none" stroke-linecap="round"/>
+      <path d="M112 300q12-2 24 0M164 300q12-2 24 0" stroke="#fff" stroke-width="2.5" opacity=".6" fill="none" stroke-linecap="round"/>
+      <!-- 关节座 -->
+      <g fill="#dfe4ee" stroke="#aab4c6" stroke-width="1.5">
+        <circle cx="96" cy="112" r="15"/><circle cx="204" cy="112" r="15"/>
+        <circle cx="78" cy="214" r="11"/><circle cx="222" cy="214" r="11"/>
+        <circle cx="128" cy="288" r="13"/><circle cx="172" cy="288" r="13"/>
+        <circle cx="126" cy="374" r="14"/><circle cx="174" cy="374" r="14"/>
+        <circle cx="126" cy="450" r="10"/><circle cx="174" cy="450" r="10"/>
+      </g>`;
+    const dots = all.map(x => { const st = stOf(x.id), on = x.id === sel;
+      return `<g class="jt" data-j="${x.id}" style="cursor:pointer"><circle cx="${x.x}" cy="${x.y}" r="${on ? 9 : 6.5}" fill="${st === 'warn' ? 'var(--warn)' : 'var(--ok)'}" stroke="${on ? 'var(--txt)' : '#fff'}" stroke-width="${on ? 2.5 : 1.8}"/>${st === 'warn' ? `<circle cx="${x.x}" cy="${x.y}" r="13" fill="none" stroke="var(--warn)" stroke-width="2" opacity=".55"><animate attributeName="r" values="9;15;9" dur="1.6s" repeatCount="indefinite"/><animate attributeName="opacity" values=".6;0;.6" dur="1.6s" repeatCount="indefinite"/></circle><text x="${x.x}" y="${x.y + 3.5}" font-size="10" text-anchor="middle" fill="#000" font-weight="800">!</text>` : ''}</g>`; }).join('');
+    const label = warnJ ? `<g><line x1="${warnJ.x + 10}" y1="${warnJ.y}" x2="${warnJ.x + 22}" y2="${warnJ.y}" stroke="var(--warn)" stroke-width="1.5"/><rect x="${warnJ.x + 22}" y="${warnJ.y - 13}" width="118" height="26" rx="6" fill="var(--warn-soft)" stroke="var(--warn)"/><text x="${warnJ.x + 30}" y="${warnJ.y + 4.5}" font-size="12" fill="var(--warn)" font-weight="700">${warnJ.part.slice(0, 1)}${warnJ.nm.slice(0, 1)} ${warnJ.id} · 温度预警</text></g>` : '';
+    return `<svg viewBox="0 0 300 480" style="width:100%;max-height:560px;display:block">${body}<g>${dots}</g>${label}</svg>`;
   };
-  const bodyView = (j, L, warn) => `<div style="display:grid;grid-template-columns:360px minmax(0,1fr) 380px;gap:18px;align-items:start" class="bd3">
+  const bodyView = (j, L, warn) => `<div style="display:grid;grid-template-columns:340px minmax(0,1fr) 340px;gap:16px;align-items:start" class="bd3">
     <div class="card pad"><div class="row"><b class="h3">机器人视图</b><span class="grow"></span><div class="seg"><button class="${side === 'front' ? 'on' : ''}" data-side="front">正面</button><button class="${side === 'back' ? 'on' : ''}" data-side="back">背面</button></div></div>
       <div style="margin-top:12px;background:var(--card2);border-radius:12px;padding:6px">${figure()}</div>
-      <div class="row" style="margin-top:10px;font-size:12.5px;color:var(--dim);gap:14px"><span><i class="dot"></i> 正常</span><span><i class="dot" style="background:var(--warn)"></i> 预警</span><span><i class="dot off"></i> 无回读</span><span class="grow"></span><button class="btn sm">✥ 旋转视图</button><button class="btn sm">↺ 重置</button></div>
-      <div class="card" style="margin-top:12px;padding:12px 14px;box-shadow:none"><div class="row"><span style="font-size:22px">🖧</span><div><b>主控连接</b><div class="sub" style="margin:0;font-size:13px">以太网 · ${esc(B.ip)}</div><div class="sub" style="margin:0;font-size:12.5px">元件来源：设备上报 + 已确认配置</div></div><span class="grow"></span><span class="pill ok">● 已连接</span></div></div>
+      <div class="row wrap" style="margin-top:10px;font-size:12.5px;color:var(--dim);gap:10px 14px;white-space:nowrap"><span><i class="dot"></i> 正常</span><span><i class="dot" style="background:var(--warn)"></i> 预警</span><span><i class="dot off"></i> 无回读</span><span class="grow"></span><button class="btn sm">✥ 旋转视图</button><button class="btn sm">↺ 重置</button></div>
+      <div class="card" style="margin-top:12px;padding:12px 14px;box-shadow:none"><div class="row"><span style="font-size:22px">🖧</span><div><b>主控连接</b><div class="sub" style="margin:0;font-size:13px">以太网 · ${esc(B.ip)}</div><div class="sub" style="margin:0;font-size:12.5px">元件来源：设备上报 + 已确认配置</div></div><span class="grow"></span><span class="pill ok" style="white-space:nowrap">● 已连接</span></div></div>
       <p class="sub" style="font-size:12.5px;margin-top:10px">ⓘ 点击关节或元件，查看状态</p></div>
-    <div class="card pad"><div class="row"><b class="h3">全部元件（${all.length + B.sensors.length + B.power.length}）</b><span class="grow"></span><input id="bdQ" placeholder="🔍 搜索名称 / ID" value="${esc(q)}" style="width:180px;padding:7px 10px"><label class="row" style="gap:6px;font-size:13px"><input type="checkbox" id="bdBad" ${onlyBad ? 'checked' : ''} style="width:auto">仅看异常</label></div>
+    <div class="card pad"><b class="h3">全部元件（${all.length + B.sensors.length + B.power.length}）</b><div class="row" style="margin-top:10px;white-space:nowrap"><input id="bdQ" placeholder="🔍 搜索名称 / ID" value="${esc(q)}" style="flex:1;min-width:0;padding:7px 10px"><label class="row" style="gap:6px;font-size:13px"><input type="checkbox" id="bdBad" ${onlyBad ? 'checked' : ''} style="width:auto">仅看异常</label></div>
       <div class="sub" style="margin-top:12px">▾ 关节电机（${all.length}）</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">${B.parts.map(pt => { const js = pt.joints.map(([id, nm]) => ({ id, nm })).filter(x => (!onlyBad || stOf(x.id) === 'warn') && (!q || (x.id + x.nm).toLowerCase().includes(q))); return js.length ? `<div class="card" style="padding:10px 12px;box-shadow:none"><b style="font-size:13.5px">${esc(pt.nm)} · ${pt.joints.length}</b>${js.map(x => { const st = stOf(x.id); return `<div class="row jrow ${x.id === sel ? 'on' : ''}" data-j="${x.id}" style="font-size:13px;padding:4px 6px;margin:2px -6px;border-radius:6px;cursor:pointer;${x.id === sel ? 'background:var(--acc-soft)' : ''}"><i class="dot" style="background:${st === 'warn' ? 'var(--warn)' : 'var(--ok)'}"></i><span class="mono" style="color:var(--dim)">${x.id}</span><span>${esc(x.nm)}</span><span class="grow"></span><span style="color:${st === 'warn' ? 'var(--warn)' : 'var(--dim)'}">${st === 'warn' ? '温度预警' : '正常'}</span></div>`; }).join('')}</div>` : ''; }).join('')}</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin-top:8px">${B.parts.map(pt => { const js = pt.joints.map(([id, nm]) => ({ id, nm })).filter(x => (!onlyBad || stOf(x.id) === 'warn') && (!q || (x.id + x.nm).toLowerCase().includes(q))); return js.length ? `<div class="card" style="padding:10px 12px;box-shadow:none"><b style="font-size:13.5px">${esc(pt.nm)} · ${pt.joints.length}</b>${js.map(x => { const st = stOf(x.id); return `<div class="row jrow ${x.id === sel ? 'on' : ''}" data-j="${x.id}" style="font-size:12.5px;padding:4px 6px;margin:2px -6px;border-radius:6px;cursor:pointer;white-space:nowrap;gap:8px;${x.id === sel ? 'background:var(--acc-soft)' : ''}"><i class="dot" style="background:${st === 'warn' ? 'var(--warn)' : 'var(--ok)'}"></i><span class="mono" style="color:var(--dim)">${x.id}</span><span>${esc(x.nm)}</span><span class="grow"></span><span style="color:${st === 'warn' ? 'var(--warn)' : 'var(--dim)'}">${st === 'warn' ? '温度预警' : '正常'}</span></div>`; }).join('')}</div>` : ''; }).join('')}</div>
       <div class="sub" style="margin-top:14px">▾ 传感器与交互（${B.sensors.length}）</div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px">${B.sensors.map(([nm, st, ic]) => `<div class="card" style="padding:10px 12px;box-shadow:none;display:flex;gap:10px;align-items:center"><span style="font-size:20px">${ic}</span><div><b style="font-size:13.5px">${esc(nm)}</b><div class="sub" style="margin:0;font-size:12px;color:var(--ok)">${esc(st)}</div></div></div>`).join('')}</div>
       <div class="sub" style="margin-top:14px">▾ 控制与电源（${B.power.length}）</div>
@@ -484,6 +526,141 @@ function vBodyDiag(v, p){
     const rp = $('#bdReport'); if (rp) rp.onclick = () => { const txt = `人形机器人 · 全身诊断报告\n${new Date().toLocaleString()}\n\n预警 ${warnN()} 项\n` + all.map(x => `${x.id} ${x.part}${x.nm}  ${stOf(x.id) === 'warn' ? '⚠ 温度预警 ' + live(x.id).temp + '℃' : '正常'}`).join('\n'); const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], { type: 'text/plain' })); a.download = '全身诊断报告.txt'; a.click(); };
     const ag = $('#bdAskGo'); if (ag) ag.onclick = () => { const t = $('#bdAsk').value.trim(); if (!t) return; $('#bdAsk').value = ''; if (state.bridge) runOnBridge(p.devices[0].plat, `关于 ${sel} 的问题：${t}`, () => {}).then(() => toast('已回答，见对话')); else toast('演示模式：装好本机桥接后会由 COS 真实回答'); };
     const cp = $('#bdCopy'); if (cp) cp.onclick = () => toast('日志已复制');
+  };
+  draw();
+}
+
+/* ═══════════ 仿真工作台 ═══════════ */
+let simTimer = null;
+function vSim(v){
+  const S = D.sim; const p = state.projects.find(x => x.body) || state.projects[0];
+  crumb(p.nm, '仿真工作台');
+  const st = { t: 7.2, playing: true, speed: 1, engine: 'isaac', env: 1, tab: 'motion', task: { ...S.task }, log: [] };
+  const T = 20;
+  const seg = t => S.segments.find(([, , a, b]) => t >= a && t < b) || S.segments[S.segments.length - 1];
+  const dist = t => Math.max(0, Math.min(st.task.dist, (t - 3) / 9 * st.task.dist));
+  const fmt = t => `00:${String(Math.floor(t)).padStart(2, '0')}.${Math.floor((t % 1) * 10)}`;
+  clearInterval(simTimer);
+  const draw = () => {
+    v.innerHTML = `<div class="row"><div><div class="h1">仿真工作台</div><div class="sub">连接仿真引擎，预览机器人的运动与任务执行</div></div><span class="grow"></span>
+      <button class="btn" id="simStop" style="color:var(--err);border-color:color-mix(in srgb,var(--err) 40%,transparent)">■ 停止</button><button class="btn primary" id="simPause">${st.playing ? '❚❚ 暂停仿真' : '▶ 继续仿真'}</button></div>
+    <div class="row wrap" style="margin-top:16px"><select style="min-width:240px"><option>${esc(p.body ? p.body.model : p.nm)} · ${p.body ? p.body.dof : p.devices.length} 自由度</option></select>
+      <span class="pill ${st.playing ? 'ok' : 'gray'}">● ${st.playing ? '仿真运行中' : '已暂停'}</span><span class="sub" style="margin:0">实例 ${esc(S.instance)}</span></div>
+    <div class="tabs">${[['motion','运动仿真'],['model','模型与关节'],['log','运行日志'],['hist','历史记录']].map(([k, n]) => `<a href="javascript:void 0" data-tab="${k}" class="${st.tab === k ? 'on' : ''}">${n}</a>`).join('')}</div>
+    <div class="sim3" style="display:grid;grid-template-columns:250px minmax(0,1fr) 340px;gap:16px;margin-top:16px;align-items:start">
+      <div>
+        <div class="card pad"><b class="h3">仿真引擎</b><div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">${S.engines.map(e => `<button class="card" data-eng="${e.id}" style="padding:10px 12px;display:flex;align-items:center;gap:10px;text-align:left;box-shadow:none;${st.engine === e.id ? 'border-color:var(--acc);background:var(--acc-soft)' : ''}"><span style="font-size:18px">${e.ic}</span><b class="grow">${esc(e.nm)}</b><span class="pill ${st.engine === e.id ? '' : 'gray'}" style="font-size:11px">${st.engine === e.id ? '当前引擎' : '配置接口'}</span></button>`).join('')}</div><p style="margin-top:10px"><a href="javascript:void 0" id="simAddEng">＋ 添加其他引擎</a></p></div>
+        <div class="card pad" style="margin-top:12px"><b class="h3">运行环境</b><div class="seg" style="margin-top:10px">${S.envs.map((e, i) => `<button class="${st.env === i ? 'on' : ''}" data-env="${i}" style="flex:1">${e}</button>`).join('')}</div>
+          <select style="width:100%;margin-top:10px">${S.gpus.map(g => `<option>${g}</option>`).join('')}</select>
+          <div class="row" style="margin-top:10px;font-size:13.5px"><span class="pill ok">● 已连接</span><span class="grow"></span><a href="javascript:void 0">管理连接</a></div><div class="sub" style="font-size:13px">🖥 画面连接：已就绪</div></div>
+        <div class="card pad" style="margin-top:12px"><b class="h3">机器人与场景</b><div class="sub" style="font-size:12.5px;margin-top:8px">模型文件</div><div class="row" style="margin-top:4px"><input value="${esc(S.model)}" readonly style="flex:1;padding:7px 10px;font-family:var(--mono);font-size:12.5px"><button class="btn sm">导入模型</button></div>
+          <div class="row" style="margin-top:8px;font-size:13.5px"><span class="pill ok">✓</span>关节映射 <b>${p.body ? p.body.dof : p.devices.length} / ${p.body ? p.body.dof : p.devices.length}</b></div>
+          <div class="kv" style="margin-top:10px;font-size:13.5px"><span>场景</span><select style="padding:6px 10px">${S.scenes.map(x => `<option>${x}</option>`).join('')}</select><span>控制器</span><select style="padding:6px 10px">${S.controllers.map(x => `<option>${x}</option>`).join('')}</select></div>
+          <div class="row" style="margin-top:8px;font-size:13px"><span class="pill ok">✓</span>控制器与当前模型匹配<span class="grow"></span><a href="javascript:void 0">导入运动策略</a></div></div>
+      </div>
+      <div>
+        <div class="card pad"><div class="row"><b class="h3">实时仿真画面</b><span class="grow"></span><select style="padding:6px 10px"><option>跟随视角</option><option>固定视角</option><option>俯视</option></select><button class="btn sm">⛶</button></div>
+          <div style="position:relative;margin-top:12px;border-radius:12px;overflow:hidden;background:#0b1220"><canvas id="simCv" width="880" height="480" style="width:100%;display:block"></canvas>
+            <div style="position:absolute;top:12px;left:12px;display:flex;gap:8px"><span class="pill ok" style="background:rgba(22,163,74,.9);color:#fff">● ${esc(seg(st.t)[0])}中</span><span class="pill" style="background:rgba(0,0,0,.55);color:#fff">目标速度 ${st.task.speed.toFixed(2)} m/s</span></div>
+            <span class="badge" style="position:absolute;top:12px;right:12px;background:rgba(0,0,0,.6);color:#fff;border:0">SIMULATION</span>
+            <div style="position:absolute;right:12px;bottom:12px;width:190px;height:96px;border-radius:8px;background:#0e1626;border:1px solid rgba(255,255,255,.2);color:#cfd8e6;font-size:11px;padding:6px 8px">机器人视角<canvas id="simPip" width="190" height="70" style="width:100%;height:70px;display:block;margin-top:4px"></canvas></div></div>
+          <div class="row" style="margin-top:12px"><button class="btn primary sm" id="simPP">${st.playing ? '❚❚' : '▶'}</button><button class="btn sm" id="simSq">■</button><button class="btn sm" id="simStep">▶| 单步</button><button class="btn sm" id="simReset">↺ 重置</button>
+            <select id="simSpd" style="padding:6px 10px">${[0.25, 0.5, 1, 2].map(x => `<option ${x === st.speed ? 'selected' : ''} value="${x}">${x}×</option>`).join('')}</select><span class="grow"></span><span class="mono" id="simClock">${fmt(st.t)} / ${fmt(T)}</span></div>
+          <div id="simTl" style="margin-top:10px"></div>
+          <div class="card" style="margin-top:12px;padding:12px 14px;box-shadow:none"><b class="h3">运行状态</b><div class="row" style="margin-top:8px;gap:0"><div class="grow" style="border-right:1px solid var(--line)">🚶 行进距离<br><b style="font-size:20px;font-family:var(--mono)" id="simDist">${dist(st.t).toFixed(2)} m</b></div><div class="grow" style="padding-left:16px;border-right:1px solid var(--line)">⚠ 异常碰撞<br><b style="font-size:20px;font-family:var(--mono)">0</b></div><div class="grow" style="padding-left:16px">⚙ 关节越限<br><b style="font-size:20px;font-family:var(--mono)">0</b></div><span class="sub" style="margin:0;font-size:12.5px">当前为仿真状态</span></div></div></div>
+      </div>
+      <div>
+        <div class="card pad"><b class="h3">✦ AI 仿真助手</b>
+          <div class="msg me" style="max-width:100%;margin-top:10px"><div class="bub" style="font-size:14px">让机器人向前走 ${st.task.dist} 米，转身后挥手。</div></div>
+          <div class="msg" style="max-width:100%;margin-top:8px"><span class="av">C</span><div class="bub" style="font-size:13.5px">已加载匹配的运动控制器，将按任务顺序运行并记录结果。</div></div>
+          <div class="card" style="margin-top:12px;padding:12px 14px;box-shadow:none"><b>任务参数</b><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px;font-size:12.5px">
+            <div>前进距离<div class="row" style="gap:4px"><input id="tDist" value="${st.task.dist}" style="width:100%;padding:6px 8px">m</div></div><div>目标速度<div class="row" style="gap:4px"><input id="tSpeed" value="${st.task.speed}" style="width:100%;padding:6px 8px">m/s</div></div><div>转身角度<div class="row" style="gap:4px"><input id="tTurn" value="${st.task.turn}" style="width:100%;padding:6px 8px">°</div></div></div>
+            <div class="row" style="margin-top:8px;justify-content:flex-end"><button class="btn sm" id="simApply">✎ 修改任务</button></div></div>
+          <div class="card" style="margin-top:12px;padding:12px 14px;box-shadow:none"><b>执行进度</b><ul class="plan" id="simProg" style="margin-top:8px"></ul></div>
+          <div class="card" style="margin-top:12px;padding:12px 14px;box-shadow:none"><b>仿真检查</b><ul class="plan" style="margin-top:8px"><li><span class="ck">✓</span>关节限位 <span class="grow"></span><span style="color:var(--ok)">当前正常</span></li><li><span class="ck">✓</span>异常碰撞 <span class="grow"></span><span style="color:var(--ok)">未检出</span></li><li><span class="ck" style="background:var(--card2);color:var(--mute)">·</span>任务完成 <span class="grow"></span><span class="sub" style="margin:0" id="simDone">待结束</span></li></ul>
+            <div class="row" style="margin-top:8px;font-size:12.5px"><span class="sub" style="margin:0">ⓘ 运行结束后生成完整报告</span><span class="grow"></span><button class="btn sm" id="simLog">📄 查看仿真日志</button></div></div>
+          <div class="row" style="margin-top:12px"><input id="simAsk" placeholder="描述你想调整的动作…" style="flex:1"><button class="btn primary sm" id="simAskGo">➤</button></div>
+          <div class="sub" style="font-size:12px;margin-top:6px">本轮 AI 用量 0.18M tokens</div></div>
+      </div>
+    </div>
+    <p class="foot-note" style="text-align:right;margin-top:8px">界面示例 · 引擎接入与运行数据用于设计展示${state.bridge ? '；装好仿真引擎后由本机 COS 驱动' : ''}</p>
+    <style>@media(max-width:1200px){.sim3{grid-template-columns:1fr!important}}</style>`;
+    bind(); tick(true);
+  };
+  const timeline = () => {
+    const el = $('#simTl'); if (!el) return;
+    el.innerHTML = `<div class="row" style="font-size:11px;color:var(--mute);justify-content:space-between;padding:0 2px">${[0, 5, 10, 15, 20].map(x => `<span>${x}s</span>`).join('')}</div>
+      <div style="position:relative;height:6px;background:var(--card2);border-radius:3px;margin:4px 0 8px"><div style="position:absolute;left:${st.t / T * 100}%;top:-6px;width:2px;height:18px;background:var(--acc)"></div><span class="mono" style="position:absolute;left:${st.t / T * 100}%;top:-24px;transform:translateX(-50%);font-size:11px;color:var(--acc);font-weight:700">${st.t.toFixed(1)}s</span></div>
+      <div style="display:flex;gap:4px">${S.segments.map(([n, d, a, b]) => { const on = st.t >= a && st.t < b; return `<div style="flex:${b - a};padding:8px 6px;border-radius:8px;text-align:center;font-size:12.5px;background:${on ? 'var(--acc)' : 'var(--card2)'};color:${on ? 'var(--acc-txt)' : 'var(--dim)'}"><b>${n}${d && n === '前进' ? ' ' + st.task.dist + ' m' : d ? ' ' + d : ''}</b><div style="font-size:11px;opacity:.85">${a} – ${b}s</div></div>`; }).join('')}</div>`;
+    const prog = $('#simProg'); if (prog) prog.innerHTML = S.segments.map(([n, , a, b]) => { const done = st.t >= b, run = st.t >= a && st.t < b;
+      return `<li><span class="ck" style="${done ? '' : run ? 'background:var(--acc-soft);color:var(--acc);border:2px solid var(--acc)' : 'background:var(--card2);color:var(--mute)'}">${done ? '✓' : run ? '●' : '·'}</span>${n === '站立' ? '站立准备' : n === '前进' ? '向前行走' : n}<span class="grow"></span><span style="color:${done ? 'var(--ok)' : run ? 'var(--acc)' : 'var(--mute)'};font-size:13px">${done ? '完成' : run ? '运行中' : '等待'}</span></li>`; }).join('');
+    const dn = $('#simDone'); if (dn) dn.textContent = st.t >= T ? '已完成' : '待结束';
+  };
+  /* 画面: 透视地面 + 目标点 + 轨迹 + 行走中的小人形(用全身诊断同一套关节骨架简化) */
+  const scene = () => {
+    const cv = $('#simCv'); if (!cv) return; const c = cv.getContext('2d'); const W = cv.width, H = cv.height;
+    c.fillStyle = '#0b1220'; c.fillRect(0, 0, W, H);
+    const g = c.createLinearGradient(0, H * 0.45, 0, H); g.addColorStop(0, '#182338'); g.addColorStop(1, '#0e1729'); c.fillStyle = g; c.fillRect(0, H * 0.45, W, H * 0.55);
+    c.strokeStyle = 'rgba(120,150,200,.18)'; c.lineWidth = 1;
+    for (let i = 0; i <= 12; i++) { const x = i / 12; c.beginPath(); c.moveTo(W * 0.5 + (x - 0.5) * W * 0.5, H * 0.45); c.lineTo(W * 0.5 + (x - 0.5) * W * 1.6, H); c.stroke(); }
+    for (let i = 0; i <= 10; i++) { const y = H * 0.45 + Math.pow(i / 10, 1.6) * H * 0.55; c.beginPath(); c.moveTo(0, y); c.lineTo(W, y); c.stroke(); }
+    const prog = Math.min(1, dist(st.t) / st.task.dist);
+    const px = (u) => W * 0.5 + (u - 0.5) * W * 0.9, py = (dep) => H * 0.45 + Math.pow(1 - dep, 1.6) * H * 0.5;   // dep 0=远 1=近
+    const P0 = [0.34, 0.12], P1 = [0.60, 0.70];   // 终点落在画面中上部, 别被右下角小窗挡住   // 起点(近左) → 目标(远右)
+    const lerp = (a, b, k) => a + (b - a) * k;
+    const flagU = P1[0], flagD = P1[1];
+    c.setLineDash([6, 8]); c.strokeStyle = 'rgba(80,160,255,.8)'; c.lineWidth = 3; c.beginPath();
+    for (let k = 0; k <= 1; k += 0.05) { const u = lerp(P0[0], P1[0], k), d = lerp(P0[1], P1[1], k); const X = px(u), Y = py(1 - d); k ? c.lineTo(X, Y) : c.moveTo(X, Y); } c.stroke(); c.setLineDash([]);
+    const fx = px(flagU), fy = py(1 - flagD); c.fillStyle = '#3b82f6'; c.fillRect(fx - 1.5, fy - 34, 3, 34); c.beginPath(); c.moveTo(fx + 1, fy - 34); c.lineTo(fx + 22, fy - 27); c.lineTo(fx + 1, fy - 20); c.fill();
+    c.fillStyle = 'rgba(59,130,246,.9)'; c.font = '600 12px system-ui'; c.fillText(`目标点 · ${st.task.dist} m`, fx + 26, fy - 22);
+    const u = lerp(P0[0], P1[0], prog), d = lerp(P0[1], P1[1], prog); const X = px(u), Y = py(1 - d), sc = 1.35 - d * 0.55;
+    const phase = st.t * 6, swing = seg(st.t)[0] === '前进' ? Math.sin(phase) * 0.35 : 0, wave = seg(st.t)[0] === '挥手' ? Math.sin(st.t * 8) * 0.5 - 1.2 : 0.2;
+    c.save(); c.translate(X, Y); c.scale(sc, sc);
+    c.fillStyle = 'rgba(0,0,0,.35)'; c.beginPath(); c.ellipse(0, 4, 26, 7, 0, 0, Math.PI * 2); c.fill();
+    const limb = (x1, y1, x2, y2, w) => { c.strokeStyle = '#e8edf5'; c.lineWidth = w; c.lineCap = 'round'; c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2, y2); c.stroke(); c.strokeStyle = '#9aa7bb'; c.lineWidth = w + 2; c.globalAlpha = .35; c.stroke(); c.globalAlpha = 1; };
+    const joint = (x, y, r = 4) => { c.fillStyle = '#2dd4bf'; c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill(); c.strokeStyle = '#0b1220'; c.lineWidth = 1.5; c.stroke(); };
+    // 腿
+    limb(-8, -60, -8 - Math.sin(phase) * 14, -30, 12); limb(-8 - Math.sin(phase) * 14, -30, -8 - Math.sin(phase) * 10, -2, 10);
+    limb(8, -60, 8 + Math.sin(phase) * 14, -30, 12); limb(8 + Math.sin(phase) * 14, -30, 8 + Math.sin(phase) * 10, -2, 10);
+    // 躯干
+    c.fillStyle = '#f1f4f9'; c.strokeStyle = '#b5c0d2'; c.lineWidth = 1.5; c.beginPath(); c.roundRect(-18, -128, 36, 70, 12); c.fill(); c.stroke();
+    c.fillStyle = '#2dd4bf'; c.beginPath(); c.arc(0, -108, 3.5, 0, Math.PI * 2); c.fill();
+    // 手臂
+    limb(-18, -118, -26 + swing * 20, -86, 9); limb(-26 + swing * 20, -86, -28 + swing * 26, -58, 8);
+    limb(18, -118, 26 - swing * 20, -86, 9); limb(26 - swing * 20, -86, 30 - swing * 26, -58 + wave * 40, 8);
+    // 头
+    c.fillStyle = '#f1f4f9'; c.beginPath(); c.roundRect(-13, -158, 26, 26, 9); c.fill(); c.stroke();
+    c.fillStyle = '#141b2b'; c.beginPath(); c.roundRect(-9, -150, 18, 8, 4); c.fill(); c.fillStyle = '#2dd4bf'; c.fillRect(-6, -147, 12, 2);
+    [[-8, -60], [8, -60], [-8 - Math.sin(phase) * 14, -30], [8 + Math.sin(phase) * 14, -30], [-18, -118], [18, -118], [-26 + swing * 20, -86], [26 - swing * 20, -86], [0, -132]].forEach(([x, y]) => joint(x, y));
+    c.restore();
+    // 坐标轴
+    c.strokeStyle = '#ef4444'; c.lineWidth = 2; c.beginPath(); c.moveTo(24, H - 22); c.lineTo(48, H - 14); c.stroke(); c.strokeStyle = '#22c55e'; c.beginPath(); c.moveTo(24, H - 22); c.lineTo(52, H - 30); c.stroke(); c.strokeStyle = '#3b82f6'; c.beginPath(); c.moveTo(24, H - 22); c.lineTo(24, H - 50); c.stroke();
+    c.fillStyle = '#cbd5e1'; c.font = '10px system-ui'; c.fillText('Z', 20, H - 52); c.fillText('Y', 54, H - 30); c.fillText('X', 50, H - 8);
+    // 小窗: 机器人视角(目标点在前方)
+    const pv = $('#simPip'); if (pv) { const q = pv.getContext('2d'); q.fillStyle = '#0e1626'; q.fillRect(0, 0, 190, 70); q.strokeStyle = 'rgba(120,150,200,.25)'; for (let i = 0; i < 6; i++) { q.beginPath(); q.moveTo(95 + (i - 2.5) * 12, 30); q.lineTo(95 + (i - 2.5) * 70, 70); q.stroke(); } const fy2 = 30 + (1 - prog) * 30; q.fillStyle = '#3b82f6'; q.fillRect(94, fy2 - 14, 2, 14); q.beginPath(); q.moveTo(96, fy2 - 14); q.lineTo(106, fy2 - 10); q.lineTo(96, fy2 - 6); q.fill(); }
+  };
+  const tick = force => {
+    if (st.playing && !force) st.t = Math.min(T, st.t + 0.1 * st.speed);
+    if (st.t >= T && st.playing) { st.playing = false; const b = $('#simPause'); if (b) b.textContent = '▶ 继续仿真'; const pp = $('#simPP'); if (pp) pp.textContent = '▶'; }
+    const ck = $('#simClock'); if (ck) ck.textContent = `${fmt(st.t)} / ${fmt(T)}`;
+    const ds = $('#simDist'); if (ds) ds.textContent = dist(st.t).toFixed(2) + ' m';
+    timeline(); scene();
+  };
+  const bind = () => {
+    v.querySelectorAll('[data-tab]').forEach(a => a.onclick = () => { st.tab = a.dataset.tab; if (st.tab !== 'motion') toast(`「${a.textContent}」为界面示例`); });
+    v.querySelectorAll('[data-eng]').forEach(b => b.onclick = () => { st.engine = b.dataset.eng; draw(); });
+    v.querySelectorAll('[data-env]').forEach(b => b.onclick = () => { st.env = +b.dataset.env; draw(); });
+    const pp = () => { st.playing = !st.playing; $('#simPause').textContent = st.playing ? '❚❚ 暂停仿真' : '▶ 继续仿真'; $('#simPP').textContent = st.playing ? '❚❚' : '▶'; };
+    $('#simPause').onclick = pp; $('#simPP').onclick = pp;
+    $('#simStop').onclick = () => { st.playing = false; st.t = 0; draw(); }; $('#simSq').onclick = () => { st.playing = false; st.t = 0; draw(); };
+    $('#simStep').onclick = () => { st.playing = false; st.t = Math.min(T, st.t + 0.5); tick(true); };
+    $('#simReset').onclick = () => { st.t = 0; st.playing = true; draw(); };
+    $('#simSpd').onchange = e => { st.speed = +e.target.value; };
+    $('#simApply').onclick = () => { st.task = { dist: +$('#tDist').value || 2, speed: +$('#tSpeed').value || 0.3, turn: +$('#tTurn').value || 180 }; st.t = 0; st.playing = true; toast('任务已更新，重新运行'); draw(); };
+    $('#simLog').onclick = () => modal(`<div class="hd"><b class="h3">仿真日志 · ${esc(S.instance)}</b><span class="grow"></span><button class="btn sm" data-close>关闭</button></div><div class="bd"><div class="code" style="border-radius:10px">${['[INFO] engine: Isaac Sim 6.0 · GPU-01', `[INFO] model: ${S.model} · joints 24/24 mapped`, '[INFO] controller: H24 步行控制器 v0.3 loaded', '[INFO] task: walk 2.0 m @ 0.30 m/s → turn 180° → wave', '[INFO] t=3.0 stand ok · CoM stable', `[INFO] t=${st.t.toFixed(1)} dist=${dist(st.t).toFixed(2)} m · collisions 0 · joint limits 0`].map((l, i) => `<div class="ln"><span class="n">${i + 1}</span><span>${esc(l)}</span></div>`).join('')}</div></div>`);
+    $('#simAskGo').onclick = () => { const t = $('#simAsk').value.trim(); if (!t) return; $('#simAsk').value = ''; const m = t.match(/(\d+(?:\.\d+)?)\s*米/); if (m) { st.task.dist = +m[1]; st.t = 0; st.playing = true; toast(`已把前进距离改为 ${m[1]} m`); draw(); } else toast(state.bridge ? '已交给 COS（本机）' : '演示模式：识别"向前走 N 米"这类指令'); };
+    $('#simAddEng').onclick = () => toast('添加引擎：界面示例');
+    clearInterval(simTimer); simTimer = setInterval(() => { if (!document.getElementById('simCv')) { clearInterval(simTimer); return; } tick(); }, 100);
   };
   draw();
 }
