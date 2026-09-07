@@ -255,6 +255,15 @@ const PLATFORMS = [
     ]},
 ];
 
+function shade(hex, k){
+  const n = parseInt(hex.slice(1),16);
+  let r=(n>>16)&255, g=(n>>8)&255, b=n&255;
+  if(k>1){ r+=(255-r)*(k-1); g+=(255-g)*(k-1); b+=(255-b)*(k-1); }
+  else   { r*=k; g*=k; b*=k; }
+  const h=v=>Math.round(Math.max(0,Math.min(255,v))).toString(16).padStart(2,'0');
+  return '#'+h(r)+h(g)+h(b);
+}
+
 function proj(x,y,z){ return [(x-y)*ISO.ax*ISO.s, ((x+y)*ISO.ay - z)*ISO.s]; }
 
 function cube(b){
