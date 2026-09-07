@@ -29,6 +29,146 @@ window.COS_DATA = {
   /* 示例项目 */
   projects: [
     {
+      id:'humanoid', nm:'人形机器人', ico:'🧍', ver:'v0.4', budget:300, complex:true,
+      devices:[
+        { id:'d1', role:'主控计算板', plat:'rk',    conn:'以太网 · 192.168.1.108', env:'Python · ROS2 桥', prog:'brain/main.py',  status:'已连接' },
+        { id:'d2', role:'运动控制板', plat:'stm32', conn:'CAN1 · 1 Mbps',          env:'C / HAL',          prog:'motion/main.c', status:'已连接' },
+      ],
+      link:{ a:'主控计算板', b:'运动控制板', proto:'CAN · 1 Mbps', ver:'关节协议 v0.4' },
+      modules:[ { nm:'24 路关节电机', dev:'运动控制板', st:'已配置' }, { nm:'IMU', dev:'运动控制板', st:'已配置' }, { nm:'双目相机', dev:'主控计算板', st:'已配置' }, { nm:'足底压力', dev:'运动控制板', st:'已配置' } ],
+      wiring:[],
+      /* 全身诊断用的机器人本体: 关节按部位分组, 每个关节有 CAN 地址与实时量; 坐标是视图里的落点(0-300 × 0-480) */
+      body:{
+        model:'Humanoid H24', dof:24, bus:'CAN1 · 1 Mbps', ip:'192.168.1.108',
+        parts:[
+          { nm:'头部', joints:[ ['J01','颈部偏航',150,64], ['J02','颈部俯仰',150,84] ] },
+          { nm:'腰部', joints:[ ['J03','腰部偏航',150,214], ['J04','腰部俯仰',150,234] ] },
+          { nm:'左臂', joints:[ ['J05','肩部俯仰',96,124], ['J06','肩部侧摆',86,144], ['J07','肩部旋转',80,172], ['J08','肘部俯仰',72,214] ] },
+          { nm:'右臂', joints:[ ['J09','肩部俯仰',204,124], ['J10','肩部侧摆',214,144], ['J11','肩部旋转',220,172], ['J12','肘部俯仰',228,214] ] },
+          { nm:'左腿', joints:[ ['J13','髋部旋转',124,262], ['J14','髋部侧摆',118,282], ['J15','髋部俯仰',122,300], ['J16','膝部俯仰',122,364], ['J17','踝部俯仰',124,428], ['J18','踝部侧摆',124,446] ] },
+          { nm:'右腿', joints:[ ['J19','髋部旋转',176,262], ['J20','髋部侧摆',182,282], ['J21','髋部俯仰',178,300], ['J22','膝部俯仰',178,364], ['J23','踝部俯仰',176,428], ['J24','踝部侧摆',176,446] ] },
+        ],
+        sensors:[ ['IMU','在线','🧭'], ['双目相机','在线','📷'], ['左足压力','在线','🦶'], ['右足压力','在线','🦶'], ['麦克风阵列','已配置','🎙️'], ['扬声器','已配置','🔊'] ],
+        power:[ ['主控计算板','在线','🖥️'], ['运动控制板','在线','🎛️'], ['CAN 网关','在线','🔗'], ['电池 / BMS','在线','🔋'], ['电源分配板','已配置','⚡'], ['急停开关','已释放','🛑'] ],
+        /* 实时量(示例): 温度阈值 65℃; J16 超阈值 → 预警 */
+        live:{ J16:{ pos:32.4, temp:68, cur:1.8, volt:24.1, trend:[52,53,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68] } },
+        threshold:65,
+      },
+      chat:[
+        { who:'me', t:'人形机器人走路时左膝发热，先做一次全身检查，找出是电机、驱动还是机械阻力的问题。', ts:'今天 09:12' },
+        { who:'ai', plan:['主控计算板：轮询 CAN 总线上 24 路关节的位置/温度/电流/电压','运动控制板：对异常关节做空载/带载对比测试','结论：温度超阈值且电流偏高 → 先查散热与机械阻力，再看驱动'],
+          applied:'人形全身诊断流程', est:'整体任务预计约 24M 原始 Token' },
+      ],
+      files:{
+        'brain/main.py':
+`import time
+from can_bus import Bus, JOINTS
+from health import Watch
+
+bus = Bus("can0", bitrate=1_000_000)
+watch = Watch(temp_limit=65, current_limit=2.5)
+
+# 24 路关节: 每 20ms 轮询一遍位置/温度/电流/电压(每帧 8 字节, 1Mbps 下一遍 < 4ms)
+while True:
+    for j in JOINTS:
+        st = bus.read_state(j.addr)
+        alarm = watch.check(j.id, st)
+        if alarm:
+            print(f"[WARN] {j.id} {j.name}: {alarm}")
+            if alarm.startswith("temp"):
+                bus.set_torque_limit(j.addr, 0.5)      # 先降半扭矩, 不停机, 等人来看
+    time.sleep(0.02)`,
+        'brain/can_bus.py':
+`import can, struct
+from collections import namedtuple
+
+Joint = namedtuple("Joint", "id name addr part")
+JOINTS = [Joint(f"J{i:02d}", n, 0x01 + i - 1, p) for i, (n, p) in enumerate([
+    ("颈部偏航","头部"),("颈部俯仰","头部"),("腰部偏航","腰部"),("腰部俯仰","腰部"),
+    ("肩部俯仰","左臂"),("肩部侧摆","左臂"),("肩部旋转","左臂"),("肘部俯仰","左臂"),
+    ("肩部俯仰","右臂"),("肩部侧摆","右臂"),("肩部旋转","右臂"),("肘部俯仰","右臂"),
+    ("髋部旋转","左腿"),("髋部侧摆","左腿"),("髋部俯仰","左腿"),("膝部俯仰","左腿"),("踝部俯仰","左腿"),("踝部侧摆","左腿"),
+    ("髋部旋转","右腿"),("髋部侧摆","右腿"),("髋部俯仰","右腿"),("膝部俯仰","右腿"),("踝部俯仰","右腿"),("踝部侧摆","右腿"),
+], 1)]
+
+# 帧格式(关节协议 v0.4): 请求 id=0x100+addr 空帧; 回复 id=0x200+addr
+#   pos int16 0.01° | temp int8 ℃ | cur int16 mA | volt uint16 10mV | flags uint8
+class Bus:
+    def __init__(self, ch, bitrate):
+        self.b = can.interface.Bus(channel=ch, bustype="socketcan", bitrate=bitrate)
+    def read_state(self, addr):
+        self.b.send(can.Message(arbitration_id=0x100 + addr, data=[], is_extended_id=False))
+        m = self.b.recv(timeout=0.01)
+        if m is None or m.arbitration_id != 0x200 + addr:
+            return None
+        pos, temp, cur, volt, flags = struct.unpack("<hbhHB", m.data[:8])
+        return dict(pos=pos / 100, temp=temp, cur=cur / 1000, volt=volt / 100, flags=flags)
+    def set_torque_limit(self, addr, ratio):
+        self.b.send(can.Message(arbitration_id=0x300 + addr, data=struct.pack("<B", int(ratio * 100)), is_extended_id=False))`,
+        'brain/health.py':
+`class Watch:
+    '''每个关节的健康判定: 温度 / 电流 / 无回读'''
+    def __init__(self, temp_limit, current_limit):
+        self.tl, self.cl = temp_limit, current_limit
+        self.miss = {}
+    def check(self, jid, st):
+        if st is None:
+            self.miss[jid] = self.miss.get(jid, 0) + 1
+            return "no-reply x%d" % self.miss[jid] if self.miss[jid] >= 3 else None
+        self.miss[jid] = 0
+        if st["temp"] >= self.tl:
+            return f"temp {st['temp']}℃ ≥ {self.tl}℃"
+        if st["cur"] >= self.cl:
+            return f"current {st['cur']:.1f}A ≥ {self.cl}A"
+        return None`,
+        'motion/main.c':
+`#include "main.h"
+/* 运动控制板: 24 路关节 CAN 从站聚合 + 1kHz 步态循环
+ * 主控只发目标(0x400+addr: pos int16 0.01°), 本板做电流环/位置环, 主控读状态(0x100/0x200)。
+ * 温度由每个关节驱动板回读, 本板转发; 阈值判断在主控做, 本板只执行降扭矩(0x300)。 */
+extern CAN_HandleTypeDef hcan1;
+static int16_t target[24], pos[24]; static int8_t temp[24]; static int16_t cur[24]; static uint8_t torque_pct[24];
+
+static void gait_tick(void){                      /* 1kHz */
+    for(int j = 0; j < 24; j++){
+        int32_t err = target[j] - pos[j];
+        int32_t u = err * 8 / 10;                  /* P 环, 单位 0.01° → mA 粗略 */
+        if(u >  2500) u =  2500; if(u < -2500) u = -2500;
+        u = u * torque_pct[j] / 100;
+        drive_current(j, (int16_t)u);
+    }
+}
+void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *h){
+    CAN_RxHeaderTypeDef hd; uint8_t d[8];
+    HAL_CAN_GetRxMessage(h, CAN_RX_FIFO0, &hd, d);
+    uint16_t id = hd.StdId; int a = id & 0xFF;
+    if((id & 0xF00) == 0x400 && a < 24){ target[a] = (int16_t)(d[0] | d[1] << 8); }
+    else if((id & 0xF00) == 0x300 && a < 24){ torque_pct[a] = d[0]; }
+    else if((id & 0xF00) == 0x100 && a < 24){ can_reply_state(a, pos[a], temp[a], cur[a]); }
+}
+int main(void){
+    HAL_Init(); SystemClock_Config(); MX_CAN1_Init(); MX_TIM6_Init();   /* TIM6 1kHz → gait_tick */
+    for(int j = 0; j < 24; j++) torque_pct[j] = 100;
+    HAL_CAN_Start(&hcan1); HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
+    for(;;){ HAL_Delay(1); }
+}`,
+        'shared/joints.yaml':
+`# 关节协议 v0.4 · CAN1 1Mbps
+bus: can0
+bitrate: 1000000
+frames:
+  request_state: 0x100+addr   # 空帧
+  reply_state:   0x200+addr   # pos int16(0.01°) temp int8 cur int16(mA) volt u16(10mV) flags u8
+  torque_limit:  0x300+addr   # u8 percent
+  target_pos:    0x400+addr   # int16 0.01°
+limits:
+  temp_c: 65
+  current_a: 2.5
+joints: J01..J24  # 地址 0x01..0x18, 分组见 can_bus.py`,
+        'requirements.txt': `python-can>=4.3\npyyaml`,
+      },
+    },
+    {
       id:'rc', nm:'遥控机器人', ico:'🚗', ver:'v0.3', budget:100,
       devices:[
         { id:'d1', role:'机器人主控', plat:'pi',    conn:'网络连接 · Wi-Fi', env:'Python',      prog:'robot/main.py',  status:'已连接' },

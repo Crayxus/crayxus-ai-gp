@@ -327,8 +327,9 @@ function vDevices(v){
 
 /* ═══════════ 故障诊断 ═══════════ */
 function vDiagnose(v){
-  crumb('故障诊断');
   let pid = state.projects[0].id, desc = '', logTab = 'all', res = null, running = false;
+  if (proj(pid).body) return vBodyDiag(v, proj(pid));
+  crumb('故障诊断');
   const P = () => proj(pid);
   const draw = () => {
     const p = P();
@@ -345,7 +346,7 @@ function vDiagnose(v){
       <div class="card pad"><div class="row"><b class="h3">◎ 诊断概览</b></div>${res ? overview(p) : `<div class="sub" style="padding:30px 0;text-align:center">写好问题描述，点「开始诊断」。${state.bridge ? '' : '演示模式会按已验证的排障流程给出示例结果。'}</div>`}</div>
       <div class="card pad"><b class="h3">✦ AI 诊断结论</b>${res ? conclusion(p) : `<div class="sub" style="padding:30px 0;text-align:center">诊断完成后在这里给出结论与修复建议</div>`}</div></div>
     <p class="foot-note" style="text-align:right;margin-top:10px">${state.bridge && res && res.real ? '结果来自本机桥接的真实执行' : '诊断结果与日志均为界面示例'}</p>`;
-    $('#dgProj').onchange = e => { pid = e.target.value; res = null; draw(); };
+    $('#dgProj').onchange = e => { pid = e.target.value; res = null; if (proj(pid).body) return vBodyDiag(v, proj(pid)); draw(); };
     $('#dgEdit').onclick = () => { $('#dgDescView').hidden = true; $('#dgDesc').hidden = false; $('#dgDesc').focus(); };
     $('#dgDesc').oninput = e => { desc = e.target.value; };
     v.querySelectorAll('.filters button').forEach(b => b.onclick = () => { desc = b.dataset.s; $('#dgDesc').value = desc; $('#dgDesc').hidden = false; $('#dgDescView').hidden = true; });
@@ -393,6 +394,97 @@ function vDiagnose(v){
     }
     running = false; draw();
   }
+  draw();
+}
+
+/* ═══════════ 全身诊断（复杂项目：人形机器人）═══════════ */
+function vBodyDiag(v, p){
+  crumb('故障诊断', p.nm);
+  const B = p.body; let tab = 'body', side = 'front', sel = 'J16', onlyBad = false, q = '', scanning = false;
+  const all = B.parts.flatMap(pt => pt.joints.map(([id, nm, x, y]) => ({ id, nm, x, y, part: pt.nm })));
+  const stOf = id => B.live[id] && B.live[id].temp >= B.threshold ? 'warn' : 'ok';
+  const live = id => B.live[id] || { pos: (Math.sin(id.charCodeAt(2) * 7) * 20).toFixed(1), temp: 38 + (id.charCodeAt(2) % 7), cur: (0.4 + (id.charCodeAt(2) % 5) / 10).toFixed(1), volt: 24.1, trend: null };
+  const warnN = () => all.filter(j => stOf(j.id) === 'warn').length;
+  const draw = () => {
+    const j = all.find(x => x.id === sel); const L = live(sel); const warn = stOf(sel) === 'warn';
+    v.innerHTML = `<div class="row"><div><div class="h1">${esc(p.nm)} · 全身诊断</div><div class="sub">查看全部关节、传感器与控制模块${state.bridge ? '（已连接本机：通过 CAN 真实回读）' : ''}</div></div><span class="grow"></span>
+      <button class="btn" id="bdRefresh">⟳ 刷新元件</button><button class="btn primary" id="bdScan">${scanning ? '诊断中…' : '▶ 开始全身诊断'}</button></div>
+    <div class="row wrap" style="margin-top:18px"><select style="min-width:220px"><option>${esc(B.model)}</option></select><span class="pill ok">● 已连接 · 以太网</span><span class="grow"></span>
+      <span class="badge" style="font-size:14px;padding:8px 14px">🦿 ${B.dof} 自由度</span><span class="badge" style="font-size:14px;padding:8px 14px">🧊 ${all.length + B.sensors.length + B.power.length} 个元件</span>
+      <span class="badge ${warnN() ? 'warn' : 'ok'}" style="font-size:14px;padding:8px 14px">${warnN() ? '❗ ' + warnN() + ' 项预警' : '✓ 无预警'}</span></div>
+    <div class="tabs">${[['body','全身视图'],['bus','连接与总线'],['log','运行日志']].map(([k, n]) => `<a href="javascript:void 0" data-tab="${k}" class="${tab === k ? 'on' : ''}">${n}</a>`).join('')}</div>
+    <div id="bdBody" style="margin-top:16px">${tab === 'body' ? bodyView(j, L, warn) : tab === 'bus' ? busView() : logView()}</div>
+    <p class="foot-note" style="text-align:right;margin-top:8px">界面示例：元件与状态数据用于设计展示${state.bridge ? '；开始全身诊断会由本机 COS 真实执行' : ''}</p>`;
+    bind();
+  };
+  const figure = () => {
+    const seg = (a, b) => { const A = all.find(x => x.id === a), Bq = all.find(x => x.id === b); return `<line x1="${A.x}" y1="${A.y}" x2="${Bq.x}" y2="${Bq.y}"/>`; };
+    const bones = [['J02','J03'],['J03','J04'],['J05','J06'],['J06','J07'],['J07','J08'],['J09','J10'],['J10','J11'],['J11','J12'],['J13','J14'],['J14','J15'],['J15','J16'],['J16','J17'],['J17','J18'],['J19','J20'],['J20','J21'],['J21','J22'],['J22','J23'],['J23','J24']];
+    return `<svg viewBox="0 0 300 480" style="width:100%;max-height:520px;display:block">
+      <defs><pattern id="g" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="var(--line2)" stroke-width="1"/></pattern></defs>
+      <rect width="300" height="480" fill="url(#g)"/>
+      <g fill="var(--card2)" stroke="var(--line)" stroke-width="2">
+        <circle cx="150" cy="46" r="26"/><rect x="112" y="92" width="76" height="130" rx="22"/><rect x="118" y="222" width="64" height="40" rx="14"/>
+        <rect x="64" y="112" width="30" height="110" rx="14" transform="rotate(12 79 167)"/><rect x="206" y="112" width="30" height="110" rx="14" transform="rotate(-12 221 167)"/>
+        <rect x="106" y="262" width="34" height="200" rx="16"/><rect x="160" y="262" width="34" height="200" rx="16"/>
+        <rect x="98" y="440" width="50" height="22" rx="10"/><rect x="152" y="440" width="50" height="22" rx="10"/></g>
+      <g stroke="var(--line)" stroke-width="3" stroke-linecap="round" opacity=".6">${bones.map(([a, b]) => seg(a, b)).join('')}${seg('J04','J13')}${seg('J04','J19')}${seg('J03','J05')}${seg('J03','J09')}</g>
+      <g id="joints">${all.map(x => { const st = stOf(x.id), on = x.id === sel; return `<g class="jt" data-j="${x.id}" style="cursor:pointer"><circle cx="${x.x}" cy="${x.y}" r="${on ? 11 : 8}" fill="${st === 'warn' ? 'var(--warn)' : 'var(--ok)'}" stroke="${on ? 'var(--txt)' : 'var(--card)'}" stroke-width="${on ? 2.5 : 2}"/>${st === 'warn' ? `<text x="${x.x}" y="${x.y + 4}" font-size="11" text-anchor="middle" fill="#000" font-weight="800">!</text>` : ''}</g>`; }).join('')}</g>
+      ${(() => { const w = all.find(x => stOf(x.id) === 'warn'); return w ? `<g><rect x="${w.x + 16}" y="${w.y - 14}" width="120" height="26" rx="6" fill="var(--warn-soft)" stroke="var(--warn)"/><text x="${w.x + 24}" y="${w.y + 4}" font-size="12" fill="var(--warn)" font-weight="700">${w.part.slice(0, 1)}${w.nm.slice(0, 1)} ${w.id} · 温度预警</text></g>` : ''; })()}
+    </svg>`;
+  };
+  const bodyView = (j, L, warn) => `<div style="display:grid;grid-template-columns:360px minmax(0,1fr) 380px;gap:18px;align-items:start" class="bd3">
+    <div class="card pad"><div class="row"><b class="h3">机器人视图</b><span class="grow"></span><div class="seg"><button class="${side === 'front' ? 'on' : ''}" data-side="front">正面</button><button class="${side === 'back' ? 'on' : ''}" data-side="back">背面</button></div></div>
+      <div style="margin-top:12px;background:var(--card2);border-radius:12px;padding:6px">${figure()}</div>
+      <div class="row" style="margin-top:10px;font-size:12.5px;color:var(--dim);gap:14px"><span><i class="dot"></i> 正常</span><span><i class="dot" style="background:var(--warn)"></i> 预警</span><span><i class="dot off"></i> 无回读</span><span class="grow"></span><button class="btn sm">✥ 旋转视图</button><button class="btn sm">↺ 重置</button></div>
+      <div class="card" style="margin-top:12px;padding:12px 14px;box-shadow:none"><div class="row"><span style="font-size:22px">🖧</span><div><b>主控连接</b><div class="sub" style="margin:0;font-size:13px">以太网 · ${esc(B.ip)}</div><div class="sub" style="margin:0;font-size:12.5px">元件来源：设备上报 + 已确认配置</div></div><span class="grow"></span><span class="pill ok">● 已连接</span></div></div>
+      <p class="sub" style="font-size:12.5px;margin-top:10px">ⓘ 点击关节或元件，查看状态</p></div>
+    <div class="card pad"><div class="row"><b class="h3">全部元件（${all.length + B.sensors.length + B.power.length}）</b><span class="grow"></span><input id="bdQ" placeholder="🔍 搜索名称 / ID" value="${esc(q)}" style="width:180px;padding:7px 10px"><label class="row" style="gap:6px;font-size:13px"><input type="checkbox" id="bdBad" ${onlyBad ? 'checked' : ''} style="width:auto">仅看异常</label></div>
+      <div class="sub" style="margin-top:12px">▾ 关节电机（${all.length}）</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">${B.parts.map(pt => { const js = pt.joints.map(([id, nm]) => ({ id, nm })).filter(x => (!onlyBad || stOf(x.id) === 'warn') && (!q || (x.id + x.nm).toLowerCase().includes(q))); return js.length ? `<div class="card" style="padding:10px 12px;box-shadow:none"><b style="font-size:13.5px">${esc(pt.nm)} · ${pt.joints.length}</b>${js.map(x => { const st = stOf(x.id); return `<div class="row jrow ${x.id === sel ? 'on' : ''}" data-j="${x.id}" style="font-size:13px;padding:4px 6px;margin:2px -6px;border-radius:6px;cursor:pointer;${x.id === sel ? 'background:var(--acc-soft)' : ''}"><i class="dot" style="background:${st === 'warn' ? 'var(--warn)' : 'var(--ok)'}"></i><span class="mono" style="color:var(--dim)">${x.id}</span><span>${esc(x.nm)}</span><span class="grow"></span><span style="color:${st === 'warn' ? 'var(--warn)' : 'var(--dim)'}">${st === 'warn' ? '温度预警' : '正常'}</span></div>`; }).join('')}</div>` : ''; }).join('')}</div>
+      <div class="sub" style="margin-top:14px">▾ 传感器与交互（${B.sensors.length}）</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px">${B.sensors.map(([nm, st, ic]) => `<div class="card" style="padding:10px 12px;box-shadow:none;display:flex;gap:10px;align-items:center"><span style="font-size:20px">${ic}</span><div><b style="font-size:13.5px">${esc(nm)}</b><div class="sub" style="margin:0;font-size:12px;color:var(--ok)">${esc(st)}</div></div></div>`).join('')}</div>
+      <div class="sub" style="margin-top:14px">▾ 控制与电源（${B.power.length}）</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px">${B.power.map(([nm, st, ic]) => `<div class="card" style="padding:10px 12px;box-shadow:none;display:flex;gap:10px;align-items:center"><span style="font-size:20px">${ic}</span><div><b style="font-size:13.5px">${esc(nm)}</b><div class="sub" style="margin:0;font-size:12px;color:${st === '在线' ? 'var(--ok)' : 'var(--dim)'}">${esc(st)}</div></div></div>`).join('')}</div></div>
+    <div class="card pad"><div class="row"><b class="h3">元件详情</b><span class="grow"></span><button class="btn sm">✎ 编辑</button></div>
+      <div class="row" style="margin-top:12px"><span style="font-size:40px">⚙️</span><div><b style="font-size:20px">${esc(j.part)}${esc(j.nm.slice(0, 2))}关节</b><div class="row" style="gap:8px"><span class="sub" style="margin:0">${j.id} · 关节电机</span>${warn ? '<span class="pill warn">❗ 温度预警</span>' : '<span class="pill ok">正常</span>'}</div></div></div>
+      <div class="row" style="margin-top:8px;font-size:13px;color:var(--dim)"><span>${esc(B.bus.split(' ')[0])} · 地址 0x${(all.indexOf(j) + 1).toString(16).padStart(2, '0')}</span><span class="pill ok">● 在线</span><span class="grow"></span><span>来源：设备回读</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">${[['当前位置', L.pos + '°', ''], ['电机温度', L.temp + '℃', warn ? 'color:var(--warn)' : ''], ['工作电流', L.cur + ' A', ''], ['母线电压', L.volt + ' V', '']].map(([k, val, st]) => `<div class="card" style="padding:12px 14px;box-shadow:none"><div class="sub" style="margin:0;font-size:12.5px">${k}</div><b style="font-size:22px;font-family:var(--mono);${st}">${val}</b></div>`).join('')}</div>
+      ${L.trend ? `<div style="margin-top:14px"><div class="row"><span class="sub" style="margin:0;font-size:13px">温度趋势 · 最近 60 秒</span><span class="grow"></span><span style="font-size:12px;color:var(--warn)">配置阈值 ${B.threshold}℃</span></div>${trendSVG(L.trend, B.threshold)}</div>
+      <div class="card" style="margin-top:12px;padding:12px 14px;box-shadow:none;background:var(--warn-soft);border-color:color-mix(in srgb,var(--warn) 40%,transparent)"><b style="color:var(--warn)">❗ 温度超过当前配置阈值</b><div class="sub" style="margin:0;font-size:13px">当前 ${L.temp}℃，配置阈值 ${B.threshold}℃</div></div>` : `<div class="sub" style="margin-top:14px;font-size:13px">该关节各项指标在阈值内</div>`}
+      <div style="margin-top:16px"><b>✦ AI 诊断助手</b><div class="sub" style="font-size:14px;margin-top:4px">${warn ? `${esc(j.part)}${esc(j.nm.slice(0, 2))}关节仍在线。建议暂停负载动作，检查散热与机械阻力，再复测温度。` : '未见异常。可对该关节做空载/带载对比，确认电流曲线正常。'}</div>
+        <div class="card" style="margin-top:8px;padding:8px 12px;box-shadow:none;background:var(--card2);font-size:13px">📄 依据：温度回读 · 设备配置</div></div>
+      <button class="btn primary" style="width:100%;justify-content:center;margin-top:14px" id="bdSteps">📄 查看排查步骤</button>
+      <button class="btn" style="width:100%;justify-content:center;margin-top:8px" id="bdReport">✎ 导出诊断报告</button>
+      <div class="row" style="margin-top:10px"><input id="bdAsk" placeholder="向 AI 描述你遇到的问题…" style="flex:1"><button class="btn primary sm" id="bdAskGo">➤</button></div></div></div>
+    <style>@media(max-width:1100px){.bd3{grid-template-columns:1fr!important}}</style>`;
+  const trendSVG = (t, th) => { const W = 320, H = 110, lo = 40, hi = 90; const X = i => 10 + i * (W - 20) / (t.length - 1), Y = val => H - 10 - (val - lo) * (H - 20) / (hi - lo);
+    return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;display:block;margin-top:6px"><g stroke="var(--line)" stroke-width="1">${[45, 65, 85].map(g => `<line x1="10" y1="${Y(g)}" x2="${W - 10}" y2="${Y(g)}"/>`).join('')}</g>
+      <line x1="10" y1="${Y(th)}" x2="${W - 10}" y2="${Y(th)}" stroke="var(--warn)" stroke-dasharray="4 3"/>
+      <path d="M${t.map((val, i) => `${X(i)},${Y(val)}`).join(' L')}" fill="none" stroke="var(--warn)" stroke-width="2.5"/>
+      <path d="M${X(0)},${Y(lo)} L${t.map((val, i) => `${X(i)},${Y(val)}`).join(' L')} L${X(t.length - 1)},${Y(lo)} Z" fill="var(--warn)" opacity=".12"/>
+      ${[[40, '-60秒'], [t.length - 1, '现在']].map(([i, s]) => `<text x="${i === 40 ? 10 : X(t.length - 1)}" y="${H - 1}" font-size="10" fill="var(--mute)" text-anchor="${i === 40 ? 'start' : 'end'}">${s}</text>`).join('')}
+      ${[45, 65, 85].map(g => `<text x="0" y="${Y(g) + 3}" font-size="9" fill="var(--mute)">${g}</text>`).join('')}</svg>`; };
+  const busView = () => `<div class="card pad"><b class="h3">连接与总线</b><div class="kv" style="margin-top:12px"><span>主控计算板</span><div>以太网 · ${esc(B.ip)} · SSH</div><span>运动控制板</span><div>${esc(B.bus)} · 24 从站 0x01–0x18</div><span>帧格式</span><div class="mono" style="font-size:12.5px">0x100+addr 请求 · 0x200+addr 回读(pos temp cur volt flags) · 0x300 扭矩上限 · 0x400 目标位置</div><span>总线负载</span><div>24 帧 / 20 ms ≈ 18%（1 Mbps）</div><span>丢帧</span><div>最近 60 秒 0</div></div>
+    <table class="tb" style="margin-top:16px"><thead><tr><th>关节</th><th>地址</th><th>回读延迟</th><th>状态</th></tr></thead><tbody>${all.map((x, i) => `<tr><td class="mono">${x.id} ${esc(x.nm)}</td><td class="mono">0x${(i + 1).toString(16).padStart(2, '0')}</td><td class="mono">${(0.12 + (i % 5) * 0.03).toFixed(2)} ms</td><td><span class="pill ${stOf(x.id) === 'warn' ? 'warn' : 'ok'}">${stOf(x.id) === 'warn' ? '温度预警' : '正常'}</span></td></tr>`).join('')}</tbody></table></div>`;
+  const logView = () => { const lines = ['[INFO] brain: CAN1 up, 24 joints discovered', '[INFO] motion: gait loop 1kHz started', '[INFO] brain: poll 24 joints / 20ms, bus load 18%', '[WARN] J16 膝部俯仰: temp 66℃ ≥ 65℃', '[WARN] J16 膝部俯仰: temp 67℃ ≥ 65℃', '[INFO] brain: J16 torque limit → 50%', '[WARN] J16 膝部俯仰: temp 68℃ ≥ 65℃'];
+    return `<div class="card pad"><div class="row"><b class="h3">运行日志</b><span class="grow"></span><button class="btn link sm" id="bdCopy">⧉ 复制日志</button></div><div class="code" style="margin-top:12px;border-radius:10px">${lines.map((l, i) => `<div class="ln"><span class="n">${i + 1}</span><span class="${l.includes('WARN') ? 'num' : ''}">${esc(l)}</span></div>`).join('')}</div></div>`; };
+  const bind = () => {
+    v.querySelectorAll('[data-tab]').forEach(a => a.onclick = () => { tab = a.dataset.tab; draw(); });
+    v.querySelectorAll('[data-side]').forEach(b => b.onclick = () => { side = b.dataset.side; draw(); });
+    v.querySelectorAll('.jt,[data-j]').forEach(el => el.onclick = () => { sel = el.dataset.j; draw(); });
+    const qi = $('#bdQ'); if (qi) qi.oninput = e => { q = e.target.value.toLowerCase(); draw(); $('#bdQ').focus(); $('#bdQ').setSelectionRange(q.length, q.length); };
+    const ob = $('#bdBad'); if (ob) ob.onchange = e => { onlyBad = e.target.checked; draw(); };
+    $('#bdRefresh').onclick = () => { toast('已刷新元件（示例）'); draw(); };
+    $('#bdScan').onclick = async () => { if (scanning) return; scanning = true; draw();
+      if (state.bridge) { try { await runOnBridge(p.devices[0].plat, `全身诊断：通过 CAN 轮询 24 路关节的位置/温度/电流/电压，标出超阈值(${B.threshold}℃ / 2.5A)的关节，给出结论`, () => {}); toast('全身诊断完成（本机执行）'); } catch (e) { toast('✗ ' + e.message); } }
+      else { for (const x of all) { sel = x.id; draw(); await sleep(45); } sel = all.find(x => stOf(x.id) === 'warn') ? all.find(x => stOf(x.id) === 'warn').id : 'J16'; toast(`全身诊断完成：${warnN()} 项预警`); }
+      scanning = false; draw(); };
+    const st = $('#bdSteps'); if (st) st.onclick = () => modal(`<div class="hd"><b class="h3">排查步骤 · ${sel}</b><span class="grow"></span><button class="btn sm" data-close>关闭</button></div><div class="bd"><ul class="plan">${['暂停负载动作，让关节空载 60 秒复测温度','检查散热片与风道是否被线束遮挡','手动转动关节，感受是否有机械阻力/异响','空载 vs 带载电流对比：带载 > 2× 空载 → 机械问题','以上都正常 → 更换驱动板复测'].map(x => `<li><span class="ck">✓</span>${x}</li>`).join('')}</ul></div>`);
+    const rp = $('#bdReport'); if (rp) rp.onclick = () => { const txt = `人形机器人 · 全身诊断报告\n${new Date().toLocaleString()}\n\n预警 ${warnN()} 项\n` + all.map(x => `${x.id} ${x.part}${x.nm}  ${stOf(x.id) === 'warn' ? '⚠ 温度预警 ' + live(x.id).temp + '℃' : '正常'}`).join('\n'); const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], { type: 'text/plain' })); a.download = '全身诊断报告.txt'; a.click(); };
+    const ag = $('#bdAskGo'); if (ag) ag.onclick = () => { const t = $('#bdAsk').value.trim(); if (!t) return; $('#bdAsk').value = ''; if (state.bridge) runOnBridge(p.devices[0].plat, `关于 ${sel} 的问题：${t}`, () => {}).then(() => toast('已回答，见对话')); else toast('演示模式：装好本机桥接后会由 COS 真实回答'); };
+    const cp = $('#bdCopy'); if (cp) cp.onclick = () => toast('日志已复制');
+  };
   draw();
 }
 
