@@ -1,4 +1,4 @@
-/* COS 开发平台 · 应用逻辑
+/* EI TOKEN 具身智能开发平台 · 应用逻辑
    路由(hash): #/home  #/project/:id/(chat|devices|code|deploy)  #/devices  #/diagnose  #/templates  #/store  #/usage
    真实接口: 本机桥接 :8799 —— /api/health /api/run(流式) /api/launch /api/usage；没有桥接时走演示流程。 */
 (() => {
@@ -167,8 +167,8 @@ function pickDevices(done, preset = homeDevs){
 /* ═══════════ 项目 ═══════════ */
 function vProject(v, r){
   const p = proj(r.id); const tab = r.tab;
-  crumb(p.nm, { chat: '对话', devices: '设备', code: '源代码', deploy: '部署与联调' }[tab]);
-  const tabs = `<div class="tabs">${[['chat','对话'],['devices','设备'],['code','源代码'],['deploy','部署与联调']].map(([k, n]) => `<a href="#/project/${p.id}/${k}" class="${tab === k ? 'on' : ''}">${n}</a>`).join('')}</div>`;
+  crumb(p.nm, { chat: '对话', devices: '设备', code: '代码与界面', deploy: '部署与联调' }[tab]);
+  const tabs = `<div class="tabs">${[['chat','对话'],['devices','设备'],['code','代码与界面'],['deploy','部署与联调']].map(([k, n]) => `<a href="#/project/${p.id}/${k}" class="${tab === k ? 'on' : ''}">${n}</a>`).join('')}</div>`;
   const head = `<div class="phead"><span class="ic">${p.ico}</span><div><div class="h1">${esc(p.nm)}</div><div class="sub">${p.devices.length} 个设备 · 项目 ${p.ver}</div></div></div>`;
   v.innerHTML = head + tabs + `<div id="tabBody"></div>`;
   ({ chat: tChat, devices: tDevices, code: tCode, deploy: tDeploy })[tab]($('#tabBody'), p);
@@ -186,13 +186,13 @@ function tChat(v, p){
     <div class="card chat" id="chat">${p.chat.length ? p.chat.map((m, i) => m.who === 'me'
       ? `<div class="msg me"><div><div class="bub">${esc(m.t)}</div><div class="ts">${esc(m.ts || '')}</div></div></div>`
       : m.term
-        ? `<div class="msg"><span class="av">C</span><div class="grow" style="max-width:100%"><div class="term" id="term-${i}">${ansiToHtml(m.term)}</div></div></div>`
-        : `<div class="msg"><span class="av">C</span><div class="bub">我会为${p.devices.length > 1 ? '两个设备' : '这块板'}生成配套程序。
+        ? `<div class="msg"><span class="av">EI</span><div class="grow" style="max-width:100%"><div class="term" id="term-${i}">${ansiToHtml(m.term)}</div></div></div>`
+        : `<div class="msg"><span class="av">EI</span><div class="bub">我会为${p.devices.length > 1 ? '两个设备' : '这块板'}生成配套程序。
             <ul class="plan">${m.plan.map(s => `<li><span class="ck">✓</span>${esc(s)}</li>`).join('')}</ul>
             <div class="applied">📖 已应用：<b>${esc(m.applied)}</b> <span class="grow"></span><a href="#/templates">查看开发依据</a></div>
             <div class="row"><button class="btn primary sm" data-gen>▶ 生成配套程序</button><button class="btn sm" data-adjust>⚙ 调整方案</button></div>
             <div class="sub" style="font-size:13px">${esc(m.est || '')}</div></div></div>`).join('')
-      : `<div class="sub center" style="margin:auto">描述你希望实现的功能，COS 会先给方案，再生成配套程序。</div>`}</div>
+      : `<div class="sub center" style="margin:auto">描述你希望实现的功能，EI TOKEN 会先给方案，再生成配套程序。</div>`}</div>
     <div class="card composer"><textarea id="say" placeholder="继续描述你希望实现的功能…"></textarea>
       <div class="row"><button class="iconbtn">📎</button><span class="grow"></span>${modelSel('modelSel2')}<button class="btn primary" id="send">▶ 发送</button></div></div>
   </div><div>
@@ -206,7 +206,7 @@ function tChat(v, p){
   $('#send').onclick = send; $('#say').onkeydown = e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) send(); };
   $('#budget').onchange = e => { p.budget = parseFloat(e.target.value.replace(/[^\d.]/g, '')) || 0; e.target.value = '¥' + p.budget.toFixed(2); if (p.user) saveUserProjects(); };
   $('#addDev2').onclick = () => pickDevices(sel => { sel.forEach(id => { if (!p.devices.some(d => d.plat === id)) { const pl = platOf(id); p.devices.push({ id: 'd' + (p.devices.length + 1), role: pl.role, plat: id, conn: pl.via === 'ssh' ? '网络连接' : '串口', env: pl.rt, prog: `${id}/main.py`, status: '未连接' }); } }); if (p.user) saveUserProjects(); render(); }, p.devices.map(d => d.plat));
-  v.querySelectorAll('[data-gen]').forEach(b => b.onclick = () => { if (!Object.keys(p.files).length) p.files = { ...D.projects[0].files }; toast('配套程序已生成 → 源代码'); location.hash = `#/project/${p.id}/code`; });
+  v.querySelectorAll('[data-gen]').forEach(b => b.onclick = () => { if (!Object.keys(p.files).length) p.files = { ...D.projects[0].files }; toast('配套程序已生成 → 代码与界面'); location.hash = `#/project/${p.id}/code`; });
   v.querySelectorAll('[data-adjust]').forEach(b => b.onclick = () => $('#say').focus());
   const c = $('#chat'); c.scrollTop = c.scrollHeight;
 }
@@ -245,41 +245,108 @@ function tDevices(v, p){
 function hl(code){
   return esc(code).split('\n').map((ln, i) => {
     let s = ln.replace(/(#.*|\/\/.*)$/, '<span class="cm">$1</span>')
-      .replace(/\b(import|from|while|try|except|as|def|return|if|else|for|in|True|False|None|const|let|function|include|void|int|float)\b/g, '<span class="kw">$1</span>')
+      .replace(/\b(import|from|while|try|except|as|def|return|if|else|for|in|True|False|None|const|let|function|export|include|void|int|float)\b/g, '<span class="kw">$1</span>')
       .replace(/(&quot;.*?&quot;|&#39;.*?&#39;|f&quot;.*?&quot;)/g, '<span class="str">$1</span>')
       .replace(/\b(\d+\.?\d*)\b/g, '<span class="num">$1</span>');
     return `<div class="ln ${/TIMEOUT_SECONDS = /.test(ln) ? 'add' : ''}"><span class="n">${i + 1}</span><span>${s || ' '}</span></div>`; }).join('');
 }
 function tCode(v, p){
-  const files = Object.keys(p.files); let cur = files[0] || '';
-  const tree = () => { const dirs = {}; files.forEach(f => { const [d, n] = f.includes('/') ? f.split('/') : ['', f]; (dirs[d] = dirs[d] || []).push(f); });
-    return Object.entries(dirs).map(([d, fs]) => (d ? `<div class="dir">📁 ${esc(d)}</div>` : '') + fs.map(f => `<div class="f ${f === cur ? 'on' : ''}" data-f="${esc(f)}">📄 ${esc(f.split('/').pop())}</div>`).join('')).join(''); };
+  const files = Object.keys(p.files); let cur = files.find(f => f.endsWith('.tsx')) || files[0] || '';
+  let mode = p.ui ? 'both' : 'code', ver = 'v0.4', padSize = 'normal', hasSave = true;
+  const pose = { x: 2.4, y: 1.2, th: 36, bat: 78 }; let mapMode = 'both';
+  const lang = f => /\.tsx?$/.test(f) ? 'TypeScript React' : /\.c$|\.h$|\.ino$/.test(f) ? 'C / C++' : /\.json$|\.yaml$|\.md$|\.txt$/.test(f) ? '配置' : 'Python';
+  const tree = () => { const dirs = {}; files.forEach(f => { const parts = f.split('/'); const d = parts.length > 1 ? parts.slice(0, -1).join('/') : ''; (dirs[d] = dirs[d] || []).push(f); });
+    return Object.entries(dirs).sort(([x], [y]) => x.localeCompare(y)).map(([d, fs]) => (d ? `<div class="dir">📁 ${esc(d)}</div>` : '') + fs.map(f => `<div class="f ${f === cur ? 'on' : ''}" data-f="${esc(f)}">📄 ${esc(f.split('/').pop())}${/tsx$/.test(f) && p.ui ? ' <span class="pill" style="font-size:10px;padding:1px 6px">新建</span>' : ''}</div>`).join('')).join(''); };
   const draw = () => {
-    v.innerHTML = `<div class="codebar"><span class="lbl">目标设备</span><select>${p.devices.map(d => `<option>${esc(d.role)}</option>`).join('')}</select>
-      <span class="lbl">编程语言</span><select><option>🐍 Python</option><option>C / C++</option><option>MicroPython</option></select>
-      <span class="lbl">版本</span><select><option>${esc(p.ver)}</option></select><span class="grow"></span>
+    const showCode = mode !== 'preview', showPrev = mode !== 'code' && p.ui;
+    v.innerHTML = `<div class="codebar"><span class="lbl">视图模式</span><select id="cmode">${[['both','代码 + 预览'],['code','仅代码'],['preview','仅预览']].map(([k, n]) => `<option value="${k}" ${mode === k ? 'selected' : ''} ${k !== 'code' && !p.ui ? 'disabled' : ''}>${n}</option>`).join('')}</select>
+      <span class="lbl">编程语言</span><select><option>🐍 Python</option><option>TypeScript React</option><option>C / C++</option></select>
+      <span class="lbl">版本</span><select><option>${ver}</option><option>v0.3</option></select><span class="grow"></span>
       <button class="btn" id="exportBtn">⬆ 导出工程</button><a class="btn primary" href="#/project/${p.id}/deploy">▶ 部署到设备</a></div>
-    <div class="ide">
-      <div class="card tree"><div class="hd">项目文件</div>${files.length ? tree() : `<div class="sub" style="padding:8px 16px">还没有文件，先在「对话」里生成配套程序</div>`}</div>
-      <div class="card editor"><div class="tabs2"><span class="on">📄 ${esc(cur || '—')}</span></div><div class="code">${cur ? hl(p.files[cur]) : ''}</div>
-        <div class="ft"><span>› 日志</span><span class="grow"></span><span>🐍 Python</span><span>UTF-8</span><span>${esc(p.devices[0].role)}</span></div></div>
-      <div class="card aipanel"><div class="row"><b class="h3">✦ AI 修改</b><span class="grow"></span><button class="iconbtn">⋯</button></div>
-        <div id="aiLog"><div class="sub" style="font-size:13px">对这段程序提要求，例如"把失联停车时间改为 300 毫秒"。${state.bridge ? '已连接本机，会真改。' : '演示模式下会展示待确认的差异。'}</div></div>
-        <textarea id="aiIn" placeholder="继续修改这段程序…" style="width:100%;min-height:70px;margin-top:10px"></textarea>
-        <div class="row" style="margin-top:8px"><button class="iconbtn">📎</button><span class="grow"></span><button class="btn primary sm" id="aiGo">➤</button></div></div>
-    </div>`;
+    <div class="ide" style="grid-template-columns:${showCode && showPrev ? '340px minmax(0,1fr) 340px' : showCode ? '230px minmax(0,1fr) 340px' : 'minmax(0,1fr) 360px'}">
+      ${showCode ? `<div style="display:flex;flex-direction:column;gap:12px"><div class="card tree"><div class="hd row">项目文件<span class="grow"></span><span class="sub" style="margin:0;font-size:12px">▾</span></div>${files.length ? tree() : `<div class="sub" style="padding:8px 16px">还没有文件，先在「对话」里生成配套程序</div>`}</div>
+        ${showPrev ? `<div class="card editor"><div class="tabs2"><span class="on">📄 ${esc(cur.split('/').pop())} ✕</span></div><div class="code" style="max-height:300px">${cur ? hl(p.files[cur]) : ''}</div></div>
+        <div class="card pad"><b class="h3">已绑定机器人能力</b><ul class="plan" style="margin-top:10px">${p.ui.caps.map(c => `<li><span class="ck">✓</span>${esc(c)}<span class="grow"></span><span style="color:var(--ok);font-size:13px">已绑定</span></li>`).join('')}</ul>
+          <div class="row" style="margin-top:10px;font-size:12.5px;color:var(--dim)"><span>机器人程序：Python</span><span class="grow"></span><span>${esc(lang(cur))} · UTF-8</span></div></div>` : ''}</div>` : ''}
+      ${showCode && !showPrev ? `<div class="card editor"><div class="tabs2"><span class="on">📄 ${esc(cur || '—')}</span></div><div class="code">${cur ? hl(p.files[cur]) : ''}</div>
+        <div class="ft"><span>› 日志</span><span class="grow"></span><span>${esc(lang(cur))}</span><span>UTF-8</span><span>${esc(p.devices[0].role)}</span></div></div>` : ''}
+      ${showPrev ? `<div class="card" style="overflow:hidden"><div class="row" style="padding:12px 16px;border-bottom:1px solid var(--line)"><b class="h3">任务界面预览</b><span class="pill">✦ AI 生成 · 仅当前任务</span><span class="grow"></span><button class="iconbtn" id="prevClose">✕</button></div>
+        <div style="padding:14px 16px"><div class="row"><div><b style="font-size:19px">${esc(p.ui.title)}</b><div class="sub" style="margin:0;font-size:13px">${esc(p.ui.sub)}</div></div><span class="grow"></span><span class="pill ok">● 数据已连接</span><span class="sub" style="margin:0;font-size:12.5px">示例数据</span></div>
+          <div class="seg" style="margin-top:12px;width:100%">${[['both','地图 + 遥控'],['map','仅地图'],['drive','仅遥控']].map(([k, n]) => `<button data-mm="${k}" class="${mapMode === k ? 'on' : ''}" style="flex:1">${n}</button>`).join('')}</div>
+          ${mapMode !== 'drive' ? `<div style="position:relative;margin-top:12px;border-radius:10px;overflow:hidden;background:#111827"><canvas id="slam" width="760" height="300" style="width:100%;display:block"></canvas>
+            <span style="position:absolute;top:10px;left:12px;color:#fff;font-weight:700;font-size:13px">SLAM 地图</span><span class="pill ok" style="position:absolute;top:32px;left:12px;background:rgba(22,163,74,.9);color:#fff">● 正在建图</span>
+            <div style="position:absolute;right:10px;top:10px;display:flex;flex-direction:column;gap:4px"><button class="btn sm" data-zoom="1">＋</button><button class="btn sm" data-zoom="-1">－</button><button class="btn sm">⛶</button></div>
+            <div style="position:absolute;left:12px;bottom:8px;color:#cbd5e1;font-size:11px">1 m ▬</div><div style="position:absolute;right:12px;bottom:8px;color:#cbd5e1;font-size:11px">□ 已探索　■ 未探索　- - 轨迹</div></div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px">${[['📍 位置', `X ${pose.x.toFixed(1)} m · Y ${pose.y.toFixed(1)} m`], ['🧭 朝向', pose.th + '°'], ['🔋 电量', pose.bat + '%']].map(([k, val]) => `<div class="card" style="padding:10px 12px;box-shadow:none"><div class="sub" style="margin:0;font-size:12px">${k}</div><b>${val}</b></div>`).join('')}</div>` : ''}
+          <div style="display:grid;grid-template-columns:${mapMode === 'both' ? '1fr 1fr' : '1fr'};gap:12px;margin-top:12px">
+            ${mapMode !== 'drive' ? `<div class="card" style="padding:12px;box-shadow:none"><div class="row"><b>机器人视角</b><span class="grow"></span><span class="pill ok" style="font-size:11px">● 视频在线</span></div><div style="position:relative;margin-top:8px;border-radius:8px;overflow:hidden"><canvas id="cam" width="360" height="180" style="width:100%;display:block"></canvas><span class="badge" style="position:absolute;top:8px;left:8px;background:rgba(0,0,0,.6);color:#fff;border:0">实时画面</span></div>
+              ${hasSave ? `<button class="btn" style="width:100%;justify-content:center;margin-top:10px" id="saveMap">💾 保存地图</button>` : ''}</div>` : ''}
+            ${mapMode !== 'map' ? `<div class="card" style="padding:12px;box-shadow:none"><div class="row"><b>屏幕遥控器</b><span class="grow"></span><span class="sub" style="margin:0;font-size:12px">按住移动 · 松开停止</span></div>
+              <div class="pad ${padSize}" id="pad" style="margin:14px auto 0"><button data-d="0,1">▲</button><button data-d="-1,0">◀</button><button class="stop" id="padStop">■</button><button data-d="1,0">▶</button><button data-d="0,-1">▼</button></div>
+              <div class="row" style="margin-top:12px;font-size:12.5px"><span class="sub" style="margin:0;white-space:nowrap">速度上限</span><b class="mono" id="spdV">0.20 m/s</b><input type="range" id="spd" min="5" max="60" value="20" style="flex:1;padding:0"></div>
+              <button class="btn" style="width:100%;justify-content:center;margin-top:10px;color:var(--err);border-color:color-mix(in srgb,var(--err) 45%,transparent)" id="robotStop">■ 停止机器人</button></div>` : ''}</div>
+          <div class="row" style="margin-top:12px"><button class="btn" id="saveProj">💾 保存到项目</button><button class="btn" id="foldPanel">⌃ 收起面板</button><span class="grow"></span><button class="btn" id="viewSrc">&lt;/&gt; 查看界面源码</button></div></div></div>` : ''}
+      <div class="card aipanel"><div class="row"><b class="h3">✦ AI 开发助手</b><span class="grow"></span><button class="iconbtn">⋯</button></div>
+        <div id="aiLog">${p.ui ? `<div class="q">给我一个带实时画面和地图的遥控器，我想控制机器人探索房间并建图。</div><div class="a">已确认机器人提供 SLAM 与相机接口，正在为这个任务生成操作面板。</div>
+          <div class="pending"><ul class="plan" style="margin:0">${['机器人程序', '地图、视频与遥控界面', '数据与控制绑定'].map(x => `<li><span class="ck">✓</span>${x}</li>`).join('')}</ul><div class="sub" style="font-size:12.5px;margin-top:8px;border-top:1px dashed var(--line);padding-top:6px">已复用项目组件库</div></div>
+          <div class="a">面板已生成。你可以直接操作，也可以继续用自然语言修改。</div>
+          <div class="row wrap"><button class="btn sm" data-quick="save">＋ ${hasSave ? '去掉' : '增加'}保存按钮</button><button class="btn sm" data-quick="pad">＋ 改成${padSize === 'large' ? '普通' : '大'}摇杆</button></div>` : `<div class="sub" style="font-size:13px">对这段程序提要求，例如"把失联停车时间改为 300 毫秒"；也可以说"给我一个带地图的遥控界面"，AI 会为当前任务生成操作面板。</div>`}</div>
+        <textarea id="aiIn" placeholder="例如：把遥控器放大，地图放左边…" style="width:100%;min-height:66px;margin-top:10px"></textarea>
+        <div class="row" style="margin-top:8px"><button class="iconbtn">📎</button><span class="grow"></span><button class="btn primary sm" id="aiGo">➤</button></div>
+        <div class="sub" style="font-size:12px;margin-top:8px">本轮 AI 用量 0.24M tokens</div></div>
+    </div>
+    <style>.pad{display:grid;grid-template-columns:repeat(3,52px);grid-template-rows:repeat(3,52px);gap:6px;place-items:center;width:max-content}.pad button{width:52px;height:52px;border-radius:50%;background:var(--acc-soft);color:var(--acc);font-size:18px;font-weight:800}.pad button:active{background:var(--acc);color:var(--acc-txt)}.pad .stop{background:var(--acc);color:var(--acc-txt)}.pad button:nth-child(1){grid-column:2}.pad button:nth-child(2){grid-column:1;grid-row:2}.pad button:nth-child(3){grid-column:2;grid-row:2}.pad button:nth-child(4){grid-column:3;grid-row:2}.pad button:nth-child(5){grid-column:2;grid-row:3}.pad.large{grid-template-columns:repeat(3,72px);grid-template-rows:repeat(3,72px)}.pad.large button{width:72px;height:72px;font-size:24px}</style>`;
+    bind(); drawMap(); drawCam();
+  };
+  /* SLAM 地图: 三个房间 + 走廊, 已探索区随机器人位置扩大; 轨迹虚线; 机器人朝向扇形 */
+  let zoom = 1, trail = [[1.2, 1.2]];
+  const drawMap = () => { const cv = $('#slam'); if (!cv) return; const c = cv.getContext('2d'), W = cv.width, H = cv.height;
+    c.fillStyle = '#1f2937'; c.fillRect(0, 0, W, H);
+    const S = 60 * zoom, ox = 60, oy = 40; const px = x => ox + x * S, py = y => H - oy - y * S;
+    const rooms = [[0, 0, 4, 3.5], [4.6, 1, 4, 2.5], [9.2, 0.4, 3, 3]], halls = [[4, 1.6, 0.6, 0.8], [8.6, 1.8, 0.6, 0.6]];
+    c.fillStyle = '#f3f4f6'; c.strokeStyle = '#0f172a'; c.lineWidth = 4;
+    rooms.concat(halls).forEach(([x, y, w, h]) => { c.fillRect(px(x), py(y + h), w * S, h * S); });
+    rooms.forEach(([x, y, w, h]) => c.strokeRect(px(x), py(y + h), w * S, h * S));
+    c.fillStyle = '#374151'; [[2, 1.5], [6.4, 2.2], [10.4, 1.8]].forEach(([x, y]) => c.fillRect(px(x) - 8, py(y) - 8, 16, 16));
+    const ex = Math.min(1, (pose.x + 1) / 12); c.fillStyle = 'rgba(31,41,55,.85)'; c.fillRect(px(2 + ex * 10), 0, W, H);   // 未探索区盖住右侧
+    c.setLineDash([6, 6]); c.strokeStyle = '#60a5fa'; c.lineWidth = 2; c.beginPath(); trail.forEach(([x, y], i) => i ? c.lineTo(px(x), py(y)) : c.moveTo(px(x), py(y))); c.stroke(); c.setLineDash([]);
+    const rx = px(pose.x), ry = py(pose.y), th = -pose.th * Math.PI / 180;
+    c.fillStyle = 'rgba(59,130,246,.25)'; c.beginPath(); c.moveTo(rx, ry); c.arc(rx, ry, 48, th - 0.5, th + 0.5); c.closePath(); c.fill();
+    c.fillStyle = '#2563eb'; c.beginPath(); c.moveTo(rx + 12 * Math.cos(th), ry + 12 * Math.sin(th)); c.lineTo(rx + 10 * Math.cos(th + 2.5), ry + 10 * Math.sin(th + 2.5)); c.lineTo(rx + 10 * Math.cos(th - 2.5), ry + 10 * Math.sin(th - 2.5)); c.closePath(); c.fill(); };
+  const drawCam = () => { const cv = $('#cam'); if (!cv) return; const c = cv.getContext('2d'), W = cv.width, H = cv.height;   // 简易走廊透视
+    const g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#cbd5e1'); g.addColorStop(.5, '#e2e8f0'); g.addColorStop(1, '#94a3b8'); c.fillStyle = g; c.fillRect(0, 0, W, H);
+    c.fillStyle = '#64748b'; c.beginPath(); c.moveTo(0, H); c.lineTo(W * .38, H * .55); c.lineTo(W * .62, H * .55); c.lineTo(W, H); c.fill();
+    c.fillStyle = '#334155'; c.beginPath(); c.moveTo(0, 0); c.lineTo(W * .38, H * .45); c.lineTo(W * .38, H * .55); c.lineTo(0, H); c.fill(); c.beginPath(); c.moveTo(W, 0); c.lineTo(W * .62, H * .45); c.lineTo(W * .62, H * .55); c.lineTo(W, H); c.fill();
+    c.fillStyle = '#f8fafc'; c.fillRect(W * .40, H * .40, W * .2, H * .18); c.strokeStyle = 'rgba(255,255,255,.35)'; for (let i = 1; i < 6; i++) { c.beginPath(); c.moveTo(0, H * (.15 * i)); c.lineTo(W * .38, H * (.45 + .02 * i)); c.stroke(); c.beginPath(); c.moveTo(W, H * (.15 * i)); c.lineTo(W * .62, H * (.45 + .02 * i)); c.stroke(); } };
+  const bind = () => {
+    $('#cmode').onchange = e => { mode = e.target.value; draw(); };
     v.querySelectorAll('.f').forEach(f => f.onclick = () => { cur = f.dataset.f; draw(); });
+    v.querySelectorAll('[data-mm]').forEach(b => b.onclick = () => { mapMode = b.dataset.mm; draw(); });
+    v.querySelectorAll('[data-zoom]').forEach(b => b.onclick = () => { zoom = Math.max(.6, Math.min(1.8, zoom + 0.2 * +b.dataset.zoom)); drawMap(); });
+    const spd = $('#spd'); if (spd) spd.oninput = e => { $('#spdV').textContent = (e.target.value / 100).toFixed(2) + ' m/s'; };
+    let mv = null; const move = (dx, dy) => { const sp = spd ? spd.value / 100 : .2; pose.x = Math.max(.3, Math.min(11.6, pose.x + dx * sp * .6)); pose.y = Math.max(.3, Math.min(3.2, pose.y + dy * sp * .6)); pose.th = dx > 0 ? 0 : dx < 0 ? 180 : dy > 0 ? 90 : 270; trail.push([pose.x, pose.y]); if (trail.length > 80) trail.shift(); drawMap(); const st = v.querySelector('.card b'); const cells = v.querySelectorAll('[style*="grid-template-columns:repeat(3,1fr)"] b'); if (cells[0]) { cells[0].textContent = `X ${pose.x.toFixed(1)} m · Y ${pose.y.toFixed(1)} m`; cells[1].textContent = pose.th + '°'; } };
+    v.querySelectorAll('#pad [data-d]').forEach(b => { const [dx, dy] = b.dataset.d.split(',').map(Number); b.onpointerdown = () => { move(dx, dy); mv = setInterval(() => move(dx, dy), 120); }; b.onpointerup = b.onpointerleave = () => { clearInterval(mv); mv = null; }; });
+    const stopAll = () => { clearInterval(mv); toast('已发送停止'); }; const ps = $('#padStop'); if (ps) ps.onclick = stopAll; const rs = $('#robotStop'); if (rs) rs.onclick = stopAll;
+    const sm = $('#saveMap'); if (sm) sm.onclick = () => toast('地图已保存（示例）'); const sp2 = $('#saveProj'); if (sp2) sp2.onclick = () => toast('面板已保存到项目');
+    const fp = $('#foldPanel'); if (fp) fp.onclick = () => { mode = 'code'; draw(); }; const pc = $('#prevClose'); if (pc) pc.onclick = () => { mode = 'code'; draw(); };
+    const vs = $('#viewSrc'); if (vs) vs.onclick = () => { cur = files.find(f => f.endsWith('RoomPanel.tsx')) || cur; mode = 'both'; draw(); };
     $('#exportBtn').onclick = () => { const blob = new Blob([files.map(f => `# ==== ${f} ====\n${p.files[f]}\n`).join('\n')], { type: 'text/plain' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${p.nm}-工程.txt`; a.click(); };
-    $('#aiGo').onclick = async () => {
-      const q = $('#aiIn').value.trim(); if (!q) return; $('#aiIn').value = '';
-      const log = $('#aiLog'); log.insertAdjacentHTML('beforeend', `<div class="q">${esc(q)}</div>`);
-      if (state.bridge) { const t = document.createElement('div'); t.className = 'term'; log.appendChild(t);
-        try { await runOnBridge(p.devices[0].plat, `修改 ${cur}：${q}`, b => { t.innerHTML = ansiToHtml(b); t.scrollTop = t.scrollHeight; }); } catch (e) { t.innerHTML += `\n✗ ${esc(e.message)}`; } return; }
-      log.insertAdjacentHTML('beforeend', `<div class="a">已更新相关设置，并检查两端协议兼容性。</div><div class="pending"><div class="row"><b>▾ 2 个文件待确认</b></div><div class="f"><span>${esc(cur)}</span><b>+1 行</b></div><div class="f"><span>shared/protocol.json</span><b>+2 行</b></div>
-        <div class="row" style="margin-top:8px"><button class="btn sm">查看差异</button><button class="btn primary sm" data-apply>应用修改</button></div></div>`);
-      log.querySelector('[data-apply]').onclick = () => { const m = q.match(/(\d+)\s*毫秒/); if (m && cur && /TIMEOUT_SECONDS = /.test(p.files[cur])) { p.files[cur] = p.files[cur].replace(/TIMEOUT_SECONDS = [\d.]+/, `TIMEOUT_SECONDS = ${(+m[1] / 1000)}`); if (p.user) saveUserProjects(); } toast('修改已应用'); draw(); };
-      log.scrollTop = log.scrollHeight;
-    };
+    v.querySelectorAll('[data-quick]').forEach(b => b.onclick = () => applyUI(b.dataset.quick === 'save' ? (hasSave ? '去掉保存按钮' : '增加保存按钮') : (padSize === 'large' ? '改成普通摇杆' : '改成大摇杆')));
+    $('#aiGo').onclick = () => { const q = $('#aiIn').value.trim(); if (!q) return; $('#aiIn').value = ''; applyUI(q); };
+  };
+  /* AI 改界面: 识别几类常见要求, 同时改 tsx 源码与预览; 其余走桥接或提示 */
+  const applyUI = q => {
+    const log = $('#aiLog'); if (log) log.insertAdjacentHTML('beforeend', `<div class="q">${esc(q)}</div>`);
+    const tsx = files.find(f => f.endsWith('RoomPanel.tsx'));
+    if (/大摇杆|放大.*遥控|遥控.*放大/.test(q) && tsx) { padSize = 'large'; p.files[tsx] = p.files[tsx].replace(/<DrivePad\n/, '<DrivePad size="large"\n'); toast('已改成大摇杆'); }
+    else if (/普通摇杆|缩小.*遥控/.test(q) && tsx) { padSize = 'normal'; p.files[tsx] = p.files[tsx].replace(' size="large"', ''); toast('已改回普通摇杆'); }
+    else if (/去掉.*保存|删除.*保存/.test(q) && tsx) { hasSave = false; p.files[tsx] = p.files[tsx].replace(/\n\s*<SaveMap[^\n]*\/>/, ''); toast('已去掉保存按钮'); }
+    else if (/保存按钮|增加.*保存/.test(q) && tsx) { hasSave = true; if (!/<SaveMap/.test(p.files[tsx])) p.files[tsx] = p.files[tsx].replace('    </TaskPanel>', '      <SaveMap onClick={actions.saveMap} />\n    </TaskPanel>'); toast('已增加保存按钮'); }
+    else if (/仅地图|只要地图/.test(q)) { mapMode = 'map'; } else if (/仅遥控|只要遥控/.test(q)) { mapMode = 'drive'; }
+    else if (/地图.*界面|遥控.*界面|生成.*面板/.test(q) && !p.ui) { p.ui = { title: p.nm + '操作台', sub: '按当前任务生成', caps: ['状态', '启动与停止'] }; mode = 'both'; toast('已为当前任务生成操作面板'); }
+    else if (state.bridge) { runOnBridge(p.devices[0].plat, `修改 ${cur}：${q}`, () => {}).then(() => toast('已交给本机桥接')); return; }
+    else { if (log) log.insertAdjacentHTML('beforeend', `<div class="a">演示模式：目前认得"改成大摇杆 / 增加保存按钮 / 仅地图 / 仅遥控"这几类；装好本机桥接后任意要求都会真改。</div>`); return; }
+    if (p.user) saveUserProjects(); draw();
   };
   draw();
 }
@@ -312,7 +379,7 @@ function tDeploy(v, p){
 /* ═══════════ 设备中心 ═══════════ */
 function vDevices(v){
   crumb('设备中心');
-  v.innerHTML = `<div class="row"><div><div class="h1">设备中心</div><div class="sub">COS 已适配的 ${PLATFORMS.length} 块开发板 —— 单片机跑 COS-MCU 微代理，Linux 板跑 COS Runtime，插上就认</div></div><span class="grow"></span><input id="bq" placeholder="搜索板卡 / 芯片…" style="width:260px"></div>
+  v.innerHTML = `<div class="row"><div><div class="h1">设备中心</div><div class="sub">EI TOKEN 已适配的 ${PLATFORMS.length} 块开发板 —— 单片机跑 COS-MCU 微代理，Linux 板跑 COS Runtime，插上就认</div></div><span class="grow"></span><input id="bq" placeholder="搜索板卡 / 芯片…" style="width:260px"></div>
     <div class="boards" id="boards"></div>`;
   const draw = q => { q = (q || '').toLowerCase();
     $('#boards').innerHTML = ['ser','ssh'].map(via => { const list = PLATFORMS.filter(p => p.via === via && (!q || (p.nm + p.ch + p.role).toLowerCase().includes(q)));
@@ -380,7 +447,7 @@ function vDiagnose(v){
     if (state.bridge) {
       let out = ''; try { out = await runOnBridge(p.devices[0].plat, `故障诊断（项目「${p.nm}」，设备：${p.devices.map(d => d.role + '=' + platOf(d.plat).nm).join('、')}）。问题：${desc}。请依次检查设备连接、程序运行状态、通信协议一致性、执行测试，给出结论、依据和下一步。`, () => {}); } catch (e) { out = '✗ ' + e.message; }
       res = { real: true, checks: [{ nm: '设备连接', d: `${p.devices.length} 台`, st: 'ok' }, { nm: '程序运行状态', d: '见日志', st: 'ok' }, { nm: '通信协议一致性', d: '见日志', st: 'ok' }, { nm: '执行测试', d: '见日志', st: 'skip' }],
-        logs: out.split('\n').filter(Boolean).map(t => ({ dev: p.devices[0].role, t })), title: 'COS 已完成检查', why: '结论见日志末尾', basis: '本机桥接实时执行', next: '按日志中的建议处理', ref: '实机排障' };
+        logs: out.split('\n').filter(Boolean).map(t => ({ dev: p.devices[0].role, t })), title: 'EI TOKEN 已完成检查', why: '结论见日志末尾', basis: '本机桥接实时执行', next: '按日志中的建议处理', ref: '实机排障' };
     } else {
       await sleep(900);
       const two = p.devices.length > 1, A = p.devices[0].role, B = two ? p.devices[1].role : A;
@@ -414,7 +481,7 @@ function vBodyDiag(v, p){
       <span class="badge ${warnN() ? 'warn' : 'ok'}" style="font-size:14px;padding:8px 14px">${warnN() ? '❗ ' + warnN() + ' 项预警' : '✓ 无预警'}</span></div>
     <div class="tabs">${[['body','全身视图'],['bus','连接与总线'],['log','运行日志']].map(([k, n]) => `<a href="javascript:void 0" data-tab="${k}" class="${tab === k ? 'on' : ''}">${n}</a>`).join('')}</div>
     <div id="bdBody" style="margin-top:16px">${tab === 'body' ? bodyView(j, L, warn) : tab === 'bus' ? busView() : logView()}</div>
-    <p class="foot-note" style="text-align:right;margin-top:8px">界面示例：元件与状态数据用于设计展示${state.bridge ? '；开始全身诊断会由本机 COS 真实执行' : ''}</p>`;
+    <p class="foot-note" style="text-align:right;margin-top:8px">界面示例：元件与状态数据用于设计展示${state.bridge ? '；开始全身诊断会由本机 桥接真实执行' : ''}</p>`;
     bind();
   };
   const figure = () => {
@@ -524,7 +591,7 @@ function vBodyDiag(v, p){
       scanning = false; draw(); };
     const st = $('#bdSteps'); if (st) st.onclick = () => modal(`<div class="hd"><b class="h3">排查步骤 · ${sel}</b><span class="grow"></span><button class="btn sm" data-close>关闭</button></div><div class="bd"><ul class="plan">${['暂停负载动作，让关节空载 60 秒复测温度','检查散热片与风道是否被线束遮挡','手动转动关节，感受是否有机械阻力/异响','空载 vs 带载电流对比：带载 > 2× 空载 → 机械问题','以上都正常 → 更换驱动板复测'].map(x => `<li><span class="ck">✓</span>${x}</li>`).join('')}</ul></div>`);
     const rp = $('#bdReport'); if (rp) rp.onclick = () => { const txt = `人形机器人 · 全身诊断报告\n${new Date().toLocaleString()}\n\n预警 ${warnN()} 项\n` + all.map(x => `${x.id} ${x.part}${x.nm}  ${stOf(x.id) === 'warn' ? '⚠ 温度预警 ' + live(x.id).temp + '℃' : '正常'}`).join('\n'); const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], { type: 'text/plain' })); a.download = '全身诊断报告.txt'; a.click(); };
-    const ag = $('#bdAskGo'); if (ag) ag.onclick = () => { const t = $('#bdAsk').value.trim(); if (!t) return; $('#bdAsk').value = ''; if (state.bridge) runOnBridge(p.devices[0].plat, `关于 ${sel} 的问题：${t}`, () => {}).then(() => toast('已回答，见对话')); else toast('演示模式：装好本机桥接后会由 COS 真实回答'); };
+    const ag = $('#bdAskGo'); if (ag) ag.onclick = () => { const t = $('#bdAsk').value.trim(); if (!t) return; $('#bdAsk').value = ''; if (state.bridge) runOnBridge(p.devices[0].plat, `关于 ${sel} 的问题：${t}`, () => {}).then(() => toast('已回答，见对话')); else toast('演示模式：装好本机桥接后会由 桥接真实回答'); };
     const cp = $('#bdCopy'); if (cp) cp.onclick = () => toast('日志已复制');
   };
   draw();
@@ -572,7 +639,7 @@ function vSim(v){
       <div>
         <div class="card pad"><b class="h3">✦ AI 仿真助手</b>
           <div class="msg me" style="max-width:100%;margin-top:10px"><div class="bub" style="font-size:14px">让机器人向前走 ${st.task.dist} 米，转身后挥手。</div></div>
-          <div class="msg" style="max-width:100%;margin-top:8px"><span class="av">C</span><div class="bub" style="font-size:13.5px">已加载匹配的运动控制器，将按任务顺序运行并记录结果。</div></div>
+          <div class="msg" style="max-width:100%;margin-top:8px"><span class="av">EI</span><div class="bub" style="font-size:13.5px">已加载匹配的运动控制器，将按任务顺序运行并记录结果。</div></div>
           <div class="card" style="margin-top:12px;padding:12px 14px;box-shadow:none"><b>任务参数</b><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px;font-size:12.5px">
             <div>前进距离<div class="row" style="gap:4px"><input id="tDist" value="${st.task.dist}" style="width:100%;padding:6px 8px">m</div></div><div>目标速度<div class="row" style="gap:4px"><input id="tSpeed" value="${st.task.speed}" style="width:100%;padding:6px 8px">m/s</div></div><div>转身角度<div class="row" style="gap:4px"><input id="tTurn" value="${st.task.turn}" style="width:100%;padding:6px 8px">°</div></div></div>
             <div class="row" style="margin-top:8px;justify-content:flex-end"><button class="btn sm" id="simApply">✎ 修改任务</button></div></div>
@@ -583,7 +650,7 @@ function vSim(v){
           <div class="sub" style="font-size:12px;margin-top:6px">本轮 AI 用量 0.18M tokens</div></div>
       </div>
     </div>
-    <p class="foot-note" style="text-align:right;margin-top:8px">界面示例 · 引擎接入与运行数据用于设计展示${state.bridge ? '；装好仿真引擎后由本机 COS 驱动' : ''}</p>
+    <p class="foot-note" style="text-align:right;margin-top:8px">界面示例 · 引擎接入与运行数据用于设计展示${state.bridge ? '；装好仿真引擎后由本机 EI TOKEN 驱动' : ''}</p>
     <style>@media(max-width:1200px){.sim3{grid-template-columns:1fr!important}}</style>`;
     bind(); tick(true);
   };
@@ -658,7 +725,7 @@ function vSim(v){
     $('#simSpd').onchange = e => { st.speed = +e.target.value; };
     $('#simApply').onclick = () => { st.task = { dist: +$('#tDist').value || 2, speed: +$('#tSpeed').value || 0.3, turn: +$('#tTurn').value || 180 }; st.t = 0; st.playing = true; toast('任务已更新，重新运行'); draw(); };
     $('#simLog').onclick = () => modal(`<div class="hd"><b class="h3">仿真日志 · ${esc(S.instance)}</b><span class="grow"></span><button class="btn sm" data-close>关闭</button></div><div class="bd"><div class="code" style="border-radius:10px">${['[INFO] engine: Isaac Sim 6.0 · GPU-01', `[INFO] model: ${S.model} · joints 24/24 mapped`, '[INFO] controller: H24 步行控制器 v0.3 loaded', '[INFO] task: walk 2.0 m @ 0.30 m/s → turn 180° → wave', '[INFO] t=3.0 stand ok · CoM stable', `[INFO] t=${st.t.toFixed(1)} dist=${dist(st.t).toFixed(2)} m · collisions 0 · joint limits 0`].map((l, i) => `<div class="ln"><span class="n">${i + 1}</span><span>${esc(l)}</span></div>`).join('')}</div></div>`);
-    $('#simAskGo').onclick = () => { const t = $('#simAsk').value.trim(); if (!t) return; $('#simAsk').value = ''; const m = t.match(/(\d+(?:\.\d+)?)\s*米/); if (m) { st.task.dist = +m[1]; st.t = 0; st.playing = true; toast(`已把前进距离改为 ${m[1]} m`); draw(); } else toast(state.bridge ? '已交给 COS（本机）' : '演示模式：识别"向前走 N 米"这类指令'); };
+    $('#simAskGo').onclick = () => { const t = $('#simAsk').value.trim(); if (!t) return; $('#simAsk').value = ''; const m = t.match(/(\d+(?:\.\d+)?)\s*米/); if (m) { st.task.dist = +m[1]; st.t = 0; st.playing = true; toast(`已把前进距离改为 ${m[1]} m`); draw(); } else toast(state.bridge ? '已交给本机桥接' : '演示模式：识别"向前走 N 米"这类指令'); };
     $('#simAddEng').onclick = () => toast('添加引擎：界面示例');
     clearInterval(simTimer); simTimer = setInterval(() => { if (!document.getElementById('simCv')) { clearInterval(simTimer); return; } tick(); }, 100);
   };
@@ -701,9 +768,9 @@ function vStore(v){
     v.innerHTML = `<div class="row"><div><div class="h1">发现好玩的具身智能装置</div><div class="sub">开箱体验，用自然语言拓展新功能</div></div><span class="grow"></span>
       <button class="btn" id="cartBtn">🛒 购物车 <span class="pill">${state.cart.length}</span></button><button class="btn">📄 我的订单</button></div>
       <input id="sq" placeholder="🔍 搜索机器人、机械臂或开发套件…" value="${esc(q)}" style="width:100%;margin-top:18px">
-      <div class="row" style="margin-top:12px"><div class="filters" style="margin:0">${D.storeCats.map(c => `<button class="${c === cat ? 'on' : ''}" data-c="${c}">${c}</button>`).join('')}</div><span class="grow"></span><label class="row" style="gap:6px;font-size:14px"><input type="checkbox" id="fit" ${fitOnly ? 'checked' : ''} style="width:auto">仅看 COS 已适配</label></div>
+      <div class="row" style="margin-top:12px"><div class="filters" style="margin:0">${D.storeCats.map(c => `<button class="${c === cat ? 'on' : ''}" data-c="${c}">${c}</button>`).join('')}</div><span class="grow"></span><label class="row" style="gap:6px;font-size:14px"><input type="checkbox" id="fit" ${fitOnly ? 'checked' : ''} style="width:auto">仅看 EI TOKEN 已适配</label></div>
       <div class="tplgrid">${list.map(s => `<div class="card tpl" style="cursor:default"><div class="hero2" style="height:150px;margin:0 0 12px;font-size:64px">${s.ico}</div><b class="h3">${esc(s.nm)}</b><div class="sub" style="margin:2px 0 6px;font-size:13.5px">${esc(s.sub)}</div>
-        <div class="tags">${s.tags.map(g => `<span>${esc(g)}</span>`).join('')}${s.fit ? '<span style="background:var(--ok-soft);color:var(--ok)">COS 已适配</span>' : ''}</div>
+        <div class="tags">${s.tags.map(g => `<span>${esc(g)}</span>`).join('')}${s.fit ? '<span style="background:var(--ok-soft);color:var(--ok)">EI TOKEN 已适配</span>' : ''}</div>
         <div class="sub" style="font-size:12.5px;margin:0">原型：${esc(s.proto)}</div>
         <div class="row" style="margin-top:12px"><b style="font-size:20px">¥${s.price.toLocaleString()}</b><span class="grow"></span><button class="btn sm" data-add="${s.id}">🛒 加入购物车</button></div></div>`).join('')}</div>
       <p class="foot-note">概念商品与价格仅供界面示例，具体规格及适配范围以商品说明为准。</p>`;

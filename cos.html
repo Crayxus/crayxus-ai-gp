@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>COS · Crayxus Robot OS 开发平台</title>
-<meta name="description" content="描述一个任务，连接设备，让想法运行起来。COS 把引脚、波特率、烧录命令这些平台差异关进驱动层。">
+<title>EI TOKEN · 具身智能开发平台</title>
+<meta name="description" content="EI TOKEN · 具身智能开发平台：描述一个任务，连接设备，让想法运行起来。">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
 /* ═══════════════ 主题令牌：白 / 黑 / Cyber ═══════════════ */
@@ -54,9 +54,9 @@ textarea{resize:vertical;line-height:1.6}
 .app{display:grid;grid-template-columns:280px 1fr;min-height:100vh}
 .sb{background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
 .logo{display:flex;align-items:center;gap:10px;padding:22px 22px 14px;font-weight:900;font-size:20px;letter-spacing:.01em}
-.logo .mk{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--acc),color-mix(in srgb,var(--acc) 55%,#8b5cf6));
+.logo .mk{width:34px;height:34px;border-radius:9px;font-size:13px;background:linear-gradient(135deg,var(--acc),color-mix(in srgb,var(--acc) 55%,#8b5cf6));
           display:grid;place-items:center;color:var(--acc-txt);font-size:12px;font-weight:900;font-family:var(--mono)}
-.logo small{display:block;font-size:10px;letter-spacing:.24em;color:var(--mute);font-weight:600;margin-top:-2px}
+.logo small{display:block;font-size:10px;letter-spacing:.06em;color:var(--mute);font-weight:600;margin-top:-2px;white-space:nowrap}
 .newbtn{margin:4px 20px 18px;padding:12px;border-radius:10px;background:var(--acc);color:var(--acc-txt);font-weight:700;font-size:15px;
         display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 6px 18px color-mix(in srgb,var(--acc) 30%,transparent)}
 .newbtn:hover{background:var(--acc-h)}
@@ -208,7 +208,7 @@ table.tb{width:100%;border-collapse:collapse;font-size:14px}
 .editor .tabs2 span{padding:10px 16px;font-size:13.5px;color:var(--dim);border-right:1px solid var(--line)}
 .editor .tabs2 span.on{background:var(--card);color:var(--txt);font-weight:700}
 .code{font-family:var(--mono);font-size:13px;line-height:1.75;padding:14px 0;overflow:auto;max-height:560px;background:var(--code-bg)}
-.code .ln{display:flex}
+.code .ln{display:flex}.code .ln>span:last-child{white-space:pre-wrap;flex:1;padding-right:14px}
 .code .n{width:52px;text-align:right;padding-right:16px;color:var(--mute);user-select:none;flex:0 0 auto}
 .code .ln.add{background:var(--ok-soft)}
 .code .ln.add .n::after{content:"+";color:var(--ok);margin-left:6px}
@@ -285,7 +285,7 @@ table.tb{width:100%;border-collapse:collapse;font-size:14px}
 <body>
 <div class="app">
   <aside class="sb">
-    <div class="logo"><span class="mk">COS</span><div>Crayxus Robot OS<small>DEVELOPER PLATFORM</small></div></div>
+    <div class="logo"><span class="mk">EI</span><div>EI TOKEN<small>具身智能 · EMBODIED INTELLIGENCE</small></div></div>
     <button class="newbtn" id="newBtn">＋ 新建项目</button>
     <div class="sb-sec">我的项目</div>
     <div class="nav" id="projList"></div>
@@ -299,7 +299,7 @@ table.tb{width:100%;border-collapse:collapse;font-size:14px}
       <a href="#/usage" data-route="usage"><span class="ic">📊</span>Token 用量</a>
     </div>
     <div class="sb-foot">
-      <span class="avatar">C</span><span>个人工作空间</span><span class="sp"></span>
+      <span class="avatar">E</span><span>个人工作空间</span><span class="sp"></span>
       <button class="iconbtn" id="themeBtn" title="切换配色">◐</button>
     </div>
   </aside>
@@ -312,7 +312,7 @@ table.tb{width:100%;border-collapse:collapse;font-size:14px}
       <div class="seg" id="themeSeg">
         <button data-theme="white">白</button><button data-theme="black">黑</button><button data-theme="cyber">Cyber</button>
       </div>
-      <span class="avatar">C</span>
+      <span class="avatar">E</span>
     </header>
     <div class="view" id="view"></div>
   </div>

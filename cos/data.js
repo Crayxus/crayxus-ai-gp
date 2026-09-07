@@ -1,4 +1,4 @@
-/* COS 开发平台 · 示例数据
+/* EI TOKEN 具身智能开发平台 · 示例数据
    这里的项目/模板/金额都是界面示例, 真实数据来自本机桥接(:8799)与 COS Runtime。 */
 window.COS_DATA = {
 
@@ -257,8 +257,48 @@ def read():
   "timeout_ms": 300,
   "fields": { "throttle": "float -1..1", "steer": "float -1..1", "btn": "bool" }
 }`,
+        'ui/RoomPanel.tsx':
+`export function RoomPanel() {
+  return (
+    <TaskPanel title="房间建图遥控台">
+      <SlamMap source="map" />
+      <CameraView source="video" />
+      <RobotPose source="pose" />
+      <DrivePad
+        onMove={actions.drive}
+        onRelease={actions.stop}
+      />
+      <SaveMap onClick={actions.saveMap} />
+    </TaskPanel>
+  );
+}`,
+        'ui/components/DrivePad.tsx':
+`// 屏幕遥控器：按住移动，松开即停（对应机器人端 TIMEOUT_SECONDS 失联停车）
+export function DrivePad({ onMove, onRelease, size = "normal" }) {
+  const dirs = [["↑", 1, 0], ["←", 0, -1], ["→", 0, 1], ["↓", -1, 0]];
+  return (
+    <div className={"pad " + size}>
+      {dirs.map(([k, t, s]) => (
+        <button key={k} onPointerDown={() => onMove(t, s)} onPointerUp={onRelease}>{k}</button>
+      ))}
+      <button className="stop" onClick={onRelease}>■</button>
+    </div>
+  );
+}`,
+        'shared/bindings.json':
+`{
+  "map":   { "topic": "/slam/map",  "type": "occupancy_grid", "rate_hz": 2 },
+  "video": { "topic": "/camera/mjpeg", "type": "mjpeg", "rate_hz": 15 },
+  "pose":  { "topic": "/slam/pose", "type": "pose2d", "rate_hz": 10 },
+  "actions": {
+    "drive":   { "udp": "robot:9000", "payload": { "throttle": "float", "steer": "float" } },
+    "stop":    { "udp": "robot:9000", "payload": { "throttle": 0, "steer": 0 } },
+    "saveMap": { "http": "POST robot:8080/map/save" }
+  }
+}`,
         'requirements.txt': `gpiozero>=2.0`,
       },
+      ui:{ title:'房间建图遥控台', sub:'遥控探索房间，实时查看地图与画面', caps:['地图与位姿','相机视频','移动与停止'] },
     },
     { id:'arm', nm:'机械臂分类抓取', ico:'🦾', ver:'v0.2', budget:100,
       devices:[ { id:'d1', role:'视觉与规划', plat:'rdk',   conn:'网络连接 · SSH', env:'Python',   prog:'vision/main.py', status:'已连接' },
@@ -597,17 +637,17 @@ void loop(){
   /* 经验与模板 */
   templates: [
     { id:'t1', cat:'任务方案', nm:'双设备遥控方案', ico:'🎮', tags:['Raspberry Pi','ESP32'], sub:'生成机器人与遥控器的配套程序', ver:'v0.3', verified:true,
-      devs:'Raspberry Pi + ESP32', includes:['两端源码','通信协议','接线说明','测试步骤'], team:'Crayxus 工程团队' },
+      devs:'Raspberry Pi + ESP32', includes:['两端源码','通信协议','接线说明','测试步骤'], team:'EI Token 工程团队' },
     { id:'t2', cat:'驱动组件', nm:'舵机角度控制', ico:'⚙️', tags:['Arduino','ESP32'], sub:'配置舵机行程与动作参数', ver:'v0.2', verified:true,
-      devs:'Arduino / ESP32', includes:['驱动源码','参数表','实机踩坑(LEDC 14bit)'], team:'Crayxus 工程团队' },
+      devs:'Arduino / ESP32', includes:['驱动源码','参数表','实机踩坑(LEDC 14bit)'], team:'EI Token 工程团队' },
     { id:'t3', cat:'任务方案', nm:'距离检测与避障', ico:'📡', tags:['Raspberry Pi','STM32'], sub:'读取距离并触发停止动作', ver:'v0.1', verified:false,
-      devs:'Raspberry Pi + STM32', includes:['雷达接入','避障状态机','测试步骤'], team:'Crayxus 工程团队' },
+      devs:'Raspberry Pi + STM32', includes:['雷达接入','避障状态机','测试步骤'], team:'EI Token 工程团队' },
     { id:'t4', cat:'故障诊断', nm:'串口连接排障', ico:'🔌', tags:['诊断流程'], sub:'按步骤检查端口、驱动与通信', ver:'v0.1', verified:true,
-      devs:'任意串口设备', includes:['端口漂移处理','驱动检查','回环测试'], team:'Crayxus 工程团队' },
+      devs:'任意串口设备', includes:['端口漂移处理','驱动检查','回环测试'], team:'EI Token 工程团队' },
     { id:'t5', cat:'硬件配置', nm:'ESP32-S3 USB 串口配置', ico:'🧩', tags:['ESP32-S3'], sub:'USBMode=hwcdc 与烧录参数', ver:'v1.0', verified:true,
-      devs:'ESP32-S3 / XIAO', includes:['编译参数','烧录命令','常见报错'], team:'Crayxus 工程团队' },
+      devs:'ESP32-S3 / XIAO', includes:['编译参数','烧录命令','常见报错'], team:'EI Token 工程团队' },
     { id:'t6', cat:'任务方案', nm:'机械臂颜色分拣', ico:'🦾', tags:['RDK X5','STM32'], sub:'视觉识别 + 关节规划 + 抓取', ver:'v0.2', verified:false,
-      devs:'RDK X5 + STM32', includes:['视觉源码','关节协议','标定步骤'], team:'Crayxus 工程团队' },
+      devs:'RDK X5 + STM32', includes:['视觉源码','关节协议','标定步骤'], team:'EI Token 工程团队' },
   ],
   templateCats: ['全部','硬件配置','驱动组件','任务方案','故障诊断'],
 
@@ -627,7 +667,7 @@ void loop(){
     { id:'s4', cat:'移动机器人',ico:'🏎️', nm:'视觉巡游车',    sub:'视觉识别 · 避障 · 跟随',   tags:['Python','配套模板'], price:899,  fit:true,  proto:'AIGP 赛车 · Pi + ESP32-S3 + OV9281' },
     { id:'s5', cat:'移动机器人',ico:'🐕', nm:'迷你机器狗',    sub:'动作编排 · 舞蹈 · 遥控',   tags:['开放 SDK'],          price:1699, fit:false, proto:'四足 · Jetson' },
     { id:'s6', cat:'创客套件', ico:'🎮', nm:'遥控开发套件',   sub:'机器人与遥控器双端开发',   tags:['双设备项目'],        price:299,  fit:true,  proto:'Raspberry Pi + ESP32 + 摇杆模块' },
-    { id:'s7', cat:'创客套件', ico:'🧩', nm:'即插即用传感器包', sub:'雷达 · IMU · 超声 · 摄像头', tags:['COS 驱动已备'],    price:459,  fit:true,  proto:'RPLIDAR C1 + BNO055 + OV9281' },
+    { id:'s7', cat:'创客套件', ico:'🧩', nm:'即插即用传感器包', sub:'雷达 · IMU · 超声 · 摄像头', tags:['EI Token 已适配'],    price:459,  fit:true,  proto:'RPLIDAR C1 + BNO055 + OV9281' },
     { id:'s8', cat:'机械臂',   ico:'🤖', nm:'人形上半身',     sub:'双臂 · 头部 · 表情屏',     tags:['开放 SDK'],          price:4999, fit:false, proto:'RK3588 · 20 舵机' },
   ],
 
