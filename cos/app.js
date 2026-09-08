@@ -20,6 +20,7 @@ const state = {
   bridge: null, provider: '', usage: null,
   hw: [],   // 实机：已授权/已插入的设备
   relay: LS.get('relay', ''),   // 中转配对码：线上页面靠它看本机设备
+  names: LS.get('hwnames', {}),   // 自己给设备起的名字：key → 名字
 };
 const saveUserProjects = () => LS.set('projects', state.projects.filter(p => p.user));
 
@@ -484,9 +485,15 @@ async function pullHW(scan){
   (j.boards || []).forEach(b => { const k = 'net:' + b.ip; keys.add(k);
     let e = state.hw.find(x => x.key === k);
     if (!e) { state.hw.push({ key: k, src: 'bridge', relayed, net: true, plat: b.plat, nm: b.nm, ip: b.ip,
-        banner: b.banner, why: b.why, info: {}, lines: [] });
+        banner: b.banner, why: b.why, services: b.services || [], info: {}, lines: [] });
       toast('🔌 ' + b.nm + ' 已连接（' + b.ip + '）'); changed = true; }
-    else { e.nm = b.nm; e.why = b.why; } });
+    else { e.nm = b.nm; e.why = b.why; e.services = b.services || []; } });
+  (j.bt || []).forEach(b => { const k = 'bt:' + b.com; keys.add(k);
+    if (state.hw.some(x => x.key === k)) return;
+    state.hw.push({ key: k, src: 'bridge', relayed, bt: true, com: b.com, plat: b.plat || '',
+      nm: b.nm, why: b.why, info: {}, lines: [] });
+    toast('🔌 ' + b.nm + ' 已连接（' + b.com + '）'); changed = true; });
+  state.btSkip = j.btSkip || 0;
   (j.serial || []).forEach(sp => {
     const own = state.hw.find(x => x.port && x.info.usbVendorId === sp.vid && x.info.usbProductId === sp.pid);
     const k = 'com:' + sp.com;
@@ -528,9 +535,9 @@ async function hwScan(){
 function hwReport(found){
   const row = e => { const pl = e.plat ? platOf(e.plat) : null;
     return `<div class="hwrow">${pl ? boardPic(pl, 'boardpic sm') : '<span class="boardpic sm">🔌</span>'}
-      <div style="min-width:0"><b>${esc(e.nm)}</b> ${found.includes(e) ? '<span class="badge ok">新</span>' : ''}
+      <div style="min-width:0"><b>${esc(state.names[e.key || ''] || e.nm)}</b> ${found.includes(e) ? '<span class="badge ok">新</span>' : ''}
         <div class="sub" style="margin:0;font-size:12.5px">${esc(e.why || '')}</div></div><span class="grow"></span>
-      <span class="mono" style="font-size:12px;color:var(--mute);white-space:nowrap">${e.net ? 'SSH ' + esc(e.ip) : e.com ? esc(e.com) : 'VID ' + hex4(e.info.usbVendorId) + ':' + hex4(e.info.usbProductId)}</span></div>`; };
+      <span class="mono" style="font-size:12px;color:var(--mute);white-space:nowrap">${e.net ? esc(e.ip) : e.com ? esc(e.com) : 'VID ' + hex4(e.info.usbVendorId) + ':' + hex4(e.info.usbProductId)}</span></div>`; };
   modal(`<div class="hd"><b class="h3">扫描完成</b>
       <span class="pill ${found.length ? 'ok' : 'gray'}">${found.length ? '新增 ' + found.length + ' 台' : '无新增'}</span>
       <span class="grow"></span><button class="btn sm" data-close>关闭</button></div>
@@ -556,27 +563,39 @@ function paintLive(){
   const el = $('#hwList'); if (!el) return;
   const c = $('#hwCount'); if (c){ c.textContent = state.hw.length + ' 台在线'; c.className = 'pill ' + (state.hw.length ? 'ok' : 'gray'); }
   el.innerHTML = state.hw.length ? state.hw.map((e, i) => { const pl = e.plat ? platOf(e.plat) : null;
-    const tag = e.sim ? '<span class="badge">演示</span>' : e.fixed ? '<span class="badge ok">日志已确认</span>'
+    const nm = state.names[e.key || ''] || e.nm;
+    const tag = e.sim ? '<span class="badge">演示</span>' : e.bt ? '<span class="badge ok">蓝牙串口</span>' : e.fixed ? '<span class="badge ok">日志已确认</span>'
       : e.relayed ? '<span class="badge ok">' + (e.net ? '网络发现' : '本机发现') + ' · 经中转</span>'
       : e.net ? '<span class="badge ok">网络发现</span>' : e.src === 'bridge' ? '<span class="badge">本机发现</span>' : '<span class="badge ok">浏览器已授权</span>';
-    const meta = e.sim ? '模拟设备' : e.net ? 'SSH ' + esc(e.ip)
+    const meta = e.sim ? '模拟设备' : e.net ? esc(e.ip) : e.bt ? esc(e.com)
       : (e.com ? esc(e.com) + ' · ' : '') + 'VID ' + hex4(e.info.usbVendorId) + ':' + hex4(e.info.usbProductId);
     return `<div class="hwrow"><span class="dotpulse ${e.sim ? 'sim' : ''}"></span>
       ${pl ? boardPic(pl, 'boardpic sm') : '<span class="boardpic sm">🔌</span>'}
-      <div style="min-width:0"><b>${esc(e.nm)}</b> ${tag}
-        <div class="sub" style="margin:0;font-size:12.5px">${esc(e.why || '')}${e.banner ? ' · <span class="mono">' + esc(e.banner) + '</span>' : ''}</div></div>
+      <div style="min-width:0"><b>${esc(nm)}</b> ${tag}
+        <div class="sub" style="margin:0;font-size:12.5px">${esc(e.why || '')}${e.services && e.services.length ? ' · ' + e.services.map(esc).join(' · ') : ''}${e.banner ? ' · <span class="mono">' + esc(e.banner) + '</span>' : ''}</div></div>
       <span class="grow"></span>
       <span class="mono" style="font-size:12px;color:var(--mute);white-space:nowrap">${meta}</span>
       ${pl ? `<a class="btn sm" href="#/home" data-use="${e.plat}">用它新建项目</a>` : ''}
+      <button class="btn sm" data-nm="${i}" title="改名">✎</button>
       ${e.port ? `<button class="btn sm" data-log="${i}">${e.opened ? '● 读取中' : '▶ 读串口日志'}</button>` : ''}
       ${e.src === 'bridge' && !e.net ? '' : ''}
       <button class="btn sm" data-rm="${i}">${e.sim ? '拔出' : '移除'}</button></div>`; }).join('')
     : `<div class="sub" style="padding:10px 0">还没有设备</div>`;
+  if (state.btSkip) el.insertAdjacentHTML('beforeend',
+    `<div class="sub" style="margin-top:8px;font-size:12px">另有 ${state.btSkip} 个蓝牙串口未识别</div>`);
   el.querySelectorAll('[data-log]').forEach(b => b.onclick = () => { const e = state.hw[+b.dataset.log]; if (e.opened) hwClose(e); else { hwOpen(e); hwLogModal(e); } });
   el.querySelectorAll('[data-rm]').forEach(b => b.onclick = async () => { const e = state.hw[+b.dataset.rm];
     if (e.src === 'bridge') return toast('这台是本机实时发现的，拔掉设备它就会自己消失');
     if (e.opened) await hwClose(e); if (e.port && e.port.forget) { try { await e.port.forget(); } catch (_) {} }
     state.hw.splice(+b.dataset.rm, 1); toast('已移除'); syncHW(); paintLive(); });
+  el.querySelectorAll('[data-nm]').forEach(b => b.onclick = () => { const e = state.hw[+b.dataset.nm]; const k = e.key || ('usb:' + e.info.usbVendorId + ':' + e.info.usbProductId);
+    const r = modal(`<div class="hd"><b class="h3">设备改名</b><span class="grow"></span><button class="btn sm" data-close>取消</button></div>
+      <div class="bd"><input id="nmIn" value="${esc(state.names[k] || e.nm)}" style="width:100%"><div class="row" style="margin-top:12px;justify-content:flex-end"><button class="btn primary" id="nmOk">保存</button></div></div>`);
+    const save = () => { const v = r.querySelector('#nmIn').value.trim();
+      if (v) state.names[k] = v; else delete state.names[k];
+      LS.set('hwnames', state.names); e.key = k; $('#modalRoot').innerHTML = ''; paintLive(); };
+    r.querySelector('#nmOk').onclick = save; r.querySelector('#nmIn').onkeydown = ev => { if (ev.key === 'Enter') save(); };
+    r.querySelector('#nmIn').focus(); });
   el.querySelectorAll('[data-use]').forEach(b => b.onclick = () => { homeDevs = [b.dataset.use]; });
 }
 function hwLogModal(e){
