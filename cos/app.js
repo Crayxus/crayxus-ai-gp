@@ -19,6 +19,7 @@ const state = {
   cart: LS.get('cart', []),
   bridge: null, provider: '', usage: null,
   hw: [],   // 实机：已授权/已插入的设备
+  relay: LS.get('relay', ''),   // 中转配对码：线上页面靠它看本机设备
 };
 const saveUserProjects = () => LS.set('projects', state.projects.filter(p => p.user));
 
@@ -466,15 +467,24 @@ if (HW_OK) {
   navigator.serial.getPorts().then(ps => { ps.forEach(p => hwAdd(p, true)); syncHW(); }).catch(() => {});
 }
 
-/* 桥接侧发现：浏览器看不到网络板(RDK/Jetson/树莓派走 SSH)，交给本机桥接扫 */
+/* 桥接侧发现：浏览器看不到网络板(RDK/Jetson/树莓派走 SSH)，交给本机桥接扫。
+   线上 https 页面读不到 127.0.0.1（浏览器不允许），改走公网中转：
+   本机桥接把设备快照推上去，这边凭配对码取回来 —— 手机也能看。 */
+const RELAY_API = 'https://safegate-2rw7.onrender.com/api/cos/hw';
 async function pullHW(){
-  if (!state.bridge) return;
-  let j; try { j = await (await fetch(state.bridge + '/api/hw')).json(); } catch (e) { return; }
+  let j = null, relayed = false;
+  if (state.bridge) { try { j = await (await fetch(state.bridge + '/api/hw')).json(); } catch (e) {} }
+  if (!j && state.relay) {
+    relayed = true;
+    try { j = await (await fetch(RELAY_API + '?code=' + encodeURIComponent(state.relay))).json(); } catch (e) {}
+    if (j && !j.online) { if (state.relayOn !== false) { state.relayOn = false; state.relayHost = ''; paintLive(); } j = null; }
+    else if (j) { state.relayOn = true; state.relayHost = j.host || ''; }
+  }
   if (!j || !j.ok) return;
   const keys = new Set(); let changed = false;
   (j.boards || []).forEach(b => { const k = 'net:' + b.ip; keys.add(k);
     let e = state.hw.find(x => x.key === k);
-    if (!e) { state.hw.push({ key: k, src: 'bridge', net: true, plat: b.plat, nm: b.nm, ip: b.ip,
+    if (!e) { state.hw.push({ key: k, src: 'bridge', relayed, net: true, plat: b.plat, nm: b.nm, ip: b.ip,
         banner: b.banner, why: b.why, info: {}, lines: [] });
       toast('🔌 ' + b.nm + ' 已连接（' + b.ip + '）'); changed = true; }
     else { e.nm = b.nm; e.why = b.why; } });
@@ -486,7 +496,7 @@ async function pullHW(){
     keys.add(k);
     if (state.hw.some(x => x.key === k)) return;
     const hit = sp.vid != null ? usbHit({ usbVendorId: sp.vid, usbProductId: sp.pid }) : null;
-    state.hw.push({ key: k, src: 'bridge', com: sp.com, info: { usbVendorId: sp.vid, usbProductId: sp.pid },
+    state.hw.push({ key: k, src: 'bridge', relayed, com: sp.com, info: { usbVendorId: sp.vid, usbProductId: sp.pid },
       plat: hit ? hit.plat : '', nm: hit ? hit.nm : (sp.name || '串口设备'),
       why: (hit ? hit.note : '本机发现的串口设备') + ' · ' + sp.com, lines: [] });
     toast('🔌 ' + (hit ? hit.nm : '串口设备') + ' 已连接（' + sp.com + '）'); changed = true; });
@@ -500,9 +510,15 @@ function liveCard(){
   return `<div class="card live" style="padding:16px 18px;margin-top:6px">
     <div class="row wrap"><b class="h3">🔌 实机连接</b><span class="pill ${state.hw.length ? 'ok' : 'gray'}" id="hwCount">${state.hw.length} 台在线</span>
       <span class="grow"></span>
+      ${state.bridge ? '' : `<input id="hwCode" placeholder="配对码" value="${esc(state.relay)}" style="width:120px;text-transform:uppercase"><button class="btn sm" id="hwLink">${state.relay ? '换' : '连'}本机</button>`}
       <button class="btn sm" id="hwAuth">＋ 授权设备</button>
       <select class="sm" id="hwSimSel" style="max-width:170px"><option value="">模拟插入（演示）…</option>${PLATFORMS.map(p => `<option value="${p.id}">${esc(p.nm)}</option>`).join('')}</select></div>
-    <div class="hint">${state.bridge ? '<b>已连接本机桥接</b>：串口设备和 RDK / Jetson / 树莓派这类网络板都会自动出现，插上就认，不用授权。<br>' : ''}${HW_OK
+    <div class="hint">${state.bridge
+      ? '<b>已连接本机桥接</b>：串口设备和 RDK / Jetson / 树莓派这类网络板都会自动出现，插上就认，不用授权。<br>'
+      : state.relay
+        ? (state.relayOn ? `<b>已通过中转看到本机「${esc(state.relayHost || '')}」</b>：那台机器上插的板子会实时出现在这里，手机上也一样。<br>`
+                         : `配对码 <b>${esc(state.relay)}</b> 暂时没有信号 —— 确认那台机器上 <span class="mono">npm run bridge</span> 在跑。<br>`)
+        : '想让本页看到<b>网络板（RDK / Jetson / 树莓派）</b>：在那台机器上跑 <span class="mono">npm run bridge</span>，把启动横幅里的<b>配对码</b>填到右上角。<br>'}${HW_OK
       ? '本浏览器支持 Web Serial：点「授权设备」选中一次板子后，<b>之后插拔会自动识别并提示</b>——先按 USB VID/PID 判型号，打开串口后再按启动日志二次确认。'
       : '当前浏览器不支持 Web Serial，请用 <b>Edge / Chrome</b> 打开本页；也可以用「模拟插入」走完整演示流程。'}</div>
     <div id="hwList" style="margin-top:10px"></div></div>`;
@@ -512,6 +528,7 @@ function paintLive(){
   const c = $('#hwCount'); if (c){ c.textContent = state.hw.length + ' 台在线'; c.className = 'pill ' + (state.hw.length ? 'ok' : 'gray'); }
   el.innerHTML = state.hw.length ? state.hw.map((e, i) => { const pl = e.plat ? platOf(e.plat) : null;
     const tag = e.sim ? '<span class="badge">演示</span>' : e.fixed ? '<span class="badge ok">日志已确认</span>'
+      : e.relayed ? '<span class="badge ok">' + (e.net ? '网络发现' : '本机发现') + ' · 经中转</span>'
       : e.net ? '<span class="badge ok">网络发现</span>' : e.src === 'bridge' ? '<span class="badge">本机发现</span>' : '<span class="badge ok">浏览器已授权</span>';
     const meta = e.sim ? '模拟设备' : e.net ? 'SSH ' + esc(e.ip)
       : (e.com ? esc(e.com) + ' · ' : '') + 'VID ' + hex4(e.info.usbVendorId) + ':' + hex4(e.info.usbProductId);
@@ -552,6 +569,11 @@ function vDevices(v){
     <div class="boards" id="boards" style="margin-top:20px"></div>`;
   paintLive();
   $('#hwAuth').onclick = hwAuthorize;
+  const cin = $('#hwCode');
+  if (cin) { const link = () => { state.relay = cin.value.trim().toUpperCase(); LS.set('relay', state.relay);
+      state.hw = state.hw.filter(e => e.src !== 'bridge'); state.relayOn = null;
+      toast(state.relay ? '正在连接 ' + state.relay + ' …' : '已断开中转'); pullHW(); render(); };
+    $('#hwLink').onclick = link; cin.onkeydown = ev => { if (ev.key === 'Enter') link(); }; }
   $('#hwSimSel').onchange = e2 => { if (e2.target.value) hwSim(e2.target.value); e2.target.value = ''; };
   const draw = q => { q = (q || '').toLowerCase();
     $('#boards').innerHTML = ['ser','ssh'].map(via => { const list = PLATFORMS.filter(p => p.via === via && (!q || (p.nm + p.ch + p.role).toLowerCase().includes(q)));
@@ -995,10 +1017,13 @@ function vUsage(v){
 applyTheme(state.theme);
 render();
 syncHW();
+/* 线上看本机设备：cos.html?hw=配对码（配对码由 npm run bridge 启动时给出） */
+try{ const hq = new URLSearchParams(location.search).get('hw');
+  if (hq) { state.relay = hq.trim().toUpperCase(); LS.set('relay', state.relay); pullHW(); } }catch(e){}
 /* 演示用：cos.html?sim=esp32,rdk#/devices 预置模拟设备，无硬件也能彩排 */
 try{ const q=new URLSearchParams(location.search).get('sim');
   if(q) q.split(',').map(x=>x.trim()).filter(x=>platOf(x)).forEach(hwSim); }catch(e){}
 probeBridge().then(ok => { if (ok) pullHW(); });
 setInterval(pullUsage, 15000);
-setInterval(pullHW, 3000);   // 本机桥接在跑时才真发请求
+setInterval(pullHW, 3000);   // 本机桥接优先，没有就走中转
 })();
