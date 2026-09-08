@@ -50,7 +50,8 @@ async function probeBridge(){
       const ctl = new AbortController(); const t = setTimeout(() => ctl.abort(), 900);
       const r = await fetch(b + '/api/health', { signal: ctl.signal }); clearTimeout(t);
       if (r.ok) { const j = await r.json(); state.bridge = b; state.provider = j.provider || '';
-        $('#bridgeBadge').textContent = '已连接本机 · ' + (state.provider || '桥接'); $('#bridgeBadge').className = 'badge ok'; pullUsage(); return true; }
+        $('#bridgeBadge').textContent = '已连接本机 · ' + (state.provider || '桥接'); $('#bridgeBadge').className = 'badge ok'; pullUsage();
+        if (location.hash.startsWith('#/devices')) render(); return true; }
     } catch (e) {}
   }
   $('#bridgeBadge').textContent = '未连接本机（演示模式）'; $('#bridgeBadge').className = 'badge'; return false;
@@ -465,6 +466,35 @@ if (HW_OK) {
   navigator.serial.getPorts().then(ps => { ps.forEach(p => hwAdd(p, true)); syncHW(); }).catch(() => {});
 }
 
+/* 桥接侧发现：浏览器看不到网络板(RDK/Jetson/树莓派走 SSH)，交给本机桥接扫 */
+async function pullHW(){
+  if (!state.bridge) return;
+  let j; try { j = await (await fetch(state.bridge + '/api/hw')).json(); } catch (e) { return; }
+  if (!j || !j.ok) return;
+  const keys = new Set(); let changed = false;
+  (j.boards || []).forEach(b => { const k = 'net:' + b.ip; keys.add(k);
+    let e = state.hw.find(x => x.key === k);
+    if (!e) { state.hw.push({ key: k, src: 'bridge', net: true, plat: b.plat, nm: b.nm, ip: b.ip,
+        banner: b.banner, why: b.why, info: {}, lines: [] });
+      toast('🔌 ' + b.nm + ' 已连接（' + b.ip + '）'); changed = true; }
+    else { e.nm = b.nm; e.why = b.why; } });
+  (j.serial || []).forEach(sp => {
+    const own = state.hw.find(x => x.port && x.info.usbVendorId === sp.vid && x.info.usbProductId === sp.pid);
+    const k = 'com:' + sp.com;
+    if (own) { own.com = sp.com;                                    // 已授权的补上 COM 号
+      const dup = state.hw.findIndex(x => x.key === k); if (dup >= 0) { state.hw.splice(dup, 1); changed = true; } return; }
+    keys.add(k);
+    if (state.hw.some(x => x.key === k)) return;
+    const hit = sp.vid != null ? usbHit({ usbVendorId: sp.vid, usbProductId: sp.pid }) : null;
+    state.hw.push({ key: k, src: 'bridge', com: sp.com, info: { usbVendorId: sp.vid, usbProductId: sp.pid },
+      plat: hit ? hit.plat : '', nm: hit ? hit.nm : (sp.name || '串口设备'),
+      why: (hit ? hit.note : '本机发现的串口设备') + ' · ' + sp.com, lines: [] });
+    toast('🔌 ' + (hit ? hit.nm : '串口设备') + ' 已连接（' + sp.com + '）'); changed = true; });
+  state.hw.filter(e => e.src === 'bridge' && !keys.has(e.key)).forEach(e => {
+    state.hw.splice(state.hw.indexOf(e), 1); toast('⏏ ' + e.nm + ' 已拔出'); changed = true; });
+  syncHW(); if (changed) paintLive();
+}
+
 /* 实机连接卡片（设备中心顶部） */
 function liveCard(){
   return `<div class="card live" style="padding:16px 18px;margin-top:6px">
@@ -472,7 +502,7 @@ function liveCard(){
       <span class="grow"></span>
       <button class="btn sm" id="hwAuth">＋ 授权设备</button>
       <select class="sm" id="hwSimSel" style="max-width:170px"><option value="">模拟插入（演示）…</option>${PLATFORMS.map(p => `<option value="${p.id}">${esc(p.nm)}</option>`).join('')}</select></div>
-    <div class="hint">${HW_OK
+    <div class="hint">${state.bridge ? '<b>已连接本机桥接</b>：串口设备和 RDK / Jetson / 树莓派这类网络板都会自动出现，插上就认，不用授权。<br>' : ''}${HW_OK
       ? '本浏览器支持 Web Serial：点「授权设备」选中一次板子后，<b>之后插拔会自动识别并提示</b>——先按 USB VID/PID 判型号，打开串口后再按启动日志二次确认。'
       : '当前浏览器不支持 Web Serial，请用 <b>Edge / Chrome</b> 打开本页；也可以用「模拟插入」走完整演示流程。'}</div>
     <div id="hwList" style="margin-top:10px"></div></div>`;
@@ -481,18 +511,24 @@ function paintLive(){
   const el = $('#hwList'); if (!el) return;
   const c = $('#hwCount'); if (c){ c.textContent = state.hw.length + ' 台在线'; c.className = 'pill ' + (state.hw.length ? 'ok' : 'gray'); }
   el.innerHTML = state.hw.length ? state.hw.map((e, i) => { const pl = e.plat ? platOf(e.plat) : null;
+    const tag = e.sim ? '<span class="badge">演示</span>' : e.fixed ? '<span class="badge ok">日志已确认</span>'
+      : e.net ? '<span class="badge ok">网络发现</span>' : e.src === 'bridge' ? '<span class="badge">本机发现</span>' : '<span class="badge ok">浏览器已授权</span>';
+    const meta = e.sim ? '模拟设备' : e.net ? 'SSH ' + esc(e.ip)
+      : (e.com ? esc(e.com) + ' · ' : '') + 'VID ' + hex4(e.info.usbVendorId) + ':' + hex4(e.info.usbProductId);
     return `<div class="hwrow"><span class="dotpulse ${e.sim ? 'sim' : ''}"></span>
       ${pl ? boardPic(pl, 'boardpic sm') : '<span class="boardpic sm">🔌</span>'}
-      <div style="min-width:0"><b>${esc(e.nm)}</b> ${e.sim ? '<span class="badge">演示</span>' : e.fixed ? '<span class="badge ok">日志已确认</span>' : ''}
-        <div class="sub" style="margin:0;font-size:12.5px">${esc(e.why || '')}</div></div>
+      <div style="min-width:0"><b>${esc(e.nm)}</b> ${tag}
+        <div class="sub" style="margin:0;font-size:12.5px">${esc(e.why || '')}${e.banner ? ' · <span class="mono">' + esc(e.banner) + '</span>' : ''}</div></div>
       <span class="grow"></span>
-      <span class="mono" style="font-size:12px;color:var(--mute);white-space:nowrap">${e.sim ? '模拟设备' : 'VID ' + hex4(e.info.usbVendorId) + ':' + hex4(e.info.usbProductId)}</span>
+      <span class="mono" style="font-size:12px;color:var(--mute);white-space:nowrap">${meta}</span>
       ${pl ? `<a class="btn sm" href="#/home" data-use="${e.plat}">用它新建项目</a>` : ''}
-      ${e.sim ? '' : `<button class="btn sm" data-log="${i}">${e.opened ? '● 读取中' : '▶ 读串口日志'}</button>`}
+      ${e.port ? `<button class="btn sm" data-log="${i}">${e.opened ? '● 读取中' : '▶ 读串口日志'}</button>` : ''}
+      ${e.src === 'bridge' && !e.net ? '<span class="sub" style="margin:0;font-size:12px">授权后可读日志</span>' : ''}
       <button class="btn sm" data-rm="${i}">${e.sim ? '拔出' : '移除'}</button></div>`; }).join('')
     : `<div class="sub" style="padding:10px 0">还没有设备。插上 ESP32 / STM32 / 开发板后点「授权设备」授权一次；或用「模拟插入」演示。</div>`;
   el.querySelectorAll('[data-log]').forEach(b => b.onclick = () => { const e = state.hw[+b.dataset.log]; if (e.opened) hwClose(e); else { hwOpen(e); hwLogModal(e); } });
   el.querySelectorAll('[data-rm]').forEach(b => b.onclick = async () => { const e = state.hw[+b.dataset.rm];
+    if (e.src === 'bridge') return toast('这台是本机实时发现的，拔掉设备它就会自己消失');
     if (e.opened) await hwClose(e); if (e.port && e.port.forget) { try { await e.port.forget(); } catch (_) {} }
     state.hw.splice(+b.dataset.rm, 1); toast('已移除'); syncHW(); paintLive(); });
   el.querySelectorAll('[data-use]').forEach(b => b.onclick = () => { homeDevs = [b.dataset.use]; });
@@ -962,6 +998,7 @@ syncHW();
 /* 演示用：cos.html?sim=esp32,rdk#/devices 预置模拟设备，无硬件也能彩排 */
 try{ const q=new URLSearchParams(location.search).get('sim');
   if(q) q.split(',').map(x=>x.trim()).filter(x=>platOf(x)).forEach(hwSim); }catch(e){}
-probeBridge().then(() => { if (route().v !== 'project') return; });
+probeBridge().then(ok => { if (ok) pullHW(); });
 setInterval(pullUsage, 15000);
+setInterval(pullHW, 3000);   // 本机桥接在跑时才真发请求
 })();
