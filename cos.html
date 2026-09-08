@@ -280,6 +280,16 @@ table.tb{width:100%;border-collapse:collapse;font-size:14px}
   .view{padding:18px}
   .hero .h1{font-size:32px}
 }
+
+/* 实机连接 */
+.hwrow{display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px dashed var(--line)}
+.hwrow:first-child{border-top:0}
+.boardpic.sm{width:44px;height:34px;font-size:18px}.boardpic.sm svg{width:38px;height:38px}
+.dotpulse{width:9px;height:9px;border-radius:50%;background:var(--ok);flex:0 0 auto;box-shadow:0 0 0 0 color-mix(in srgb,var(--ok) 60%,transparent);animation:hwp 1.8s infinite}
+.dotpulse.sim{background:var(--warn);animation:none}
+@keyframes hwp{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--ok) 55%,transparent)}70%{box-shadow:0 0 0 9px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.live .hint{font-size:12.5px;color:var(--dim);margin-top:6px;line-height:1.7}
+.hwlog{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-family:var(--mono);font-size:12.5px;line-height:1.6;height:300px;overflow:auto;white-space:pre-wrap;word-break:break-all}
 </style>
 </head>
 <body>
@@ -308,6 +318,7 @@ table.tb{width:100%;border-collapse:collapse;font-size:14px}
     <header class="top">
       <div class="crumb" id="crumb"><a href="#/home">⌂</a><i>›</i><span>工作空间</span><i>/</i><b>首页</b></div>
       <span class="sp"></span>
+      <span class="badge" id="hwBadge" style="cursor:pointer">🔌 未插入设备</span>
       <span class="badge" id="bridgeBadge">未连接本机</span>
       <div class="seg" id="themeSeg">
         <button data-theme="white">白</button><button data-theme="black">黑</button><button data-theme="cyber">Cyber</button>
