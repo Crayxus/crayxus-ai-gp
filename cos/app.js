@@ -478,7 +478,8 @@ async function pullHW(){
     relayed = true;
     try { j = await (await fetch(RELAY_API + '?code=' + encodeURIComponent(state.relay))).json(); } catch (e) {}
     if (j && !j.online) { if (state.relayOn !== false) { state.relayOn = false; state.relayHost = ''; paintLive(); } j = null; }
-    else if (j) { state.relayOn = true; state.relayHost = j.host || ''; }
+    else if (j) { const was = state.relayOn; state.relayOn = true; state.relayHost = j.host || '';
+      if (!was && location.hash.startsWith('#/devices')) render(); }
   }
   if (!j || !j.ok) return;
   const keys = new Set(); let changed = false;
@@ -1019,7 +1020,7 @@ render();
 syncHW();
 /* 线上看本机设备：cos.html?hw=配对码（配对码由 npm run bridge 启动时给出） */
 try{ const hq = new URLSearchParams(location.search).get('hw');
-  if (hq) { state.relay = hq.trim().toUpperCase(); LS.set('relay', state.relay); pullHW(); } }catch(e){}
+  if (hq) { state.relay = hq.trim().toUpperCase(); LS.set('relay', state.relay); render(); pullHW(); } }catch(e){}
 /* 演示用：cos.html?sim=esp32,rdk#/devices 预置模拟设备，无硬件也能彩排 */
 try{ const q=new URLSearchParams(location.search).get('sim');
   if(q) q.split(',').map(x=>x.trim()).filter(x=>platOf(x)).forEach(hwSim); }catch(e){}
