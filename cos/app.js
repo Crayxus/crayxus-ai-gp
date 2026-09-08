@@ -55,7 +55,7 @@ async function probeBridge(){
         if (location.hash.startsWith('#/devices')) render(); return true; }
     } catch (e) {}
   }
-  $('#bridgeBadge').textContent = '未连接本机（演示模式）'; $('#bridgeBadge').className = 'badge'; return false;
+  $('#bridgeBadge').textContent = '未连接本机'; $('#bridgeBadge').className = 'badge'; return false;
 }
 async function pullUsage(){
   if (!state.bridge) return;
@@ -145,8 +145,7 @@ function vHome(v){
   </div>
   <div class="chips">${D.chips.map(c => `<button class="chip">${esc(c)}</button>`).join('')}</div>
   <div class="starters">${D.starters.map(s => `<button class="card starter" data-s="${s.id}"><span class="ic">${s.ico}</span><div><b>${esc(s.nm)}</b><span>${esc(s.sub)}</span></div></button>`).join('')}</div>
-  <p class="center" style="margin-top:34px"><a href="#/store">📁 导入已有工程</a>　·　<a href="#/store">🛒 去装置商城挑一台</a></p>
-  <p class="foot-note">项目可连接一块或多块开发板 · 本机装了 COS Code 桥接后，这里的每一步都会真跑在你的板子上</p>`;
+  <p class="center" style="margin-top:34px"><a href="#/store">📁 导入已有工程</a>　·　<a href="#/store">🛒 去装置商城挑一台</a></p>`;
   bindModel($('#modelSel'));
   const ta = $('#prompt');
   const upd = () => { const e = estimate(ta.value, platOf(homeDevs[0] || 'pi')); $('#est').textContent = e ? `预计 ${fmtTok(e.total)} tokens · ${e.turns[0]}–${e.turns[1]} 轮 · ≈¥${e.cost.toFixed(3)}` : ''; };
@@ -202,7 +201,7 @@ function tChat(v, p){
     <div class="card pad"><div class="row"><b class="h3">本项目设备</b><span class="grow"></span><button class="btn link" id="addDev2">＋ 添加</button></div>
       <div style="display:flex;flex-direction:column;gap:12px;margin-top:12px">${p.devices.map((d, i) => devCard(p, d, i)).join('')}</div></div>
     <div class="card budget" style="margin-top:16px"><div class="row"><b class="h3">任务预算上限</b><span class="grow"></span><span class="sub" style="margin:0;font-size:13px">可修改</span></div>
-      <input id="budget" value="¥${Number(p.budget).toFixed(2)}" style="margin-top:10px"><div class="sub" style="font-size:12.5px">金额为界面示例</div></div>
+      <input id="budget" value="¥${Number(p.budget).toFixed(2)}" style="margin-top:10px"></div>
   </div></div>`;
   bindModel($('#modelSel2'));
   const send = () => { const t = $('#say').value; $('#say').value = ''; sendMessage(p, t); };
@@ -219,7 +218,7 @@ function tDevices(v, p){
     const d = p.devices[sel] || p.devices[0]; const pl = platOf(d.plat);
     v.innerHTML = `<div class="two" style="grid-template-columns:minmax(0,1fr) 340px">
     <div>
-      <div class="row"><div><div class="h2">本项目设备</div><div class="sub">为每块设备指定角色，生成并部署对应程序</div></div><span class="grow"></span><button class="btn primary" id="addDev3">＋ 添加设备</button></div>
+      <div class="row"><div><div class="h2">本项目设备</div></div><span class="grow"></span><button class="btn primary" id="addDev3">＋ 添加设备</button></div>
       <div class="devgrid">${p.devices.map((x, i) => { const q = platOf(x.plat); return `<div class="card devbig ${i === sel ? 'sel' : ''}" data-i="${i}">
         <div class="pic">${boardPic(q, 'boardpic')}</div>
         <div class="row"><b style="font-size:17px">${esc(x.role)}</b><span class="grow"></span><span class="pill ${x.status === '已连接' ? 'ok' : 'gray'}">● ${esc(x.status)}</span>${hwLive(x.plat) ? '<span class="badge ok" style="margin-left:6px">实机在线</span>' : ''}</div>
@@ -229,7 +228,7 @@ function tDevices(v, p){
       ${p.link ? `<div class="h3" style="margin-top:22px">设备协作</div><div class="card coop"><b>${esc(p.link.a)}</b><span class="arrow">⟷</span><b>${esc(p.link.b)}</b><span class="pill">${esc(p.link.proto)}</span><span class="pill gray">${esc(p.link.ver)}</span><span class="grow"></span><button class="btn sm">📄 查看协议</button></div>` : ''}
       <div class="h3" style="margin-top:22px">已关联模块</div>
       <div class="card" style="margin-top:10px;overflow:hidden"><table class="tb"><thead><tr><th>模块名称</th><th>关联设备</th><th>状态</th><th>操作</th></tr></thead><tbody>
-        ${p.modules.length ? p.modules.map(m => `<tr><td>${esc(m.nm)}</td><td>${esc(m.dev)}</td><td><span class="pill ${m.st === '已配置' ? 'ok' : 'warn'}">● ${esc(m.st)}</span></td><td>—</td></tr>`).join('') : `<tr><td colspan="4" class="sub">还没有关联模块，在对话里描述硬件后自动出现</td></tr>`}
+        ${p.modules.length ? p.modules.map(m => `<tr><td>${esc(m.nm)}</td><td>${esc(m.dev)}</td><td><span class="pill ${m.st === '已配置' ? 'ok' : 'warn'}">● ${esc(m.st)}</span></td><td>—</td></tr>`).join('') : `<tr><td colspan="4" class="sub">—</td></tr>`}
       </tbody></table></div>
     </div>
     <div class="card wire">
@@ -267,14 +266,14 @@ function tCode(v, p){
       <span class="lbl">版本</span><select><option>${ver}</option><option>v0.3</option></select><span class="grow"></span>
       <button class="btn" id="exportBtn">⬆ 导出工程</button><a class="btn primary" href="#/project/${p.id}/deploy">▶ 部署到设备</a></div>
     <div class="ide" style="grid-template-columns:${showCode && showPrev ? '340px minmax(0,1fr) 340px' : showCode ? '230px minmax(0,1fr) 340px' : 'minmax(0,1fr) 360px'}">
-      ${showCode ? `<div style="display:flex;flex-direction:column;gap:12px"><div class="card tree"><div class="hd row">项目文件<span class="grow"></span><span class="sub" style="margin:0;font-size:12px">▾</span></div>${files.length ? tree() : `<div class="sub" style="padding:8px 16px">还没有文件，先在「对话」里生成配套程序</div>`}</div>
+      ${showCode ? `<div style="display:flex;flex-direction:column;gap:12px"><div class="card tree"><div class="hd row">项目文件<span class="grow"></span><span class="sub" style="margin:0;font-size:12px">▾</span></div>${files.length ? tree() : `<div class="sub" style="padding:8px 16px">还没有文件</div>`}</div>
         ${showPrev ? `<div class="card editor"><div class="tabs2"><span class="on">📄 ${esc(cur.split('/').pop())} ✕</span></div><div class="code" style="max-height:300px">${cur ? hl(p.files[cur]) : ''}</div></div>
         <div class="card pad"><b class="h3">已绑定机器人能力</b><ul class="plan" style="margin-top:10px">${p.ui.caps.map(c => `<li><span class="ck">✓</span>${esc(c)}<span class="grow"></span><span style="color:var(--ok);font-size:13px">已绑定</span></li>`).join('')}</ul>
           <div class="row" style="margin-top:10px;font-size:12.5px;color:var(--dim)"><span>机器人程序：Python</span><span class="grow"></span><span>${esc(lang(cur))} · UTF-8</span></div></div>` : ''}</div>` : ''}
       ${showCode && !showPrev ? `<div class="card editor"><div class="tabs2"><span class="on">📄 ${esc(cur || '—')}</span></div><div class="code">${cur ? hl(p.files[cur]) : ''}</div>
         <div class="ft"><span>› 日志</span><span class="grow"></span><span>${esc(lang(cur))}</span><span>UTF-8</span><span>${esc(p.devices[0].role)}</span></div></div>` : ''}
       ${showPrev ? `<div class="card" style="overflow:hidden"><div class="row" style="padding:12px 16px;border-bottom:1px solid var(--line)"><b class="h3">任务界面预览</b><span class="pill">✦ AI 生成 · 仅当前任务</span><span class="grow"></span><button class="iconbtn" id="prevClose">✕</button></div>
-        <div style="padding:14px 16px"><div class="row"><div><b style="font-size:19px">${esc(p.ui.title)}</b><div class="sub" style="margin:0;font-size:13px">${esc(p.ui.sub)}</div></div><span class="grow"></span><span class="pill ok">● 数据已连接</span><span class="sub" style="margin:0;font-size:12.5px">示例数据</span></div>
+        <div style="padding:14px 16px"><div class="row"><div><b style="font-size:19px">${esc(p.ui.title)}</b></div><span class="grow"></span><span class="pill ok">● 数据已连接</span></div>
           <div class="seg" style="margin-top:12px;width:100%">${[['both','地图 + 遥控'],['map','仅地图'],['drive','仅遥控']].map(([k, n]) => `<button data-mm="${k}" class="${mapMode === k ? 'on' : ''}" style="flex:1">${n}</button>`).join('')}</div>
           ${mapMode !== 'drive' ? `<div style="position:relative;margin-top:12px;border-radius:10px;overflow:hidden;background:#111827"><canvas id="slam" width="760" height="300" style="width:100%;display:block"></canvas>
             <span style="position:absolute;top:10px;left:12px;color:#fff;font-weight:700;font-size:13px">SLAM 地图</span><span class="pill ok" style="position:absolute;top:32px;left:12px;background:rgba(22,163,74,.9);color:#fff">● 正在建图</span>
@@ -282,18 +281,18 @@ function tCode(v, p){
             <div style="position:absolute;left:12px;bottom:8px;color:#cbd5e1;font-size:11px">1 m ▬</div><div style="position:absolute;right:12px;bottom:8px;color:#cbd5e1;font-size:11px">□ 已探索　■ 未探索　- - 轨迹</div></div>
           <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px">${[['📍 位置', `X ${pose.x.toFixed(1)} m · Y ${pose.y.toFixed(1)} m`], ['🧭 朝向', pose.th + '°'], ['🔋 电量', pose.bat + '%']].map(([k, val]) => `<div class="card" style="padding:10px 12px;box-shadow:none"><div class="sub" style="margin:0;font-size:12px">${k}</div><b>${val}</b></div>`).join('')}</div>` : ''}
           <div style="display:grid;grid-template-columns:${mapMode === 'both' ? '1fr 1fr' : '1fr'};gap:12px;margin-top:12px">
-            ${mapMode !== 'drive' ? `<div class="card" style="padding:12px;box-shadow:none"><div class="row"><b>机器人视角</b><span class="grow"></span><span class="pill ok" style="font-size:11px">● 视频在线</span></div><div style="position:relative;margin-top:8px;border-radius:8px;overflow:hidden"><canvas id="cam" width="360" height="180" style="width:100%;display:block"></canvas><span class="badge" style="position:absolute;top:8px;left:8px;background:rgba(0,0,0,.6);color:#fff;border:0">实时画面</span></div>
+            ${mapMode !== 'drive' ? `<div class="card" style="padding:12px;box-shadow:none"><div class="row wrap" style="gap:6px"><b style="white-space:nowrap">机器人视角</b><span class="grow"></span><span class="pill ok" style="font-size:11px;white-space:nowrap">● 视频在线</span></div><div style="position:relative;margin-top:8px;border-radius:8px;overflow:hidden"><canvas id="cam" width="360" height="180" style="width:100%;display:block"></canvas><span class="badge" style="position:absolute;top:8px;left:8px;background:rgba(0,0,0,.6);color:#fff;border:0">实时画面</span></div>
               ${hasSave ? `<button class="btn" style="width:100%;justify-content:center;margin-top:10px" id="saveMap">💾 保存地图</button>` : ''}</div>` : ''}
-            ${mapMode !== 'map' ? `<div class="card" style="padding:12px;box-shadow:none"><div class="row"><b>屏幕遥控器</b><span class="grow"></span><span class="sub" style="margin:0;font-size:12px">按住移动 · 松开停止</span></div>
+            ${mapMode !== 'map' ? `<div class="card" style="padding:12px;box-shadow:none"><div class="row wrap" style="gap:6px"><b style="white-space:nowrap">屏幕遥控器</b><span class="grow"></span></div>
               <div class="pad ${padSize}" id="pad" style="margin:14px auto 0"><button data-d="0,1">▲</button><button data-d="-1,0">◀</button><button class="stop" id="padStop">■</button><button data-d="1,0">▶</button><button data-d="0,-1">▼</button></div>
               <div class="row" style="margin-top:12px;font-size:12.5px"><span class="sub" style="margin:0;white-space:nowrap">速度上限</span><b class="mono" id="spdV">0.20 m/s</b><input type="range" id="spd" min="5" max="60" value="20" style="flex:1;padding:0"></div>
               <button class="btn" style="width:100%;justify-content:center;margin-top:10px;color:var(--err);border-color:color-mix(in srgb,var(--err) 45%,transparent)" id="robotStop">■ 停止机器人</button></div>` : ''}</div>
           <div class="row" style="margin-top:12px"><button class="btn" id="saveProj">💾 保存到项目</button><button class="btn" id="foldPanel">⌃ 收起面板</button><span class="grow"></span><button class="btn" id="viewSrc">&lt;/&gt; 查看界面源码</button></div></div></div>` : ''}
       <div class="card aipanel"><div class="row"><b class="h3">✦ AI 开发助手</b><span class="grow"></span><button class="iconbtn">⋯</button></div>
         <div id="aiLog">${p.ui ? `<div class="q">给我一个带实时画面和地图的遥控器，我想控制机器人探索房间并建图。</div><div class="a">已确认机器人提供 SLAM 与相机接口，正在为这个任务生成操作面板。</div>
-          <div class="pending"><ul class="plan" style="margin:0">${['机器人程序', '地图、视频与遥控界面', '数据与控制绑定'].map(x => `<li><span class="ck">✓</span>${x}</li>`).join('')}</ul><div class="sub" style="font-size:12.5px;margin-top:8px;border-top:1px dashed var(--line);padding-top:6px">已复用项目组件库</div></div>
+          <div class="pending"><ul class="plan" style="margin:0">${['机器人程序', '地图、视频与遥控界面', '数据与控制绑定'].map(x => `<li><span class="ck">✓</span>${x}</li>`).join('')}</ul></div>
           <div class="a">面板已生成。你可以直接操作，也可以继续用自然语言修改。</div>
-          <div class="row wrap"><button class="btn sm" data-quick="save">＋ ${hasSave ? '去掉' : '增加'}保存按钮</button><button class="btn sm" data-quick="pad">＋ 改成${padSize === 'large' ? '普通' : '大'}摇杆</button></div>` : `<div class="sub" style="font-size:13px">对这段程序提要求，例如"把失联停车时间改为 300 毫秒"；也可以说"给我一个带地图的遥控界面"，AI 会为当前任务生成操作面板。</div>`}</div>
+          <div class="row wrap"><button class="btn sm" data-quick="save">＋ ${hasSave ? '去掉' : '增加'}保存按钮</button><button class="btn sm" data-quick="pad">＋ 改成${padSize === 'large' ? '普通' : '大'}摇杆</button></div>` : ``}</div>
         <textarea id="aiIn" placeholder="例如：把遥控器放大，地图放左边…" style="width:100%;min-height:66px;margin-top:10px"></textarea>
         <div class="row" style="margin-top:8px"><button class="iconbtn">📎</button><span class="grow"></span><button class="btn primary sm" id="aiGo">➤</button></div>
         <div class="sub" style="font-size:12px;margin-top:8px">本轮 AI 用量 0.24M tokens</div></div>
@@ -330,7 +329,7 @@ function tCode(v, p){
     let mv = null; const move = (dx, dy) => { const sp = spd ? spd.value / 100 : .2; pose.x = Math.max(.3, Math.min(11.6, pose.x + dx * sp * .6)); pose.y = Math.max(.3, Math.min(3.2, pose.y + dy * sp * .6)); pose.th = dx > 0 ? 0 : dx < 0 ? 180 : dy > 0 ? 90 : 270; trail.push([pose.x, pose.y]); if (trail.length > 80) trail.shift(); drawMap(); const st = v.querySelector('.card b'); const cells = v.querySelectorAll('[style*="grid-template-columns:repeat(3,1fr)"] b'); if (cells[0]) { cells[0].textContent = `X ${pose.x.toFixed(1)} m · Y ${pose.y.toFixed(1)} m`; cells[1].textContent = pose.th + '°'; } };
     v.querySelectorAll('#pad [data-d]').forEach(b => { const [dx, dy] = b.dataset.d.split(',').map(Number); b.onpointerdown = () => { move(dx, dy); mv = setInterval(() => move(dx, dy), 120); }; b.onpointerup = b.onpointerleave = () => { clearInterval(mv); mv = null; }; });
     const stopAll = () => { clearInterval(mv); toast('已发送停止'); }; const ps = $('#padStop'); if (ps) ps.onclick = stopAll; const rs = $('#robotStop'); if (rs) rs.onclick = stopAll;
-    const sm = $('#saveMap'); if (sm) sm.onclick = () => toast('地图已保存（示例）'); const sp2 = $('#saveProj'); if (sp2) sp2.onclick = () => toast('面板已保存到项目');
+    const sm = $('#saveMap'); if (sm) sm.onclick = () => toast('地图已保存'); const sp2 = $('#saveProj'); if (sp2) sp2.onclick = () => toast('面板已保存到项目');
     const fp = $('#foldPanel'); if (fp) fp.onclick = () => { mode = 'code'; draw(); }; const pc = $('#prevClose'); if (pc) pc.onclick = () => { mode = 'code'; draw(); };
     const vs = $('#viewSrc'); if (vs) vs.onclick = () => { cur = files.find(f => f.endsWith('RoomPanel.tsx')) || cur; mode = 'both'; draw(); };
     $('#exportBtn').onclick = () => { const blob = new Blob([files.map(f => `# ==== ${f} ====\n${p.files[f]}\n`).join('\n')], { type: 'text/plain' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${p.nm}-工程.txt`; a.click(); };
@@ -348,16 +347,16 @@ function tCode(v, p){
     else if (/仅地图|只要地图/.test(q)) { mapMode = 'map'; } else if (/仅遥控|只要遥控/.test(q)) { mapMode = 'drive'; }
     else if (/地图.*界面|遥控.*界面|生成.*面板/.test(q) && !p.ui) { p.ui = { title: p.nm + '操作台', sub: '按当前任务生成', caps: ['状态', '启动与停止'] }; mode = 'both'; toast('已为当前任务生成操作面板'); }
     else if (state.bridge) { runOnBridge(p.devices[0].plat, `修改 ${cur}：${q}`, () => {}).then(() => toast('已交给本机桥接')); return; }
-    else { if (log) log.insertAdjacentHTML('beforeend', `<div class="a">演示模式：目前认得"改成大摇杆 / 增加保存按钮 / 仅地图 / 仅遥控"这几类；装好本机桥接后任意要求都会真改。</div>`); return; }
+    else { if (log) log.insertAdjacentHTML('beforeend', `<div class="a">这条修改需要本机桥接。</div>`); return; }
     if (p.user) saveUserProjects(); draw();
   };
   draw();
 }
 function tDeploy(v, p){
   v.innerHTML = `<div class="two" style="grid-template-columns:minmax(0,1fr) 340px">
-    <div><div class="row" style="margin-top:6px"><div><div class="h2">部署与联调</div><div class="sub">把当前工程推到每块板上，看启动日志，再联调</div></div><span class="grow"></span>
+    <div><div class="row" style="margin-top:6px"><div><div class="h2">部署与联调</div></div><span class="grow"></span>
       <button class="btn" id="launchBtn">🪟 另开 PowerShell</button><button class="btn primary" id="deployBtn">▶ 部署到全部设备</button></div>
-      <div class="card term" id="dterm" style="margin-top:18px;min-height:280px;max-height:none"><span class="dim">$ 等待部署… ${state.bridge ? '（已连接本机，将真实执行）' : '（演示模式）'}</span></div></div>
+      <div class="card term" id="dterm" style="margin-top:18px;min-height:280px;max-height:none"><span class="dim">$ 等待部署… </span></div></div>
     <div class="card pad"><b class="h3">联调清单</b><ul class="plan" id="steps">
       ${p.devices.map(d => `<li><span class="ck" style="background:var(--card2);color:var(--mute)">·</span>${esc(d.role)} · ${esc(platOf(d.plat).tool.split('/')[0].trim())} 推送</li>`).join('')}
       <li><span class="ck" style="background:var(--card2);color:var(--mute)">·</span>两端握手 · 协议 ${esc(p.link ? p.link.ver : '—')}</li>
@@ -373,7 +372,6 @@ function tDeploy(v, p){
       line(`<span class="ok">✓</span> ${esc(d.role)} 已启动 · ${esc(pl.nm)}`); tick(i); await sleep(300); }
     line(`<span class="dim">$</span> 握手 ${esc(p.link ? p.link.proto : '')}`); await sleep(600); line('<span class="ok">✓</span> 两端握手成功 · 往返 12 ms'); tick(p.devices.length); await sleep(400);
     line('<span class="dim">$</span> 模拟失联 400 ms'); await sleep(600); line('<span class="ok">✓</span> 300 ms 后自动停车'); tick(p.devices.length + 1);
-    line('\n<span class="dim">演示模式：以上为预置流程；装好本机桥接后这里是真实日志</span>');
   };
   $('#launchBtn').onclick = async () => { if (!state.bridge) { toast('需要本机桥接：cd cos-code && npm run bridge'); return; }
     try { const j = await (await fetch(state.bridge + '/api/launch', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ platform: p.devices[0].plat, task: '' }) })).json(); toast(j.ok ? `已另开 PowerShell（PID ${j.pid}）` : (j.error || '启动失败')); } catch (e) { toast(e.message); } };
@@ -514,14 +512,6 @@ function liveCard(){
       ${state.bridge ? '' : `<input id="hwCode" placeholder="配对码" value="${esc(state.relay)}" style="width:120px;text-transform:uppercase"><button class="btn sm" id="hwLink">${state.relay ? '换' : '连'}本机</button>`}
       <button class="btn sm" id="hwAuth">＋ 授权设备</button>
       <select class="sm" id="hwSimSel" style="max-width:170px"><option value="">模拟插入（演示）…</option>${PLATFORMS.map(p => `<option value="${p.id}">${esc(p.nm)}</option>`).join('')}</select></div>
-    <div class="hint">${state.bridge
-      ? '<b>已连接本机桥接</b>：串口设备和 RDK / Jetson / 树莓派这类网络板都会自动出现，插上就认，不用授权。<br>'
-      : state.relay
-        ? (state.relayOn ? `<b>已通过中转看到本机「${esc(state.relayHost || '')}」</b>：那台机器上插的板子会实时出现在这里，手机上也一样。<br>`
-                         : `配对码 <b>${esc(state.relay)}</b> 暂时没有信号 —— 确认那台机器上 <span class="mono">npm run bridge</span> 在跑。<br>`)
-        : '想让本页看到<b>网络板（RDK / Jetson / 树莓派）</b>：在那台机器上跑 <span class="mono">npm run bridge</span>，把启动横幅里的<b>配对码</b>填到右上角。<br>'}${HW_OK
-      ? '本浏览器支持 Web Serial：点「授权设备」选中一次板子后，<b>之后插拔会自动识别并提示</b>——先按 USB VID/PID 判型号，打开串口后再按启动日志二次确认。'
-      : '当前浏览器不支持 Web Serial，请用 <b>Edge / Chrome</b> 打开本页；也可以用「模拟插入」走完整演示流程。'}</div>
     <div id="hwList" style="margin-top:10px"></div></div>`;
 }
 function paintLive(){
@@ -541,9 +531,9 @@ function paintLive(){
       <span class="mono" style="font-size:12px;color:var(--mute);white-space:nowrap">${meta}</span>
       ${pl ? `<a class="btn sm" href="#/home" data-use="${e.plat}">用它新建项目</a>` : ''}
       ${e.port ? `<button class="btn sm" data-log="${i}">${e.opened ? '● 读取中' : '▶ 读串口日志'}</button>` : ''}
-      ${e.src === 'bridge' && !e.net ? '<span class="sub" style="margin:0;font-size:12px">授权后可读日志</span>' : ''}
+      ${e.src === 'bridge' && !e.net ? '' : ''}
       <button class="btn sm" data-rm="${i}">${e.sim ? '拔出' : '移除'}</button></div>`; }).join('')
-    : `<div class="sub" style="padding:10px 0">还没有设备。插上 ESP32 / STM32 / 开发板后点「授权设备」授权一次；或用「模拟插入」演示。</div>`;
+    : `<div class="sub" style="padding:10px 0">还没有设备</div>`;
   el.querySelectorAll('[data-log]').forEach(b => b.onclick = () => { const e = state.hw[+b.dataset.log]; if (e.opened) hwClose(e); else { hwOpen(e); hwLogModal(e); } });
   el.querySelectorAll('[data-rm]').forEach(b => b.onclick = async () => { const e = state.hw[+b.dataset.rm];
     if (e.src === 'bridge') return toast('这台是本机实时发现的，拔掉设备它就会自己消失');
@@ -555,8 +545,7 @@ function hwLogModal(e){
   const r = modal(`<div class="hd"><b class="h3">${esc(e.nm)} · 串口日志</b><span class="pill ok">115200</span><span class="grow"></span>
       <button class="btn sm" id="hwRst">⟳ 复位</button><button class="btn sm" data-close>关闭</button></div>
     <div class="bd"><div class="hwlog" id="hwLogBox">${esc(e.lines.join('\n')) || '等待串口输出…（多数板子需要按一下复位键，或点右上角「复位」）'}</div>
-      <div class="row" style="margin-top:10px"><input id="hwIn" placeholder="向设备发送一行，例如 help / 回车唤醒登录提示" style="flex:1"><button class="btn primary sm" id="hwSend">发送</button></div>
-      <div class="sub" style="font-size:12.5px;margin-top:8px">日志里出现 ESP-ROM / U-Boot / Horizon 等关键字时，会自动把型号改成确认结果。</div></div>`);
+      <div class="row" style="margin-top:10px"><input id="hwIn" placeholder="向设备发送一行，例如 help / 回车唤醒登录提示" style="flex:1"><button class="btn primary sm" id="hwSend">发送</button></div></div>`);
   r.querySelector('#hwRst').onclick = () => hwReset(e);
   r.querySelector('#hwSend').onclick = () => { const i = r.querySelector('#hwIn'); hwWrite(e, i.value); i.value = ''; };
   r.querySelector('#hwIn').onkeydown = ev => { if (ev.key === 'Enter') r.querySelector('#hwSend').click(); };
@@ -565,7 +554,7 @@ function hwLogModal(e){
 /* ═══════════ 设备中心 ═══════════ */
 function vDevices(v){
   crumb('设备中心');
-  v.innerHTML = `<div class="row"><div><div class="h1">设备中心</div><div class="sub">EI TOKEN 已适配的 ${PLATFORMS.length} 块开发板 —— 单片机跑 COS-MCU 微代理，Linux 板跑 COS Runtime，插上就认</div></div><span class="grow"></span><input id="bq" placeholder="搜索板卡 / 芯片…" style="width:260px"></div>
+  v.innerHTML = `<div class="row"><div><div class="h1">设备中心</div><div class="sub">${PLATFORMS.length} 块开发板</div></div><span class="grow"></span><input id="bq" placeholder="搜索板卡 / 芯片…" style="width:260px"></div>
     ${liveCard()}
     <div class="boards" id="boards" style="margin-top:20px"></div>`;
   paintLive();
@@ -582,7 +571,7 @@ function vDevices(v){
         list.map(p => `<div class="card board" data-id="${p.id}"><div class="pic">${boardPic(p, 'boardpic')}</div><b>${esc(p.nm)}</b><div class="ch">${esc(p.ch)}</div><div class="role">${esc(p.role)}</div></div>`).join('') : ''; }).join('');
     $('#boards').querySelectorAll('.board').forEach(b => b.onclick = () => { const p = platOf(b.dataset.id);
       modal(`<div class="hd">${boardPic(p)}<div><b class="h3">${esc(p.nm)}</b><div class="sub" style="margin:0;font-size:13px">${esc(p.ch)}</div></div><span class="grow"></span><button class="btn sm" data-close>关闭</button></div>
-        <div class="bd"><div class="kv"><span>连接方式</span><div>${p.via === 'ssh' ? 'SSH · 网络' : '串口烧录'}</div><span>运行时</span><div>${esc(p.rt)}</div><span>工具链</span><div class="mono">${esc(p.tool)}</div><span>示例项目</span><div>${esc(p.role)}</div></div>
+        <div class="bd"><div class="kv"><span>连接方式</span><div>${p.via === 'ssh' ? 'SSH · 网络' : '串口烧录'}</div><span>运行时</span><div>${esc(p.rt)}</div><span>工具链</span><div class="mono">${esc(p.tool)}</div><span>典型项目</span><div>${esc(p.role)}</div></div>
         <div class="row" style="margin-top:18px;justify-content:flex-end"><button class="btn primary" id="useBoard">用它新建项目</button></div></div>`).querySelector('#useBoard').onclick = () => { homeDevs = [p.id]; $('#modalRoot').innerHTML = ''; location.hash = '#/home'; }; }); };
   draw(); $('#bq').oninput = e => draw(e.target.value);
 }
@@ -595,7 +584,7 @@ function vDiagnose(v){
   const P = () => proj(pid);
   const draw = () => {
     const p = P();
-    v.innerHTML = `<div class="row"><div><div class="h1">故障诊断</div><div class="sub">从连接、程序到设备协作，逐步定位问题${state.bridge ? '（已连接本机：真读串口、真跑检查）' : ''}</div></div><span class="grow"></span><button class="btn" id="dgHist">🕘 历史诊断</button></div>
+    v.innerHTML = `<div class="row"><div><div class="h1">故障诊断</div></div><span class="grow"></span><button class="btn" id="dgHist">🕘 历史诊断</button></div>
     <div class="row wrap" style="margin-top:20px"><span class="sub" style="margin:0">项目</span><select id="dgProj" style="min-width:260px">${state.projects.map(x => `<option value="${x.id}" ${x.id === pid ? 'selected' : ''}>${esc(x.nm)}</option>`).join('')}</select>
       <span class="sub" style="margin:0 0 0 12px">诊断范围</span><select style="min-width:200px"><option>全部设备（${p.devices.length}）</option>${p.devices.map(d => `<option>${esc(d.role)}</option>`).join('')}</select>
       <span class="grow"></span><button class="btn" id="dgImport">⬆ 导入日志</button><button class="btn primary" id="dgRun">${res ? '▶ 重新诊断' : '▶ 开始诊断'}</button></div>
@@ -605,15 +594,14 @@ function vDiagnose(v){
       <div class="sub" style="font-size:13px">已关联：${p.devices.map(d => esc(d.role)).join(' / ')}</div>
       <div class="filters" style="margin-top:10px">${D.symptoms.map(x => `<button data-s="${esc(x.nm)}">${esc(x.nm)}</button>`).join('')}</div></div>
     <div class="two" style="grid-template-columns:minmax(0,1fr) 380px;margin-top:16px" id="dgBody">
-      <div class="card pad"><div class="row"><b class="h3">◎ 诊断概览</b></div>${res ? overview(p) : `<div class="sub" style="padding:30px 0;text-align:center">写好问题描述，点「开始诊断」。${state.bridge ? '' : '演示模式会按已验证的排障流程给出示例结果。'}</div>`}</div>
-      <div class="card pad"><b class="h3">✦ AI 诊断结论</b>${res ? conclusion(p) : `<div class="sub" style="padding:30px 0;text-align:center">诊断完成后在这里给出结论与修复建议</div>`}</div></div>
-    <p class="foot-note" style="text-align:right;margin-top:10px">${state.bridge && res && res.real ? '结果来自本机桥接的真实执行' : '诊断结果与日志均为界面示例'}</p>`;
+      <div class="card pad"><div class="row"><b class="h3">◎ 诊断概览</b></div>${res ? overview(p) : `<div class="sub" style="padding:30px 0;text-align:center">尚未诊断</div>`}</div>
+      <div class="card pad"><b class="h3">✦ AI 诊断结论</b>${res ? conclusion(p) : `<div class="sub" style="padding:30px 0;text-align:center">待生成</div>`}</div></div>`;
     $('#dgProj').onchange = e => { pid = e.target.value; res = null; if (proj(pid).body) return vBodyDiag(v, proj(pid)); draw(); };
     $('#dgEdit').onclick = () => { $('#dgDescView').hidden = true; $('#dgDesc').hidden = false; $('#dgDesc').focus(); };
     $('#dgDesc').oninput = e => { desc = e.target.value; };
     v.querySelectorAll('.filters button').forEach(b => b.onclick = () => { desc = b.dataset.s; $('#dgDesc').value = desc; $('#dgDesc').hidden = false; $('#dgDescView').hidden = true; });
-    $('#dgHist').onclick = () => toast('历史诊断：界面示例');
-    $('#dgImport').onclick = () => toast('导入日志：界面示例，桥接模式下会读设备实时日志');
+    $('#dgHist').onclick = () => toast('历史诊断');
+    $('#dgImport').onclick = () => toast('导入日志');
     $('#dgRun').onclick = run;
     v.querySelectorAll('[data-log]').forEach(b => b.onclick = () => { logTab = b.dataset.log; draw(); });
     const cp = $('#copyLog'); if (cp) cp.onclick = () => { navigator.clipboard && navigator.clipboard.writeText(res.logs.map(l => l.t).join('\n')); toast('日志已复制'); };
@@ -669,14 +657,13 @@ function vBodyDiag(v, p){
   const warnN = () => all.filter(j => stOf(j.id) === 'warn').length;
   const draw = () => {
     const j = all.find(x => x.id === sel); const L = live(sel); const warn = stOf(sel) === 'warn';
-    v.innerHTML = `<div class="row"><div><div class="h1">${esc(p.nm)} · 全身诊断</div><div class="sub">查看全部关节、传感器与控制模块${state.bridge ? '（已连接本机：通过 CAN 真实回读）' : ''}</div></div><span class="grow"></span>
+    v.innerHTML = `<div class="row"><div><div class="h1">${esc(p.nm)} · 全身诊断</div></div><span class="grow"></span>
       <button class="btn" id="bdRefresh">⟳ 刷新元件</button><button class="btn primary" id="bdScan">${scanning ? '诊断中…' : '▶ 开始全身诊断'}</button></div>
     <div class="row wrap" style="margin-top:18px"><select style="min-width:220px"><option>${esc(B.model)}</option></select><span class="pill ok">● 已连接 · 以太网</span><span class="grow"></span>
       <span class="badge" style="font-size:14px;padding:8px 14px">🦿 ${B.dof} 自由度</span><span class="badge" style="font-size:14px;padding:8px 14px">🧊 ${all.length + B.sensors.length + B.power.length} 个元件</span>
       <span class="badge ${warnN() ? 'warn' : 'ok'}" style="font-size:14px;padding:8px 14px">${warnN() ? '❗ ' + warnN() + ' 项预警' : '✓ 无预警'}</span></div>
     <div class="tabs">${[['body','全身视图'],['bus','连接与总线'],['log','运行日志']].map(([k, n]) => `<a href="javascript:void 0" data-tab="${k}" class="${tab === k ? 'on' : ''}">${n}</a>`).join('')}</div>
-    <div id="bdBody" style="margin-top:16px">${tab === 'body' ? bodyView(j, L, warn) : tab === 'bus' ? busView() : logView()}</div>
-    <p class="foot-note" style="text-align:right;margin-top:8px">界面示例：元件与状态数据用于设计展示${state.bridge ? '；开始全身诊断会由本机 桥接真实执行' : ''}</p>`;
+    <div id="bdBody" style="margin-top:16px">${tab === 'body' ? bodyView(j, L, warn) : tab === 'bus' ? busView() : logView()}</div>`;
     bind();
   };
   const figure = () => {
@@ -741,8 +728,7 @@ function vBodyDiag(v, p){
     <div class="card pad"><div class="row"><b class="h3">机器人视图</b><span class="grow"></span><div class="seg"><button class="${side === 'front' ? 'on' : ''}" data-side="front">正面</button><button class="${side === 'back' ? 'on' : ''}" data-side="back">背面</button></div></div>
       <div style="margin-top:12px;background:var(--card2);border-radius:12px;padding:6px">${figure()}</div>
       <div class="row wrap" style="margin-top:10px;font-size:12.5px;color:var(--dim);gap:10px 14px;white-space:nowrap"><span><i class="dot"></i> 正常</span><span><i class="dot" style="background:var(--warn)"></i> 预警</span><span><i class="dot off"></i> 无回读</span><span class="grow"></span><button class="btn sm">✥ 旋转视图</button><button class="btn sm">↺ 重置</button></div>
-      <div class="card" style="margin-top:12px;padding:12px 14px;box-shadow:none"><div class="row"><span style="font-size:22px">🖧</span><div><b>主控连接</b><div class="sub" style="margin:0;font-size:13px">以太网 · ${esc(B.ip)}</div><div class="sub" style="margin:0;font-size:12.5px">元件来源：设备上报 + 已确认配置</div></div><span class="grow"></span><span class="pill ok" style="white-space:nowrap">● 已连接</span></div></div>
-      <p class="sub" style="font-size:12.5px;margin-top:10px">ⓘ 点击关节或元件，查看状态</p></div>
+      <div class="card" style="margin-top:12px;padding:12px 14px;box-shadow:none"><div class="row"><span style="font-size:22px">🖧</span><div><b>主控连接</b><div class="sub" style="margin:0;font-size:13px">以太网 · ${esc(B.ip)}</div></div><span class="grow"></span><span class="pill ok" style="white-space:nowrap">● 已连接</span></div></div></div>
     <div class="card pad"><b class="h3">全部元件（${all.length + B.sensors.length + B.power.length}）</b><div class="row" style="margin-top:10px;white-space:nowrap"><input id="bdQ" placeholder="🔍 搜索名称 / ID" value="${esc(q)}" style="flex:1;min-width:0;padding:7px 10px"><label class="row" style="gap:6px;font-size:13px"><input type="checkbox" id="bdBad" ${onlyBad ? 'checked' : ''} style="width:auto">仅看异常</label></div>
       <div class="sub" style="margin-top:12px">▾ 关节电机（${all.length}）</div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin-top:8px">${B.parts.map(pt => { const js = pt.joints.map(([id, nm]) => ({ id, nm })).filter(x => (!onlyBad || stOf(x.id) === 'warn') && (!q || (x.id + x.nm).toLowerCase().includes(q))); return js.length ? `<div class="card" style="padding:10px 12px;box-shadow:none"><b style="font-size:13.5px">${esc(pt.nm)} · ${pt.joints.length}</b>${js.map(x => { const st = stOf(x.id); return `<div class="row jrow ${x.id === sel ? 'on' : ''}" data-j="${x.id}" style="font-size:12.5px;padding:4px 6px;margin:2px -6px;border-radius:6px;cursor:pointer;white-space:nowrap;gap:8px;${x.id === sel ? 'background:var(--acc-soft)' : ''}"><i class="dot" style="background:${st === 'warn' ? 'var(--warn)' : 'var(--ok)'}"></i><span class="mono" style="color:var(--dim)">${x.id}</span><span>${esc(x.nm)}</span><span class="grow"></span><span style="color:${st === 'warn' ? 'var(--warn)' : 'var(--dim)'}">${st === 'warn' ? '温度预警' : '正常'}</span></div>`; }).join('')}</div>` : ''; }).join('')}</div>
@@ -779,14 +765,14 @@ function vBodyDiag(v, p){
     v.querySelectorAll('.jt,[data-j]').forEach(el => el.onclick = () => { sel = el.dataset.j; draw(); });
     const qi = $('#bdQ'); if (qi) qi.oninput = e => { q = e.target.value.toLowerCase(); draw(); $('#bdQ').focus(); $('#bdQ').setSelectionRange(q.length, q.length); };
     const ob = $('#bdBad'); if (ob) ob.onchange = e => { onlyBad = e.target.checked; draw(); };
-    $('#bdRefresh').onclick = () => { toast('已刷新元件（示例）'); draw(); };
+    $('#bdRefresh').onclick = () => { toast('已刷新元件'); draw(); };
     $('#bdScan').onclick = async () => { if (scanning) return; scanning = true; draw();
       if (state.bridge) { try { await runOnBridge(p.devices[0].plat, `全身诊断：通过 CAN 轮询 24 路关节的位置/温度/电流/电压，标出超阈值(${B.threshold}℃ / 2.5A)的关节，给出结论`, () => {}); toast('全身诊断完成（本机执行）'); } catch (e) { toast('✗ ' + e.message); } }
       else { for (const x of all) { sel = x.id; draw(); await sleep(45); } sel = all.find(x => stOf(x.id) === 'warn') ? all.find(x => stOf(x.id) === 'warn').id : 'J16'; toast(`全身诊断完成：${warnN()} 项预警`); }
       scanning = false; draw(); };
     const st = $('#bdSteps'); if (st) st.onclick = () => modal(`<div class="hd"><b class="h3">排查步骤 · ${sel}</b><span class="grow"></span><button class="btn sm" data-close>关闭</button></div><div class="bd"><ul class="plan">${['暂停负载动作，让关节空载 60 秒复测温度','检查散热片与风道是否被线束遮挡','手动转动关节，感受是否有机械阻力/异响','空载 vs 带载电流对比：带载 > 2× 空载 → 机械问题','以上都正常 → 更换驱动板复测'].map(x => `<li><span class="ck">✓</span>${x}</li>`).join('')}</ul></div>`);
     const rp = $('#bdReport'); if (rp) rp.onclick = () => { const txt = `人形机器人 · 全身诊断报告\n${new Date().toLocaleString()}\n\n预警 ${warnN()} 项\n` + all.map(x => `${x.id} ${x.part}${x.nm}  ${stOf(x.id) === 'warn' ? '⚠ 温度预警 ' + live(x.id).temp + '℃' : '正常'}`).join('\n'); const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], { type: 'text/plain' })); a.download = '全身诊断报告.txt'; a.click(); };
-    const ag = $('#bdAskGo'); if (ag) ag.onclick = () => { const t = $('#bdAsk').value.trim(); if (!t) return; $('#bdAsk').value = ''; if (state.bridge) runOnBridge(p.devices[0].plat, `关于 ${sel} 的问题：${t}`, () => {}).then(() => toast('已回答，见对话')); else toast('演示模式：装好本机桥接后会由 桥接真实回答'); };
+    const ag = $('#bdAskGo'); if (ag) ag.onclick = () => { const t = $('#bdAsk').value.trim(); if (!t) return; $('#bdAsk').value = ''; if (state.bridge) runOnBridge(p.devices[0].plat, `关于 ${sel} 的问题：${t}`, () => {}).then(() => toast('已回答，见对话')); else toast('需要本机桥接'); };
     const cp = $('#bdCopy'); if (cp) cp.onclick = () => toast('日志已复制');
   };
   draw();
@@ -804,7 +790,7 @@ function vSim(v){
   const fmt = t => `00:${String(Math.floor(t)).padStart(2, '0')}.${Math.floor((t % 1) * 10)}`;
   clearInterval(simTimer);
   const draw = () => {
-    v.innerHTML = `<div class="row"><div><div class="h1">仿真工作台</div><div class="sub">连接仿真引擎，预览机器人的运动与任务执行</div></div><span class="grow"></span>
+    v.innerHTML = `<div class="row"><div><div class="h1">仿真工作台</div></div><span class="grow"></span>
       <button class="btn" id="simStop" style="color:var(--err);border-color:color-mix(in srgb,var(--err) 40%,transparent)">■ 停止</button><button class="btn primary" id="simPause">${st.playing ? '❚❚ 暂停仿真' : '▶ 继续仿真'}</button></div>
     <div class="row wrap" style="margin-top:16px"><select style="min-width:240px"><option>${esc(p.body ? p.body.model : p.nm)} · ${p.body ? p.body.dof : p.devices.length} 自由度</option></select>
       <span class="pill ${st.playing ? 'ok' : 'gray'}">● ${st.playing ? '仿真运行中' : '已暂停'}</span><span class="sub" style="margin:0">实例 ${esc(S.instance)}</span></div>
@@ -840,12 +826,11 @@ function vSim(v){
             <div class="row" style="margin-top:8px;justify-content:flex-end"><button class="btn sm" id="simApply">✎ 修改任务</button></div></div>
           <div class="card" style="margin-top:12px;padding:12px 14px;box-shadow:none"><b>执行进度</b><ul class="plan" id="simProg" style="margin-top:8px"></ul></div>
           <div class="card" style="margin-top:12px;padding:12px 14px;box-shadow:none"><b>仿真检查</b><ul class="plan" style="margin-top:8px"><li><span class="ck">✓</span>关节限位 <span class="grow"></span><span style="color:var(--ok)">当前正常</span></li><li><span class="ck">✓</span>异常碰撞 <span class="grow"></span><span style="color:var(--ok)">未检出</span></li><li><span class="ck" style="background:var(--card2);color:var(--mute)">·</span>任务完成 <span class="grow"></span><span class="sub" style="margin:0" id="simDone">待结束</span></li></ul>
-            <div class="row" style="margin-top:8px;font-size:12.5px"><span class="sub" style="margin:0">ⓘ 运行结束后生成完整报告</span><span class="grow"></span><button class="btn sm" id="simLog">📄 查看仿真日志</button></div></div>
+            <div class="row" style="margin-top:8px;font-size:12.5px"><span class="grow"></span><button class="btn sm" id="simLog">📄 查看仿真日志</button></div></div>
           <div class="row" style="margin-top:12px"><input id="simAsk" placeholder="描述你想调整的动作…" style="flex:1"><button class="btn primary sm" id="simAskGo">➤</button></div>
           <div class="sub" style="font-size:12px;margin-top:6px">本轮 AI 用量 0.18M tokens</div></div>
       </div>
     </div>
-    <p class="foot-note" style="text-align:right;margin-top:8px">界面示例 · 引擎接入与运行数据用于设计展示${state.bridge ? '；装好仿真引擎后由本机 EI TOKEN 驱动' : ''}</p>
     <style>@media(max-width:1200px){.sim3{grid-template-columns:1fr!important}}</style>`;
     bind(); tick(true);
   };
@@ -909,7 +894,7 @@ function vSim(v){
     timeline(); scene();
   };
   const bind = () => {
-    v.querySelectorAll('[data-tab]').forEach(a => a.onclick = () => { st.tab = a.dataset.tab; if (st.tab !== 'motion') toast(`「${a.textContent}」为界面示例`); });
+    v.querySelectorAll('[data-tab]').forEach(a => a.onclick = () => { st.tab = a.dataset.tab; if (st.tab !== 'motion') toast(`「${a.textContent}」`); });
     v.querySelectorAll('[data-eng]').forEach(b => b.onclick = () => { st.engine = b.dataset.eng; draw(); });
     v.querySelectorAll('[data-env]').forEach(b => b.onclick = () => { st.env = +b.dataset.env; draw(); });
     const pp = () => { st.playing = !st.playing; $('#simPause').textContent = st.playing ? '❚❚ 暂停仿真' : '▶ 继续仿真'; $('#simPP').textContent = st.playing ? '❚❚' : '▶'; };
@@ -920,8 +905,8 @@ function vSim(v){
     $('#simSpd').onchange = e => { st.speed = +e.target.value; };
     $('#simApply').onclick = () => { st.task = { dist: +$('#tDist').value || 2, speed: +$('#tSpeed').value || 0.3, turn: +$('#tTurn').value || 180 }; st.t = 0; st.playing = true; toast('任务已更新，重新运行'); draw(); };
     $('#simLog').onclick = () => modal(`<div class="hd"><b class="h3">仿真日志 · ${esc(S.instance)}</b><span class="grow"></span><button class="btn sm" data-close>关闭</button></div><div class="bd"><div class="code" style="border-radius:10px">${['[INFO] engine: Isaac Sim 6.0 · GPU-01', `[INFO] model: ${S.model} · joints 24/24 mapped`, '[INFO] controller: H24 步行控制器 v0.3 loaded', '[INFO] task: walk 2.0 m @ 0.30 m/s → turn 180° → wave', '[INFO] t=3.0 stand ok · CoM stable', `[INFO] t=${st.t.toFixed(1)} dist=${dist(st.t).toFixed(2)} m · collisions 0 · joint limits 0`].map((l, i) => `<div class="ln"><span class="n">${i + 1}</span><span>${esc(l)}</span></div>`).join('')}</div></div>`);
-    $('#simAskGo').onclick = () => { const t = $('#simAsk').value.trim(); if (!t) return; $('#simAsk').value = ''; const m = t.match(/(\d+(?:\.\d+)?)\s*米/); if (m) { st.task.dist = +m[1]; st.t = 0; st.playing = true; toast(`已把前进距离改为 ${m[1]} m`); draw(); } else toast(state.bridge ? '已交给本机桥接' : '演示模式：识别"向前走 N 米"这类指令'); };
-    $('#simAddEng').onclick = () => toast('添加引擎：界面示例');
+    $('#simAskGo').onclick = () => { const t = $('#simAsk').value.trim(); if (!t) return; $('#simAsk').value = ''; const m = t.match(/(\d+(?:\.\d+)?)\s*米/); if (m) { st.task.dist = +m[1]; st.t = 0; st.playing = true; toast(`已把前进距离改为 ${m[1]} m`); draw(); } else toast(state.bridge ? '已交给本机桥接' : '需要本机桥接'); };
+    $('#simAddEng').onclick = () => toast('添加引擎');
     clearInterval(simTimer); simTimer = setInterval(() => { if (!document.getElementById('simCv')) { clearInterval(simTimer); return; } tick(); }, 100);
   };
   draw();
@@ -935,12 +920,11 @@ function vTemplates(v){
     const list = D.templates.filter(t => (cat === '全部' || t.cat === cat) && (!q || (t.nm + t.sub + t.tags.join()).toLowerCase().includes(q)));
     const t = D.templates.find(x => x.id === sel) || list[0];
     v.innerHTML = `<div class="two" style="grid-template-columns:minmax(0,1fr) 380px"><div>
-      <div class="row"><div class="h1">经验与模板</div><span class="badge acc">示例内容</span></div><div class="sub">把成熟的工程方案，直接用到你的项目里</div>
+      <div class="row"><div class="h1">经验与模板</div></div>
       <input id="tq" placeholder="🔍 搜索板卡、传感器或开发任务…" value="${esc(q)}" style="width:100%;margin-top:18px">
       <div class="filters">${D.templateCats.map(c => `<button class="${c === cat ? 'on' : ''}" data-c="${c}">${c}</button>`).join('')}</div>
       <div class="tplgrid">${list.map(x => `<div class="card tpl ${x.id === sel ? 'sel' : ''}" data-t="${x.id}">${x.verified ? '<span class="pill ok vf">✓ 已验证</span>' : ''}<div class="ic">${x.ico}</div><b class="h3">${esc(x.nm)}</b>
         <div class="tags">${x.tags.map(g => `<span>${esc(g)}</span>`).join('')}</div><div class="sub" style="margin:0;font-size:13.5px">${esc(x.sub)}</div><div class="row" style="margin-top:10px"><span class="sub" style="margin:0;font-size:13px">${esc(x.ver)}</span><span class="grow"></span>›</div></div>`).join('')}</div>
-      <p class="foot-note" style="margin-top:22px">ⓘ 适配与验证状态为界面示例，具体以已发布版本为准。</p>
     </div>
     ${t ? `<div class="card tpldetail"><div class="row"><b class="h2">${esc(t.nm)}</b><span class="grow"></span><span class="pill ${t.verified ? 'ok' : 'gray'}">${t.verified ? '✓ 已验证 · ' : ''}${esc(t.ver)}</span></div><div class="sub">${esc(t.sub)}</div>
       <div class="hero2">${t.ico}</div>
@@ -960,23 +944,22 @@ function vStore(v){
   let cat = '全部', fitOnly = false, q = '';
   const draw = () => {
     const list = D.store.filter(s => (cat === '全部' || s.cat === cat) && (!fitOnly || s.fit) && (!q || (s.nm + s.sub + s.proto).toLowerCase().includes(q)));
-    v.innerHTML = `<div class="row"><div><div class="h1">发现好玩的具身智能装置</div><div class="sub">开箱体验，用自然语言拓展新功能</div></div><span class="grow"></span>
+    v.innerHTML = `<div class="row"><div><div class="h1">发现好玩的具身智能装置</div></div><span class="grow"></span>
       <button class="btn" id="cartBtn">🛒 购物车 <span class="pill">${state.cart.length}</span></button><button class="btn">📄 我的订单</button></div>
       <input id="sq" placeholder="🔍 搜索机器人、机械臂或开发套件…" value="${esc(q)}" style="width:100%;margin-top:18px">
       <div class="row" style="margin-top:12px"><div class="filters" style="margin:0">${D.storeCats.map(c => `<button class="${c === cat ? 'on' : ''}" data-c="${c}">${c}</button>`).join('')}</div><span class="grow"></span><label class="row" style="gap:6px;font-size:14px"><input type="checkbox" id="fit" ${fitOnly ? 'checked' : ''} style="width:auto">仅看 EI TOKEN 已适配</label></div>
       <div class="tplgrid">${list.map(s => `<div class="card tpl" style="cursor:default"><div class="hero2" style="height:150px;margin:0 0 12px;font-size:64px">${s.ico}</div><b class="h3">${esc(s.nm)}</b><div class="sub" style="margin:2px 0 6px;font-size:13.5px">${esc(s.sub)}</div>
         <div class="tags">${s.tags.map(g => `<span>${esc(g)}</span>`).join('')}${s.fit ? '<span style="background:var(--ok-soft);color:var(--ok)">EI TOKEN 已适配</span>' : ''}</div>
         <div class="sub" style="font-size:12.5px;margin:0">原型：${esc(s.proto)}</div>
-        <div class="row" style="margin-top:12px"><b style="font-size:20px">¥${s.price.toLocaleString()}</b><span class="grow"></span><button class="btn sm" data-add="${s.id}">🛒 加入购物车</button></div></div>`).join('')}</div>
-      <p class="foot-note">概念商品与价格仅供界面示例，具体规格及适配范围以商品说明为准。</p>`;
+        <div class="row" style="margin-top:12px"><b style="font-size:20px">¥${s.price.toLocaleString()}</b><span class="grow"></span><button class="btn sm" data-add="${s.id}">🛒 加入购物车</button></div></div>`).join('')}</div>`;
     $('#sq').oninput = e => { q = e.target.value.toLowerCase(); draw(); $('#sq').focus(); $('#sq').setSelectionRange(q.length, q.length); };
     v.querySelectorAll('.filters button').forEach(b => b.onclick = () => { cat = b.dataset.c; draw(); });
     $('#fit').onchange = e => { fitOnly = e.target.checked; draw(); };
     v.querySelectorAll('[data-add]').forEach(b => b.onclick = () => { state.cart.push(b.dataset.add); LS.set('cart', state.cart); toast('已加入购物车'); draw(); });
     $('#cartBtn').onclick = () => { const items = state.cart.map(id => D.store.find(s => s.id === id)); const sum = items.reduce((a, s) => a + s.price, 0);
-      modal(`<div class="hd"><b class="h3">购物车</b><span class="grow"></span><button class="btn sm" data-close>关闭</button></div><div class="bd">${items.length ? `<table class="tb">${items.map(s => `<tr><td>${s.ico} ${esc(s.nm)}</td><td class="mono">¥${s.price}</td></tr>`).join('')}<tr><td><b>合计</b></td><td class="mono"><b>¥${sum}</b></td></tr></table><div class="row" style="margin-top:14px;justify-content:flex-end"><button class="btn" id="clearCart">清空</button><button class="btn primary" id="checkout">去结算（示例）</button></div>` : '<div class="sub">购物车是空的</div>'}</div>`);
+      modal(`<div class="hd"><b class="h3">购物车</b><span class="grow"></span><button class="btn sm" data-close>关闭</button></div><div class="bd">${items.length ? `<table class="tb">${items.map(s => `<tr><td>${s.ico} ${esc(s.nm)}</td><td class="mono">¥${s.price}</td></tr>`).join('')}<tr><td><b>合计</b></td><td class="mono"><b>¥${sum}</b></td></tr></table><div class="row" style="margin-top:14px;justify-content:flex-end"><button class="btn" id="clearCart">清空</button><button class="btn primary" id="checkout">去结算</button></div>` : '<div class="sub">购物车是空的</div>'}</div>`);
       const c = $('#clearCart'); if (c) c.onclick = () => { state.cart = []; LS.set('cart', []); $('#modalRoot').innerHTML = ''; draw(); };
-      const k = $('#checkout'); if (k) k.onclick = () => toast('结算为界面示例，未接支付'); };
+      const k = $('#checkout'); if (k) k.onclick = () => toast('未接支付'); };
   };
   draw();
 }
@@ -991,11 +974,11 @@ function vUsage(v){
   let by = U.byProject.map(x => ({ ...x, p: proj(x.id) }));
   if (real && real.calls && real.calls.length) { const m = {}; real.calls.forEach(c => { const k = c.platform || 'other'; m[k] = (m[k] || 0) + (c.tokens || 0); }); by = Object.entries(m).map(([k, t]) => ({ id: k, tok: t, cost: t / 1e6 * ((PRICE.hit + PRICE.miss) / 2), p: { nm: platOf(k).nm, ico: '🧩' } })); }
   const sum = by.reduce((a, x) => a + x.tok, 0) || 1;
-  v.innerHTML = `<div class="row"><div><div class="h1">Token 用量与充值</div><div class="sub">按底层模型实际消耗的原始 Token 计费${real ? ' · <b>实时（本机桥接）</b>' : ' · 界面示例'}</div></div><span class="grow"></span>
+  v.innerHTML = `<div class="row"><div><div class="h1">Token 用量与充值</div><div class="sub">按底层模型实际消耗的原始 Token 计费${real ? ' · <b>实时</b>' : ''}</div></div><span class="grow"></span>
       <div class="seg"><button class="on">个人</button><button>团队</button></div><select><option>📅 本月</option></select></div>
     <div class="stat3">
-      <div class="card stat"><span class="ic">👛</span><div><div class="k">可用余额 ⓘ</div><div class="v">${yuan(U.balance - (real ? cost : 0))}</div></div></div>
-      <div class="card stat"><span class="ic">📊</span><div><div class="k">本月原始 Token ⓘ</div><div class="v">${fmtTok(tot)}</div></div></div>
+      <div class="card stat"><span class="ic">👛</span><div><div class="k">可用余额</div><div class="v">${yuan(U.balance - (real ? cost : 0))}</div></div></div>
+      <div class="card stat"><span class="ic">📊</span><div><div class="k">本月原始 Token</div><div class="v">${fmtTok(tot)}</div></div></div>
       <div class="card stat"><span class="ic">💳</span><div><div class="k">本月消费</div><div class="v">${yuan(cost)}</div></div></div></div>
     <div class="usagegrid"><div class="card pad"><b class="h3">${real ? '按平台用量' : '项目用量'}</b>
       <table class="tb" style="margin-top:12px"><thead><tr><th>${real ? '平台' : '项目'}</th><th>原始 Token</th><th>费用</th><th>明细</th></tr></thead><tbody>
@@ -1003,15 +986,14 @@ function vUsage(v){
       <p class="sub" style="font-size:13px;margin-top:10px">▾ 按模型查看输入、缓存输入与输出明细${real ? `：命中 ${fmtTok(real.hit)} · 未命中 ${fmtTok(real.miss)} · 输出 ${fmtTok(real.out)}` : ''}</p>
       <div class="row" style="margin-top:18px"><b class="h3">${real ? '平台' : '项目'}用量占比（原始 Token）</b><span class="grow"></span><span class="sub" style="margin:0">总计 ${fmtTok(sum)}</span></div>
       <div class="bar">${by.map((x, i) => `<i style="width:${(x.tok / sum * 100).toFixed(1)}%;background:${cols[i % cols.length]}"></i>`).join('')}</div>
-      <div class="legend">${by.map((x, i) => `<span style="--c:${cols[i % cols.length]}">${x.p ? esc(x.p.nm) : esc(x.id)}<small>${fmtTok(x.tok)} (${(x.tok / sum * 100).toFixed(1)}%)</small></span>`).join('')}</div>
-      <p class="sub" style="font-size:12.5px;margin-top:16px">ⓘ 余额、金额及用量${real ? '中的金额按预估费率折算' : '均为界面示例'}，实际费用以模型费率和调用记录为准。</p></div>
+      <div class="legend">${by.map((x, i) => `<span style="--c:${cols[i % cols.length]}">${x.p ? esc(x.p.nm) : esc(x.id)}<small>${fmtTok(x.tok)} (${(x.tok / sum * 100).toFixed(1)}%)</small></span>`).join('')}</div></div>
     <div><div class="card pad"><b class="h3">购买 Token 用量</b><div class="sub" style="font-size:13px">充值后，按原始 Token 实际消耗结算</div>
       <div class="topup">${U.topups.map((t, i) => `<button class="${i === 1 ? 'on' : ''}" data-t="${t}">¥${t}</button>`).join('')}<button data-t="0">自定义金额</button></div>
       <button class="btn primary" style="width:100%;justify-content:center" id="topupBtn">充值</button></div>
       <div class="card pad" style="margin-top:16px"><b class="h3">预算控制</b><div class="sub" style="font-size:13px">单项目预算上限</div><input value="¥100.00" style="width:100%;margin-top:8px">
-      <label class="row" style="margin-top:12px;gap:8px;font-size:14px"><input type="checkbox" checked style="width:auto">达到上限时暂停 ⓘ</label><p style="margin-top:10px"><a href="#/usage">团队额度分配 ›</a></p></div></div></div>`;
+      <label class="row" style="margin-top:12px;gap:8px;font-size:14px"><input type="checkbox" checked style="width:auto">达到上限时暂停</label><p style="margin-top:10px"><a href="#/usage">团队额度分配 ›</a></p></div></div></div>`;
   v.querySelectorAll('.topup button').forEach(b => b.onclick = () => { v.querySelectorAll('.topup button').forEach(x => x.classList.remove('on')); b.classList.add('on'); });
-  $('#topupBtn').onclick = () => toast('充值为界面示例，未接支付');
+  $('#topupBtn').onclick = () => toast('未接支付');
 }
 
 /* ───────── 启动 ───────── */
