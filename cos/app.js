@@ -469,12 +469,12 @@ if (HW_OK) {
    线上 https 页面读不到 127.0.0.1（浏览器不允许），改走公网中转：
    本机桥接把设备快照推上去，这边凭配对码取回来 —— 手机也能看。 */
 const RELAY_API = 'https://safegate-2rw7.onrender.com/api/cos/hw';
-async function pullHW(){
+async function pullHW(scan){
   let j = null, relayed = false;
-  if (state.bridge) { try { j = await (await fetch(state.bridge + '/api/hw')).json(); } catch (e) {} }
+  if (state.bridge) { try { j = await (await fetch(state.bridge + '/api/hw' + (scan ? '?scan=1' : ''))).json(); } catch (e) {} }
   if (!j && state.relay) {
     relayed = true;
-    try { j = await (await fetch(RELAY_API + '?code=' + encodeURIComponent(state.relay))).json(); } catch (e) {}
+    try { j = await (await fetch(RELAY_API + '?code=' + encodeURIComponent(state.relay) + (scan ? '&scan=1' : ''))).json(); } catch (e) {}
     if (j && !j.online) { if (state.relayOn !== false) { state.relayOn = false; state.relayHost = ''; paintLive(); } j = null; }
     else if (j) { const was = state.relayOn; state.relayOn = true; state.relayHost = j.host || '';
       if (!was && location.hash.startsWith('#/devices')) render(); }
@@ -504,17 +504,55 @@ async function pullHW(){
   syncHW(); if (changed) paintLive();
 }
 
+/* 扫描设备：本机桥接当场重扫；线上走中转等下一轮；纯浏览器调起串口选择器 */
+let hwScanning = false;
+async function hwScan(){
+  if (hwScanning) return;
+  hwScanning = true; paintLive();
+  const before = new Set(state.hw.map(e => e.key || (e.info && e.info.usbVendorId + ':' + e.info.usbProductId) || e.nm));
+  const step = t => { const el = $('#hwStep'); if (el) el.textContent = t; };
+  try {
+    if (HW_OK) { step('读取已授权的串口设备…');
+      try { (await navigator.serial.getPorts()).forEach(pt => hwAdd(pt, true)); } catch (e) {} }
+    if (state.bridge) { step('扫描本机串口与网络板…'); await pullHW(true); }
+    else if (state.relay) { step('通知本机扫描…');
+      const t0 = Date.now(); await pullHW(true);
+      while (Date.now() - t0 < 12000) {          // 本机每 5 秒推一次，等它把新结果送上来
+        await sleep(1200); step('等待本机回传…（' + Math.round((Date.now() - t0) / 1000) + 's）');
+        await pullHW(); if (state.hw.some(e => !before.has(e.key))) break; } }
+    const found = state.hw.filter(e => !before.has(e.key || (e.info && e.info.usbVendorId + ':' + e.info.usbProductId) || e.nm));
+    if (!found.length && HW_OK && !state.bridge) { step('打开浏览器串口选择器…'); hwScanning = false; paintLive(); return hwAuthorize(); }
+    hwScanning = false; paintLive(); hwReport(found);
+  } catch (e) { hwScanning = false; paintLive(); toast('扫描失败：' + (e.message || '')); }
+}
+function hwReport(found){
+  const row = e => { const pl = e.plat ? platOf(e.plat) : null;
+    return `<div class="hwrow">${pl ? boardPic(pl, 'boardpic sm') : '<span class="boardpic sm">🔌</span>'}
+      <div style="min-width:0"><b>${esc(e.nm)}</b> ${found.includes(e) ? '<span class="badge ok">新</span>' : ''}
+        <div class="sub" style="margin:0;font-size:12.5px">${esc(e.why || '')}</div></div><span class="grow"></span>
+      <span class="mono" style="font-size:12px;color:var(--mute);white-space:nowrap">${e.net ? 'SSH ' + esc(e.ip) : e.com ? esc(e.com) : 'VID ' + hex4(e.info.usbVendorId) + ':' + hex4(e.info.usbProductId)}</span></div>`; };
+  modal(`<div class="hd"><b class="h3">扫描完成</b>
+      <span class="pill ${found.length ? 'ok' : 'gray'}">${found.length ? '新增 ' + found.length + ' 台' : '无新增'}</span>
+      <span class="grow"></span><button class="btn sm" data-close>关闭</button></div>
+    <div class="bd">${state.hw.length ? state.hw.map(row).join('')
+      : `<div class="sub" style="padding:16px 0">没有找到设备。串口板请确认已插好并点「授权设备」；RDK / Jetson 这类网络板需要本机跑 <span class="mono">npm run bridge</span>。</div>`}</div>`);
+}
+
 /* 实机连接卡片（设备中心顶部） */
 function liveCard(){
   return `<div class="card live" style="padding:16px 18px;margin-top:6px">
     <div class="row wrap"><b class="h3">🔌 实机连接</b><span class="pill ${state.hw.length ? 'ok' : 'gray'}" id="hwCount">${state.hw.length} 台在线</span>
       <span class="grow"></span>
       ${state.bridge ? '' : `<input id="hwCode" placeholder="配对码" value="${esc(state.relay)}" style="width:120px;text-transform:uppercase"><button class="btn sm" id="hwLink">${state.relay ? '换' : '连'}本机</button>`}
+      <button class="btn primary sm" id="hwScan" ${hwScanning ? 'disabled' : ''}>${hwScanning ? '扫描中…' : '🔍 扫描设备'}</button>
       <button class="btn sm" id="hwAuth">＋ 授权设备</button>
       <select class="sm" id="hwSimSel" style="max-width:170px"><option value="">模拟插入（演示）…</option>${PLATFORMS.map(p => `<option value="${p.id}">${esc(p.nm)}</option>`).join('')}</select></div>
+    <div id="hwStep" class="sub" style="margin:8px 0 0;font-size:12.5px"></div>
     <div id="hwList" style="margin-top:10px"></div></div>`;
 }
 function paintLive(){
+  const b = $('#hwScan'); if (b) { b.disabled = hwScanning; b.textContent = hwScanning ? '扫描中…' : '🔍 扫描设备'; }
+  const st = $('#hwStep'); if (st && !hwScanning) st.textContent = '';
   const el = $('#hwList'); if (!el) return;
   const c = $('#hwCount'); if (c){ c.textContent = state.hw.length + ' 台在线'; c.className = 'pill ' + (state.hw.length ? 'ok' : 'gray'); }
   el.innerHTML = state.hw.length ? state.hw.map((e, i) => { const pl = e.plat ? platOf(e.plat) : null;
@@ -559,6 +597,7 @@ function vDevices(v){
     <div class="boards" id="boards" style="margin-top:20px"></div>`;
   paintLive();
   $('#hwAuth').onclick = hwAuthorize;
+  $('#hwScan').onclick = hwScan;
   const cin = $('#hwCode');
   if (cin) { const link = () => { state.relay = cin.value.trim().toUpperCase(); LS.set('relay', state.relay);
       state.hw = state.hw.filter(e => e.src !== 'bridge'); state.relayOn = null;
