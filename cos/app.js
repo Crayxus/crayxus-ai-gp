@@ -53,6 +53,8 @@ async function probeBridge(){
       const r = await fetch(b + '/api/health', { signal: ctl.signal }); clearTimeout(t);
       if (r.ok) { const j = await r.json(); state.bridge = b; state.provider = j.provider || '';
         $('#bridgeBadge').textContent = '已连接本机 · ' + (state.provider || '桥接'); $('#bridgeBadge').className = 'badge ok'; pullUsage();
+        fetch(b + '/api/relay').then(x => x.json()).then(x => { if (x && x.enabled) { state.relayInfo = x;
+          if (location.hash.startsWith('#/devices')) render(); } }).catch(() => {});
         if (location.hash.startsWith('#/devices')) render(); return true; }
     } catch (e) {}
   }
@@ -550,7 +552,9 @@ function liveCard(){
   return `<div class="card live" style="padding:16px 18px;margin-top:6px">
     <div class="row wrap"><b class="h3">🔌 实机连接</b><span class="pill ${state.hw.length ? 'ok' : 'gray'}" id="hwCount">${state.hw.length} 台在线</span>
       <span class="grow"></span>
-      ${state.bridge ? '' : `<input id="hwCode" placeholder="配对码" value="${esc(state.relay)}" style="width:120px;text-transform:uppercase"><button class="btn sm" id="hwLink">${state.relay ? '换' : '连'}本机</button>`}
+      ${state.bridge
+        ? (state.relayInfo ? `<span class="badge">配对码 ${esc(state.relayInfo.code)}</span><button class="btn sm" id="hwCopy">⧉ 复制线上链接</button>` : '')
+        : `<input id="hwCode" placeholder="配对码" value="${esc(state.relay)}" style="width:120px;text-transform:uppercase"><button class="btn sm" id="hwLink">${state.relay ? '换' : '连'}本机</button>`}
       <button class="btn primary sm" id="hwScan" ${hwScanning ? 'disabled' : ''}>${hwScanning ? '扫描中…' : '🔍 扫描设备'}</button>
       <button class="btn sm" id="hwAuth">＋ 授权设备</button>
       <select class="sm" id="hwSimSel" style="max-width:170px"><option value="">模拟插入（演示）…</option>${PLATFORMS.map(p => `<option value="${p.id}">${esc(p.nm)}</option>`).join('')}</select></div>
@@ -626,6 +630,9 @@ function vDevices(v){
   paintLive();
   $('#hwAuth').onclick = hwAuthorize;
   $('#hwScan').onclick = hwScan;
+  const cp = $('#hwCopy');
+  if (cp) cp.onclick = async () => { const u = 'https://crayxus.com.au/cos.html?hw=' + state.relayInfo.code + '#/devices';
+    try { await navigator.clipboard.writeText(u); toast('已复制：' + u); } catch (e) { toast(u); } };
   const cin = $('#hwCode');
   if (cin) { const link = () => { state.relay = cin.value.trim().toUpperCase(); LS.set('relay', state.relay);
       state.hw = state.hw.filter(e => e.src !== 'bridge'); state.relayOn = null;
