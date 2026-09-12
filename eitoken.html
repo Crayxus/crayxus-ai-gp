@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>EI TOKEN · 超级 AI 工程师</title>
+<meta name="description" content="插上你自己的模块，它认得出、看得穿、写得了代码、烧得进去。">
+
+<!-- 微信分享缩略图。这一整块照抄 xiaoshan.html（站内实测能出图的金标准），
+     缺任何一条都可能白图 —— 踩过三轮才定下来的，别凭印象删改：
+     · 图必须是 JPG，同规格换 PNG 就白（2026-07-30 实证）
+     · 800×800 方图，放仓库根目录
+     · 全部绝对地址 + ?v= 破缓存（微信按完整 URL 永久缓存缩略图）
+     · 不引 Google Fonts（国内被墙，卡死爬虫 → 白） -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EI TOKEN">
+<meta property="og:title" content="EI TOKEN · 超级 AI 工程师">
+<meta property="og:description" content="插上你自己的模块，它认得出、看得穿、写得了代码、烧得进去。">
+<meta property="og:image" content="https://crayxus.com.au/og-eitoken.jpg?v=1">
+<meta property="og:image:secure_url" content="https://crayxus.com.au/og-eitoken.jpg?v=1">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="800">
+<meta property="og:image:height" content="800">
+<meta property="og:image:alt" content="EI TOKEN · 超级 AI 工程师">
+<meta property="og:url" content="https://crayxus.com.au/eitoken.html">
+<meta property="og:locale" content="zh_CN">
+<meta itemprop="image" content="https://crayxus.com.au/og-eitoken.jpg?v=1">
+<meta name="image" content="https://crayxus.com.au/og-eitoken.jpg?v=1">
+<link rel="image_src" href="https://crayxus.com.au/og-eitoken.jpg?v=1">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="EI TOKEN · 超级 AI 工程师">
+<meta name="twitter:image" content="https://crayxus.com.au/og-eitoken.jpg?v=1">
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>🔌</text></svg>">
+<style>
+/* 极简：一屏一件事，能删的都删了。
+   不引任何外部字体和脚本 —— 国内快，也是微信白图的根因之一。 */
+:root{
+  --bg:#fff; --bg2:#fafbfc; --line:#e8eaef; --line2:#f0f2f5;
+  --txt:#0d1117; --dim:#5b6472; --mute:#8b94a3;
+  --acc:#2b6cff; --acc-h:#1f57d6; --acc-soft:#eef3ff;
+  --font:"PingFang SC","Microsoft YaHei","Source Han Sans SC",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",Consolas,ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:var(--font);
+  line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+img{max-width:100%}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+.nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.88);
+  backdrop-filter:saturate(180%) blur(14px);border-bottom:1px solid var(--line2)}
+.nav .wrap{display:flex;align-items:center;height:62px;gap:14px}
+.brand{font-weight:800;font-size:16.5px;display:flex;align-items:center;gap:9px;white-space:nowrap}
+.brand .dot{width:8px;height:8px;border-radius:50%;background:var(--acc);
+  box-shadow:0 0 0 4px var(--acc-soft)}
+.brand small{font-weight:500;font-size:12.5px;color:var(--mute)}
+.grow{flex:1}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:9px 19px;border-radius:9px;font-size:14px;font-weight:600;
+  border:1px solid transparent;cursor:pointer;transition:.15s;white-space:nowrap}
+.btn.primary{background:var(--acc);color:#fff}
+.btn.primary:hover{background:var(--acc-h)}
+.btn.ghost{border-color:var(--line);color:var(--txt);background:#fff}
+.btn.ghost:hover{border-color:#cfd6e4}
+.btn.lg{padding:13px 28px;font-size:15.5px;border-radius:11px}
+
+/* 首屏 */
+.hero{padding:96px 0 84px;background:linear-gradient(180deg,#f5f8ff 0%,var(--bg) 62%)}
+.hero .wrap{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+h1{margin:0;font-size:52px;line-height:1.18;font-weight:800;letter-spacing:-.022em}
+h1 em{font-style:normal;color:var(--acc)}
+.lead{margin:22px 0 0;font-size:16.5px;line-height:1.8;color:var(--dim);max-width:27em}
+.cta{display:flex;gap:11px;margin:32px 0 0;flex-wrap:wrap;align-items:center}
+.cta small{width:100%;font-size:12.5px;color:var(--mute);margin-top:4px}
+
+/* 终端演示：画出来的，不是截图 —— 改 UI 不会让这页过期 */
+.demo{background:#0d1117;border-radius:13px;overflow:hidden;
+  box-shadow:0 10px 28px rgba(13,17,23,.13),0 34px 64px rgba(13,17,23,.11)}
+.demo .bar{display:flex;align-items:center;gap:7px;padding:11px 14px;background:#161b22;
+  border-bottom:1px solid #21262d}
+.demo .bar i{width:10px;height:10px;border-radius:50%;display:block;background:#30363d}
+.demo .bar i:nth-child(1){background:#ff5f57}.demo .bar i:nth-child(2){background:#febc2e}
+.demo .bar i:nth-child(3){background:#28c840}
+.demo .bar span{margin-left:7px;font:500 11.5px/1 var(--mono);color:#6e7681}
+.demo .body{padding:17px 19px;font:12.5px/2.05 var(--mono);color:#c9d1d9}
+.demo .u{color:#58a6ff}.demo .g{color:#3fb950}.demo .y{color:#d29922}
+.demo .m{color:#8b949e}.demo .w{color:#f0f6fc}
+
+section{padding:80px 0}
+section.alt{background:var(--bg2);border-top:1px solid var(--line2);border-bottom:1px solid var(--line2)}
+.head{text-align:center;margin:0 0 46px}
+.head h2{margin:0;font-size:31px;font-weight:800;letter-spacing:-.02em}
+.head p{margin:12px 0 0;font-size:15px;color:var(--dim)}
+
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:24px 22px}
+.card .n{display:block;font:700 12px/1 var(--mono);color:var(--acc);margin:0 0 13px}
+.card h3{margin:0 0 8px;font-size:16px;font-weight:700}
+.card p{margin:0;font-size:13.5px;line-height:1.75;color:var(--dim)}
+
+/* 真机名单：一行标签，够了 */
+.proof{margin:44px 0 0;text-align:center}
+.proof .t{font-size:12.5px;color:var(--mute);margin:0 0 14px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.chips i{font-style:normal;font-size:13px;padding:7px 15px;border-radius:999px;
+  border:1px solid var(--line);background:#fff;color:var(--dim)}
+.chips i.more{border-style:dashed;color:var(--mute)}
+
+/* 下载：一个框 */
+.dl{max-width:520px;margin:0 auto;text-align:center}
+.dl .meta{margin:0 0 22px;font:12.5px/1.8 var(--mono);color:var(--mute)}
+.dl .note{margin:22px 0 0;font-size:13px;line-height:1.85;color:var(--dim)}
+.dl .note b{color:var(--txt);font-weight:600}
+
+footer{border-top:1px solid var(--line2);padding:32px 0;background:var(--bg2)}
+footer .wrap{display:flex;align-items:center;gap:20px;flex-wrap:wrap;font-size:13px;color:var(--mute)}
+footer a:hover{color:var(--txt)}
+
+@media (max-width:900px){
+  .hero{padding:52px 0 46px}
+  .hero .wrap{grid-template-columns:1fr;gap:36px}
+  h1{font-size:34px}
+  .lead{font-size:15px}
+  section{padding:56px 0}
+  .head h2{font-size:25px}
+  .steps{grid-template-columns:1fr 1fr}
+}
+@media (max-width:540px){
+  .steps{grid-template-columns:1fr}
+  h1{font-size:29px}
+  .demo .body{font-size:11px}
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#"><span class="dot"></span>EI TOKEN <small>超级 AI 工程师</small></a>
+    <span class="grow"></span>
+    <a class="btn primary" href="#download">下载</a>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <div>
+      <h1>插上你自己的模块，<br>它<em>认得出</em>、<em>看得穿</em>、<em>跑得起来</em>。</h1>
+      <p class="lead">不是又一个代码生成器。它先把你手里这台设备读明白，再按它真实的接口写代码，然后直接烧进去跑。</p>
+      <div class="cta">
+        <a class="btn primary lg" href="#download">下载 Windows 版</a>
+        <a class="btn ghost lg" href="cos.html">在浏览器里试</a>
+        <small>设备识别、烧录、调试不计费；只有生成代码按实际消耗计费。</small>
+      </div>
+    </div>
+
+    <div class="demo">
+      <div class="bar"><i></i><i></i><i></i><span>EI TOKEN</span></div>
+      <div class="body">
+<span class="m">// 插上一块没见过的板子</span><br>
+<span class="g">›</span> <span class="w">检测到新设备</span>  <span class="m">COM9 · VID 0483</span><br>
+<span class="g">✓</span> <span class="w">STM32H743 视觉板 · MicroPython</span><br>
+<span class="m">  模块 sensor / image / imu / helloFly</span><br><br>
+<span class="u">你</span> 找到红色标签就飞过去悬停<br><br>
+<span class="g">›</span> <span class="m">按这台机器的真实接口生成……</span><br>
+<span class="y">  import sensor, image, time, pyb</span><br>
+<span class="y">  from helloFly import fly</span><br>
+<span class="m">  · 用 pyb.delay（这块板没有 sleep_ms）</span><br>
+<span class="g">✓</span> 已写入 <span class="w">/user.py</span>　<span class="m">6.2s · ¥0.14</span><br>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <div class="head">
+      <h2>四步，从插上到跑起来</h2>
+      <p>每一步都对着你手里这台真机，不是对着文档</p>
+    </div>
+    <div class="steps">
+      <div class="card">
+        <span class="n">01</span>
+        <h3>插上就认到</h3>
+        <p>串口、蓝牙、网络里的板子自动出现。不用先装驱动，也不用告诉它你插的是什么。</p>
+      </div>
+      <div class="card">
+        <span class="n">02</span>
+        <h3>看穿内部有什么</h3>
+        <p>不是查表猜型号，是直接问设备本身。探到的和推断的分开标。</p>
+      </div>
+      <div class="card">
+        <span class="n">03</span>
+        <h3>说一句话生成代码</h3>
+        <p>生成时带上这台机器的真实接口。真机报的错会回灌，下一轮自动避开。</p>
+      </div>
+      <div class="card">
+        <span class="n">04</span>
+        <h3>烧进去跑起来</h3>
+        <p>编译、烧录、看串口在同一个界面里。也可以先在仿真里跑。</p>
+      </div>
+    </div>
+
+    <div class="proof">
+      <div class="t">已经在这些真机上跑通</div>
+      <div class="chips">
+        <i>VEX V5</i><i>ROS 底盘</i><i>编程无人机</i><i>STM32</i>
+        <i>Arduino / AVR</i><i>ESP32</i><i>XGO 轮腿</i><i>Isaac Sim</i><i>Gazebo</i>
+        <i class="more">你的模块也可以加进来</i>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="download">
+  <div class="wrap">
+    <div class="dl">
+      <div class="head" style="margin-bottom:26px">
+        <h2>下载</h2>
+        <p>装完双击桌面图标即可</p>
+      </div>
+      <div class="meta" id="meta">版本 2026.9.12 · 25.4 MB · Windows 10/11 64 位</div>
+      <a class="btn primary lg" href="#" id="dlbtn" style="min-width:230px">下载安装包</a>
+      <p class="note">
+        一路下一步，<b>不需要管理员权限</b>。自带运行环境，不用另外装 Node 或 Python。<br>
+        新版本自动下载，下次打开时生效。桥接只监听本机 127.0.0.1，不对外开放端口。
+      </p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="brand" style="font-size:13.5px"><span class="dot"></span>EI TOKEN</span>
+    <span class="grow"></span>
+    <a href="cos.html">在线版</a>
+    <a href="https://crayxus.com.au">Crayxus</a>
+    <span>© 2026 Crayxus</span>
+  </div>
+</footer>
+
+<script>
+/* 下载地址和版本号读 dl/latest.json，发新版只改那个文件不动页面。
+   读不到就用兜底链接 —— 页面上永远有个能点的按钮，比一直"加载中"强。 */
+(function () {
+  var F = { version: '2026.9.12', size: '25.4 MB',
+            url: 'https://github.com/Crayxus/crayxus-ai-gp/releases/download/eitoken-v2026.9.12/EITOKEN-Setup.exe' };
+  function paint(d) {
+    document.getElementById('meta').textContent =
+      '版本 ' + d.version + ' · ' + d.size + ' · Windows 10/11 64 位';
+    document.getElementById('dlbtn').href = d.url;
+  }
+  paint(F);
+  fetch('dl/latest.json', { cache: 'no-store' })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (d) { if (d && d.url) paint(d); })
+    .catch(function () {});
+})();
+</script>
+</body>
+</html>

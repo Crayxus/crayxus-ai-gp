@@ -63,6 +63,11 @@ textarea{resize:vertical;line-height:1.6}
 .sb-sec{font-size:12px;color:var(--mute);padding:6px 24px}
 .nav a,.nav button{display:flex;align-items:center;gap:12px;padding:11px 20px;margin:0 10px;border-radius:10px;color:var(--txt);font-size:15px;width:calc(100% - 20px);text-align:left}
 .nav a:hover{background:var(--card2)}
+/* 项目名太长要截断，删除按钮平时隐身、悬停才出现 */
+.nav a .pnm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nav a .del{flex:0 0 auto;opacity:0;color:var(--mute);font-size:13px;padding:2px 6px;border-radius:6px;transition:.15s}
+.nav a:hover .del{opacity:1}
+.nav a .del:hover{background:var(--err);color:#fff}
 .nav a.on{background:var(--acc-soft);color:var(--acc);font-weight:700}
 .nav .ic{width:22px;text-align:center;font-size:17px;opacity:.85}
 .sb-div{height:1px;background:var(--line);margin:12px 20px}
@@ -138,7 +143,10 @@ table.tb{width:100%;border-collapse:collapse;font-size:14px}
 .prompt{max-width:1060px;margin:26px auto 0;padding:18px 20px 14px}
 .prompt textarea{width:100%;min-height:96px;border:0;background:transparent;padding:4px 6px;font-size:15.5px;resize:none}
 .prompt textarea:focus{box-shadow:none}
-.prompt .bar{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap}
+/* height/overflow/background 必须显式写死：下面第 248 行还有个进度条也叫 .bar，
+   那条规则带 height:12px + overflow:hidden，会把这排按钮压成一条缝。 */
+.prompt .bar{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap;
+  height:auto;overflow:visible;background:transparent;border-radius:0}
 .prompt .est{font-size:12.5px;color:var(--mute);font-family:var(--mono);margin-left:6px}
 .starters{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;max-width:1060px;margin:44px auto 0}
 .starter{display:flex;align-items:center;gap:16px;padding:22px 20px;text-align:left}
@@ -146,6 +154,198 @@ table.tb{width:100%;border-collapse:collapse;font-size:14px}
 .starter .ic{font-size:40px;line-height:1}
 .starter b{font-size:16px;display:block}
 .starter span{color:var(--dim);font-size:13.5px}
+/* ── 生成面板：紧贴 prompt 卡片下方向下展开 ── */
+.genpanel{max-width:1060px;margin:14px auto 0;overflow:hidden;
+  animation:genDrop .32s cubic-bezier(.22,.9,.3,1)}
+@keyframes genDrop{from{opacity:0;transform:translateY(-10px);max-height:0}
+                   to{opacity:1;transform:none;max-height:2400px}}
+.genpanel .gp{border:1px solid var(--line);border-radius:var(--r);background:var(--card);box-shadow:var(--shadow);overflow:hidden}
+.genpanel .gphead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 18px;border-bottom:1px solid var(--line2);background:var(--card2)}
+.genpanel .gpbody{padding:16px 18px}
+.genpanel .code{border:1px solid var(--line);border-radius:10px;max-height:420px}
+/* 步骤条：生成 → 烧录 → 就绪 → 运行 */
+.steps{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin:2px 0 14px}
+.steps .st{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--mute);white-space:nowrap}
+.steps .st .dot{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;
+  border:1.5px solid var(--line);font-size:11px;background:var(--card);flex:0 0 auto}
+.steps .st.on{color:var(--txt);font-weight:500}
+.steps .st.on .dot{border-color:var(--acc);color:var(--acc)}
+.steps .st.done{color:var(--ok)}
+.steps .st.done .dot{border-color:var(--ok);background:var(--ok);color:#fff}
+.steps .sep{flex:1 1 22px;height:1.5px;background:var(--line);margin:0 10px;min-width:18px}
+.steps .sep.done{background:var(--ok)}
+.roslogo{display:grid;place-items:center;background:var(--acc-soft)!important;border-color:transparent!important}
+/* 左栏的 ROS 大图：把部件面板旁边那块空白填实，兼做品牌识别 */
+/* 左栏拉满整行高度：.hwrow 是 flex-start 对齐，靠 align-self:stretch 单独撑开，
+   里面再用纵向 flex 让车图 flex:1 吃掉剩余高度，跟右边部件面板齐平。 */
+.devinfo{flex:1 1 430px;min-width:320px;align-self:stretch;display:flex;flex-direction:column}
+.roshero{flex:1;margin-top:16px;display:grid;place-items:center;min-height:220px;max-height:400px;overflow:hidden;padding:10px;
+  border-radius:14px;background:linear-gradient(160deg,var(--acc-soft),transparent 70%);
+  border:1px solid var(--line2)}
+.roshero .cap{margin-top:10px;font-size:12px;color:var(--mute);letter-spacing:.06em;text-align:center;padding:0 12px}
+/* 必须 contain 不能 cover：车图是 800x466 的宽图，框被拉高之后 cover 会裁掉左右大半，
+   车身直接被切断。contain 保证整台车完整，四周留白由渐变底兜住。 */
+.roshero .rosphoto{width:100%;height:100%;object-fit:contain;display:block}
+.roshero .rosfallback{display:grid;place-items:center}
+/* 板上部件：按功能分组的卡片，铺在设备行下面 */
+/* 不能用 flex-basis:100% —— 这行不换行，100% 会把左边的设备信息挤成一个字宽。
+   给一个能伸缩的基准宽度，左栏才留得住空间。 */
+.partrow{flex:1 1 560px;min-width:320px;margin:2px 0;padding:14px 16px;border-radius:12px;
+  background:var(--card2);border:1px solid var(--line2)}
+.partshead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.partshead b{font-size:14px}
+.partgrp{margin-bottom:12px}
+.partgrp:last-child{margin-bottom:0}
+.partgrp .gname{font-size:11.5px;color:var(--mute);letter-spacing:.08em;margin-bottom:7px}
+.pcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(184px,1fr));gap:9px}
+/* VEX 端口面板：串口设备行左边没有大图要摆，整行铺开更合适。
+   端口数量多（十几个），卡片要小、列要多，否则一列两个能拉出一千多像素。 */
+.vexrow{flex:1 1 100%;margin:10px 0 2px;padding:14px 16px;border-radius:12px;
+  background:var(--card2);border:1px solid var(--line2)}
+.vexrow .pcards{grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:7px}
+.vexrow .pcard{padding:7px 9px;gap:8px}
+.vexrow .pcard .ico{font-size:17px}
+.vexrow .pcard .txt b{font-size:12.5px}
+.vexrow .pcard .st,.vexrow .pcard .tp{font-size:10.5px}
+
+/* VEX 调试台：左边主控屏幕（480×272，按 16:9 留黑边），右边启停 + 日志 */
+.vexdbg{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(260px,.85fr);gap:16px}
+@media(max-width:860px){.vexdbg{grid-template-columns:1fr}}
+.vxfrm{position:relative;aspect-ratio:480/272;border-radius:10px;overflow:hidden;
+  background:#0b0e13;border:1px solid var(--line2);display:flex;align-items:center;justify-content:center}
+.vxfrm img{width:100%;height:100%;object-fit:contain;display:block;image-rendering:pixelated}
+.vxph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:16px;color:#8b96a8;font-size:13px;line-height:1.7}
+.vxslots{display:flex;flex-direction:column;gap:6px}
+.vxslot{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;
+  border:1px solid var(--line);background:var(--card)}
+.vxslot b{font-size:13px;white-space:nowrap}
+.vxlog{height:190px;overflow:auto;padding:10px 12px;border-radius:9px;white-space:pre-wrap;
+  word-break:break-all;font-size:11.5px;line-height:1.65;color:#b9c4d4;
+  background:#0b0e13;border:1px solid var(--line2)}
+
+/* 电机实时表：一行一个电机，转速用条形，过热标红 */
+.vxmot{display:flex;flex-direction:column;gap:4px;max-height:320px;overflow:auto}
+.vxm{display:flex;align-items:center;gap:9px;padding:5px 9px;border-radius:8px;
+  border:1px solid var(--line);background:var(--card)}
+.vxm b{font-size:12px;white-space:nowrap;min-width:52px}
+.vxm.hot{border-color:#f59e0b;background:rgba(245,158,11,.07)}
+.vxbar{flex:1;height:7px;border-radius:5px;background:var(--line2);overflow:hidden;min-width:40px}
+.vxbar i{display:block;height:100%;width:0;background:var(--line2);transition:width .12s linear}
+.vxm .vxv{font-size:11.5px;min-width:62px;text-align:right;color:var(--mute)}
+.vxm .vxt{font-size:11px;min-width:88px;text-align:right;color:var(--mute)}
+.vxm .btn.sm{padding:2px 9px;min-width:0}
+
+/* 实时控制 */
+.vxctl{padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card)}
+.vxbatt{display:flex;align-items:center;gap:9px;font-size:12.5px}
+.vxbatt .bar2{flex:1;height:9px;border-radius:5px;background:var(--line2);overflow:hidden}
+.vxbatt .bar2 i{display:block;height:100%;background:linear-gradient(90deg,#ef4444,#f59e0b 35%,#16a34a 60%);
+  transition:width .3s}
+.btn.danger{background:#fee2e2;border-color:#fca5a5;color:#b91c1c}
+.btn.danger:hover{background:#fecaca;border-color:#f87171}
+
+/* 自定义调试的话题清单 */
+.tplist{max-height:52vh;overflow:auto;display:flex;flex-direction:column;gap:5px}
+.tprow{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:8px 11px;
+  border-radius:9px;border:1px solid var(--line);background:var(--card);transition:.13s}
+.tprow:hover{border-color:var(--acc);transform:translateX(2px)}
+.tprow .ico{font-size:17px;flex:0 0 auto;line-height:1}
+.tprow .tt{min-width:0}
+.tprow .tt b{display:block;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chk{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--mute);white-space:nowrap}
+.chk input{margin:0}
+.btn .cnt{margin-left:5px;padding:1px 5px;border-radius:20px;font-size:10.5px;
+  background:var(--line2);color:var(--mute)}
+
+/* 选目标：三档摊开讲清楚 */
+.tggrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}
+.tgcard{display:block;width:100%;text-align:left;padding:12px 14px;border-radius:12px;
+  border:1px solid var(--line);background:var(--card);transition:.15s}
+.tgcard:hover{border-color:var(--acc);transform:translateY(-1px);box-shadow:var(--shadow)}
+.tgcard.on{border-color:var(--acc);background:var(--card2)}
+.tgcard .sub{margin:0}
+/* 首页那一排：卡片贴着输入框下面，别太抢戏 */
+.tgband{margin:14px 0 4px}
+/* 能拿它做什么：一条一卡，会动的标红 */
+.actgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:8px}
+.actcard{padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card)}
+.actcard.danger{border-color:#fca5a5;background:rgba(254,226,226,.35)}
+.actcard .sub{margin:0}
+/* 虚拟遥控器 */
+.rcwarn{padding:10px 12px;border-radius:10px;border:1px solid #fca5a5;background:rgba(254,226,226,.4);
+  font-size:12.5px;line-height:1.7;color:#b91c1c}
+.rcgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.rcpad{padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--card)}
+.rcpad3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.rcbtn{height:62px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2px;font-size:17px;line-height:1.1;padding:0}
+.rcbtn span{font-size:11px;opacity:.75}
+.rcbtn:active{transform:scale(.95)}
+.tgband .tgcard{padding:11px 13px}
+@media(max-width:720px){.tggrid{grid-template-columns:1fr}}
+.pcard{display:flex;align-items:center;gap:11px;text-align:left;padding:10px 12px;border-radius:11px;
+  border:1px solid var(--line);background:var(--card);transition:.15s;width:100%}
+.pcard:hover{border-color:var(--acc);transform:translateY(-1px);box-shadow:var(--shadow)}
+.pcard .ico{font-size:22px;flex:0 0 auto;line-height:1}
+.pcard .txt{min-width:0;flex:1}
+.pcard .txt b{display:block;font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pcard .st{font-size:11.5px;color:var(--mute);display:flex;align-items:center;gap:4px;margin-top:1px}
+.pcard .st i{font-style:normal;font-size:9px}
+.pcard.ok .st{color:var(--ok)}
+.pcard.warn .st{color:var(--warn)}
+.pcard .tp{font-size:10.5px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+/* 账号条：整条可点，鼠标上去有反馈 */
+.sb-foot{cursor:pointer;transition:.15s}
+.sb-foot:hover{background:var(--card2)}
+/* 部件实时调试台 */
+.lvkv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin-top:12px;font-size:13px;
+  font-family:var(--mono);align-items:center}
+.lvkv span{color:var(--mute)}
+.lvkv b{color:var(--txt)}
+.lvwarn{padding:10px 13px;border-radius:10px;background:var(--warn-soft);border:1px solid var(--warn);
+  font-size:13.5px;margin-bottom:14px}
+.lvpad{display:grid;grid-template-columns:repeat(3,64px);grid-template-rows:repeat(3,64px);
+  gap:8px;justify-content:center}
+.lvpad .lvbtn:nth-child(1){grid-area:1/2}.lvpad .lvbtn:nth-child(2){grid-area:2/1}
+.lvpad .lvbtn:nth-child(3){grid-area:2/2}.lvpad .lvbtn:nth-child(4){grid-area:2/3}
+.lvpad .lvbtn:nth-child(5){grid-area:3/2}
+.lvbtn{font-size:20px;border:1px solid var(--line);border-radius:12px;background:var(--card2);
+  color:var(--txt);cursor:pointer;user-select:none;transition:.1s;touch-action:none}
+.lvbtn:hover{border-color:var(--acc);background:var(--acc-soft)}
+.lvbtn:active{transform:scale(.94);background:var(--acc);color:var(--acc-txt)}
+.lvbtn.stop{color:var(--err);font-size:16px}
+.lvbtn.stop:active{background:var(--err);color:#fff}
+.partchip{cursor:pointer}
+.partchip:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+/* 部件示范案例 */
+.rcpwrap{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.rcphead{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-weight:700;font-size:14px;margin-bottom:11px}
+.rcp{border:1px solid var(--line);border-radius:11px;padding:11px 13px;margin-bottom:9px;background:var(--card2)}
+.rcptop{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.rcptop b{font-size:14px}
+.rcpwhy{font-size:12.5px;color:var(--dim);margin-top:5px;line-height:1.6}
+.rcpcode{margin-top:10px;padding:11px 13px;border-radius:9px;background:var(--code-bg);border:1px solid var(--line);
+  font-family:var(--mono);font-size:12px;line-height:1.65;overflow-x:auto;white-space:pre;color:var(--txt)}
+/* 可编辑代码框：和只读的 .code 视觉一致，免得切换时跳一下 */
+.codeedit{width:100%;min-height:340px;max-height:520px;font-family:var(--mono);font-size:13px;
+  line-height:1.75;padding:14px 16px;border-radius:12px;border:1px solid var(--line);
+  background:var(--code-bg);color:var(--txt);resize:vertical;white-space:pre;overflow-wrap:normal;overflow-x:auto;tab-size:4}
+.codeedit:focus{border-color:var(--acc)}
+/* 追问 / 交流框 */
+.askbox{margin-top:14px;border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--card2)}
+.askbox textarea{width:100%;border:1px solid var(--line);border-radius:9px;background:var(--card);
+  padding:9px 11px;font-size:14px;resize:vertical;min-height:52px;font-family:var(--font)}
+.askbox .asklog{margin-bottom:10px;display:flex;flex-direction:column;gap:6px}
+.askbox .asklog .t{display:flex;gap:9px;align-items:flex-start;font-size:13px;color:var(--dim);line-height:1.55}
+.askbox .asklog .t .n{flex:0 0 auto;width:18px;height:18px;border-radius:50%;background:var(--acc-soft);
+  color:var(--acc);font-size:11px;display:grid;place-items:center;margin-top:1px}
+.askbox .tel{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--dim);cursor:pointer}
+/* 只看不动开关 */
+.drywrap{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:9px;
+  background:var(--warn-soft);border:1px solid var(--warn);font-size:13px}
+.drywrap.off{background:var(--ok-soft);border-color:var(--ok)}
+.genpanel .cam{width:100%;max-width:420px;border-radius:10px;border:1px solid var(--line);display:block;background:var(--code-bg)}
 .chips{display:flex;gap:8px;flex-wrap:wrap;max-width:1060px;margin:16px auto 0;justify-content:center}
 .chip{font-size:13px;padding:6px 14px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--dim)}
 .chip:hover{border-color:var(--acc);color:var(--acc)}
@@ -282,7 +482,9 @@ table.tb{width:100%;border-collapse:collapse;font-size:14px}
 }
 
 /* 实机连接 */
-.hwrow{display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px dashed var(--line)}
+/* 顶端对齐：右边的部件面板很高，用 center 的话左边信息会被推到中间，
+   上下各留一块空白。顶端对齐 + 左栏放一张 ROS 大图，把那块空间填实。 */
+.hwrow{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-top:1px dashed var(--line);flex-wrap:wrap}
 .hwrow:first-child{border-top:0}
 .boardpic.sm{width:44px;height:34px;font-size:18px}.boardpic.sm svg{width:38px;height:38px}
 .dotpulse{width:9px;height:9px;border-radius:50%;background:var(--ok);flex:0 0 auto;box-shadow:0 0 0 0 color-mix(in srgb,var(--ok) 60%,transparent);animation:hwp 1.8s infinite}
@@ -290,6 +492,68 @@ table.tb{width:100%;border-collapse:collapse;font-size:14px}
 @keyframes hwp{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--ok) 55%,transparent)}70%{box-shadow:0 0 0 9px transparent}100%{box-shadow:0 0 0 0 transparent}}
 .live .hint{font-size:12.5px;color:var(--dim);margin-top:6px;line-height:1.7}
 .hwlog{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-family:var(--mono);font-size:12.5px;line-height:1.6;height:300px;overflow:auto;white-space:pre-wrap;word-break:break-all}
+
+/* ───────── 登录页（整屏分栏：左介绍 / 右登录口） ───────── */
+.authov{position:fixed;inset:0;z-index:80;display:grid;grid-template-columns:1.15fr .85fr;
+  background:var(--bg);overflow:auto}
+/* 左：介绍。深色底 + 网格，和右边的表单拉开层次 */
+.authov .au-showcase{position:relative;padding:52px 48px;display:flex;flex-direction:column;
+  background:var(--card2);border-right:1px solid var(--line);overflow:hidden}
+.authov .au-showcase::before{content:"";position:absolute;inset:0;
+  background-image:var(--grid);background-size:34px 34px;opacity:.9;pointer-events:none}
+/* 一层极淡的主色光，避免左栏在浅色主题下显得发灰 */
+.authov .au-showcase::after{content:"";position:absolute;width:520px;height:520px;right:-160px;top:-120px;
+  border-radius:50%;background:radial-gradient(circle,var(--acc-soft) 0%,transparent 70%);
+  opacity:.8;pointer-events:none}
+.authov .au-showcase>*{position:relative;z-index:1}
+.authov .au-brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;letter-spacing:.04em}
+.authov .au-brand .au-dot{width:9px;height:9px;border-radius:50%;background:var(--acc);
+  box-shadow:0 0 0 4px var(--acc-soft)}
+.authov h1{margin:40px 0 0;font-size:34px;line-height:1.3;font-weight:700;letter-spacing:-.01em}
+.authov h1 em{font-style:normal;color:var(--acc)}
+.authov .au-lead{margin:16px 0 0;font-size:14.5px;line-height:1.85;color:var(--dim);max-width:30em}
+/* 四步：认到 → 看穿 → 生成 → 跑起来。这是产品本身的动线，不是装饰 */
+.authov .au-steps{margin:36px 0 0;display:flex;flex-direction:column;gap:2px}
+.authov .au-step{display:flex;gap:14px;align-items:flex-start;padding:13px 0}
+.authov .au-step+.au-step{border-top:1px solid var(--line2)}
+.authov .au-step .au-n{flex:0 0 26px;height:26px;border-radius:8px;display:grid;place-items:center;
+  background:var(--acc-soft);color:var(--acc);font:600 12px/1 var(--mono)}
+.authov .au-step b{display:block;font-size:14px;margin:3px 0 3px}
+.authov .au-step span{display:block;font-size:12.8px;line-height:1.7;color:var(--dim)}
+/* 已经跑通的真机，按名字列 —— 比形容词有说服力 */
+.authov .au-proof{margin:auto 0 0;padding-top:28px}
+.authov .au-proof .au-t{font-size:11.5px;letter-spacing:.08em;color:var(--mute);margin:0 0 11px}
+.authov .au-chips{display:flex;flex-wrap:wrap;gap:7px}
+.authov .au-chips i{font-style:normal;font-size:12px;padding:5px 11px;border-radius:999px;
+  border:1px solid var(--line);background:var(--card);color:var(--dim);white-space:nowrap}
+/* 右：登录口 */
+.authov .au-formside{padding:52px 48px;display:flex;flex-direction:column;justify-content:center;
+  background:var(--panel)}
+.authov .au-fbox{width:100%;max-width:364px;margin:0 auto}
+.authov .au-fbox h2{margin:0;font-size:23px;font-weight:700}
+.authov .au-fbox .au-why{margin:10px 0 0;font-size:13px;line-height:1.75;color:var(--dim)}
+.authov .au-fbox .au-reason{margin:18px 0 0;padding:12px 14px;border-radius:10px;font-size:12.8px;
+  line-height:1.7;background:var(--acc-soft);border:1px solid var(--line);color:var(--txt)}
+.authov .au-fld{margin:20px 0 0}
+.authov .au-fld label{display:block;font-size:12.5px;color:var(--dim);margin:0 0 6px}
+.authov .au-fld input{width:100%;font-size:14px;padding:11px 13px}
+.authov .au-err{margin:14px 0 0;font-size:12.8px;line-height:1.6;color:var(--err);min-height:1.2em}
+.authov .au-err.busy{color:var(--dim)}
+.authov .au-fbox .au-go{width:100%;margin:18px 0 0;padding:12px;font-size:14.5px;font-weight:600}
+.authov .au-alt{margin:16px 0 0;display:flex;align-items:center;gap:8px;font-size:12.8px;color:var(--dim)}
+.authov .au-foot{margin:30px 0 0;padding-top:18px;border-top:1px solid var(--line2);
+  font-size:11.8px;line-height:1.8;color:var(--mute)}
+.authov .au-xclose{position:absolute;right:18px;top:16px;z-index:3}
+/* 窄屏：左栏收成顶部一小段，别把表单挤到屏幕外 */
+@media (max-width:980px){
+  .authov{grid-template-columns:1fr;align-content:start}
+  .authov .au-showcase{padding:30px 22px 26px;border-right:0;border-bottom:1px solid var(--line)}
+  .authov .au-showcase::after{display:none}
+  .authov h1{margin:20px 0 0;font-size:25px}
+  .authov .au-lead{font-size:13.5px}
+  .authov .au-steps,.authov .au-proof{display:none}   /* 手机上先让人登进去，介绍让位 */
+  .authov .au-formside{padding:28px 22px 44px}
+}
 </style>
 </head>
 <body>
@@ -308,8 +572,12 @@ table.tb{width:100%;border-collapse:collapse;font-size:14px}
       <a href="#/store" data-route="store"><span class="ic">🛍️</span>装置商城</a>
       <a href="#/usage" data-route="usage"><span class="ic">📊</span>Token 用量</a>
     </div>
-    <div class="sb-foot">
-      <span class="avatar">E</span><span>个人工作空间</span><span class="sp"></span>
+    <div class="sb-foot" id="acctFoot">
+      <span class="avatar" id="acctAv">E</span>
+      <div style="min-width:0;flex:1">
+        <div id="acctName" style="font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">未登录</div>
+        <div id="acctSub" class="sub" style="margin:0;font-size:11.5px">点这里登录，设备和用量才跟着账号走</div>
+      </div>
       <button class="iconbtn" id="themeBtn" title="切换配色">◐</button>
     </div>
   </aside>
@@ -331,8 +599,34 @@ table.tb{width:100%;border-collapse:collapse;font-size:14px}
 <div class="toast" id="toast"></div>
 <div id="modalRoot"></div>
 
+<script>/* EIT_ERR_HOOK —— 把网页端报错回传给桥接，排障用。放在所有脚本之前才抓得全 */
+(function(){
+  var sent = 0;
+  function post(o){
+    if (sent++ > 30) return;                 // 别把死循环里的报错灌满硬盘
+    try {
+      fetch('/api/clientlog', { method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(o), keepalive: true }).catch(function(){});
+    } catch(e) {}
+  }
+  window.addEventListener('error', function(e){
+    post({ kind:'error', msg: String(e.message || e.type),
+           src: (e.filename||'').split('/').pop(), line: e.lineno, col: e.colno,
+           stack: e.error && e.error.stack ? String(e.error.stack).slice(0,900) : '' });
+  }, true);
+  window.addEventListener('unhandledrejection', function(e){
+    var r = e.reason;
+    post({ kind:'reject', msg: String(r && r.message || r),
+           stack: r && r.stack ? String(r.stack).slice(0,900) : '' });
+  });
+  window.EIT_ERR_HOOK = true;
+})();</script>
 <script src="cos/legacy.js"></script>
 <script src="cos/data.js"></script>
+<script src="cos/eit_ros.js"></script>
+<script src="cos/eit_cloud.js"></script>
+<script src="cos/eit_recipes.js"></script>
+<script src="cos/eit_live.js"></script>
 <script src="cos/app.js"></script>
 </body>
 </html>
