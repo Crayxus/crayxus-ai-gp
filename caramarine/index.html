@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>CaraMarine 深蓝方舟 · 高端水下会所</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="CaraMarine 深蓝方舟——全球首座透明移动式高端水下会所。Caravan × Submarine，把客厅沉进海里。">
+<link rel="canonical" href="https://crayxus.com.au/caramarine/">
+<!-- Open Graph / 微信分享 -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://crayxus.com.au/caramarine/">
+<meta property="og:title" content="CaraMarine 深蓝方舟 · 高端水下会所">
+<meta property="og:description" content="全球首座透明移动式高端水下会所 · Caravan × Submarine · 把客厅沉进海里">
+<meta property="og:image" content="https://crayxus.com.au/caramarine/02.jpg?v=1">
+<meta property="og:image:width" content="1600">
+<meta property="og:image:height" content="900">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://crayxus.com.au/caramarine/02.jpg?v=1">
+<link rel="icon" href="https://crayxus.com.au/caramarine/01.jpg?v=1">
+<style>
+  :root{
+    --band-a:#04101a; --band-b:#08243a; --ink:#f5f6f2; --muted:#9db6c0;
+    --gold:#f4c072; --gold2:#ffdca0; --cyan:#4fe6da; --brd:rgba(244,192,114,.3);
+    --sans:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+    --disp:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  }
+  @media(prefers-color-scheme:light){
+    :root{--band-a:#fbf7f1;--band-b:#eef3f4;--ink:#12212a;--muted:#5a7078;
+      --gold:#bd820f;--gold2:#d69a2a;--cyan:#0c8f89;--brd:rgba(189,130,15,.28)}
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--sans);color:var(--ink);background:var(--band-a);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto}}
+  img{max-width:100%;display:block}
+
+  .band{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:100px 24px;position:relative;overflow:hidden}
+  .band--a{background:var(--band-a)}
+  .band--b{background:var(--band-b)}
+  .band--hero{background:radial-gradient(120% 90% at 50% 0%,#0c3049,#061e2f 55%,#04101a)}
+  @media(prefers-color-scheme:light){.band--hero{background:radial-gradient(120% 90% at 50% 0%,#e6eef1,#f5f2ec 60%,#fbf7f1)}}
+
+  .kicker{font-size:clamp(.78rem,2vw,1rem);font-weight:600;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:1.1rem}
+  h1{font-family:var(--disp);font-weight:700;font-size:clamp(3.4rem,14vw,9rem);line-height:.98;letter-spacing:-.03em;
+    background:linear-gradient(180deg,var(--ink),var(--gold2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .word{font-family:var(--disp);font-weight:700;font-size:clamp(2.5rem,9vw,6rem);line-height:1.05;letter-spacing:-.03em;color:var(--ink)}
+  .word em{font-style:normal;color:var(--gold)}
+  .line{font-family:var(--disp);font-weight:500;font-size:clamp(1.15rem,3vw,1.95rem);line-height:1.45;
+    color:var(--muted);max-width:24ch;margin:1.3rem auto 0;text-wrap:balance}
+
+  .logo{width:88px;height:88px;border-radius:50%;overflow:hidden;margin:0 auto 1.4rem;
+    border:1px solid var(--brd);background:#071a2b}
+  .logo img{width:100%;height:100%;object-fit:cover}
+
+  .shot{width:min(92vw,1000px);border-radius:22px;overflow:hidden;margin:2.6rem auto 0;
+    border:1px solid var(--brd);box-shadow:0 34px 70px -34px rgba(0,0,0,.6);background:#061c2c}
+  .shot img{width:100%;height:auto}
+
+  .reveal{opacity:0;transform:translateY(34px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+
+  .chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:2.4rem}
+  .chip{border:1px solid var(--brd);border-radius:100px;padding:9px 20px;font-family:var(--disp);font-size:.95rem;
+    color:var(--muted);display:flex;gap:9px;align-items:center}
+  .chip b{color:var(--ink);font-weight:600}
+  .chip.now{border-color:var(--gold)}
+  .chip .st{font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan)}
+  .chip.now .st{color:var(--gold)}
+
+  .scrollcue{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);font-size:.72rem;letter-spacing:.3em;
+    text-transform:uppercase;color:var(--muted);animation:down 2.4s ease-in-out infinite}
+  @keyframes down{0%,100%{transform:translate(-50%,0);opacity:.5}50%{transform:translate(-50%,7px);opacity:1}}
+  #bub{position:absolute;inset:0;z-index:0;pointer-events:none}
+  .band>*{position:relative;z-index:1}
+  footer{padding:56px 24px 78px;text-align:center;background:var(--band-a)}
+  footer .b{font-family:var(--disp);font-weight:600;color:var(--ink);letter-spacing:.1em}
+  footer p{color:var(--muted);font-size:.8rem;margin-top:.6rem}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="band band--hero">
+  <canvas id="bub"></canvas>
+  <div class="logo"><img src="https://crayxus.com.au/caramarine/01.jpg?v=1" alt="CaraMarine logo" width="88" height="88"></div>
+  <div class="kicker">Caravan × Submarine</div>
+  <h1>CaraMarine</h1>
+  <p class="line">一座潜入海面之下的<br>高端会所。</p>
+  <div class="shot"><img src="https://crayxus.com.au/caramarine/02.jpg?v=1" alt="CaraMarine 水下会所外观" width="1600" height="900"></div>
+  <div class="scrollcue">Scroll ↓</div>
+</section>
+
+<!-- 内饰 -->
+<section class="band band--a">
+  <div class="reveal">
+    <div class="kicker">Interior · 内饰</div>
+    <div class="word">把客厅，<em>沉进海里</em>。</div>
+    <p class="line">白沙发、暖光、环形光隧道——像家，却在深海。</p>
+    <div class="shot"><img src="https://crayxus.com.au/caramarine/03.jpg?v=1" alt="CaraMarine 内饰套间" width="1600" height="900" loading="lazy"></div>
+  </div>
+</section>
+
+<!-- AI Dashboard -->
+<section class="band band--b">
+  <div class="reveal">
+    <div class="kicker">AI Control · 智能主控</div>
+    <div class="word">一块屏，<em>掌控整片深海</em>。</div>
+    <p class="line">升沉、光影、氧气、调酒、宾客偏好——一套 AI 主控，尽在掌心。</p>
+    <div class="shot"><img src="https://crayxus.com.au/caramarine/04.jpg?v=1" alt="CaraMarine AI 主控台" width="1600" height="900" loading="lazy"></div>
+  </div>
+</section>
+
+<!-- 首款 -->
+<section class="band band--a">
+  <div class="reveal">
+    <div class="kicker">First of the Fleet · 首款登场</div>
+    <div class="word">先，做透 <em>Ultra</em>。</div>
+    <p class="line">CaraMarine Ultra —— 商用运营级旗舰，为高端会所打造的第一艘。</p>
+    <div class="chips">
+      <div class="chip now"><span class="st">Now</span><b>Ultra</b>商用旗舰</div>
+      <div class="chip"><span class="st">Soon</span><b>CaraMarine</b>2–3 人</div>
+      <div class="chip"><span class="st">Soon</span><b>Pro</b>4–5 人</div>
+      <div class="chip"><span class="st">Soon</span><b>Pro Max</b>6–8 人</div>
+    </div>
+  </div>
+</section>
+
+<!-- 收尾 -->
+<section class="band band--hero" style="min-height:82vh">
+  <div class="reveal">
+    <div class="logo"><img src="https://crayxus.com.au/caramarine/01.jpg?v=1" alt="CaraMarine logo" width="88" height="88"></div>
+    <div class="kicker">深蓝方舟 · Deep Blue Ark</div>
+    <div class="word">下潜，<em>此刻开始</em>。</div>
+    <p class="line">全球首座透明移动式高端水下会所。<br>CaraMarine Ultra · 即将登陆宁波。</p>
+  </div>
+</section>
+
+<footer>
+  <div class="b">CaraMarine™ · 深蓝方舟</div>
+  <p>Caravan × Submarine · 高端水下会所 · Crayxus AI</p>
+</footer>
+
+<script>
+(function(){
+  var c=document.getElementById('bub');if(!c)return;var x=c.getContext('2d'),bs=[],W,H;
+  var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  function size(){var p=c.parentElement;W=c.width=p.offsetWidth;H=c.height=p.offsetHeight;}
+  size();addEventListener('resize',size);
+  function mk(){return{x:Math.random()*W,y:H+Math.random()*H,r:1+Math.random()*4,s:.3+Math.random()*1,o:.1+Math.random()*.3,d:Math.random()*3};}
+  for(var i=0;i<46;i++)bs.push(mk());
+  function draw(){x.clearRect(0,0,W,H);for(var i=0;i<bs.length;i++){var b=bs[i];
+    x.beginPath();x.arc(b.x+Math.sin((b.y+b.d*80)/60)*7,b.y,b.r,0,7);
+    x.fillStyle='rgba(244,200,140,'+b.o+')';x.fill();b.y-=b.s;if(b.y<-10)bs[i]=mk(),bs[i].y=H+10;}
+    requestAnimationFrame(draw);}
+  if(!reduce)draw();
+})();
+(function(){
+  var els=document.querySelectorAll('.reveal');
+  if(!('IntersectionObserver'in window)){els.forEach(function(e){e.classList.add('in')});return;}
+  var io=new IntersectionObserver(function(en){en.forEach(function(e){if(e.isIntersecting)e.target.classList.add('in')})},{threshold:.2});
+  els.forEach(function(e){io.observe(e)});
+})();
+</script>
+</body>
+</html>

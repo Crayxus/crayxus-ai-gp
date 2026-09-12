@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>三项目落地匹配方案 · 杭州政府补贴</title>
+<style>
+  :root{
+    --ink:#1f2733; --sub:#5a6573; --line:#e6e9ef; --bg:#f6f7f9; --card:#ffffff;
+    --accent:#2f6f5e; --accent-soft:#eaf2ef;
+    --warn:#9a5b1e; --warn-soft:#fbf2e6;
+    --p1:#2f6f5e; --p1s:#eaf2ef;   /* 扫地机器人 绿 */
+    --p2:#5a7d2a; --p2s:#eef3e3;   /* FARM 农业绿 */
+    --p3:#7a4ea8; --p3s:#f0eaf7;   /* AURA 医美紫 */
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB",system-ui,-apple-system,"Segoe UI",sans-serif;
+    line-height:1.72; font-size:15px;}
+  .wrap{max-width:960px; margin:0 auto; padding:32px 22px 64px;}
+  header.doc{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:28px 30px; margin-bottom:22px;}
+  header.doc .kicker{color:var(--accent); font-weight:700; letter-spacing:.08em; font-size:12.5px; text-transform:uppercase;}
+  header.doc h1{margin:6px 0 8px; font-size:25px; letter-spacing:.02em;}
+  header.doc p.meta{margin:0; color:var(--sub); font-size:13.5px;}
+  section.card{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:24px 28px; margin-bottom:20px;}
+  h2{font-size:19px; margin:0 0 14px; padding-bottom:10px; border-bottom:2px solid var(--accent-soft); display:flex; align-items:center; gap:10px;}
+  h2 .num{flex:0 0 auto; width:26px; height:26px; border-radius:7px; background:var(--accent); color:#fff; font-size:14px; display:inline-flex; align-items:center; justify-content:center; font-weight:700;}
+  h3{font-size:15.5px; margin:18px 0 8px;}
+  p{margin:8px 0;} .sub{color:var(--sub); font-size:13.5px;}
+  table{width:100%; border-collapse:collapse; margin:12px 0; font-size:13.8px;}
+  th,td{text-align:left; padding:9px 11px; border-bottom:1px solid var(--line); vertical-align:top;}
+  th{background:#fbfcfd; color:var(--sub); font-weight:700; font-size:12.5px;}
+  td.k{font-weight:700; width:30%;}
+  ul{margin:8px 0; padding-left:20px;} li{margin:5px 0;}
+  ol{margin:8px 0; padding-left:22px;} ol li{margin:7px 0;}
+  .callout{background:var(--warn-soft); border:1px solid #f0ddc2; border-left:4px solid var(--warn); border-radius:10px; padding:13px 17px; margin:13px 0; color:#6e451a; font-size:14px;}
+  .callout b{color:var(--warn);}
+  .check{list-style:none; padding-left:0;}
+  .check li{position:relative; padding-left:28px; margin:9px 0;}
+  .check li::before{content:"!"; position:absolute; left:0; top:1px; width:19px; height:19px; border-radius:5px; background:var(--warn); color:#fff; font-size:12px; font-weight:800; text-align:center; line-height:19px;}
+  a{color:var(--accent); word-break:break-all;}
+  footer{color:var(--sub); font-size:12.5px; text-align:center; margin-top:26px;}
+
+  /* 项目卡 */
+  .proj{border-radius:14px; border:1px solid var(--line); background:var(--card); margin-bottom:20px; overflow:hidden;}
+  .proj .bar{padding:16px 26px; color:#fff; display:flex; align-items:center; gap:14px;}
+  .proj .bar .pn{width:34px; height:34px; border-radius:9px; background:rgba(255,255,255,.22); display:inline-flex; align-items:center; justify-content:center; font-weight:800; font-size:17px;}
+  .proj .bar .ttl{font-size:18px; font-weight:800;}
+  .proj .bar .typ{font-size:12.5px; opacity:.9; margin-top:2px;}
+  .proj .body{padding:20px 26px 24px;}
+  .p1 .bar{background:var(--p1);} .p2 .bar{background:var(--p2);} .p3 .bar{background:var(--p3);}
+  .pill{display:inline-block; border-radius:20px; padding:3px 12px; font-size:12.5px; font-weight:700; margin:0 6px 6px 0;}
+  .p1 .pill{background:var(--p1s); color:var(--p1);} .p2 .pill{background:var(--p2s); color:var(--p2);} .p3 .pill{background:var(--p3s); color:var(--p3);}
+  .reco{border-radius:10px; padding:13px 16px; margin:10px 0; font-size:14px;}
+  .p1 .reco{background:var(--p1s);} .p2 .reco{background:var(--p2s);} .p3 .reco{background:var(--p3s);}
+  .reco .lbl{font-weight:800; font-size:12px; letter-spacing:.05em;}
+  .p1 .reco .lbl{color:var(--p1);} .p2 .reco .lbl{color:var(--p2);} .p3 .reco .lbl{color:var(--p3);}
+
+  @media (max-width:640px){ .wrap{padding:18px 14px 40px;} td.k{width:40%;} .proj .body,.proj .bar{padding-left:16px; padding-right:16px;} }
+  @media print{ body{background:#fff;} section.card,header.doc,.proj{border:1px solid #ddd; break-inside:avoid;} .proj .bar{-webkit-print-color-adjust:exact; print-color-adjust:exact;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="doc">
+    <div class="kicker">内部参考 · 落地匹配方案</div>
+    <h1>三项目落地匹配方案 · 杭州政府补贴</h1>
+    <p class="meta">扫地机器人 · Crayxus FARM · Crayxus AURA ｜ 落点 + 对口机构 + 已核实申报类目 ｜ 2026 版政策 · 整理于 2026-06</p>
+  </header>
+
+  <!-- 速查表 -->
+  <section class="card">
+    <h2><span class="num">0</span>杭州主要城区产业定位速查（匹配底层逻辑）</h2>
+    <p class="sub">核心原则：项目属性 → 落到产业定位最对口的区 / 园区 → 才有那个区"专门给你这类企业的钱"。落错区＝放弃专项。</p>
+    <table>
+      <thead><tr><th>区 / 核心园区</th><th>官方主赛道</th><th>最适合的项目</th></tr></thead>
+      <tbody>
+        <tr><td class="k">滨江（高新区）</td><td>智能计算、具身智能、智能终端、集成电路、数字健康</td><td>AI 终端、具身智能、芯片、数字疗法（国家级具身智能机器人集群）</td></tr>
+        <tr><td class="k">余杭（未来科技城 / AI 小镇）</td><td>AI 算法、大模型、类脑、低空经济、智能终端</td><td>AI 软件、算法、品牌研发总部、智慧农业 AI</td></tr>
+        <tr><td class="k">萧山（机器人小镇）</td><td>机器人、视觉智能、智能芯片、智能制造</td><td>机器人本体制造、量产硬件、专精特新</td></tr>
+        <tr><td class="k">钱塘（中国医药港）</td><td>智能制造、生物智造、高端医疗器械、汽车</td><td>医疗器械、生物医药、装备量产</td></tr>
+        <tr><td class="k">临平</td><td>智能计算、算力、智能家居制造</td><td>算力、AI 计算、家居智能制造</td></tr>
+        <tr><td class="k">上城</td><td>总部经济、金融、数字内容</td><td>基金 / 总部 / 数字内容</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 项目1 扫地机器人 -->
+  <div class="proj p1">
+    <div class="bar"><span class="pn">1</span><div><div class="ttl">AI 扫地机器人</div><div class="typ">服务机器人 · AI 终端 · 具身智能</div></div></div>
+    <div class="body">
+      <span class="pill">服务机器人</span><span class="pill">AI 终端</span><span class="pill">智能硬件</span>
+      <div class="reco"><span class="lbl">★ 推荐落点</span><br>
+        <b>余杭人工智能小镇（研发总部 / 算法定位）</b> —— 直接补助最实在：入驻三年内最高 <b>租金 300 万 + 研发 600 万 + 装修 200 万</b>。</div>
+      <div class="callout"><b>权衡：</b>若以"<b>机器人本体制造 + 量产</b>"为主，<b>萧山机器人小镇</b>更对口（机器人专项政策 + 联合金沙江创投的 <b>50 亿机器人产业基金</b> + 近 40 万㎡ 便宜厂房）。<b>高阶打法：</b>研发总部落余杭、制造主体落萧山，两头的钱都碰。</div>
+
+      <h3>对口机构</h3>
+      <ul>
+        <li><b>杭州未来科技城管委会 · 招商部</b>（电话 88607016）— 落户 + 未来产业项目评审</li>
+        <li><b>余杭区科技局</b> — 高企认定、研发费用后补助</li>
+        <li><b>余杭区经信局 / 市经信局</b> — 智能制造、首台套、专精特新、具身智能机器人专项、AI 终端专项</li>
+      </ul>
+
+      <h3>已核实申报类目</h3>
+      <table>
+        <thead><tr><th>申报类目</th><th>对口部门</th><th>标准 / 备注</th></tr></thead>
+        <tbody>
+          <tr><td class="k">未来产业项目评审</td><td>未来科技城管委会</td><td>租金 ≤300 万 + 研发 ≤600 万 + 装修 ≤200 万</td></tr>
+          <tr><td class="k">具身智能机器人「强链补链」方案</td><td>市经信局</td><td>2026–2027，专项扶持 + 用地用房 / 算力 / 产业基金保障</td></tr>
+          <tr><td class="k">人工智能终端产业行动方案</td><td>市经信局</td><td>2026–2027，扫地机器人属"AI 终端"</td></tr>
+          <tr><td class="k">重大技术装备首台（套）</td><td>市 / 省经信局</td><td>整机可报奖补</td></tr>
+          <tr><td class="k">高企认定 + 研发费用后补助</td><td>区科技局 / 财政</td><td>基础口子，叠加</td></tr>
+          <tr><td class="k">专精特新中小企业</td><td>区经信局</td><td>入库 + 认定奖励</td></tr>
+          <tr><td class="k">（落萧山）机器人小镇专项 + 产业基金参股</td><td>萧山开发区管委会</td><td>50 亿机器人产业基金</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 项目2 FARM -->
+  <div class="proj p2">
+    <div class="bar"><span class="pn">2</span><div><div class="ttl">Crayxus FARM</div><div class="typ">AI 农业智能体 · 智慧农业 · AI+农业</div></div></div>
+    <div class="body">
+      <span class="pill">智慧农业</span><span class="pill">IoT 感知</span><span class="pill">自研决策引擎</span><span class="pill">无人机执行</span>
+      <div class="reco"><span class="lbl">★ 推荐落点</span><br>
+        <b>余杭区（数智农园翼 + 人工智能小镇）</b> —— AI 算法 / 决策引擎落 <b>AI 小镇做研发总部</b>（拿 AI 研发补助），示范基地走余杭涉农街道（余杭 / 仓前 / 中泰 / 闲林）。余杭明确把"数字农业 + AI"列为重点，全年招引 AI 项目不少于 20 个。</div>
+      <div class="callout"><b>关键提示：</b>陆园示范农场在<b>嘉兴</b>，要拿杭州的钱必须在杭州注册运营主体；农业类单笔补贴金额不大（数字农业工厂市级 8 万 / 省级、未来农场 15 万），<b>真正的大钱在"高企 + 研发后补助 + AI 项目补助"</b>，农业认定主要用来拿招牌背书 + 叠加。</div>
+
+      <h3>对口机构</h3>
+      <ul>
+        <li><b>余杭区科技局 / 未来科技城管委会</b> — AI 研发、高企（核心大额）</li>
+        <li><b>杭州市农业农村局 + 余杭区农业农村局</b> — 数字农业工厂、未来农场、智慧农业"百千"工程</li>
+        <li><b>浙江省农业农村厅 + 财政厅</b> — 省级数字农业工厂 / 未来农场、农机购置与应用补贴</li>
+        <li><b>市经信局</b> — 智能农机首台套；<b>余杭低空赛道</b> — 植保无人机</li>
+      </ul>
+
+      <h3>已核实申报类目</h3>
+      <table>
+        <thead><tr><th>申报类目</th><th>对口部门</th><th>标准 / 备注</th></tr></thead>
+        <tbody>
+          <tr><td class="k">高企认定 + 研发费用后补助</td><td>区科技局 / 财政</td><td>核心大额口子</td></tr>
+          <tr><td class="k">省级数字农业工厂认定</td><td>省 / 市农业农村局</td><td>一次性奖励（市级 8 万等），浙江 2028 目标 1000 家</td></tr>
+          <tr><td class="k">未来农场认定</td><td>省农业农村厅</td><td>一次性奖励约 15 万，浙江 2028 目标 100 家</td></tr>
+          <tr><td class="k">农机购置与应用补贴</td><td>省农业农村厅 + 财政厅</td><td>2024–2026 方案，智能灌溉 / 植保无人机等</td></tr>
+          <tr><td class="k">智慧农业「百千」工程</td><td>省农业农村厅</td><td>成果案例入选 + 背书</td></tr>
+          <tr><td class="k">低空经济（植保无人机）</td><td>余杭区 / 市级</td><td>余杭低空经济赛道专项</td></tr>
+          <tr><td class="k">专精特新中小企业</td><td>区经信局</td><td>入库 + 认定</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 项目3 AURA -->
+  <div class="proj p3">
+    <div class="bar"><span class="pn">3</span><div><div class="ttl">Crayxus AURA</div><div class="typ">AI 医美理疗机器人 · 智能医疗器械 · 智慧医疗</div></div></div>
+    <div class="body">
+      <span class="pill">医美机器人</span><span class="pill">弹性传感</span><span class="pill">EMS 执行</span><span class="pill">AI 自适应</span>
+      <div class="reco"><span class="lbl">★ 推荐落点</span><br>
+        <b>钱塘区 · 中国医药港</b>（高端医疗器械主平台）—— 签约项目按固定资产投资额给 <b>最高 15% 补贴（封顶 1000 万）</b>，<b>装修补贴 600 元/㎡（≤2000㎡）</b>，亿元项目还有贷款贴息（贴息贷款 ≤5000 万）。<br>
+        <span class="sub">备选：<b>滨江（数字健康 / 医疗 AI）</b>——若主打"AI 算法 + 数字疗法"定位，滨江的生物+信息融合、医疗人工智能、数字疗法赛道更贴，高企 / 研发配套足。</span></div>
+      <div class="callout"><b>核心分水岭（决定能不能拿大钱）：</b>带 EMS 治疗的医美理疗机器人大概率是 <b>II 类医疗器械</b>，需 NMPA 注册证。<br>
+        ① 走<b>医疗器械</b>（拿证）→ 落钱塘医药港 / 滨江，可吃创新医疗器械、固投、注册补助全套（金额大）；<br>
+        ② 走<b>消费级美容仪</b>（不拿证）→ 归"AI 终端 / 消费电子"，落滨江 / 余杭，吃 AI 终端补贴。<br>
+        <b>建议优先走医疗器械路线 + 申请"创新医疗器械特别审查通道"加速。</b></div>
+
+      <h3>对口机构</h3>
+      <ul>
+        <li><b>钱塘区 / 滨江区 科技局 · 经信局</b> — 高企、研发、产业项目落地</li>
+        <li><b>杭州市促进生物医药产业创新发展领导小组办公室</b> — 中国医药港项目认定</li>
+        <li><b>市 / 省药监局（药品医疗器械审评杭州分中心）</b> — 医疗器械注册指导、创新器械特别审查</li>
+        <li><b>市卫健委</b> — 创新医疗器械临床应用 / 进院</li>
+      </ul>
+
+      <h3>已核实申报类目</h3>
+      <table>
+        <thead><tr><th>申报类目</th><th>对口部门</th><th>标准 / 备注</th></tr></thead>
+        <tbody>
+          <tr><td class="k">中国医药港 高端医疗器械项目</td><td>市生物医药办 / 钱塘区</td><td>固投补贴 ≤15%（封顶 1000 万）+ 装修 600 元/㎡</td></tr>
+          <tr><td class="k">创新医疗器械特别审查通道</td><td>省 / 市药监局</td><td>加速注册 + 创新器械奖补</td></tr>
+          <tr><td class="k">医疗器械注册补助</td><td>区科技 / 经信局</td><td>取得 II / III 类注册证奖励</td></tr>
+          <tr><td class="k">生物医药与健康产业专项</td><td>市 / 区</td><td>研发、临床、产业化扶持</td></tr>
+          <tr><td class="k">数字疗法 / 数字健康（滨江）</td><td>滨江区</td><td>医疗 AI、数字疗法赛道专项</td></tr>
+          <tr><td class="k">高企认定 + 研发费用后补助</td><td>区科技局 / 财政</td><td>基础口子，叠加</td></tr>
+          <tr><td class="k">具身智能机器人 / 专精特新</td><td>市 / 区经信局</td><td>医疗服务机器人可沾边市级具身智能方案</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 对比总表 -->
+  <section class="card">
+    <h2><span class="num">4</span>三项目落点 · 一图对比</h2>
+    <table>
+      <thead><tr><th>项目</th><th>属性</th><th>推荐落点</th><th>备选</th><th>王牌补贴口子</th></tr></thead>
+      <tbody>
+        <tr><td class="k">AI 扫地机器人</td><td>服务机器人 / AI 终端</td><td>余杭 AI 小镇</td><td>萧山机器人小镇</td><td>未来产业评审（租 300+研 600+装 200 万）、具身智能强链补链</td></tr>
+        <tr><td class="k">Crayxus FARM</td><td>智慧农业 / AI+农业</td><td>余杭（数智农园翼 + AI 小镇）</td><td>城西科创大走廊</td><td>高企+研发后补助、数字农业工厂 / 未来农场、农机购置补贴</td></tr>
+        <tr><td class="k">Crayxus AURA</td><td>AI 医美 / 智能医疗器械</td><td>钱塘 中国医药港</td><td>滨江 数字健康</td><td>医药港固投 ≤15%（封顶 1000 万）、创新医疗器械、装修 600 元/㎡</td></tr>
+      </tbody>
+    </table>
+    <p class="sub">提示：三个项目分属机器人、农业、医疗三条线，<b>分别落不同区更优</b>（各拿各区专项）。若想集中管理，可把三个主体的"研发总部"统一放余杭 AI 小镇，"落地 / 制造 / 临床主体"按上表分散到对口区。</p>
+  </section>
+
+  <!-- 中介 + 甄别 -->
+  <section class="card">
+    <h2><span class="num">5</span>关于代办中介 + 签约甄别</h2>
+    <p><b>杭州众立科技服务有限公司</b> 属"政府扶持资金代办 + 招商引资落地"中介（PPT 里快速启动资金 10% + 项目扶持资金 90% 即其分账模式）。这类公司很多，政策同一套，区别只在落地园区、抽成和靠谱度。</p>
+    <p class="sub">联系方式优先级：① 微信里发你 PPT 的业务员；② 企查查 / 天眼查搜全称；③ 国家企业信用信息公示系统 gsxt.gov.cn 查工商登记（签约前必查）。</p>
+    <ul class="check">
+      <li>"快速启动资金"通常只先给一小部分（这家明示 10%），大头 90% 要经营 / 纳税 / 研发达标后分批兑现。</li>
+      <li>落地一般签<b>对赌 / 返投 / 纳税协议</b>，迁出有罚则 —— 先看清退出条款。</li>
+      <li>警惕只收服务费不保兑现、把"理论上限"说成"一定拿到"。</li>
+      <li>很多口子你<b>可直接对接区招商局 / 科技局 / 经信局</b>申报，中介值的是省事，不值高抽成。</li>
+    </ul>
+  </section>
+
+  <!-- 来源 -->
+  <section class="card">
+    <h2><span class="num">6</span>信息来源</h2>
+    <ul class="sub" style="line-height:1.9;">
+      <li><a href="https://www.yuhang.gov.cn/art/2025/10/27/art_1229174782_1862109.html">余杭区加快建设人工智能创新高地核心承载地实施方案（2025 版）</a> ｜ 未来科技城招商部 88607016</li>
+      <li><a href="https://www.parkworld.net/post/8da82b633ec7e37">杭州萧山机器人小镇 · 机器人全产业链（含 50 亿机器人产业基金）</a></li>
+      <li><a href="https://z.hangzhou.com.cn/2020/hzrmzfgb/content/content_9170671.html">杭州市具身智能机器人「强链补链」行动方案（2026—2027）· 市经信局</a></li>
+      <li><a href="https://zfgb.hangzhou.gov.cn/15/101220263/t120220263014/530165.shtml">杭州市加快发展人工智能终端产业行动方案（2026—2027）解读</a></li>
+      <li><a href="http://nynct.zj.gov.cn/art/2024/10/15/art_1229142038_2531101.html">浙江省 2024—2026 年农机购置与应用补贴实施方案</a></li>
+      <li><a href="http://agri.hangzhou.gov.cn/art/2023/1/9/art_1692132_58926807.html">杭州市数字农业工厂 / 未来农场省级认定（农业农村局）</a></li>
+      <li><a href="https://jxj.hangzhou.gov.cn/art/2024/12/26/art_1229252271_4323008.html">「中国医药港」建设三年行动计划（2024—2026）· 钱塘区</a></li>
+      <li><a href="https://36kr.com/p/3740535811539201">钱塘区推动经济高质量发展若干政策（2026 版）</a> ｜ <a href="https://www.runhugemedical.com/Index/show/catid/24/id/4552.html">钱塘区加快生物医药产业高质量发展若干措施</a></li>
+      <li><a href="https://www.keceyun.com/policy/newsdetail/524316.html">杭州高新区（滨江）推动经济高质量发展若干政策（2026 版）</a></li>
+      <li><a href="https://zfgb.hangzhou.gov.cn/upload/default/bigfile/2026/02/26/20260226_3478d6f466d9e76259abcb7e8507e973.pdf">杭政函〔2026〕11 号 · 推动经济高质量发展若干政策（2026 版）</a></li>
+      <li><a href="https://zfgb.hangzhou.gov.cn/upload/default/bigfile/2025/12/31/20251231_b755b916dc8379f1db0e36f3a1580655.pdf">杭政办函〔2025〕69 号 ·「3+N」杭州产业基金集群</a></li>
+    </ul>
+  </section>
+
+  <footer>本文档为内部参考梳理，具体金额 / 比例 / 申报时间以各区当年度官方文件为准 · Crayxus · 杭州 2026</footer>
+
+</div>
+</body>
+</html>

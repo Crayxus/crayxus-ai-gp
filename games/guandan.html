@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI掼蛋 1v1 · 3D 机器人对战</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;font-family:"PingFang SC","Microsoft YaHei",sans-serif;-webkit-user-select:none;user-select:none}
+  html,body{height:100%;overflow:hidden;background:#000}
+  body{display:flex;align-items:center;justify-content:center;background:#0a0b0e}
+  .stage{position:relative;height:100vh;aspect-ratio:9/16;max-width:100vw;overflow:hidden;background:#05080d;box-shadow:0 0 50px rgba(0,0,0,.85)}
+  #scene{position:absolute;inset:0;width:100%;height:100%;z-index:0;display:block}
+  .ui{position:absolute;inset:0;z-index:1;pointer-events:none;color:#eaf2ff}
+
+  .glass{background:rgba(10,16,26,.5);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    border:1px solid rgba(255,255,255,.12);border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,.4)}
+
+  .ai-info{position:absolute;top:20px;left:24px;padding:9px 16px;border-radius:30px;font-size:15px;font-weight:700;
+    display:flex;align-items:center;gap:8px}
+  .ai-info .dot{width:8px;height:8px;border-radius:50%;background:#36e07a;box-shadow:0 0 8px #36e07a}
+  .ai-info b{color:#ffd45e;font-size:17px}
+  .bubble{position:absolute;top:34%;left:50%;transform:translate(-50%,8px);max-width:72%;padding:9px 15px;border-radius:14px;font-size:16px;
+    font-weight:700;opacity:0;transition:.22s;border:1.5px solid rgba(94,200,255,.55);white-space:nowrap;text-align:center;z-index:4}
+  .bubble.show{opacity:1;transform:translate(-50%,0)}
+  .title{position:absolute;top:14px;left:50%;transform:translateX(-50%);font-size:24px;font-weight:900;letter-spacing:3px;
+    color:#eaf6ff;text-shadow:0 0 18px rgba(53,208,255,.85),0 2px 6px #000;white-space:nowrap}
+  .title b{color:#ffd45e}
+  .status{position:absolute;top:16px;left:50%;transform:translateX(-50%);padding:6px 14px;border-radius:30px;
+    font-size:13px;font-weight:600;color:#dfeaff;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  .played{position:absolute;top:61%;left:50%;transform:translate(-50%,-50%) perspective(820px) rotateX(26deg);
+    display:flex;flex-direction:column;align-items:center;gap:6px;filter:drop-shadow(0 16px 14px rgba(0,0,0,.55))}
+  .played .lbl{font-size:13px;font-weight:800;color:#ffd45e;text-shadow:0 1px 4px #000;transform:perspective(820px) rotateX(-26deg)}
+  .played .row{display:flex}
+  .note{position:absolute;top:50%;left:50%;transform:translateX(-50%);font-size:13px;color:#ffd0d0;height:18px;font-weight:600;text-shadow:0 1px 3px #000}
+
+  .bottom{position:absolute;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;gap:12px;
+    padding:14px 0 20px;pointer-events:none}
+  .meta{padding:6px 16px;border-radius:30px;font-size:14px;font-weight:700;pointer-events:auto}
+  .meta b{color:#ffd45e}
+  .hand{position:relative;margin:0 auto;min-height:96px;pointer-events:auto}
+  .controls{display:flex;gap:10px;pointer-events:auto}
+  .btn{border:none;border-radius:12px;padding:13px 22px;font-size:16px;font-weight:800;cursor:pointer;pointer-events:auto;
+    transition:transform .1s}
+  .btn:active{transform:translateY(1px)}
+  .btn.primary{background:linear-gradient(135deg,#ffd45e,#ff9d3d);color:#241400;box-shadow:0 6px 18px rgba(255,160,60,.35)}
+  .btn.ghost{background:rgba(255,255,255,.12);color:#dce6f5;border:1px solid rgba(255,255,255,.16)}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+
+  .card{width:56px;height:80px;background:linear-gradient(160deg,#fff,#eef2f7);border-radius:8px;position:relative;
+    border:1px solid #c2cad6;box-shadow:0 3px 9px rgba(0,0,0,.5);color:#1a1a1a}
+  .hand .card{position:absolute;bottom:0;margin:0;cursor:pointer;transition:bottom .12s,box-shadow .12s}
+  .hand .card.sel{box-shadow:0 0 0 3px #ffd45e,0 18px 24px rgba(0,0,0,.55);z-index:5}
+  .played .card{position:relative;margin-left:-24px;width:80px;height:114px;border-radius:10px}
+  .played .card:first-child{margin-left:0}
+  .card.red{color:#e3344b}
+  .card .corner{position:absolute;top:5px;left:6px;display:flex;flex-direction:column;align-items:center;line-height:.95}
+  .card .corner .r{font-weight:900;font-size:17px}
+  .card .corner .s{font-size:12px;margin-top:1px}
+  .card .big{position:absolute;bottom:5px;right:7px;font-size:23px;opacity:.85}
+  .card.joker.red{background:linear-gradient(160deg,#fff,#ffeaea)}
+  .card.joker:not(.red){background:linear-gradient(160deg,#fff,#edf1f9)}
+  .card.joker .jstar{position:absolute;top:4px;left:6px;font-size:14px;line-height:1}
+  .card.joker .jstar.jb{top:auto;left:auto;bottom:4px;right:6px;transform:rotate(180deg)}
+  .card.joker .jtext{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-90deg);font-weight:900;font-size:20px;letter-spacing:3px}
+  .played .card.joker .jtext{font-size:28px}
+  .played .card .corner .r{font-size:22px}
+  .played .card .corner .s{font-size:16px}
+  .played .card .big{font-size:38px}
+
+  .over{position:fixed;inset:0;z-index:5;background:rgba(0,0,0,.62);display:none;flex-direction:column;align-items:center;
+    justify-content:center;gap:20px}
+  .over.show{display:flex}
+  .over h1{font-size:48px;font-weight:900}
+  .toast{position:fixed;bottom:140px;left:50%;transform:translateX(-50%);z-index:6;background:rgba(0,0,0,.82);
+    padding:9px 18px;border-radius:20px;font-size:14px;opacity:0;transition:.2s;pointer-events:none}
+  .toast.show{opacity:1}
+  .loading{position:fixed;inset:0;z-index:8;display:flex;align-items:center;justify-content:center;color:#9fb4d0;font-size:15px;background:#05080d}
+  .loading.hide{display:none}
+
+  /* ===== 战绩 HUD（全在 9:16 画面内，右上角）+ 我方语音气泡 ===== */
+  .hud{position:absolute;top:46px;right:10px;width:116px;padding:8px 9px;border-radius:12px;z-index:2;
+    background:linear-gradient(160deg,rgba(20,52,36,.82),rgba(8,20,14,.86));border:1px solid rgba(255,212,94,.4);
+    box-shadow:0 6px 20px rgba(0,0,0,.45)}
+  .hud-score{font-size:13px;font-weight:800;color:#eaf6ff;text-align:center}
+  .hud-score b{color:#ffd45e;font-size:16px}.hud-score i{color:#ffd45e;font-style:normal;margin:0 2px}
+  .hud-sub{font-size:10px;color:#cdd6e6;text-align:center;margin-top:3px}.hud-sub b{color:#ffd45e}
+  .hud-sub2{font-size:11px;font-weight:700;text-align:center;margin:4px 0 6px;color:#cdd6e6}
+  .histlist{display:flex;flex-wrap:wrap;gap:3px;justify-content:center}
+  .hchip{width:18px;height:18px;border-radius:5px;display:grid;place-items:center;font-size:10px;font-weight:800}
+  .hchip.hw{background:rgba(60,200,120,.2);color:#7dff9e;border:1px solid rgba(60,200,120,.5)}
+  .hchip.hl{background:rgba(255,90,90,.18);color:#ff9a9a;border:1px solid rgba(255,90,90,.45)}
+  .me-bubble{position:absolute;left:50%;bottom:250px;transform:translateX(-50%);max-width:74%;background:rgba(10,16,26,.62);backdrop-filter:blur(8px);padding:8px 16px;border-radius:14px;font-size:16px;font-weight:800;color:#fff7e0;border:1.5px solid rgba(255,212,94,.6);opacity:0;transition:opacity .2s;white-space:nowrap;text-align:center;pointer-events:none;z-index:4}
+  .me-bubble.show{opacity:1}
+
+  /* ===== AI 神经网络深度推演特效 + 倒计时 ===== */
+  .nnorb{position:absolute;left:8px;top:43%;transform:translateY(-50%);z-index:2;width:94px;text-align:center;pointer-events:none}
+  #nnCanvas{display:block;width:94px;height:94px;border-radius:50%;border:1px solid rgba(53,208,255,.45);
+    background:radial-gradient(circle,rgba(8,24,40,.55),rgba(4,12,22,.32));
+    box-shadow:0 0 22px rgba(53,208,255,.35),inset 0 0 18px rgba(0,10,20,.55);transition:box-shadow .3s,border-color .3s}
+  .nnorb.busy #nnCanvas{box-shadow:0 0 38px rgba(53,208,255,.8);border-color:rgba(53,208,255,.95)}
+  .nn-cd{position:absolute;top:0;left:0;width:94px;height:94px;display:none;align-items:center;justify-content:center;
+    font-size:34px;font-weight:900;color:#ffd45e;text-shadow:0 0 14px rgba(255,212,94,.9)}
+  .nnorb.busy .nn-cd{display:flex}
+  .nn-lab{margin-top:5px;font-size:10px;font-weight:700;color:#9fd6ff;display:none}.nnorb.busy .nn-lab{display:block}.nn-lab b{color:#ffd45e;font-variant-numeric:tabular-nums}
+  /* 整列全选按钮 */
+  .colbtn{position:absolute;bottom:0;height:20px;border-radius:6px;display:flex;align-items:center;justify-content:center;
+    font-size:11px;font-weight:800;color:#241400;background:linear-gradient(135deg,#ffd45e,#ff9d3d);
+    cursor:pointer;pointer-events:auto;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+  .colbtn.on{background:linear-gradient(135deg,#7dff9e,#3ddc84);color:#06301a}
+
+  /* ===== 出牌气势特效（加强）===== */
+  .played .card{animation:slam .4s cubic-bezier(.18,1.4,.4,1) both}
+  @keyframes slam{0%{transform:translateY(-95px) scale(1.9) rotate(-11deg);opacity:0}
+    45%{transform:translateY(9px) scale(.88);opacity:1}68%{transform:translateY(-4px) scale(1.06)}100%{transform:translateY(0) scale(1) rotate(0)}}
+  .shock{position:absolute;left:50%;top:48%;width:64px;height:64px;border-radius:50%;border:3px solid rgba(130,225,255,.95);
+    transform:translate(-50%,-50%) scale(.15);opacity:.95;pointer-events:none;z-index:0;animation:shockwave .55s ease-out forwards}
+  .shock.s2{animation-delay:.08s;border-color:rgba(185,240,255,.6)}
+  .shock.big{border-color:rgba(255,185,80,.98);border-width:5px;box-shadow:0 0 26px rgba(255,160,60,.7)}
+  @keyframes shockwave{to{transform:translate(-50%,-50%) scale(3.8);opacity:0}}
+  .spark{position:absolute;left:50%;top:48%;width:5px;height:5px;border-radius:50%;background:#bdeeff;box-shadow:0 0 7px #6fc8ff;
+    pointer-events:none;z-index:3;transform:translate(-50%,-50%);animation:spark .6s ease-out forwards}
+  .spark.g{background:#ffe08a;box-shadow:0 0 9px #ffb44d;width:6px;height:6px}
+  @keyframes spark{0%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(.4)}}
+  .boom-emoji{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%) scale(.3);font-size:66px;z-index:2;pointer-events:none;animation:boomfx .55s ease-out forwards}
+  @keyframes boomfx{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}38%{opacity:1;transform:translate(-50%,-50%) scale(1.45)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.9)}}
+  .played.boom .row{animation:rowshake .42s ease}
+  @keyframes rowshake{0%,100%{transform:translateX(0)}15%{transform:translateX(-9px)}35%{transform:translateX(8px)}55%{transform:translateX(-6px)}75%{transform:translateX(4px)}}
+  .flash{position:absolute;inset:0;z-index:6;pointer-events:none;background:#fff;opacity:0}
+  .flash.gold{background:radial-gradient(circle at 50% 48%,rgba(255,215,130,.95),rgba(255,150,60,.25) 60%,transparent)}
+  .flash.go{animation:flashfx .26s ease-out}
+  .flash.go.gold2{animation:flashfx2 .34s ease-out}
+  @keyframes flashfx{0%{opacity:0}14%{opacity:.5}100%{opacity:0}}
+  @keyframes flashfx2{0%{opacity:0}12%{opacity:.85}100%{opacity:0}}
+  .stage.shk{animation:stshake .2s ease}
+  .stage.shkbig{animation:stshakeb .4s ease}
+  @keyframes stshake{0%,100%{transform:translate(0,0)}30%{transform:translate(-3px,2px)}60%{transform:translate(3px,-2px)}}
+  @keyframes stshakeb{0%,100%{transform:translate(0,0)}12%{transform:translate(-9px,5px)}26%{transform:translate(9px,-5px)}42%{transform:translate(-7px,-4px)}58%{transform:translate(7px,4px)}74%{transform:translate(-4px,3px)}}
+</style>
+</head>
+<body>
+  <div class="stage" id="stage">
+  <canvas id="scene"></canvas>
+  <div class="loading" id="loading">正在加载 3D 机器人…</div>
+
+  <div class="ui">
+    <div class="ai-info glass"><span class="dot"></span>🤖 AI · 剩 <b id="aiCount">16</b></div>
+    <div class="bubble glass" id="aiBubble"></div>
+    <div class="status glass" id="status">你先出牌</div>
+    <div class="hud" id="hud">
+      <div class="hud-score">🎰 你 <b id="scMe">0</b><i>:</i><b id="scAi">0</b> AI</div>
+      <div class="hud-sub">胜率 <b id="scRate">0%</b> · <b id="scTotal">0</b>局</div>
+      <div class="hud-sub2" id="scStreak">—</div>
+      <div class="histlist" id="histList"></div>
+    </div>
+
+    <div class="played" id="played"></div>
+    <div class="note" id="note"></div>
+    <div class="nnorb" id="thinkBox">
+      <canvas id="nnCanvas" width="94" height="94"></canvas>
+      <div class="nn-cd" id="thinkCount">3</div>
+      <div class="nn-lab"><span id="nnTitle">推演</span> · <b id="thinkNum">0</b> 步</div>
+    </div>
+    <div class="me-bubble" id="meBubble"></div>
+    <div class="flash" id="flash"></div>
+
+    <div class="bottom">
+      <div class="meta glass">😎 你 · 剩 <b id="meCount">16</b> 张</div>
+      <div class="hand" id="hand"></div>
+      <div class="controls">
+        <button class="btn primary" id="playBtn">出牌</button>
+        <button class="btn ghost" id="passBtn">不要</button>
+        <button class="btn ghost" id="hintBtn">提示</button>
+        <button class="btn ghost" id="newBtn">重新开局</button>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div class="over" id="over"><h1 id="overText"></h1><button class="btn primary" id="overBtn" style="pointer-events:auto">再来一局</button></div>
+  <div class="toast" id="toast"></div>
+
+<script src="engine.js"></script>
+<script type="importmap">
+{ "imports": { "three": "./three/three.module.js", "three/addons/": "./three/jsm/" } }
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+/* ================= 3D 场景 ================= */
+const canvas=document.getElementById('scene');
+const stageEl=document.getElementById('stage');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=1.05;
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+
+const scene=new THREE.Scene();
+// 渐变背景
+const bc=document.createElement('canvas');bc.width=2;bc.height=512;
+const g=bc.getContext('2d');const grd=g.createLinearGradient(0,0,0,512);
+grd.addColorStop(0,'#0b2138');grd.addColorStop(.5,'#06182c');grd.addColorStop(1,'#020611');
+g.fillStyle=grd;g.fillRect(0,0,2,512);
+const bgt=new THREE.CanvasTexture(bc);bgt.colorSpace=THREE.SRGBColorSpace;scene.background=bgt;
+scene.fog=new THREE.Fog(0x05101e,11,28);
+
+const camera=new THREE.PerspectiveCamera(54,stageEl.clientWidth/stageEl.clientHeight,0.1,100);
+camera.position.set(0,2.6,6.6); camera.lookAt(0,1.5,-1.4);
+function sizeToStage(){const w=stageEl.clientWidth,h=stageEl.clientHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();}
+sizeToStage();
+
+const pmrem=new THREE.PMREMGenerator(renderer);
+scene.environment=pmrem.fromScene(new RoomEnvironment(),0.04).texture;
+
+scene.add(new THREE.HemisphereLight(0x8fb4ff,0x20202a,0.45));
+const key=new THREE.SpotLight(0xfff2d6,80,32,Math.PI/5,0.45,1.3);
+key.position.set(2.6,8.5,4.2); key.target.position.set(0,1,-0.6);
+key.castShadow=true; key.shadow.mapSize.set(2048,2048); key.shadow.bias=-0.0004;
+scene.add(key,key.target);
+const rb=new THREE.PointLight(0x4f9cff,40,22);rb.position.set(-5.5,3.2,-3);scene.add(rb);
+const ro=new THREE.PointLight(0xff7a3d,24,22);ro.position.set(5.5,2.2,-4);scene.add(ro);
+
+const floor=new THREE.Mesh(new THREE.CircleGeometry(16,64),
+  new THREE.MeshStandardMaterial({color:0x0a0e16,roughness:.96,metalness:0}));
+floor.rotation.x=-Math.PI/2; floor.receiveShadow=true; scene.add(floor);
+
+// 牌桌
+const felt=new THREE.MeshStandardMaterial({color:0x15633f,roughness:.85,metalness:0});
+const top=new THREE.Mesh(new THREE.CylinderGeometry(2.8,2.8,0.16,72),felt);
+top.position.y=0.92; top.receiveShadow=true; scene.add(top);
+const wood=new THREE.MeshStandardMaterial({color:0x5a3a1c,roughness:.4,metalness:.3});
+const rim=new THREE.Mesh(new THREE.TorusGeometry(2.82,0.17,24,90),wood);
+rim.rotation.x=Math.PI/2; rim.position.y=1.0; rim.castShadow=true; scene.add(rim);
+const ped=new THREE.Mesh(new THREE.CylinderGeometry(0.55,0.9,0.92,40),wood);
+ped.position.y=0.46; ped.castShadow=true; scene.add(ped);
+
+// ===== AI 竞技场氛围（一眼看出是 AI）=====
+const grid=new THREE.GridHelper(60,60,0x3a9bff,0x123a66);
+grid.material.transparent=true; grid.material.opacity=0.32; grid.position.y=0.02; scene.add(grid);
+const neon=new THREE.Mesh(new THREE.TorusGeometry(3.0,0.05,16,140),new THREE.MeshBasicMaterial({color:0x35d0ff}));
+neon.rotation.x=Math.PI/2; neon.position.y=1.0; scene.add(neon);
+const np=new THREE.PointLight(0x35d0ff,10,9); np.position.set(0,1.2,0); scene.add(np);
+const pc=320,pgeo=new THREE.BufferGeometry(),ppos=new Float32Array(pc*3);
+for(let i=0;i<pc;i++){ppos[i*3]=(Math.random()-.5)*34;ppos[i*3+1]=Math.random()*9;ppos[i*3+2]=(Math.random()-.5)*34-4;}
+pgeo.setAttribute('position',new THREE.BufferAttribute(ppos,3));
+let particles=new THREE.Points(pgeo,new THREE.PointsMaterial({color:0x5fc8ff,size:.05,transparent:true,opacity:.7,depthWrite:false}));
+scene.add(particles);
+const bnc=document.createElement('canvas');bnc.width=1024;bnc.height=256;const bxx=bnc.getContext('2d');
+bxx.clearRect(0,0,1024,256);bxx.textAlign='center';bxx.textBaseline='middle';
+bxx.shadowColor='#35d0ff';bxx.shadowBlur=34;bxx.fillStyle='#eaf6ff';bxx.font='900 116px "Microsoft YaHei"';
+bxx.fillText('AI 掼蛋挑战赛',512,108);
+bxx.shadowColor='#ffd45e';bxx.shadowBlur=14;bxx.fillStyle='#ffd45e';bxx.font='700 38px Arial';
+bxx.fillText('A I   G U A N D A N   C H A L L E N G E',512,196);
+const bntex=new THREE.CanvasTexture(bnc);bntex.colorSpace=THREE.SRGBColorSpace;
+const banner=new THREE.Mesh(new THREE.PlaneGeometry(4.4,1.1),new THREE.MeshBasicMaterial({map:bntex,transparent:true}));
+banner.position.set(0,4.25,-3.5); scene.add(banner);
+
+// 机器人
+let mixer,actions={},activeName=null,finHandler=null;
+const ONESHOT=new Set(['Jump','Yes','No','Wave','Punch','ThumbsUp']);
+function play(name){
+  const next=actions[name]; if(!next) return;
+  if(activeName===name && !ONESHOT.has(name)) return;
+  const prev=actions[activeName];
+  if(prev&&prev!==next) prev.fadeOut(0.25);
+  next.reset().setEffectiveWeight(1).fadeIn(0.25).play();
+  if(ONESHOT.has(name)||name==='Death'){next.setLoop(THREE.LoopOnce,1);next.clampWhenFinished=true;}
+  else next.setLoop(THREE.LoopRepeat,Infinity);
+  activeName=name;
+}
+function gesture(name){
+  play(name);
+  if(ONESHOT.has(name)&&mixer){
+    if(finHandler) mixer.removeEventListener('finished',finHandler);
+    finHandler=()=>{mixer.removeEventListener('finished',finHandler);finHandler=null;play('Idle');};
+    mixer.addEventListener('finished',finHandler);
+  }
+}
+window.RBT={ready:false,gesture,play};
+let halo=null;
+new GLTFLoader().load('three/model/RobotExpressive.glb',gltf=>{
+  const r=gltf.scene; r.scale.setScalar(0.82); r.position.set(0,0,-3.45); r.rotation.y=0;
+  r.traverse(o=>{if(o.isMesh)o.castShadow=true;});
+  scene.add(r);
+  halo=new THREE.Mesh(new THREE.TorusGeometry(0.6,0.035,10,40),new THREE.MeshBasicMaterial({color:0x46e0ff}));
+  halo.position.set(0,1.62,-3.45); halo.rotation.x=1.15; scene.add(halo);
+  mixer=new THREE.AnimationMixer(r);
+  gltf.animations.forEach(c=>actions[c.name]=mixer.clipAction(c));
+  play('Idle'); window.RBT.ready=true;
+  document.getElementById('loading').classList.add('hide');
+},undefined,e=>{document.getElementById('loading').textContent='3D 机器人加载失败，请确认通过 http://localhost:8077/game.html 打开';console.error(e);});
+
+const clock=new THREE.Clock();
+(function loop(){requestAnimationFrame(loop);const dt=clock.getDelta();if(mixer)mixer.update(dt);if(particles)particles.rotation.y+=dt*0.03;if(halo){halo.rotation.z+=dt*1.6;halo.position.y=1.62+Math.sin(performance.now()*0.002)*0.04;}renderer.render(scene,camera);})();
+addEventListener('resize',sizeToStage);
+
+/* ================= 对局逻辑 ================= */
+const $=id=>document.getElementById(id);
+const HAND_N=16;
+let hands={me:[],ai:[]},cur=null,turn='me',lastPlayer='me',over=false,selected=new Set();
+
+let aiVoice=null,meVoice=null;
+function pickVoice(){
+  const vs=speechSynthesis.getVoices();
+  const zh=vs.filter(v=>/zh|chinese/i.test(v.lang+v.name));
+  const find=ns=>{for(const n of ns){const f=zh.find(v=>v.name.toLowerCase().includes(n));if(f)return f;}return null;};
+  // 两个不同的声音：AI=低沉男声；玩家=另一种音色（女声/不同男声）
+  aiVoice=find(['yunjian','yunxi','yunyang','kangkang'])||zh[0]||vs[0]||null;
+  meVoice=find(['xiaoxiao','xiaoyi','xiaochen','yaoyao','huihui'])||zh.find(v=>v!==aiVoice)||aiVoice;
+  if(meVoice===aiVoice&&zh.length>1) meVoice=zh.find(v=>v!==aiVoice)||aiVoice;
+}
+speechSynthesis.onvoiceschanged=pickVoice;pickVoice();
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+let _speaking=false; const _sQ=[];
+function say(text,who){
+  const b=who==='ai'?$("aiBubble"):$("meBubble");
+  if(b){b.textContent=text;b.classList.add("show");clearTimeout(b._t);b._t=setTimeout(()=>b.classList.remove("show"),2200);}
+  _sQ.push({text,who}); if(_sQ.length>3)_sQ.shift();   // 排队，避免互相掐断
+  if(!_speaking)_drain();
+}
+function _drain(){
+  if(_sQ.length===0){_speaking=false;return;}
+  _speaking=true;
+  const it=_sQ.shift();
+  let done=false; const finish=()=>{if(done)return;done=true;_speaking=false;_drain();};
+  const to=setTimeout(finish,Math.min(5000,800+it.text.length*230));   // 兜底：防 onend 不触发卡住
+  try{
+    const u=new SpeechSynthesisUtterance(it.text);u.lang="zh-CN";u.rate=1.05;u.pitch=(it.who==='ai'?0.92:1.06);const vv=(it.who==='ai'?aiVoice:meVoice);if(vv)u.voice=vv;
+    u.onend=()=>{clearTimeout(to);finish();};u.onerror=()=>{clearTimeout(to);finish();};
+    speechSynthesis.speak(u);
+  }catch(e){clearTimeout(to);finish();}
+}
+// 掼蛋报牌：领出报牌型；压牌——AI喊“大你”，我喊“管上”；过牌“要不起”
+function callLine(type,isBeat,who){
+  const name=typeName(type);
+  if(type==='rocket') return who==='ai'?'王炸，认输吧！':'王炸！';
+  if(type==='bomb')   return isBeat?(who==='ai'?'炸弹，大你！':'炸弹，管上！'):'炸弹！';
+  if(isBeat) return (who==='ai'?'大你':'管上')+(Math.random()<0.5?('，'+name):'')+'！';
+  if(who==='ai') return name+(Math.random()<0.4?('，'+pick(['接招','跟得上吗','看你的'])):'');
+  return name;
+}
+const PASS=['要不起','不要'];
+const WIN={ai:['略略略，人类不过如此','就这？我都替你着急','常来送分哦','我可是 AI，让让你都难'],me:['我赢了','这把我先走']};
+const LOSE_AI=['我让着你的，真的','网络卡了，不算不算','重启一下，刚才在养生','哼，下把把你CPU干烧'];
+// 报数：单张报点数、对子报"对X"、三个报"三个X"，其余报牌型（每手只报这一句，不再叠加音效）
+function reportLine(combo){const t=combo.type,lab=combo.cards[0].label;
+  if(t==='single')return lab;
+  if(t==='pair')return "对"+lab;
+  if(t==='trio')return "三个"+lab;
+  if(t==='trio_pair')return "三带二";
+  if(t==='straight')return "顺子";
+  if(t==='bomb')return "炸弹";
+  if(t==='rocket')return "王炸";
+  return typeName(t);}
+const EMOTE={single:'Wave',pair:'Wave',trio:'ThumbsUp',trio_pair:'ThumbsUp',straight:'Wave',bomb:'Punch',rocket:'Jump'};
+function rgest(name){if(window.RBT&&RBT.ready)RBT.gesture(name);}
+
+// ===== 战绩统计（localStorage 持久化）=====
+let stats=loadStats();
+function loadStats(){try{return JSON.parse(localStorage.getItem('gd_stats'))||{me:0,ai:0,hist:[],streak:0}}catch(e){return{me:0,ai:0,hist:[],streak:0}}}
+function saveStats(){try{localStorage.setItem('gd_stats',JSON.stringify(stats))}catch(e){}}
+function recordResult(who){
+  if(who==='me'){stats.me++;stats.streak=stats.streak>=0?stats.streak+1:1;}
+  else{stats.ai++;stats.streak=stats.streak<=0?stats.streak-1:-1;}
+  stats.hist.unshift(who);if(stats.hist.length>40)stats.hist.length=40;
+  saveStats();renderStats();
+}
+function renderStats(){
+  const total=stats.me+stats.ai, rate=total?Math.round(stats.me/total*100):0;
+  $("scMe").textContent=stats.me;$("scAi").textContent=stats.ai;
+  $("scRate").textContent=rate+"%";$("scTotal").textContent=total;
+  const st=stats.streak;
+  $("scStreak").textContent=st===0?"—":(st>0?st+" 连胜":(-st)+" 连败");
+  $("scStreak").style.color=st>0?"#7dff9e":(st<0?"#ff8a8a":"#cdd6e6");
+  const h=$("histList");h.innerHTML="";
+  stats.hist.slice(0,10).forEach(w=>{const d=document.createElement("div");d.className="hchip "+(w==='me'?"hw":"hl");d.textContent=w==='me'?"胜":"负";h.appendChild(d);});
+}
+
+function cardEl(c){
+  const d=document.createElement("div");
+  d.className="card "+(c.red?"red":"")+(c.joker?" joker":"")+(selected.has(c)?" sel":"");
+  if(c.joker) d.innerHTML=`<span class="jstar">★</span><span class="jtext">JOKER</span><span class="jstar jb">★</span>`;
+  else d.innerHTML=`<div class="corner"><span class="r">${c.label}</span><span class="s">${c.suit}</span></div><span class="big">${c.suit}</span>`;
+  return d;
+}
+function render(){
+  $("aiCount").textContent=hands.ai.length;$("meCount").textContent=hands.me.length;
+  const h=$("hand");h.innerHTML="";
+  // 大→小；同点数竖着码成一列(边锋式)，不同点数横向排开；竖屏超宽则整体缩放适配
+  const sorted=hands.me.slice().sort((a,b)=>b.r-a.r);
+  const cardW=56, cardH=80, colStep=40, upStep=26, BTN=22;
+  let x=0, prevR=null, colN=0, maxY=0;
+  const items=[], cols=[];
+  for(const c of sorted){
+    if(c.r!==prevR){ if(prevR!==null) x+=colStep; prevR=c.r; colN=0; cols.push({x,cards:[]}); }
+    else colN++;
+    const y=colN*upStep; if(y>maxY) maxY=y;
+    items.push({c,x,y,colN}); cols[cols.length-1].cards.push(c);
+  }
+  const totalW=x+cardW;
+  const availW=Math.max(120,stageEl.clientWidth-12);
+  const scale=Math.min(1,availW/totalW);
+  h.style.width=totalW+"px";
+  h.style.height=(BTN+cardH+maxY+34)+"px";
+  h.style.transform="scale("+scale+")"; h.style.transformOrigin="bottom center";
+  for(const it of items){
+    const el=cardEl(it.c);
+    el.style.left=it.x+"px";
+    el.style.bottom=(BTN+(selected.has(it.c)?30:0)+it.y)+"px";
+    el.style.zIndex=String(selected.has(it.c)?300:(60-it.colN));
+    el.onclick=()=>{if(turn!=="me"||over)return;selected.has(it.c)?selected.delete(it.c):selected.add(it.c);render();};
+    h.appendChild(el);
+  }
+  // 整列全选按钮（每列一个，在该列正下方）
+  for(const col of cols){
+    const allSel=col.cards.every(c=>selected.has(c));
+    const b=document.createElement("div");
+    b.className="colbtn"+(allSel?" on":"");
+    b.style.left=(col.x+(cardW-34)/2)+"px"; b.style.width="34px";
+    b.textContent=allSel?"✓":"全";
+    b.onclick=()=>{if(turn!=="me"||over)return;const all=col.cards.every(c=>selected.has(c));col.cards.forEach(c=>all?selected.delete(c):selected.add(c));render();};
+    h.appendChild(b);
+  }
+  $("playBtn").disabled=!(turn==="me"&&!over);
+  $("passBtn").disabled=!(turn==="me"&&cur!==null&&!over);
+  $("hintBtn").disabled=!(turn==="me"&&!over);
+}
+function typeName(t){return{single:"单张",pair:"对子",trio:"三条",trio_pair:"三带二",straight:"顺子",bomb:"炸弹",rocket:"王炸"}[t]||t;}
+function flashFx(boom){const f=$("flash");if(!f)return;f.className="flash"+(boom?" gold gold2":"");void f.offsetWidth;f.classList.add("go");setTimeout(()=>f.classList.remove("go"),360);}
+function shakeStage(boom){if(!stageEl)return;stageEl.classList.remove("shk","shkbig");void stageEl.offsetWidth;stageEl.classList.add(boom?"shkbig":"shk");setTimeout(()=>stageEl.classList.remove("shk","shkbig"),boom?420:240);}
+function burst(p,n,big){for(let i=0;i<n;i++){const d=document.createElement("div");d.className="spark"+(big?" g":"");const ang=Math.random()*6.2832,dist=(big?70:40)+Math.random()*(big?80:45);d.style.setProperty('--dx',(Math.cos(ang)*dist)+'px');d.style.setProperty('--dy',(Math.sin(ang)*dist)+'px');d.style.animationDelay=(Math.random()*0.05)+'s';p.appendChild(d);setTimeout(()=>d.remove(),700);}}
+function showPlayed(combo,who){
+  const p=$("played");p.innerHTML="";
+  const boom=(combo.type==='bomb'||combo.type==='rocket');
+  p.className="played"+(boom?" boom":"");
+  p.appendChild(Object.assign(document.createElement("div"),{className:"shock"+(boom?" big":"")}));
+  p.appendChild(Object.assign(document.createElement("div"),{className:"shock s2"+(boom?" big":"")}));
+  const lbl=document.createElement("div");lbl.className="lbl";lbl.textContent=(who==="ai"?"AI 出：":"你出：")+typeName(combo.type);
+  const row=document.createElement("div");row.className="row";
+  combo.cards.forEach((c,i)=>{const el=cardEl(c);el.style.animationDelay=(i*0.05)+"s";row.appendChild(el);});
+  p.appendChild(lbl);p.appendChild(row);
+  burst(p, boom?26:12, boom);
+  if(boom){const b=document.createElement("div");b.className="boom-emoji";b.textContent="💥";p.appendChild(b);flashFx(true);shakeStage(true);}
+  $("note").textContent="";
+}
+function setStatus(s){$("status").textContent=s;}
+function note(s){$("note").textContent=s;}
+function toast(s){const t=$("toast");t.textContent=s;t.classList.add("show");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("show"),1400);}
+
+function deal(){
+  endThink(); _sQ.length=0; _speaking=false; try{speechSynthesis.cancel()}catch(e){}
+  const d=GD.shuffle(GD.makeDeck());
+  hands.me=d.slice(0,HAND_N);hands.ai=d.slice(HAND_N,HAND_N*2);
+  cur=null;turn="me";lastPlayer="me";over=false;selected.clear();
+  $("played").innerHTML="";note("");$("over").classList.remove("show");
+  rgest('Idle');setStatus("轮到你 · 领出");render();
+}
+function playerPlay(){
+  if(turn!=="me"||over)return;
+  const combo=GD.detect([...selected]);
+  if(!combo){toast("牌型不对");return;}
+  if(cur!==null&&!GD.beats(combo,cur)){toast("压不过当前的牌");return;}
+  const lead=(cur===null);
+  hands.me=GD.removeCards(hands.me,combo);cur=combo;lastPlayer="me";selected.clear();
+  showPlayed(combo,"me");say(reportLine(combo),'me');render();
+  if(combo.type==='bomb'||combo.type==='rocket')setTimeout(()=>{if(!over)rgest('No');},650);  // 你砸炸弹，它"啊这"摇头
+  if(hands.me.length===0)return endGame("me");
+  turn="ai";setStatus("AI 思考中…");render();setTimeout(aiThink,350);
+}
+function playerPass(){
+  if(turn!=="me"||over||cur===null)return;
+  say(pick(PASS),'me');note("你：要不起");cur=null;turn="ai";setStatus("AI 领出…");render();setTimeout(aiThink,350);
+}
+let nnAnim=null, thinkRAF=null;
+let nnBusy=false;
+function makeNN(){  // 旋转网络球（AI核心）
+  const cv=$("nnCanvas"); if(!cv) return null;
+  const ctx=cv.getContext('2d'), W=cv.width, H=cv.height, cx=W/2, cy=H/2, R=Math.min(W,H)*0.40, N=100;
+  const pts=[];
+  for(let i=0;i<N;i++){const phi=Math.acos(1-2*(i+0.5)/N),th=Math.PI*(1+Math.sqrt(5))*i;pts.push({x:Math.sin(phi)*Math.cos(th),y:Math.sin(phi)*Math.sin(th),z:Math.cos(phi)});}
+  const links=[];
+  for(let i=0;i<N;i++){const d=pts.map((q,j)=>({j,v:(q.x-pts[i].x)**2+(q.y-pts[i].y)**2+(q.z-pts[i].z)**2})).filter(o=>o.j!==i).sort((a,b)=>a.v-b.v);links.push([i,d[0].j]);if(d[1])links.push([i,d[1].j]);}
+  let raf=null,t=0;
+  function frame(){
+    t += nnBusy?0.05:0.018;
+    ctx.clearRect(0,0,W,H);
+    const cosY=Math.cos(t),sinY=Math.sin(t),ax=0.5+Math.sin(t*0.4)*0.35,cosX=Math.cos(ax),sinX=Math.sin(ax);
+    const cg=ctx.createRadialGradient(cx,cy,0,cx,cy,R*1.5);
+    cg.addColorStop(0,nnBusy?'rgba(120,220,255,0.55)':'rgba(80,170,255,0.3)');cg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=cg;ctx.beginPath();ctx.arc(cx,cy,R*1.5,0,7);ctx.fill();
+    const P=pts.map(p=>{const x=p.x*cosY-p.z*sinY,z=p.x*sinY+p.z*cosY,y=p.y,y2=y*cosX-z*sinX,z2=y*sinX+z*cosX;return{sx:cx+x*R,sy:cy+y2*R,z:z2};});
+    ctx.lineWidth=0.6;
+    links.forEach(([a,b])=>{const pa=P[a],pb=P[b],dp=((pa.z+pb.z)/2+1)/2;ctx.strokeStyle='rgba(95,185,255,'+(0.05+dp*(nnBusy?0.3:0.18))+')';ctx.beginPath();ctx.moveTo(pa.sx,pa.sy);ctx.lineTo(pb.sx,pb.sy);ctx.stroke();});
+    P.slice().sort((a,b)=>a.z-b.z).forEach(p=>{const dp=(p.z+1)/2,r=0.6+dp*2.2,al=0.25+dp*0.75;ctx.fillStyle=(nnBusy&&Math.random()<0.04)?'rgba(255,212,94,'+al+')':'rgba(140,228,255,'+al+')';ctx.beginPath();ctx.arc(p.sx,p.sy,r,0,7);ctx.fill();});
+    for(let k=0;k<2;k++){
+      const tilt=k===0?1.1:-0.6, rr=R*(1.18+k*0.12);
+      ctx.strokeStyle='rgba(120,220,255,'+(nnBusy?0.5:0.3)+')';ctx.lineWidth=1;ctx.beginPath();
+      for(let a=0;a<=50;a++){const ang=a/50*6.2832;const x=Math.cos(ang)*rr,z=Math.sin(ang)*rr,y1=-z*Math.sin(tilt),z1=z*Math.cos(tilt),x2=x*cosY-z1*sinY,z2=x*sinY+z1*cosY,y2=y1*cosX-z2*sinX,sx=cx+x2,sy=cy+y2;if(a===0)ctx.moveTo(sx,sy);else ctx.lineTo(sx,sy);}
+      ctx.stroke();
+    }
+    raf=requestAnimationFrame(frame);
+  }
+  return {start:()=>{if(!raf)frame();},stop:()=>{if(raf){cancelAnimationFrame(raf);raf=null;}}};
+}
+function endThink(){const box=$("thinkBox");if(box)box.classList.remove('busy');nnBusy=false;const tit=$("nnTitle");if(tit)tit.textContent="🧠 AI 神经引擎";if(thinkRAF){cancelAnimationFrame(thinkRAF);thinkRAF=null;}}
+function aiThink(){
+  if(over)return;
+  const box=$("thinkBox");if(box)box.classList.add('busy');
+  nnBusy=true; const tit=$("nnTitle");if(tit)tit.textContent="🧠 深度推演中…";
+  rgest('Idle');setStatus("AI 推演中…");
+  const numEl=$("thinkNum"),cntEl=$("thinkCount"),dur=1900,t0=performance.now();
+  (function tick(){
+    const el=performance.now()-t0,prog=Math.min(1,el/dur);
+    if(numEl)numEl.textContent=Math.floor(Math.pow(prog,0.55)*1834521).toLocaleString();
+    if(cntEl)cntEl.textContent=Math.max(1,Math.ceil((dur-el)/(dur/3)));
+    if(prog<1)thinkRAF=requestAnimationFrame(tick);
+    else{endThink();aiMove();}
+  })();
+}
+function aiMove(){
+  if(over)return;
+  const lead=(cur===null);
+  const move=lead?GD.leadMove(hands.ai):GD.followMove(hands.ai,cur,hands.me.length);
+  if(move){
+    hands.ai=GD.removeCards(hands.ai,move);cur=move;lastPlayer="ai";
+    showPlayed(move,"ai");rgest(EMOTE[move.type]||'Wave');say(reportLine(move),'ai');render();
+    if(hands.ai.length===0)return endGame("ai");
+    turn="me";setStatus(cur?"轮到你":"你领出");
+  }else{
+    rgest('No');say(pick(PASS),'ai');note("AI：要不起");cur=null;turn="me";setStatus("你领出");
+  }
+  render();
+}
+function hint(){
+  if(turn!=="me"||over)return;
+  const m=cur===null?GD.leadMove(hands.me):GD.followMove(hands.me,cur,hands.ai.length);
+  if(!m){toast('没有能压的牌，点"不要"');selected.clear();render();return;}
+  selected=new Set(m.cards);render();
+}
+function endGame(who){
+  over=true;render();recordResult(who);
+  if(window.RBT&&RBT.ready)who==="ai"?RBT.play('Dance'):RBT.play('Death');
+  if(who==="ai") say(pick(WIN.ai),'ai');
+  else { say(pick(WIN.me),'me'); setTimeout(()=>say(pick(LOSE_AI),'ai'),1500); }
+  $("overText").textContent=who==="ai"?"🤖 AI 获胜":"🎉 你赢了！";
+  $("overText").style.color=who==="ai"?"#ff7a7a":"#ffd45e";
+  $("over").classList.add("show");
+}
+$("playBtn").onclick=playerPlay;$("passBtn").onclick=playerPass;$("hintBtn").onclick=hint;
+$("newBtn").onclick=deal;$("overBtn").onclick=deal;
+nnAnim=makeNN(); if(nnAnim)nnAnim.start(); renderStats(); deal();
+</script>
+</body>
+</html>

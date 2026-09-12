@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI·GP — 真正的 AI 赛车 · 免费开源赛事</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="AI·GP — 真正的 AI 赛车">
+<meta property="og:description" content="浙江大学发起 · 免费赛事 · 全开源。高中生训练自己的 AI 赛车，在复刻上海 F1 赛道上同场对决。">
+<meta property="og:url" content="https://crayxus.com.au/aigp-open-7b2c.html">
+<meta property="og:image" content="https://crayxus.com.au/aigp-share.jpg?v=1">
+<meta itemprop="image" content="https://crayxus.com.au/aigp-share.jpg?v=1">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#08090d;color:#e8eaf0;font-family:"Segoe UI","Microsoft YaHei",sans-serif;line-height:1.7}
+  .page{max-width:720px;margin:0 auto;padding:0 22px 60px}
+  /* Hero */
+  .hero{padding:64px 0 40px;text-align:left}
+  .badge{display:inline-block;border:1px solid #e10600;color:#ff4d42;font-size:12px;letter-spacing:3px;padding:4px 14px;border-radius:20px;margin-bottom:22px;font-weight:600}
+  h1{font-size:44px;font-style:italic;font-weight:900;line-height:1.15;letter-spacing:1px}
+  h1 .red{color:#e10600}
+  .tagline{font-size:19px;color:#c8ccd8;margin-top:14px;font-weight:300}
+  .tagline b{color:#fff;font-weight:700}
+  .meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+  .meta span{background:#12141c;border:1px solid #232735;border-radius:8px;padding:7px 14px;font-size:13px;color:#aab0c0}
+  .meta b{color:#ffd700;font-weight:700}
+  .rule{height:4px;background:linear-gradient(90deg,#e10600 0,#e10600 160px,transparent 160px);margin:34px 0}
+  /* sections */
+  h2{font-size:22px;font-style:italic;font-weight:900;margin:46px 0 16px;letter-spacing:1px}
+  h2 em{color:#e10600;font-style:italic}
+  p{color:#b8bdcc;font-size:15px;margin-bottom:12px}
+  p b,li b{color:#fff}
+  .card{background:#101218;border:1px solid #1e222d;border-radius:12px;padding:22px 24px;margin:18px 0}
+  .card h4{font-size:15px;color:#fff;margin-bottom:8px;font-weight:700}
+  .card p{font-size:14px;margin-bottom:0}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:560px){.grid2{grid-template-columns:1fr}h1{font-size:34px}}
+  .spec{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}
+  @media(max-width:560px){.spec{grid-template-columns:repeat(2,1fr)}}
+  .spec div{background:#101218;border:1px solid #1e222d;border-radius:10px;padding:14px 10px;text-align:center}
+  .spec .n{font-size:22px;font-weight:900;font-style:italic;color:#ffd700}
+  .spec .n small{font-size:12px;color:#8b90a0;font-weight:400}
+  .spec .k{font-size:12px;color:#8b90a0;margin-top:3px}
+  ol.path{counter-reset:c;list-style:none;margin:16px 0}
+  ol.path li{background:#101218;border:1px solid #1e222d;border-left:4px solid #e10600;border-radius:10px;padding:16px 18px 16px 56px;margin-bottom:12px;position:relative;font-size:14px;color:#b8bdcc}
+  ol.path li:before{counter-increment:c;content:counter(c);position:absolute;left:18px;top:16px;width:26px;height:26px;border-radius:50%;background:#e10600;color:#fff;font-weight:900;font-style:italic;display:flex;align-items:center;justify-content:center;font-size:14px}
+  svg{width:100%;height:auto;display:block;margin:6px 0}
+  .track-note{font-size:12px;color:#6b7080;text-align:right}
+  .cta{background:linear-gradient(135deg,#15080a,#1a0d0f);border:1px solid #3a1518;border-radius:14px;padding:26px;margin-top:40px;text-align:center}
+  .cta .t{font-size:20px;font-weight:900;font-style:italic;margin-bottom:8px}
+  .cta p{font-size:14px}
+  .cta .loc{color:#ffd700;font-weight:700;font-size:16px;margin-top:10px}
+  .foot{margin-top:44px;font-size:12px;color:#5c6270;text-align:center;line-height:2}
+  .video-slot{position:relative;aspect-ratio:16/9;background:#0d0f15;border:1px dashed #3a3f4e;border-radius:14px;margin:6px 0 10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+  .video-slot .play{width:64px;height:64px;border-radius:50%;background:#e10600;display:flex;align-items:center;justify-content:center}
+  .video-slot .play:after{content:"";border-left:20px solid #fff;border-top:12px solid transparent;border-bottom:12px solid transparent;margin-left:5px}
+  .video-slot .hint{font-size:12px;color:#6b7080;letter-spacing:1px}
+  .video-slot video{position:absolute;inset:0;width:100%;height:100%;border-radius:14px;object-fit:cover}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="hero">
+  <div class="badge">免费赛事 · 全开源 · 高中生招募</div>
+  <h1>AI·GP<br><span class="red">真正的 AI 赛车</span></h1>
+  <div class="tagline">没有遥控器。每一辆车由<b>学生训练的人工智能</b>自主驾驶，同场对决，一决高下。</div>
+  <div class="meta">
+    <span>发起 <b>浙江大学</b></span>
+    <span>地点 <b>东岳 AI 科技园 · 二楼</b></span>
+    <span>费用 <b>免费</b></span>
+    <span>代码 <b>全开源</b></span>
+  </div>
+</div>
+<div class="rule"></div>
+
+<div class="video-slot" style="border-style:solid;border-color:#232735">
+  <video src="https://crayxus.com.au/aigp-hero.mp4" poster="https://crayxus.com.au/aigp-share.jpg?v=1" autoplay muted loop playsinline controls></video>
+</div>
+
+<audio id="bgm" src="https://crayxus.com.au/aigp-bgm.mp3" loop preload="none"></audio>
+<div id="bgmBtn" style="position:fixed;right:18px;bottom:18px;z-index:99;width:46px;height:46px;border-radius:50%;background:#e10600;color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;box-shadow:0 4px 14px rgba(225,6,0,.45);user-select:none">♪</div>
+<script>
+(function(){
+  var a=document.getElementById('bgm'),b=document.getElementById('bgmBtn'),on=false,armed=true;
+  function play(){a.play().then(function(){on=true;b.style.background='#00d26a';}).catch(function(){});}
+  function toggle(){ if(on){a.pause();on=false;b.style.background='#e10600';} else play(); }
+  b.addEventListener('click',function(e){e.stopPropagation();armed=false;toggle();});
+  document.addEventListener('click',function(){ if(armed){armed=false;play();} },{once:false});
+})();
+</script>
+
+<h2>为什么做<em>这件事</em></h2>
+<p>AI 要学，已经不用争论——但今天孩子能接触到的"AI 课"，大多是学语法、拖积木、看演示：<b>学完没有作品，没有成绩，没有自己的故事。</b></p>
+<p>AI·GP 换一种做法：<b>不上课，做一件真事</b>——训练一辆真正会自己思考的赛车，在真实赛道上赢下一场比赛。做成了，作品、成绩、故事都是学生自己的；而这一切<b>免费、开源</b>，由浙江大学团队保证它的专业底色。</p>
+
+<h2>这是一场<em>什么比赛</em></h2>
+<p>每位学生训练一辆会自己开的智能赛车：它用激光雷达看路、用自己写的算法过弯超车，在复刻的上海 F1 赛道上先跑排位、再捉对淘汰——<b>两辆车同场对决，先冲线者晋级</b>。你的 AI 强不强，赛道上见真章。</p>
+<p>赛事由<b>浙江大学人工智能团队原创设计</b>——从赛车、赛道到竞赛系统均为自主研发。这不是兴趣班的模拟道具，而是大学实验室级的真实自动驾驶平台。</p>
+
+<div class="spec">
+  <div><div class="n">1 v 1</div><div class="k">同场对决 · 先冲线者胜</div></div>
+  <div><div class="n">0 <small>元</small></div><div class="k">全程免费</div></div>
+  <div><div class="n">100<small>%</small></div><div class="k">代码开源 · 成果归学生</div></div>
+</div>
+
+<h2>赛道：<em>上海国际赛车场</em> 复刻</h2>
+<p>比赛在按 1:140 比例复刻的「上」字形赛道上进行——T1-T2 螺旋收紧弯、T14 重刹发卡、后直道超车区，原版的每一个经典考验都在。圈长约 57 米，AI 单圈约 10 秒。</p>
+<svg viewBox="0 0 1010 675">
+  <g transform="translate(20,30)">
+    <path d="M 372.6 263.0 C 400.8 194.3 428.5 124.5 454.4 56.3 C 457.7 47.7 466.8 40.2 474.9 36.0 C 483.9 31.5 494.6 29.7 504.4 30.0 C 514.7 30.3 526.6 32.3 535.3 37.9 C 542.7 42.6 549.4 50.6 553.0 58.4 C 556.2 65.1 557.4 74.4 555.8 81.6 C 554.3 89.0 549.2 96.9 543.7 102.1 C 538.7 106.8 531.0 109.9 525.1 108.6 C 518.0 107.1 510.5 99.6 507.4 91.2 C 505.1 84.8 495.3 79.3 490.0 77.4 C 486.6 76.2 478.4 79.6 475.3 82.6 C 471.3 86.4 467.4 93.5 467.4 98.8 C 467.5 105.0 471.4 113.3 474.9 118.8 C 479.1 125.4 484.9 132.8 491.6 137.2 C 499.2 142.1 508.9 146.7 517.7 145.8 C 533.0 144.3 551.2 141.3 567.9 138.8 C 604.8 133.5 641.6 128.2 678.6 123.5 C 687.5 122.3 698.0 121.5 706.7 123.5 C 747.2 132.8 785.1 142.9 824.9 154.2 C 832.0 156.2 840.6 158.1 845.6 162.6 C 848.9 165.5 849.2 172.0 847.9 175.6 C 846.7 179.1 843.0 181.3 838.6 183.0 C 827.2 187.5 815.3 191.7 803.3 194.2 C 790.8 196.7 777.6 196.6 764.9 196.3 C 733.6 195.4 702.5 192.2 671.2 190.5 C 658.8 189.8 646.1 188.6 634.0 190.5 C 622.2 192.3 610.3 197.2 600.5 203.3 C 593.3 207.7 587.0 214.5 582.8 222.1 C 578.0 230.9 574.7 241.0 572.6 250.9 C 570.3 261.5 570.5 273.1 572.3 283.5 C 574.2 293.9 578.3 303.7 583.7 313.3 C 591.3 326.7 601.3 338.9 608.8 352.3 C 612.8 359.3 617.1 366.9 618.1 374.7 C 619.3 383.3 618.9 393.8 615.3 401.6 C 611.7 409.6 604.2 417.0 596.7 422.1 C 588.0 428.1 577.3 434.6 567.0 435.1 C 551.3 435.9 534.8 428.0 518.6 425.8 C 511.6 424.9 503.9 424.9 498.6 427.9 C 494.0 430.5 491.2 436.6 491.6 442.3 C 492.4 452.4 497.2 462.9 500.9 473.3 C 504.1 482.0 505.9 490.7 511.2 496.3 C 514.6 500.0 521.3 501.2 527.0 501.2 C 540.5 501.1 553.6 500.8 567.2 501.4 C 645.3 505.1 724.7 509.0 802.6 511.6 C 807.8 511.8 812.2 508.2 814.4 504.0 C 816.2 500.5 813.3 495.6 812.3 491.4 C 810.5 483.5 804.0 474.6 806.0 467.7 C 809.2 456.9 814.6 453.5 822.1 452.1 C 830.0 450.6 840.3 450.4 848.8 452.6 C 858.9 455.1 868.7 459.8 876.5 466.3 C 883.3 471.9 887.6 477.8 890.2 486.3 C 892.8 494.6 893.4 504.5 891.6 513.0 C 889.7 522.1 884.0 530.9 878.6 538.6 C 873.4 546.1 867.4 553.1 859.8 557.9 C 851.0 563.4 840.6 567.9 830.2 569.1 C 805.6 571.9 780.5 570.1 755.3 570.0 C 524.0 568.9 292.7 569.9 61.9 566.3 C 56.5 566.2 51.6 564.0 50.0 560.7 C 48.8 558.1 54.2 551.2 57.9 549.3 C 72.5 541.6 87.3 535.8 104.0 533.3 C 124.2 530.2 143.2 531.8 164.0 530.7 C 198.2 529.0 230.5 527.9 264.4 526.3 C 269.3 526.0 277.4 524.1 279.5 519.5 C 282.4 513.3 283.6 505.8 286.0 499.1 C 314.9 420.0 340.5 340.9 372.6 263.0 Z"
+      fill="none" stroke="#1c212c" stroke-width="30" stroke-linejoin="round"/>
+    <path d="M 372.6 263.0 C 400.8 194.3 428.5 124.5 454.4 56.3 C 457.7 47.7 466.8 40.2 474.9 36.0 C 483.9 31.5 494.6 29.7 504.4 30.0 C 514.7 30.3 526.6 32.3 535.3 37.9 C 542.7 42.6 549.4 50.6 553.0 58.4 C 556.2 65.1 557.4 74.4 555.8 81.6 C 554.3 89.0 549.2 96.9 543.7 102.1 C 538.7 106.8 531.0 109.9 525.1 108.6 C 518.0 107.1 510.5 99.6 507.4 91.2 C 505.1 84.8 495.3 79.3 490.0 77.4 C 486.6 76.2 478.4 79.6 475.3 82.6 C 471.3 86.4 467.4 93.5 467.4 98.8 C 467.5 105.0 471.4 113.3 474.9 118.8 C 479.1 125.4 484.9 132.8 491.6 137.2 C 499.2 142.1 508.9 146.7 517.7 145.8 C 533.0 144.3 551.2 141.3 567.9 138.8 C 604.8 133.5 641.6 128.2 678.6 123.5 C 687.5 122.3 698.0 121.5 706.7 123.5 C 747.2 132.8 785.1 142.9 824.9 154.2 C 832.0 156.2 840.6 158.1 845.6 162.6 C 848.9 165.5 849.2 172.0 847.9 175.6 C 846.7 179.1 843.0 181.3 838.6 183.0 C 827.2 187.5 815.3 191.7 803.3 194.2 C 790.8 196.7 777.6 196.6 764.9 196.3 C 733.6 195.4 702.5 192.2 671.2 190.5 C 658.8 189.8 646.1 188.6 634.0 190.5 C 622.2 192.3 610.3 197.2 600.5 203.3 C 593.3 207.7 587.0 214.5 582.8 222.1 C 578.0 230.9 574.7 241.0 572.6 250.9 C 570.3 261.5 570.5 273.1 572.3 283.5 C 574.2 293.9 578.3 303.7 583.7 313.3 C 591.3 326.7 601.3 338.9 608.8 352.3 C 612.8 359.3 617.1 366.9 618.1 374.7 C 619.3 383.3 618.9 393.8 615.3 401.6 C 611.7 409.6 604.2 417.0 596.7 422.1 C 588.0 428.1 577.3 434.6 567.0 435.1 C 551.3 435.9 534.8 428.0 518.6 425.8 C 511.6 424.9 503.9 424.9 498.6 427.9 C 494.0 430.5 491.2 436.6 491.6 442.3 C 492.4 452.4 497.2 462.9 500.9 473.3 C 504.1 482.0 505.9 490.7 511.2 496.3 C 514.6 500.0 521.3 501.2 527.0 501.2 C 540.5 501.1 553.6 500.8 567.2 501.4 C 645.3 505.1 724.7 509.0 802.6 511.6 C 807.8 511.8 812.2 508.2 814.4 504.0 C 816.2 500.5 813.3 495.6 812.3 491.4 C 810.5 483.5 804.0 474.6 806.0 467.7 C 809.2 456.9 814.6 453.5 822.1 452.1 C 830.0 450.6 840.3 450.4 848.8 452.6 C 858.9 455.1 868.7 459.8 876.5 466.3 C 883.3 471.9 887.6 477.8 890.2 486.3 C 892.8 494.6 893.4 504.5 891.6 513.0 C 889.7 522.1 884.0 530.9 878.6 538.6 C 873.4 546.1 867.4 553.1 859.8 557.9 C 851.0 563.4 840.6 567.9 830.2 569.1 C 805.6 571.9 780.5 570.1 755.3 570.0 C 524.0 568.9 292.7 569.9 61.9 566.3 C 56.5 566.2 51.6 564.0 50.0 560.7 C 48.8 558.1 54.2 551.2 57.9 549.3 C 72.5 541.6 87.3 535.8 104.0 533.3 C 124.2 530.2 143.2 531.8 164.0 530.7 C 198.2 529.0 230.5 527.9 264.4 526.3 C 269.3 526.0 277.4 524.1 279.5 519.5 C 282.4 513.3 283.6 505.8 286.0 499.1 C 314.9 420.0 340.5 340.9 372.6 263.0 Z"
+      fill="none" stroke="#e6edf3" stroke-width="4"/>
+    <circle cx="524" cy="62" r="14" fill="#e10600"/><text x="524" y="67" fill="#fff" font-size="13" font-weight="800" text-anchor="middle">1</text>
+    <circle cx="42" cy="556" r="14" fill="#e10600"/><text x="42" y="561" fill="#fff" font-size="13" font-weight="800" text-anchor="middle">14</text>
+    <text x="565" y="42" fill="#8b90a0" font-size="13" font-style="italic">T1 螺旋收紧弯</text>
+    <text x="68" y="528" fill="#8b90a0" font-size="13" font-style="italic">T14 发卡 · 头号超车点</text>
+    <line x1="120" y1="592" x2="780" y2="592" stroke="#00d26a" stroke-width="4"/>
+    <text x="330" y="618" fill="#00d26a" font-size="14" font-weight="800" font-style="italic" letter-spacing="2">后直道 OVERTAKE ZONE</text>
+  </g>
+</svg>
+<div class="track-note">赛道轮廓源自上海国际赛车场官方图纸，按场地等比复刻</div>
+
+<h2>参加它，学生能<em>带走什么</em></h2>
+<div class="grid2">
+  <div class="card"><h4>一段拿得出手的真实经历</h4><p>不是听课、不是模拟器——是让一辆真车在真赛道上跑起来、并且赢下比赛。这段经历本身，就是最有说服力的自我介绍。</p></div>
+  <div class="card"><h4>一份可以展示的作品</h4><p>你的代码、训练数据、比赛成绩全部归你，公开可查。科创比赛、综合评价、强基计划面试、留学文书——它是实证材料，不是一纸证书。</p></div>
+  <div class="card"><h4>一次提前的专业"试驾"</h4><p>自动驾驶、机器人、人工智能——在报志愿之前，先真刀真枪做三个月，知道自己到底喜不喜欢、行不行。</p></div>
+  <div class="card"><h4>一套受用的做事方法</h4><p>用 AI 工具学新东西、调试真实系统、在失败里迭代——这套方法比任何一门课都值钱，而且带着走。</p></div>
+</div>
+
+<h2>对学校，这意味着<em>什么</em></h2>
+<p><b>零成本</b>获得一个能落地的 AI 实践项目：我们提供全套课程资料、教师说明会与远程答疑，学校只需要组织学生。学生战队打出成绩，就是学校 AI 特色教育最直接的展示。</p>
+
+<h2>三种<em>参与方式</em></h2>
+<ol class="path">
+  <li><b>自学参赛</b> — 所有代码、文档、仿真环境开源公开。你可以用 AI 工具辅助学习（我们提供入门指引），在家完成仿真训练，赛前来现场实车调试。</li>
+  <li><b>学校组队</b> — 学校组织学生战队（建议 2–6 人/队），我们提供教师说明会、全套课程资料与远程答疑，赛前提供实车练习时段。</li>
+  <li><b>现场研习</b> — 每周开放日到东岳 AI 科技园现场：真车、真赛道、工程师在场指导，从零到跑通第一圈。</li>
+</ol>
+
+<img src="https://crayxus.com.au/aigp-share.jpg?v=1" alt="AI·GP 赛车" style="width:100%;border-radius:14px;margin-top:34px;display:block">
+
+<div class="cta">
+  <div class="t">首届 AI·GP 邀请赛 · 报名开放中</div>
+  <p>面向高中生（不限年级、不要求编程基础），个人与学校团队均可报名，全程免费。</p>
+  <div class="loc">📍 东岳 AI 科技园 · 二楼 AI·GP 赛场</div>
+  <p style="margin-top:10px;color:#8b90a0">报名与咨询：请联系项目组（联系方式待补）</p>
+</div>
+
+<div class="foot">
+  AI·GP 项目 · 浙江大学发起 · 免费 · 开源
+</div>
+
+</div>
+</body>
+</html>

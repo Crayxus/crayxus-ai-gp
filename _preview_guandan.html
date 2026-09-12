@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 掼蛋赛事 · 合作方案 | Crayxus</title>
+<meta name="description" content="Crayxus 自研掼蛋 AI 与智能赛事系统，为高端商协会打造公平、有仪式感、可传播、可沉淀的会员掼蛋赛事。">
+<!-- 微信分享卡片 -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="AI 掼蛋赛事 · 合作方案">
+<meta property="og:description" content="自研掼蛋 AI「AlphaDan」+ 智能赛事系统：公平、爆点、可传播、可沉淀。">
+<meta property="og:image" content="guandan-share.jpg?v=1">
+<style>
+:root{
+  --bg:#080b14; --bg2:#0d1220; --card:#121a2e; --line:rgba(255,255,255,.08);
+  --txt:#eaf0ff; --sub:#9aa7c7; --cyan:#2dd4ef; --gold:#d8b36a;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg); color:var(--txt);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+  line-height:1.7; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px}
+section{padding:54px 0}
+.eyebrow{color:var(--cyan);font-size:13px;letter-spacing:3px;font-weight:600;text-transform:uppercase}
+h2{font-size:25px;font-weight:700;margin:8px 0 6px;letter-spacing:.5px}
+.lead{color:var(--sub);font-size:15px}
+
+/* HERO */
+.hero{position:relative;overflow:hidden}
+.hero img{width:100%;display:block;filter:brightness(.55) saturate(1.1)}
+.hero-cap{position:absolute;left:0;right:0;bottom:0;padding:24px 20px 30px;
+  background:linear-gradient(to top,rgba(8,11,20,.95),rgba(8,11,20,.2) 70%,transparent)}
+.hero-cap .wrap{padding:0}
+.hero h1{font-size:27px;font-weight:800;line-height:1.35;letter-spacing:.5px}
+.hero h1 b{color:var(--cyan)}
+.hero p{color:#c7d2ee;font-size:14px;margin-top:10px}
+.tags{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+.tag{font-size:12px;color:var(--gold);border:1px solid rgba(216,179,106,.4);
+  border-radius:20px;padding:4px 12px}
+
+/* 特点 */
+.feat{display:grid;gap:14px;margin-top:24px}
+.fcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 18px 18px 20px;
+  position:relative}
+.fcard::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:3px;
+  background:linear-gradient(var(--cyan),var(--gold));border-radius:3px}
+.fcard h3{font-size:16px;font-weight:700;margin-bottom:5px}
+.fcard h3 span{color:var(--cyan)}
+.fcard p{color:var(--sub);font-size:13.5px}
+.tables{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:22px}
+.tcell{text-align:center}
+.tcell img{width:100%;border-radius:14px;border:1px solid var(--line);display:block}
+.tlabel{color:var(--sub);font-size:12.5px;margin-top:8px;line-height:1.5}
+.tlabel b{color:var(--txt)}
+.mfit{font-size:12px;color:var(--gold);border:1px solid rgba(216,179,106,.4);border-radius:20px;padding:3px 12px;white-space:nowrap;height:fit-content}
+
+/* 模式 */
+.modes{display:grid;gap:16px;margin-top:24px}
+.mode{background:linear-gradient(160deg,var(--bg2),var(--card));
+  border:1px solid var(--line);border-radius:16px;padding:22px}
+.mode.star{border-color:rgba(45,212,239,.45);box-shadow:0 0 0 1px rgba(45,212,239,.18)}
+.mhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.mname{font-size:13px;color:var(--sub);letter-spacing:1px}
+.mtitle{font-size:19px;font-weight:800;margin-top:2px}
+.mprice{font-size:22px;font-weight:800;color:var(--gold);white-space:nowrap}
+.mprice small{font-size:13px;color:var(--sub);font-weight:500}
+.mdesc{color:var(--cyan);font-size:13.5px;margin:8px 0 12px;font-weight:600}
+.mode ul{list-style:none;display:grid;gap:7px}
+.mode li{color:var(--sub);font-size:13.5px;padding-left:18px;position:relative}
+.mode li::before{content:"—";position:absolute;left:0;color:var(--cyan)}
+.badge{display:inline-block;font-size:11px;font-weight:700;color:#06202a;background:var(--cyan);
+  border-radius:6px;padding:2px 8px;margin-left:6px;vertical-align:middle}
+
+/* 路径 */
+.path{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-top:24px;text-align:center}
+.path b{color:var(--cyan)}
+.path .arrow{color:var(--gold);margin:0 6px}
+
+/* 对比 */
+.cmp{color:var(--sub);font-size:13.5px;margin-top:16px;border-left:2px solid var(--gold);padding-left:14px}
+.cmp b{color:var(--txt)}
+
+footer{border-top:1px solid var(--line);padding:30px 20px 50px;text-align:center;color:var(--sub);font-size:12.5px}
+footer .brand{color:var(--txt);font-weight:700;font-size:15px;letter-spacing:1px}
+footer a{color:var(--cyan);text-decoration:none}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <img src="guandan-hero.jpg?v=1" alt="AI 蛋吧 · 上海高端掼蛋俱乐部">
+  <div class="hero-cap"><div class="wrap">
+    <h1>让掼蛋成为<b>高端社交</b>的科技名片</h1>
+    <p>为上海产业发展中心打造 · AI 驱动的会员掼蛋赛事</p>
+    <div class="tags">
+      <span class="tag">公平公正</span>
+      <span class="tag">仪式感</span>
+      <span class="tag">可传播</span>
+      <span class="tag">可沉淀</span>
+    </div>
+  </div></div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow">Why Crayxus</div>
+    <h2>我们的特点</h2>
+    <p class="lead">同样办一场掼蛋赛，别人给不了的，正是我们的核心。</p>
+
+    <div class="feat">
+      <div class="fcard">
+        <h3>自研掼蛋 AI「<span>AlphaDan</span>」</h3>
+        <p>普通 / 上帝 / 神级三档棋力。可设"人机大战"表演赛——请会长上台对弈 AI、双屏直播解说，全场爆点。</p>
+      </div>
+      <div class="fcard">
+        <h3>AI 智能<span>赛事系统</span></h3>
+        <p>智能编排、自动计分、实时排名大屏。全程零人工差错、零计分纠纷——高端牌局最看重的就是公平。</p>
+      </div>
+      <div class="fcard">
+        <h3>人人一份<span>电子战报</span></h3>
+        <p>每位嘉宾散场即收到专属对局数据，一键转发朋友圈。把面子做成社交货币，帮中心自发二次传播。</p>
+      </div>
+      <div class="fcard">
+        <h3>AI <span>高光集锦</span></h3>
+        <p>自动生成赛事短视频与精彩片段，沉淀为中心可长期复用的品牌传播素材。</p>
+      </div>
+      <div class="fcard">
+        <h3>可复制<span>赛事 IP</span></h3>
+        <p>赛季积分、冠名体系，一套打法可原样复制到各地市商协会，长期运营、越办越值钱。</p>
+      </div>
+    </div>
+
+    <div class="tables">
+      <div class="tcell">
+        <img src="guandan-table-basic.jpg?v=1" alt="基础版 AI 智能掼蛋桌">
+        <div class="tlabel"><b>基础版 · AI 智能掼蛋桌</b><br>电子发牌识别 · 自动计分</div>
+      </div>
+      <div class="tcell">
+        <img src="guandan-table.jpg?v=1" alt="高级版 Genesis 全息智能掼蛋桌">
+        <div class="tlabel"><b>高级版 · Genesis 全息桌</b><br>沉浸式光效 · 旗舰体验</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--bg2)">
+  <div class="wrap">
+    <div class="eyebrow">Cooperation</div>
+    <h2>三种合作模式</h2>
+    <p class="lead">由轻到重三种方向，您可先选定合作方式，我们据此定制专属方案与报价。</p>
+
+    <div class="modes">
+      <div class="mode">
+        <div class="mhead">
+          <div><div class="mname">选择一 · 首次合作</div><div class="mtitle">试水合作包</div></div>
+          <div class="mfit">单场 · 试水</div>
+        </div>
+        <div class="mdesc">先合作两场，立口碑、建信任</div>
+        <ul>
+          <li>第①场上品牌规格：AlphaDan 人机大战 + 双屏直播 + 高光视频</li>
+          <li>第②场标准常态赛：呈现可月月复制的底座</li>
+          <li>AI 赛事系统 + 实时排名大屏 + 电子签到抽签 + 人人电子战报</li>
+          <li>设备由我方带场，含现场技术运营</li>
+        </ul>
+      </div>
+
+      <div class="mode star">
+        <div class="mhead">
+          <div><div class="mname">选择二 · 年度框架<span class="badge">主推</span></div><div class="mtitle">年框保底 · 常态俱乐部</div></div>
+          <div class="mfit">全年 · 常态</div>
+        </div>
+        <div class="mdesc">全年绑定常态运营，甲方零设备投入</div>
+        <ul>
+          <li>品牌大场 + 标准常态赛组合：季度高潮，月月常态</li>
+          <li>新增嘉宾排行榜、数据画像、专业主持裁判</li>
+          <li>设备由我方提供并循环复用，全年零设备投入</li>
+          <li>把"掼蛋俱乐部"做成中心的常态化招牌</li>
+        </ul>
+      </div>
+
+      <div class="mode">
+        <div class="mhead">
+          <div><div class="mname">选择三 · 深度合伙</div><div class="mtitle">联合运营 IP</div></div>
+          <div class="mfit">长约 · 合伙</div>
+        </div>
+        <div class="mdesc">共建赛事 IP，利益共享、风险共担</div>
+        <ul>
+          <li>基础服务费 + 衍生收入分成（冠名 / 赞助 / 会员 / 企业社交撮合）</li>
+          <li>AI 全息智能桌 26 套 + 全程直播 + 数据中台 + 赛季积分</li>
+          <li>共建"上海产业发展中心 × Crayxus 掼蛋公开赛"</li>
+          <li>资产级 IP，可原样复制到各地市商协会</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="path">
+      建议路径：<b>试水合作</b><span class="arrow">→</span><b>年度框架</b><span class="arrow">→</span><b>联合 IP</b><br>
+      <span style="color:var(--sub);font-size:13px">入口 → 主力 → 升级；选定方向后，我们提供一对一定制报价。</span>
+    </div>
+
+    <div class="cmp">
+      传统人工办赛（请裁判 + 人工计分），办完无数据、无传播、无沉淀，下次从零再来。
+      我们让每一场都沉淀为中心的<b>数据资产与传播素材</b>——越办越值钱。
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="brand">CRAYXUS · AI 掼蛋</div>
+  <div style="margin-top:8px">自研掼蛋 AI 与智能赛事系统 · 高端会员赛事整体方案</div>
+  <div style="margin-top:6px"><a href="https://crayxus.com.au">crayxus.com.au</a></div>
+</footer>
+
+</body>
+</html>

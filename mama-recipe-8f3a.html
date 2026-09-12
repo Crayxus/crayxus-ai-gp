@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>妈妈的养生食谱 · 每日三餐</title>
+
+<!-- ===== 微信 / Open Graph 分享（防白图：绝对地址正方形图 + 版本号）===== -->
+<meta property="og:type"  content="website">
+<meta property="og:title" content="妈妈的养生食谱 · 每天早中晚吃什么">
+<meta property="og:description" content="术后调养·高蛋白·软烂易消化·升白升板补血，每天打开就有当日三餐建议。">
+<meta property="og:url"   content="https://crayxus.com.au/mama-recipe-8f3a.html">
+<meta property="og:site_name" content="Crayxus 养生">
+<meta property="og:image"            content="https://crayxus.com.au/og-mama-recipe.jpg?v=1">
+<meta property="og:image:secure_url" content="https://crayxus.com.au/og-mama-recipe.jpg?v=1">
+<meta property="og:image:type"   content="image/jpeg">
+<meta property="og:image:width"  content="800">
+<meta property="og:image:height" content="800">
+<meta property="og:image:alt"    content="妈妈的养生食谱">
+<!-- 微信专用 itemprop -->
+<meta itemprop="name"        content="妈妈的养生食谱 · 每天早中晚吃什么">
+<meta itemprop="description" content="术后调养·高蛋白·软烂易消化·升白升板补血。">
+<meta itemprop="image"       content="https://crayxus.com.au/og-mama-recipe.jpg?v=1">
+<meta name="twitter:card"  content="summary">
+<meta name="twitter:image" content="https://crayxus.com.au/og-mama-recipe.jpg?v=1">
+
+<style>
+  :root{
+    --bg:#fbf6ee; --card:#ffffff; --ink:#2f2a24; --ink2:#6b6156;
+    --warm:#e0793a; --warm-d:#c9611f; --green:#5f8c4e; --green-bg:#eef4e7;
+    --line:#efe7db; --shadow:0 6px 20px rgba(120,90,50,.10);
+    --r:20px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:-apple-system,"PingFang SC","Microsoft YaHei","Heiti SC",sans-serif;
+    font-size:20px; line-height:1.7; letter-spacing:.2px;
+    -webkit-font-smoothing:antialiased;
+    padding:0 0 40px;
+  }
+  .wrap{max-width:560px;margin:0 auto;padding:0 16px;}
+
+  /* 顶部封面（body内真图，≥200px，防微信白图）*/
+  .hero{
+    position:relative; margin:0 -16px 0; overflow:hidden;
+    border-radius:0 0 28px 28px;
+  }
+  .hero img{width:100%;display:block;min-height:200px;object-fit:cover;}
+
+  .today{
+    background:var(--card); border-radius:var(--r); box-shadow:var(--shadow);
+    margin:-46px 6px 22px; padding:20px 22px; position:relative; z-index:2;
+    text-align:center;
+  }
+  .today .date{font-size:22px;font-weight:800;color:var(--warm-d);}
+  .today .sub{font-size:17px;color:var(--ink2);margin-top:4px;}
+  .today .dayno{
+    display:inline-block;margin-top:10px;font-size:16px;color:var(--green);
+    background:var(--green-bg);padding:4px 14px;border-radius:999px;font-weight:700;
+  }
+
+  h1{font-size:26px;text-align:center;margin:22px 0 4px;font-weight:800;}
+  .lead{text-align:center;color:var(--ink2);font-size:17px;margin:0 0 8px;}
+
+  /* 每一餐卡片 */
+  .meal{
+    background:var(--card); border-radius:var(--r); box-shadow:var(--shadow);
+    margin:0 0 16px; padding:18px 20px; border:1px solid var(--line);
+  }
+  .meal .head{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+  .meal .ico{font-size:34px;line-height:1;flex:0 0 auto;}
+  .meal .when{font-size:15px;color:var(--ink2);font-weight:600;}
+  .meal .name{font-size:22px;font-weight:800;color:var(--warm-d);}
+  .meal ul{margin:6px 0 0;padding:0;list-style:none;}
+  .meal li{
+    position:relative;padding:7px 0 7px 26px;border-top:1px dashed var(--line);
+    font-size:20px;
+  }
+  .meal li:first-child{border-top:none;}
+  .meal li::before{
+    content:"";position:absolute;left:4px;top:16px;
+    width:9px;height:9px;border-radius:50%;background:var(--warm);
+  }
+  .meal .tip{
+    margin-top:12px;background:var(--green-bg);border-radius:14px;
+    padding:10px 14px;font-size:17px;color:#41632f;line-height:1.6;
+  }
+  .meal .tip b{color:var(--green);}
+
+  /* 常驻：每日原则 + 忌口 */
+  .rules{
+    background:#fff;border-radius:var(--r);box-shadow:var(--shadow);
+    border:1px solid var(--line);margin:6px 0 16px;overflow:hidden;
+  }
+  .rules .rtitle{
+    background:var(--warm);color:#fff;font-size:19px;font-weight:800;
+    padding:12px 20px;
+  }
+  .rules .rbody{padding:8px 20px 16px;}
+  .rules .rbody div{padding:9px 0 9px 28px;position:relative;font-size:18px;border-top:1px solid var(--line);}
+  .rules .rbody div:first-child{border-top:none;}
+  .rules .rbody div::before{position:absolute;left:0;top:8px;font-size:20px;}
+  .rules.good .rbody div::before{content:"✅";}
+  .rules.bad .rbody div::before{content:"⛔";}
+
+  /* 控制按钮 */
+  .ctrl{display:flex;gap:12px;margin:4px 0 20px;}
+  .ctrl button{
+    flex:1;border:none;border-radius:16px;padding:15px 0;font-size:19px;font-weight:800;
+    background:#fff;color:var(--warm-d);box-shadow:var(--shadow);border:1px solid var(--line);
+  }
+  .ctrl button.primary{background:var(--warm);color:#fff;border-color:var(--warm);}
+  .ctrl button:active{transform:scale(.97);}
+
+  .protein{
+    background:linear-gradient(135deg,#fff2e6,#ffe8d3);border-radius:var(--r);
+    padding:16px 20px;margin:0 0 16px;border:1px solid #f3d9bf;
+  }
+  .protein b{color:var(--warm-d);}
+
+  .note{
+    font-size:14px;color:var(--ink2);line-height:1.7;text-align:center;
+    background:#f3ede3;border-radius:16px;padding:14px 18px;margin:10px 0 0;
+  }
+  .foot{text-align:center;color:#b6ab9c;font-size:13px;margin-top:20px;}
+  .sec-label{font-size:15px;color:var(--ink2);text-align:center;margin:26px 0 10px;letter-spacing:2px;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <img src="https://crayxus.com.au/og-mama-recipe.jpg?v=1" alt="妈妈的养生食谱">
+</div>
+
+<div class="wrap">
+
+  <div class="today">
+    <div class="date" id="date">今天</div>
+    <div class="sub" id="weekday"></div>
+    <div class="dayno" id="dayno"></div>
+  </div>
+
+  <h1>妈妈今天吃什么</h1>
+  <p class="lead">术后调养 · 少食多餐 · 高蛋白软烂 · 温热好消化</p>
+
+  <div class="protein">
+    🥚 <b>今日蛋白重点：</b><span id="proteinFocus"></span>
+  </div>
+
+  <div id="meals"></div>
+
+  <div class="ctrl">
+    <button onclick="shift(-1)">← 看昨天</button>
+    <button class="primary" onclick="goToday()">回到今天</button>
+    <button onclick="shift(1)">看明天 →</button>
+  </div>
+
+  <div class="sec-label">— 每天都要记住 —</div>
+
+  <div class="rules good">
+    <div class="rtitle">✅ 每日原则</div>
+    <div class="rbody">
+      <div>一天分 <b>5～6 小餐</b>，每餐七分饱，慢慢嚼、小口吃</div>
+      <div>饭菜要 <b>软、烂、温热</b>，太烫太凉都伤胃</div>
+      <div><b>干稀分开</b>：吃饭时少喝汤水，饭后半小时再喝，防止胀和"倾倒"</div>
+      <div>每餐都要有 <b>优质蛋白</b>（蛋、鱼、瘦肉、豆腐、奶）来长肉、升白细胞血小板</div>
+      <div>饭后 <b>靠坐 30 分钟</b>再躺，睡前 2 小时不进食</div>
+      <div>所有食物 <b>彻底煮熟</b>，白细胞低要防感染</div>
+    </div>
+  </div>
+
+  <div class="rules bad">
+    <div class="rtitle">⛔ 这些先别碰</div>
+    <div class="rbody">
+      <div>生冷凉拌、隔夜菜、生鱼生肉、没洗净的瓜果（防感染）</div>
+      <div>辛辣、油炸、烧烤、腌制腊味、咸菜</div>
+      <div>浓茶、咖啡、酒、碳酸饮料、太甜的点心（甜多易倾倒）</div>
+      <div>粗硬、带筋、带刺、大块难嚼的食物；糯米、年糕黏食</div>
+      <div>产气多的：大量红薯、豆浆一次别太多、韭菜</div>
+    </div>
+  </div>
+
+  <div class="note" id="med">
+    ℹ️ 本食谱为居家调养的一般营养建议，<b>不替代医生和临床营养师的诊疗</b>。
+    妈妈刚做完胃部手术、白细胞与血小板偏低，请以主治医生医嘱为准；
+    复查时可把这份食谱给医生看看是否需要调整。
+    若出现进食后剧烈腹痛、呕吐、发热、黑便、明显乏力，请<b>及时就医</b>。
+  </div>
+
+  <div class="foot">Crayxus · 为妈妈做的 ❤️ · 每天打开看今天吃什么</div>
+
+</div>
+
+<script>
+/* ===== 14 天轮换食谱 =====
+   针对：胃部分切除术后调养 + 白细胞低 + 血小板低
+   要点：软烂 / 高蛋白 / 温热 / 少食多餐 / 升白升板补血 */
+const PLAN = [
+ {
+  focus:"鸡蛋 + 鱼肉，最好消化的两种优质蛋白。",
+  meals:[
+   {ico:"🌅",when:"07:00 早餐",name:"温软起床餐",items:["小米燕麦粥（煮到软烂）","嫩鸡蛋羹 1 个","南瓜泥少许"],tip:"<b>蛋白</b>：鸡蛋羹加几滴香油更顺口，是术后最温和的蛋白来源。"},
+   {ico:"🍎",when:"09:30 上午加餐",name:"加餐",items:["温牛奶或无糖酸奶 小半杯","苏打饼干 2 片"],tip:"奶类耐受就每天喝，补蛋白补钙；不耐受改酸奶。"},
+   {ico:"🍚",when:"12:00 午餐",name:"软饭正餐",items:["软米饭 小半碗","清蒸龙利鱼/鲈鱼（去刺压碎）","胡萝卜土豆炖到软"],tip:"<b>蛋白</b>：白肉鱼刺少肉嫩，最适合术后，慢慢吃。"},
+   {ico:"🍵",when:"15:00 下午加餐",name:"加餐",items:["红枣枸杞小米糊","蒸山药 2 块"],tip:"红枣连皮煮软，温和养血、帮着升血小板。"},
+   {ico:"🌙",when:"18:00 晚餐",name:"清淡晚餐",items:["软烂面条（少汤）","豆腐嫩肉末羹","焯软的青菜切碎"],tip:"晚餐比午餐再少一点，七分饱。"},
+   {ico:"🛌",when:"20:00 睡前",name:"睡前（可选）",items:["温牛奶 小半杯"],tip:"睡前 2 小时前喝完，别空腹入睡也别吃太饱。"}
+  ]
+ },
+ {
+  focus:"鸡胸肉泥 + 豆腐，长肌肉、补体力。",
+  meals:[
+   {ico:"🌅",when:"07:00 早餐",name:"温软起床餐",items:["大米山药粥","水煮蛋 1 个（去壳压软）","蒸南瓜"],tip:"<b>蛋白</b>：鸡蛋整颗煮嫩，蛋黄也要吃，含铁帮补血。"},
+   {ico:"🍎",when:"09:30 上午加餐",name:"加餐",items:["蒸苹果泥","无糖酸奶 小半杯"],tip:"苹果蒸软好消化，比生吃温和。"},
+   {ico:"🍚",when:"12:00 午餐",name:"软饭正餐",items:["软米饭 小半碗","鸡胸肉末炖冬瓜（肉剁细）","西红柿炒蛋（少油）"],tip:"<b>蛋白</b>：鸡胸肉先剁成泥再炖，好嚼好吸收。"},
+   {ico:"🍵",when:"15:00 下午加餐",name:"加餐",items:["花生红衣煮软 一小把","温豆浆 小半杯"],tip:"<b>花生连红衣</b>吃，对升血小板有帮助，要煮软煮烂。"},
+   {ico:"🌙",when:"18:00 晚餐",name:"清淡晚餐",items:["蔬菜瘦肉粥","嫩豆腐蒸虾滑","焯软西兰花切小"],tip:"豆腐是植物蛋白好来源，配一点虾滑更鲜。"},
+   {ico:"🛌",when:"20:00 睡前",name:"睡前（可选）",items:["温牛奶或蛋白粉冲饮 小半杯"],tip:"胃口小、体重掉得快时，可加一勺乳清蛋白粉。"}
+  ]
+ },
+ {
+  focus:"猪肝/鸭血补铁补血，帮升白细胞。",
+  meals:[
+   {ico:"🌅",when:"07:00 早餐",name:"温软起床餐",items:["猪肝瘦肉粥（肝煮透切碎）","嫩蛋羹","蒸胡萝卜"],tip:"<b>蛋白+补血</b>：猪肝每周 2～3 次、每次少量，富含铁和维B。"},
+   {ico:"🍎",when:"09:30 上午加餐",name:"加餐",items:["温牛奶 小半杯","蒸蛋糕/软面包 一小块"],tip:"点心选不太甜的，防倾倒。"},
+   {ico:"🍚",when:"12:00 午餐",name:"软饭正餐",items:["软米饭 小半碗","鲈鱼豆腐煲（去刺）","菠菜焯软切碎"],tip:"<b>菠菜</b>先焯水再吃，含叶酸和铁，帮着造血。"},
+   {ico:"🍵",when:"15:00 下午加餐",name:"加餐",items:["红枣花生小米糊","蒸山药"],tip:"这一餐专门养血升板，红枣花生都要煮到烂。"},
+   {ico:"🌙",when:"18:00 晚餐",name:"清淡晚餐",items:["软烂疙瘩汤（少汤）","鸡蛋瘦肉末","炖南瓜"],tip:"晚餐好消化为主，别吃太饱。"},
+   {ico:"🛌",when:"20:00 睡前",name:"睡前（可选）",items:["温酸奶 小半杯"],tip:"酸奶帮肠道舒服，选无糖或低糖的。"}
+  ]
+ },
+ {
+  focus:"鳕鱼 + 鸡蛋，优质蛋白双补。",
+  meals:[
+   {ico:"🌅",when:"07:00 早餐",name:"温软起床餐",items:["燕麦牛奶糊（煮软）","溏心度全熟的水煮蛋 1 个","蒸紫薯少许"],tip:"<b>蛋白</b>：牛奶煮燕麦，一碗兼顾蛋白和主食。"},
+   {ico:"🍎",when:"09:30 上午加餐",name:"加餐",items:["木瓜蒸软","无糖酸奶"],tip:"木瓜温和助消化。"},
+   {ico:"🍚",when:"12:00 午餐",name:"软饭正餐",items:["软米饭 小半碗","清蒸鳕鱼（去刺压碎）","土豆胡萝卜泥"],tip:"<b>蛋白</b>：鳕鱼肉嫩无小刺，很适合术后老人。"},
+   {ico:"🍵",when:"15:00 下午加餐",name:"加餐",items:["黑芝麻核桃糊","蒸蛋 1 个"],tip:"芝麻核桃磨糊，补营养又好吞。"},
+   {ico:"🌙",when:"18:00 晚餐",name:"清淡晚餐",items:["瘦肉青菜软面","嫩豆腐羹","焯软油麦菜切碎"],tip:"面条煮软，汤留少量，干稀分开。"},
+   {ico:"🛌",when:"20:00 睡前",name:"睡前（可选）",items:["温牛奶 小半杯"],tip:""}
+  ]
+ },
+ {
+  focus:"虾仁 + 蛋，高蛋白低脂肪。",
+  meals:[
+   {ico:"🌅",when:"07:00 早餐",name:"温软起床餐",items:["小米南瓜粥","虾仁蒸蛋羹","蒸山药"],tip:"<b>蛋白</b>：虾仁剁碎拌进蛋羹，鲜嫩好吸收。"},
+   {ico:"🍎",when:"09:30 上午加餐",name:"加餐",items:["温牛奶","苏打饼干 2 片"],tip:""},
+   {ico:"🍚",when:"12:00 午餐",name:"软饭正餐",items:["软米饭 小半碗","番茄龙利鱼（去刺）","炖软的西葫芦"],tip:"<b>蛋白</b>：番茄的酸味开胃，鱼肉压碎慢吃。"},
+   {ico:"🍵",when:"15:00 下午加餐",name:"加餐",items:["红豆花生沙（煮烂少糖）","温豆浆 小半杯"],tip:"<b>花生红衣</b>要留着，升血小板。"},
+   {ico:"🌙",when:"18:00 晚餐",name:"清淡晚餐",items:["鸡蓉玉米羹","软米饭 少半碗","焯软小白菜"],tip:"鸡蓉玉米羹细软，暖胃好喝。"},
+   {ico:"🛌",when:"20:00 睡前",name:"睡前（可选）",items:["蛋白粉冲牛奶 小半杯"],tip:"体重下降明显时优先补蛋白。"}
+  ]
+ },
+ {
+  focus:"牛肉末补铁 + 鸡蛋，升白补血。",
+  meals:[
+   {ico:"🌅",when:"07:00 早餐",name:"温软起床餐",items:["大米粥","牛肉末蒸蛋（肉剁极细）","蒸南瓜"],tip:"<b>蛋白+铁</b>：瘦牛肉剁泥，补铁升白，一定要炖到软烂。"},
+   {ico:"🍎",when:"09:30 上午加餐",name:"加餐",items:["蒸苹果泥","无糖酸奶"],tip:""},
+   {ico:"🍚",when:"12:00 午餐",name:"软饭正餐",items:["软米饭 小半碗","鲳鱼/鲈鱼清蒸（去刺）","胡萝卜炖软"],tip:"<b>蛋白</b>：换换鱼的种类，营养更全面。"},
+   {ico:"🍵",when:"15:00 下午加餐",name:"加餐",items:["红枣小米糊","核桃 1～2 颗磨碎"],tip:"红枣养血。"},
+   {ico:"🌙",when:"18:00 晚餐",name:"清淡晚餐",items:["瘦肉豆腐软面","焯软青菜切碎"],tip:""},
+   {ico:"🛌",when:"20:00 睡前",name:"睡前（可选）",items:["温牛奶 小半杯"],tip:""}
+  ]
+ },
+ {
+  focus:"三文鱼 + 蛋，好脂肪 + 好蛋白。",
+  meals:[
+   {ico:"🌅",when:"07:00 早餐",name:"温软起床餐",items:["山药大米粥","嫩蛋羹","蒸胡萝卜"],tip:"<b>蛋白</b>：山药养胃护黏膜，配蛋羹很温和。"},
+   {ico:"🍎",when:"09:30 上午加餐",name:"加餐",items:["温牛奶","软面包一小块"],tip:""},
+   {ico:"🍚",when:"12:00 午餐",name:"软饭正餐",items:["软米饭 小半碗","清蒸三文鱼（压碎）","炖软冬瓜"],tip:"<b>蛋白</b>：三文鱼含好脂肪，量不用多，一小块即可。"},
+   {ico:"🍵",when:"15:00 下午加餐",name:"加餐",items:["花生红衣糊","蒸山药"],tip:"<b>花生红衣</b>升血小板。"},
+   {ico:"🌙",when:"18:00 晚餐",name:"清淡晚餐",items:["蔬菜鸡蛋软面","嫩豆腐","焯软油菜切碎"],tip:""},
+   {ico:"🛌",when:"20:00 睡前",name:"睡前（可选）",items:["温酸奶 小半杯"],tip:""}
+  ]
+ },
+ {
+  focus:"鸡蛋 + 豆腐，清淡长力气的一天。",
+  meals:[
+   {ico:"🌅",when:"07:00 早餐",name:"温软起床餐",items:["燕麦小米粥","水煮蛋 1 个（压软）","蒸南瓜"],tip:"<b>蛋白</b>：每天一个蛋，是最省心的蛋白来源。"},
+   {ico:"🍎",when:"09:30 上午加餐",name:"加餐",items:["蒸梨/蒸苹果","无糖酸奶"],tip:"水果都蒸软吃，护胃。"},
+   {ico:"🍚",when:"12:00 午餐",name:"软饭正餐",items:["软米饭 小半碗","嫩豆腐炖鱼片（去刺）","胡萝卜土豆泥"],tip:"<b>蛋白</b>：豆腐+鱼，双份优质蛋白。"},
+   {ico:"🍵",when:"15:00 下午加餐",name:"加餐",items:["红枣枸杞小米糊","核桃碎"],tip:""},
+   {ico:"🌙",when:"18:00 晚餐",name:"清淡晚餐",items:["瘦肉末青菜粥","蒸蛋半个","焯软菜心"],tip:"晚餐清淡，帮夜里好睡不胀。"},
+   {ico:"🛌",when:"20:00 睡前",name:"睡前（可选）",items:["温牛奶或蛋白粉 小半杯"],tip:""}
+  ]
+ },
+ {
+  focus:"鸡肝 + 蛋，补铁补维B，升白细胞。",
+  meals:[
+   {ico:"🌅",when:"07:00 早餐",name:"温软起床餐",items:["鸡肝瘦肉粥（肝煮透剁碎）","嫩蛋羹","蒸山药"],tip:"<b>补血升白</b>：动物肝脏每周 2～3 次、每次一小勺，铁和B12很足。"},
+   {ico:"🍎",when:"09:30 上午加餐",name:"加餐",items:["温牛奶","苏打饼干"],tip:""},
+   {ico:"🍚",when:"12:00 午餐",name:"软饭正餐",items:["软米饭 小半碗","龙利鱼豆腐煲（去刺）","焯软菠菜切碎"],tip:"<b>菠菜</b>补叶酸，先焯水去草酸。"},
+   {ico:"🍵",when:"15:00 下午加餐",name:"加餐",items:["红豆花生沙（少糖煮烂）","温豆浆"],tip:"<b>花生红衣</b>别去。"},
+   {ico:"🌙",when:"18:00 晚餐",name:"清淡晚餐",items:["鸡蓉南瓜羹","软米饭 少半碗","焯软青菜"],tip:""},
+   {ico:"🛌",when:"20:00 睡前",name:"睡前（可选）",items:["温牛奶 小半杯"],tip:""}
+  ]
+ },
+ {
+  focus:"鳕鱼 + 蒸蛋，无刺好嚼的一天。",
+  meals:[
+   {ico:"🌅",when:"07:00 早餐",name:"温软起床餐",items:["大米山药粥","虾仁蒸蛋","蒸紫薯少许"],tip:"<b>蛋白</b>：虾仁蒸蛋鲜嫩，老人爱吃。"},
+   {ico:"🍎",when:"09:30 上午加餐",name:"加餐",items:["蒸苹果泥","无糖酸奶"],tip:""},
+   {ico:"🍚",when:"12:00 午餐",name:"软饭正餐",items:["软米饭 小半碗","清蒸鳕鱼（压碎）","西红柿炖软"],tip:"<b>蛋白</b>：鳕鱼无小刺，最放心。"},
+   {ico:"🍵",when:"15:00 下午加餐",name:"加餐",items:["黑芝麻核桃糊","红枣 2 颗煮软"],tip:""},
+   {ico:"🌙",when:"18:00 晚餐",name:"清淡晚餐",items:["瘦肉豆腐软面","焯软小白菜切碎"],tip:""},
+   {ico:"🛌",when:"20:00 睡前",name:"睡前（可选）",items:["温牛奶 小半杯"],tip:""}
+  ]
+ },
+ {
+  focus:"牛肉 + 蛋，补铁升白的加强日。",
+  meals:[
+   {ico:"🌅",when:"07:00 早餐",name:"温软起床餐",items:["小米粥","牛肉末蒸蛋（极细）","蒸南瓜"],tip:"<b>蛋白+铁</b>：牛肉泥炖软，补体力。"},
+   {ico:"🍎",when:"09:30 上午加餐",name:"加餐",items:["温牛奶","软面包一小块"],tip:""},
+   {ico:"🍚",when:"12:00 午餐",name:"软饭正餐",items:["软米饭 小半碗","鲈鱼清蒸（去刺）","炖软西葫芦"],tip:"<b>蛋白</b>：鱼肉细软好吸收。"},
+   {ico:"🍵",when:"15:00 下午加餐",name:"加餐",items:["花生红衣糊","蒸山药"],tip:"<b>花生红衣</b>升血小板。"},
+   {ico:"🌙",when:"18:00 晚餐",name:"清淡晚餐",items:["蔬菜鸡蛋软面","嫩豆腐羹","焯软菜心"],tip:""},
+   {ico:"🛌",when:"20:00 睡前",name:"睡前（可选）",items:["蛋白粉冲牛奶 小半杯"],tip:""}
+  ]
+ },
+ {
+  focus:"鲈鱼 + 蛋，清爽补蛋白。",
+  meals:[
+   {ico:"🌅",when:"07:00 早餐",name:"温软起床餐",items:["燕麦牛奶糊","水煮蛋 1 个","蒸胡萝卜"],tip:"<b>蛋白</b>：牛奶+蛋，早餐蛋白足。"},
+   {ico:"🍎",when:"09:30 上午加餐",name:"加餐",items:["木瓜蒸软","无糖酸奶"],tip:""},
+   {ico:"🍚",when:"12:00 午餐",name:"软饭正餐",items:["软米饭 小半碗","鲈鱼豆腐煲（去刺）","焯软油麦菜切碎"],tip:"<b>蛋白</b>：鱼+豆腐双蛋白。"},
+   {ico:"🍵",when:"15:00 下午加餐",name:"加餐",items:["红枣花生小米糊","核桃碎"],tip:"养血升板小组合。"},
+   {ico:"🌙",when:"18:00 晚餐",name:"清淡晚餐",items:["鸡蓉玉米羹","软米饭 少半碗","焯软青菜"],tip:""},
+   {ico:"🛌",when:"20:00 睡前",name:"睡前（可选）",items:["温牛奶 小半杯"],tip:""}
+  ]
+ },
+ {
+  focus:"虾滑 + 蛋，鲜嫩高蛋白。",
+  meals:[
+   {ico:"🌅",when:"07:00 早餐",name:"温软起床餐",items:["南瓜小米粥","虾滑蒸蛋羹","蒸山药"],tip:"<b>蛋白</b>：虾滑拌蛋羹，好消化又鲜。"},
+   {ico:"🍎",when:"09:30 上午加餐",name:"加餐",items:["温牛奶","苏打饼干"],tip:""},
+   {ico:"🍚",when:"12:00 午餐",name:"软饭正餐",items:["软米饭 小半碗","番茄龙利鱼（去刺）","土豆胡萝卜泥"],tip:"<b>蛋白</b>：番茄开胃，鱼肉压碎。"},
+   {ico:"🍵",when:"15:00 下午加餐",name:"加餐",items:["红豆花生沙（煮烂）","温豆浆"],tip:"<b>花生红衣</b>留着。"},
+   {ico:"🌙",when:"18:00 晚餐",name:"清淡晚餐",items:["瘦肉青菜软面","蒸蛋半个","焯软小白菜"],tip:""},
+   {ico:"🛌",when:"20:00 睡前",name:"睡前（可选）",items:["温酸奶 小半杯"],tip:""}
+  ]
+ },
+ {
+  focus:"猪血/鸭血补铁 + 蛋，升白补血收尾日。",
+  meals:[
+   {ico:"🌅",when:"07:00 早餐",name:"温软起床餐",items:["大米粥","鸭血豆腐嫩蛋羹（血煮透切小）","蒸南瓜"],tip:"<b>补血</b>：鸭血/猪血含铁高又软嫩，务必彻底煮熟。"},
+   {ico:"🍎",when:"09:30 上午加餐",name:"加餐",items:["蒸苹果泥","无糖酸奶"],tip:""},
+   {ico:"🍚",when:"12:00 午餐",name:"软饭正餐",items:["软米饭 小半碗","清蒸鱼（去刺）","焯软菠菜切碎"],tip:"<b>蛋白+叶酸</b>：鱼配菠菜。"},
+   {ico:"🍵",when:"15:00 下午加餐",name:"加餐",items:["红枣枸杞花生糊","蒸山药"],tip:"<b>花生红衣</b>升板，红枣养血。"},
+   {ico:"🌙",when:"18:00 晚餐",name:"清淡晚餐",items:["鸡蓉南瓜羹","软米饭 少半碗","焯软青菜"],tip:"一轮结束，明天回到第 1 天继续。"},
+   {ico:"🛌",when:"20:00 睡前",name:"睡前（可选）",items:["温牛奶或蛋白粉 小半杯"],tip:""}
+  ]
+ }
+];
+
+const WEEK=["星期日","星期一","星期二","星期三","星期四","星期五","星期六"];
+let offset=0; // 相对今天的天数偏移
+
+function baseDayIndex(d){
+  // 用"距某个固定起点的天数"取模，保证每天稳定、连续轮换
+  const start=Date.UTC(2026,0,1); // 固定锚点
+  const cur=Date.UTC(d.getFullYear(),d.getMonth(),d.getDate());
+  const days=Math.floor((cur-start)/86400000);
+  return ((days%PLAN.length)+PLAN.length)%PLAN.length;
+}
+
+function render(){
+  const d=new Date();
+  d.setDate(d.getDate()+offset);
+  const idx=baseDayIndex(d);
+  const plan=PLAN[idx];
+
+  const mm=d.getMonth()+1, dd=d.getDate();
+  document.getElementById("date").textContent =
+    (offset===0?"今天 · ":offset===1?"明天 · ":offset===-1?"昨天 · ":"") + mm+"月"+dd+"日";
+  document.getElementById("weekday").textContent = WEEK[d.getDay()];
+  document.getElementById("dayno").textContent = "食谱第 "+(idx+1)+" 天 / 共 "+PLAN.length+" 天轮换";
+  document.getElementById("proteinFocus").textContent = plan.focus;
+
+  const box=document.getElementById("meals");
+  box.innerHTML="";
+  plan.meals.forEach(m=>{
+    const li=m.items.map(x=>"<li>"+x+"</li>").join("");
+    const tip=m.tip? '<div class="tip">💡 '+m.tip+'</div>' : '';
+    box.insertAdjacentHTML("beforeend",
+      '<div class="meal"><div class="head"><div class="ico">'+m.ico+'</div>'+
+      '<div><div class="when">'+m.when+'</div><div class="name">'+m.name+'</div></div></div>'+
+      '<ul>'+li+'</ul>'+tip+'</div>');
+  });
+  window.scrollTo({top:0,behavior:offset===0?'auto':'smooth'});
+}
+function shift(n){offset+=n;render();}
+function goToday(){offset=0;render();}
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,2925 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CRAYXUS AI GP — 面向 K12 的 AI 自动驾驶赛事 IP</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  :root{
+    --bg:#06090f; --bg2:#0c1220; --panel:#0e1628; --line:#1c2740;
+    --txt:#e7eef8; --dim:#8aa0c2; --mute:#566b8c;
+    --pri:#5af; --pri2:#2a6fff; --ok:#5fa; --warn:#fc6; --hot:#f55;
+    --grad-cool:linear-gradient(135deg,#2a6fff,#5af 60%,#5fa);
+    --grad-hot:linear-gradient(135deg,#ff5b6e,#fc6 60%,#fff);
+  }
+  html,body{background:var(--bg);color:var(--txt);font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.55;scroll-behavior:smooth;}
+  body{overflow-x:hidden;}
+  a{color:inherit;text-decoration:none;}
+  .container{max-width:1280px;margin:0 auto;padding:0 32px;}
+
+  /* === NAV === */
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(6,9,15,.78);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);}
+  nav .container{display:flex;align-items:center;justify-content:space-between;height:64px;}
+  .logo{font-weight:700;font-size:17px;letter-spacing:1.5px;}
+  .logo .dot{color:var(--pri);}
+  .nav-links{display:flex;gap:28px;font-size:13.5px;color:var(--dim);}
+  .nav-links a:hover{color:var(--pri);}
+  .nav-cta{background:var(--pri2);color:#fff;padding:8px 18px;border-radius:6px;font-size:13px;font-weight:600;}
+  .nav-cta:hover{background:#3d80ff;}
+
+  /* === HERO === */
+  .hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden;padding-top:64px;}
+  .hero .bg{position:absolute;inset:0;background:url('poster.png') right center/cover no-repeat;opacity:0;filter:saturate(1.15) brightness(.95);
+    animation:bgIn 1.8s cubic-bezier(.16,.84,.44,1) forwards, bgPan 22s ease-in-out 1.8s infinite alternate;}
+  .hero .bg::after{content:'';position:absolute;inset:0;background:
+    linear-gradient(90deg,var(--bg) 0%,rgba(6,9,15,.85) 30%,rgba(6,9,15,.45) 60%,rgba(6,9,15,.55) 100%),
+    linear-gradient(180deg,rgba(6,9,15,.4) 0%,transparent 30%,rgba(6,9,15,.7) 80%,var(--bg) 100%);}
+  /* 速度光痕扫过 */
+  .hero .streak{position:absolute;top:30%;left:-30%;width:60%;height:2px;
+    background:linear-gradient(90deg,transparent,#5af 30%,#fff 50%,#5fa 70%,transparent);
+    filter:blur(2px);transform:skewY(-8deg);opacity:0;animation:streak 4.5s ease-out 1s infinite;}
+  .hero .streak.s2{top:55%;animation-delay:2.6s;animation-duration:5s;}
+  .hero .streak.s3{top:72%;animation-delay:4.1s;}
+  /* 浮动粒子 */
+  .hero .particle{position:absolute;width:3px;height:3px;background:#5af;border-radius:50%;
+    box-shadow:0 0 8px #5af, 0 0 16px #5af;opacity:0;animation:particleFloat 5s ease-in-out infinite;}
+  /* 入场动画 */
+  @keyframes bgIn{from{opacity:0;transform:scale(1.15) translateX(40px);}to{opacity:.42;transform:scale(1) translateX(0);}}
+  @keyframes bgPan{0%{transform:scale(1) translateX(0);}100%{transform:scale(1.06) translateX(-20px);}}
+  @keyframes streak{0%{left:-30%;opacity:0;}10%{opacity:1;}40%{left:130%;opacity:0;}100%{left:130%;opacity:0;}}
+  @keyframes particleFloat{0%,100%{opacity:0;transform:translate(0,0);}50%{opacity:.7;transform:translate(20px,-30px);}}
+  @keyframes textRise{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+  .hero-pill{animation:textRise .7s cubic-bezier(.16,.84,.44,1) .4s both;}
+  .hero h1{animation:textRise .9s cubic-bezier(.16,.84,.44,1) .6s both;font-size:120px !important;letter-spacing:-3px !important;line-height:1 !important;display:flex;align-items:center;gap:28px;flex-wrap:wrap;}
+  .hero h1 .from{color:rgba(231,238,248,.42);font-weight:600;}
+  .hero h1 .arrow{display:inline-block;color:var(--pri);font-weight:300;animation:arrowSlide 1.8s ease-in-out infinite;text-shadow:0 0 24px rgba(85,170,255,.6);}
+  @keyframes arrowSlide{0%,100%{transform:translateX(0);}50%{transform:translateX(14px);}}
+  @media (max-width:900px){.hero h1{font-size:72px !important;gap:14px;}}
+  .hero h1 .hl{position:relative;display:inline-block;}
+  .hero h1 .hl::after{content:'';position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--grad-cool);
+    transform:scaleX(0);transform-origin:left;animation:underline 1.2s cubic-bezier(.16,.84,.44,1) 1.4s forwards;}
+  @keyframes underline{to{transform:scaleX(1);}}
+  .hero p.sub{animation:textRise .8s cubic-bezier(.16,.84,.44,1) .85s both;}
+  .hero .pillars{animation:textRise .7s cubic-bezier(.16,.84,.44,1) 1.05s both;}
+  .hero .pillar{transition:transform .25s,border-color .25s;}
+  .hero .pillar:hover{transform:translateY(-3px);border-color:var(--pri);}
+  .hero-cta{animation:textRise .7s cubic-bezier(.16,.84,.44,1) 1.25s both;}
+  .btn-pri{position:relative;overflow:hidden;}
+  .btn-pri::before{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);
+    transition:left .6s;}
+  .btn-pri:hover::before{left:120%;}
+  .hero .container{position:relative;z-index:2;}
+  .hero-pill{display:inline-block;padding:6px 14px;border:1px solid var(--pri);border-radius:20px;font-size:12px;color:var(--pri);letter-spacing:2px;margin-bottom:24px;background:rgba(85,170,255,.08);}
+  .hero h1{font-size:64px;line-height:1.05;letter-spacing:-1.5px;font-weight:800;margin-bottom:18px;}
+  .hero h1 .hl{background:var(--grad-cool);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .hero p.sub{font-size:19px;color:var(--dim);max-width:680px;margin-bottom:36px;}
+  .hero .pillars{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:42px;}
+  .pillar{padding:10px 18px;background:rgba(14,22,40,.7);border:1px solid var(--line);border-radius:8px;font-size:13px;color:var(--txt);}
+  .pillar b{color:var(--pri);margin-right:6px;}
+  .hero-cta{display:flex;gap:14px;}
+  .btn{display:inline-block;padding:14px 28px;border-radius:8px;font-size:14px;font-weight:600;border:none;cursor:pointer;transition:transform .15s,background .15s;}
+  .btn:hover{transform:translateY(-2px);}
+  .btn-pri{background:var(--pri2);color:#fff;}
+  .btn-pri:hover{background:#3d80ff;}
+  .btn-ghost{background:transparent;color:var(--txt);border:1px solid var(--line);}
+  .btn-ghost:hover{border-color:var(--pri);color:var(--pri);}
+  /* === SECTION === */
+  section.s{padding:110px 0;position:relative;}
+  section.alt{background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 50%,var(--bg) 100%);}
+  .eyebrow{font-size:11px;color:var(--pri);letter-spacing:3px;font-weight:600;margin-bottom:14px;}
+  .s h2{font-size:42px;line-height:1.15;font-weight:800;margin-bottom:18px;letter-spacing:-0.5px;max-width:760px;}
+  .s h2 .hl{background:var(--grad-cool);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .s .lede{font-size:17px;color:var(--dim);max-width:680px;margin-bottom:48px;}
+
+  /* === COMPOSER === */
+  .composer-grid{display:flex;flex-direction:column;gap:18px;margin-top:24px;}
+  .composer-side button.btn{transition:all .15s;}
+  #cmpTbl th{padding:6px 4px;font-size:10px;letter-spacing:1px;font-weight:600;}
+  #cmpTbl td{padding:3px 2px;border-bottom:1px solid var(--line);}
+  #cmpTbl input{width:55px;background:#06090f;color:var(--txt);border:1px solid var(--line);padding:3px 4px;border-radius:3px;text-align:center;font-family:inherit;font-size:11px;}
+  #cmpTbl input:focus{outline:none;border-color:var(--pri);}
+  #cmpTbl .nudge{background:#1a2540;color:var(--pri);border:none;padding:2px 5px;border-radius:3px;cursor:pointer;font-size:9px;margin:0 1px;}
+  #cmpTbl .nudge:hover{background:#2a3a60;}
+
+  /* === LIVE CONTROL === */
+  .live-grid{display:grid;grid-template-columns:380px 1fr;gap:20px;margin-top:24px;}
+  .live-panel{background:linear-gradient(160deg,#0d1628,#06090f);border:1px solid var(--line);border-radius:14px;padding:24px;position:relative;overflow:hidden;}
+  .live-panel::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#5af 30%,#5fa 70%,transparent);}
+  .live-panel h4{font-size:11px;color:var(--pri);letter-spacing:2.5px;margin-bottom:16px;font-weight:700;display:flex;align-items:center;gap:8px;}
+  .live-panel h4::before{content:'';width:4px;height:14px;background:var(--pri);border-radius:2px;}
+  .conn-row{display:flex;gap:8px;margin-bottom:12px;}
+  .conn-row input{flex:1;background:#020409;border:1px solid var(--line);color:var(--txt);padding:12px 14px;border-radius:8px;font-size:13px;font-family:"SF Mono","Consolas",monospace;transition:.15s;}
+  .conn-row input:focus{outline:none;border-color:var(--pri);box-shadow:0 0 0 3px rgba(85,170,255,.12);}
+  .conn-btn{padding:12px 20px;background:linear-gradient(135deg,#2a6fff,#5af);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:1px;transition:.15s;box-shadow:0 4px 12px rgba(42,111,255,.3);}
+  .conn-btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(42,111,255,.45);}
+  .conn-status{font-size:11px;color:var(--mute);letter-spacing:1px;margin-bottom:18px;padding:8px 10px;background:#020409;border-radius:6px;border:1px solid var(--line);}
+  .conn-status .ind{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--mute);margin-right:8px;}
+  .conn-status.ok .ind{background:var(--ok);box-shadow:0 0 12px var(--ok);animation:pulse 1.4s infinite;}
+  .conn-status.err .ind{background:var(--hot);box-shadow:0 0 8px var(--hot);}
+
+  .dpad{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:18px;padding:14px;background:#020409;border-radius:12px;border:1px solid var(--line);}
+  .dpad button{aspect-ratio:1;background:linear-gradient(160deg,#1a2a4a,#0a1428);border:1px solid #2a3a5a;color:var(--pri);font-size:22px;border-radius:50%;cursor:pointer;transition:.12s;font-weight:700;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 3px 8px rgba(0,0,0,.4);position:relative;}
+  .dpad button::before{content:'';position:absolute;inset:4px;border-radius:50%;background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.08),transparent 60%);pointer-events:none;}
+  .dpad button:hover{background:linear-gradient(160deg,#2a4070,#1a2a4a);border-color:var(--pri);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 4px 14px rgba(85,170,255,.35);}
+  .dpad button:active{transform:scale(.92);box-shadow:inset 0 2px 6px rgba(0,0,0,.5);}
+  .dpad .empty{visibility:hidden;}
+  .dpad .stop{background:linear-gradient(160deg,#5a1a1a,#2a0a0a);border-color:#7a2a2a;color:#f88;font-size:11px;letter-spacing:2px;}
+  .dpad .stop:hover{background:linear-gradient(160deg,#8a2a2a,#4a1a1a);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 4px 14px rgba(255,80,80,.4);color:#fff;}
+
+  .speed-row{margin-bottom:16px;padding:14px;background:#020409;border-radius:10px;border:1px solid var(--line);}
+  .speed-row label{font-size:11px;color:var(--mute);display:flex;justify-content:space-between;letter-spacing:1.5px;margin-bottom:10px;font-weight:600;}
+  .speed-row label b{color:var(--pri);font-family:"SF Mono","Consolas",monospace;font-size:14px;}
+  .speed-row input[type=range]{width:100%;height:6px;-webkit-appearance:none;appearance:none;background:linear-gradient(90deg,#1a2540 0%,#5af 50%,#5fa 100%);border-radius:3px;outline:none;cursor:pointer;}
+  .speed-row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#fff,#5af);box-shadow:0 0 12px #5af,0 2px 6px rgba(0,0,0,.4);cursor:pointer;}
+
+  .test-row{display:flex;flex-direction:column;gap:6px;}
+  .test-btn{padding:9px;background:#231a0f;border:1px solid #3d2e16;color:var(--warn);border-radius:6px;font-size:11px;cursor:pointer;text-align:left;letter-spacing:1px;}
+  .test-btn:hover{background:#3a2c14;}
+  .test-btn .desc{display:block;color:var(--mute);font-size:10px;margin-top:2px;letter-spacing:0;}
+
+  .telemetry{background:linear-gradient(160deg,#0d1628,#06090f);border:1px solid var(--line);border-radius:14px;padding:28px;display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden;}
+  .telemetry::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#5fa 30%,#5af 70%,transparent);}
+  .tele-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;}
+  .tele-head h4{font-size:11px;color:var(--pri);letter-spacing:2.5px;font-weight:700;display:flex;align-items:center;gap:8px;}
+  .tele-head h4::before{content:'';width:4px;height:14px;background:var(--pri);border-radius:2px;}
+  .tele-head .badge{padding:5px 12px;background:#2a0a0a;color:#f88;border:1px solid #4a1a1a;border-radius:14px;font-size:10px;letter-spacing:2px;font-weight:700;}
+  .tele-head .badge.live{background:linear-gradient(135deg,#0a6,#0c8);color:#fff;border-color:#5fa;box-shadow:0 0 12px rgba(95,255,170,.4);animation:pulse 1.4s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.6;}}
+  .tele-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px;}
+  .tele-cell{background:linear-gradient(160deg,#020409,#06090f);border:1px solid var(--line);border-radius:10px;padding:16px;position:relative;overflow:hidden;transition:.2s;}
+  .tele-cell:hover{border-color:var(--pri);transform:translateY(-2px);}
+  .tele-cell::after{content:'';position:absolute;left:0;top:0;width:2px;height:100%;background:linear-gradient(180deg,#5af,#5fa);opacity:.5;}
+  .tele-cell .lbl{font-size:10px;color:var(--mute);letter-spacing:2px;margin-bottom:8px;font-weight:600;}
+  .tele-cell .val{font-size:24px;color:var(--ok);font-family:"SF Mono","Consolas",monospace;font-weight:700;text-shadow:0 0 12px rgba(95,255,170,.4);}
+  .tele-cell .val .u{font-size:11px;color:var(--mute);margin-left:4px;text-shadow:none;font-weight:500;}
+  .log{background:#06090f;border:1px solid var(--line);border-radius:8px;padding:12px;height:200px;overflow-y:auto;font-family:"SF Mono","Consolas",monospace;font-size:11px;line-height:1.7;color:var(--dim);}
+  .log .ts{color:var(--mute);margin-right:8px;}
+  .log .ok{color:var(--ok);}
+  .log .err{color:var(--hot);}
+  .log .info{color:var(--pri);}
+  /* === LIVE DEMO 远程接入扩展 === */
+  .remote-tag{display:inline-block;font-size:9px;color:var(--ok);background:rgba(95,255,170,.1);border:1px solid #2a5a40;padding:2px 9px;border-radius:10px;margin-left:8px;letter-spacing:1.5px;font-weight:700;vertical-align:middle;}
+  .conn-mode-row{display:flex;gap:6px;margin-top:10px;}
+  .conn-mode-btn{flex:1;padding:7px 6px;font-size:11px;background:#0a121e;border:1px solid var(--line);color:var(--dim);border-radius:6px;cursor:pointer;letter-spacing:.5px;transition:.15s;font-family:inherit;text-align:center;}
+  .conn-mode-btn.active{background:linear-gradient(135deg,#2a6fff,#5af);color:#fff;border-color:#5af;font-weight:600;}
+  .conn-mode-btn:hover{border-color:var(--pri);color:var(--pri);}
+  .conn-mode-btn.active:hover{color:#fff;}
+  /* 大型启动/急停按钮 */
+  .live-ops{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+  .live-ops .ops-btn{padding:18px 14px;border-radius:12px;border:none;cursor:pointer;font-weight:800;font-size:14px;letter-spacing:1.5px;font-family:inherit;transition:.15s;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;}
+  .live-ops .ops-btn .ico{font-size:22px;line-height:1;}
+  .live-ops .ops-btn .desc{font-size:9.5px;color:rgba(255,255,255,.7);letter-spacing:.8px;font-weight:500;}
+  .live-ops .ops-start{background:linear-gradient(135deg,#0a8c4a,#5fa);color:#fff;box-shadow:0 4px 14px rgba(95,255,170,.25);}
+  .live-ops .ops-start:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(95,255,170,.4);}
+  .live-ops .ops-stop{background:linear-gradient(135deg,#a8081a,#f55);color:#fff;box-shadow:0 4px 14px rgba(255,85,85,.25);}
+  .live-ops .ops-stop:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(255,85,85,.4);}
+  .live-ops-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+  .live-ops-row .sec-btn{padding:10px 8px;font-size:11.5px;background:#0e1628;color:var(--dim);border:1px solid var(--line);border-radius:8px;cursor:pointer;font-weight:500;letter-spacing:.8px;transition:.15s;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;}
+  .live-ops-row .sec-btn:hover{border-color:var(--pri);color:var(--pri);}
+  /* REMOTE LINK 通道状态 */
+  .remote-link{padding:14px 16px;background:#020409;border:1px solid var(--line);border-radius:10px;}
+  .remote-link h4{font-size:10.5px;color:var(--pri);letter-spacing:2.5px;margin-bottom:12px;font-weight:700;display:flex;align-items:center;gap:8px;text-transform:uppercase;}
+  .remote-link h4::before{content:'';width:4px;height:12px;background:linear-gradient(180deg,#5af,#5fa);border-radius:2px;}
+  .rl-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+  .rl-cell{background:#0a121e;border:1px solid #1c2740;border-radius:8px;padding:10px 8px;text-align:center;}
+  .rl-cell .lbl{font-size:9px;color:var(--mute);letter-spacing:1.5px;margin-bottom:5px;font-weight:600;}
+  .rl-cell .val{font-size:15px;color:var(--ok);font-family:"JetBrains Mono","SF Mono",monospace;font-weight:600;letter-spacing:.5px;}
+  .rl-cell .u{font-size:9px;color:var(--mute);font-weight:400;margin-left:2px;}
+  /* MY GARAGE 车队 */
+  .garage{padding:14px 16px;background:#020409;border:1px solid var(--line);border-radius:10px;}
+  .garage h4{font-size:10.5px;color:var(--pri);letter-spacing:2.5px;margin-bottom:12px;font-weight:700;display:flex;align-items:center;gap:8px;text-transform:uppercase;}
+  .garage h4::before{content:'';width:4px;height:12px;background:linear-gradient(180deg,#fc6,#f55);border-radius:2px;}
+  .garage-list{display:flex;flex-direction:column;gap:6px;}
+  .garage-row{display:grid;grid-template-columns:auto 1fr 1fr auto;gap:10px;align-items:center;padding:10px 14px;background:#0a121e;border:1px solid #1c2740;border-radius:8px;cursor:pointer;transition:.15s;}
+  .garage-row:hover{border-color:var(--pri);}
+  .garage-row.active{border-color:var(--ok);background:rgba(95,255,170,.05);}
+  .garage-row .dot{width:8px;height:8px;border-radius:50%;}
+  .garage-row .dot.ok{background:var(--ok);box-shadow:0 0 8px var(--ok);}
+  .garage-row .dot.warn{background:var(--warn);}
+  .garage-row .g-name{font-size:12.5px;color:var(--txt);font-weight:600;font-family:"JetBrains Mono",monospace;letter-spacing:.5px;}
+  .garage-row .g-loc{font-size:11px;color:var(--dim);}
+  .garage-row .g-status{font-size:10.5px;color:var(--ok);font-family:"SF Mono",monospace;letter-spacing:1px;font-weight:600;}
+  .garage-row.sleep .g-status{color:var(--warn);}
+  .garage-row.sleep .g-name{color:var(--dim);}
+  /* LIVE LEADERBOARD 实时排名 (撑底) */
+  .leader{padding:14px 16px;background:#020409;border:1px solid var(--line);border-radius:10px;flex:1;display:flex;flex-direction:column;}
+  .leader h4{font-size:10.5px;color:var(--pri);letter-spacing:2.5px;margin-bottom:12px;font-weight:700;display:flex;align-items:center;gap:8px;text-transform:uppercase;}
+  .leader h4::before{content:'';width:4px;height:12px;background:linear-gradient(180deg,#fc6,#f55);border-radius:2px;}
+  .leader h4 .live-dot{display:inline-block;width:7px;height:7px;background:var(--hot);border-radius:50%;animation:livePulse 1.4s ease-in-out infinite;margin-left:auto;box-shadow:0 0 8px var(--hot);}
+  .leader h4 .live-txt{font-size:9px;color:var(--hot);letter-spacing:1.5px;margin-left:6px;}
+  @keyframes livePulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+  .leader-list{display:flex;flex-direction:column;gap:5px;flex:1;}
+  .leader-row{display:grid;grid-template-columns:50px 1fr auto auto;gap:10px;align-items:center;padding:9px 12px;background:#0a121e;border:1px solid #1c2740;border-radius:8px;font-size:12px;transition:.15s;}
+  .leader-row:hover{border-color:var(--pri);}
+  .leader-row.you{border-color:var(--ok);background:rgba(95,255,170,.06);box-shadow:0 0 12px rgba(95,255,170,.1);}
+  .leader-row.dnf{opacity:.5;}
+  .leader-row .pos{font-family:"JetBrains Mono",monospace;color:var(--pri);font-weight:700;letter-spacing:.5px;font-size:11px;text-align:left;}
+  .leader-row .pos.p1{color:#fc6;}
+  .leader-row .pos.p2{color:#ccc;}
+  .leader-row .pos.p3{color:#c87;}
+  .leader-row .name{color:var(--txt);font-weight:600;font-family:"JetBrains Mono",monospace;font-size:11.5px;letter-spacing:.3px;}
+  .leader-row.you .name{color:var(--ok);}
+  .leader-row .time{font-family:"JetBrains Mono",monospace;color:var(--ok);font-size:12px;font-weight:600;letter-spacing:.3px;}
+  .leader-row .gap-t{font-family:"JetBrains Mono",monospace;color:var(--mute);font-size:11px;letter-spacing:.5px;min-width:48px;text-align:right;}
+  .leader-row .gap-t.dnf{color:var(--hot);}
+  @media(max-width:560px){
+    .live-ops .ops-btn{padding:14px 10px;font-size:12px;}
+    .live-ops .ops-btn .ico{font-size:18px;}
+    .rl-grid{grid-template-columns:1fr 1fr;}
+  }
+
+  /* === CAPABILITY CARDS === */
+  .cap-row{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center;margin-bottom:80px;}
+  .cap-row:last-child{margin-bottom:0;}
+  .cap-row.reverse{direction:rtl;}
+  .cap-row.reverse>*{direction:ltr;}
+  .cap-text .num{font-family:"SF Mono",monospace;color:var(--mute);font-size:13px;letter-spacing:3px;margin-bottom:14px;}
+  .cap-text h3{font-size:32px;font-weight:800;margin-bottom:16px;line-height:1.2;}
+  .cap-text h3 .hl{color:var(--pri);}
+  .cap-text p{color:var(--dim);font-size:15px;margin-bottom:18px;}
+  .cap-text ul{list-style:none;}
+  .cap-text li{padding:8px 0 8px 24px;position:relative;color:var(--txt);font-size:14px;}
+  .cap-text li::before{content:'';position:absolute;left:0;top:14px;width:10px;height:2px;background:var(--pri);}
+  .cap-visual{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px;text-align:center;position:relative;overflow:hidden;}
+  .cap-visual::before{content:'';position:absolute;inset:-1px;background:var(--grad-cool);opacity:.18;z-index:0;border-radius:14px;}
+  .cap-visual img{position:relative;z-index:1;max-width:100%;border-radius:8px;background:#06090f;}
+  .cap-visual .cap{position:relative;z-index:1;display:inline-block;margin-top:12px;font-size:11px;color:var(--mute);letter-spacing:2px;}
+
+  /* === FULL STACK === */
+  .stack-img{background:linear-gradient(135deg,#0a1a36,#0e1628);border:1px solid var(--line);border-radius:18px;padding:32px;margin-top:32px;text-align:center;position:relative;overflow:hidden;}
+  .stack-img::before{content:'';position:absolute;inset:-1px;background:var(--grad-cool);opacity:.12;border-radius:18px;}
+  .stack-img img{position:relative;z-index:1;max-width:100%;border-radius:10px;box-shadow:0 12px 40px rgba(0,0,0,.5);}
+  .stack-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:32px;}
+  .stack-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:24px;transition:.2s;}
+  .stack-card:hover{border-color:var(--pri);transform:translateY(-3px);}
+  .stack-num{font-family:"SF Mono",monospace;color:var(--mute);font-size:11px;letter-spacing:3px;margin-bottom:10px;}
+  .stack-card h4{font-size:17px;color:var(--pri);margin-bottom:10px;font-weight:700;}
+  .stack-card p{font-size:13px;color:var(--dim);line-height:1.65;}
+  .stack-card .specs{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);display:flex;flex-direction:column;gap:6px;}
+  .stack-card .specs .row{display:flex;justify-content:space-between;font-size:11px;color:var(--mute);font-family:"SF Mono",monospace;letter-spacing:.3px;}
+  .stack-card .specs .row .val{color:var(--ok);font-weight:600;}
+  .stack-tag{text-align:center;margin-top:48px;padding:24px;border-top:1px solid var(--line);font-size:14px;letter-spacing:2px;color:var(--mute);}
+  .stack-tag b{color:var(--txt);font-weight:700;margin:0 4px;}
+  .stack-tag .plus{color:var(--pri);margin:0 12px;font-size:20px;}
+  .stack-tag .hl-grad{background:var(--grad-cool);-webkit-background-clip:text;background-clip:text;color:transparent;}
+
+  /* === ROADMAP === */
+  .roadmap{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
+  .step{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:24px;position:relative;}
+  .step .when{font-size:11px;color:var(--pri);letter-spacing:2px;font-weight:600;margin-bottom:10px;}
+  .step h4{font-size:17px;margin-bottom:8px;}
+  .step p{font-size:13px;color:var(--dim);}
+  .step.now{border-color:var(--pri);background:linear-gradient(135deg,rgba(85,170,255,.08),var(--panel));}
+  .step.now .when::after{content:' · NOW';color:var(--ok);}
+
+  /* === CTA / FOOTER === */
+  .cta{text-align:center;padding:120px 0;background:radial-gradient(ellipse at center,rgba(85,170,255,.1),transparent 60%);}
+  .cta h2{font-size:48px;margin-bottom:18px;}
+  .cta p{color:var(--dim);font-size:17px;max-width:520px;margin:0 auto 32px;}
+  footer{border-top:1px solid var(--line);padding:32px 0;text-align:center;color:var(--mute);font-size:12px;letter-spacing:1px;}
+  footer b{color:var(--dim);}
+
+  @media (max-width:900px){
+    .container{padding:0 18px;}
+    /* Nav */
+    nav .container{height:56px;}
+    .nav-links{display:none;}
+    .logo{font-size:13px;letter-spacing:1px;}
+    /* Hero */
+    .hero{min-height:auto;padding-top:90px;padding-bottom:60px;}
+    .hero .bg{background-position:center;}
+    .hero h1{font-size:56px !important;gap:12px !important;letter-spacing:-1.5px !important;}
+    .hero h1 .arrow{font-size:42px;}
+    .hero-pill{font-size:10px;padding:5px 12px;letter-spacing:1.5px;}
+    .hero p.sub{font-size:14px;margin-bottom:24px;line-height:1.6;}
+    .hero .pillars{gap:8px;margin-bottom:28px;}
+    .pillar{padding:8px 12px;font-size:11px;}
+    .hero-cta{flex-direction:column;gap:10px;}
+    .hero-cta .btn{width:100%;text-align:center;padding:12px;font-size:13px;}
+    /* Sections */
+    section.s{padding:60px 0;}
+    .s h2,.cta h2{font-size:24px;line-height:1.2;}
+    .s .lede{font-size:14px;margin-bottom:28px;}
+    .eyebrow{font-size:10px;letter-spacing:2px;}
+    /* Live Demo */
+    .live-grid{grid-template-columns:1fr;gap:14px;}
+    .live-panel,.telemetry{padding:18px;}
+    .dpad button{font-size:18px;}
+    .tele-grid{grid-template-columns:1fr 1fr;gap:10px;}
+    .tele-cell{padding:12px;}
+    .tele-cell .val{font-size:18px;}
+    /* Cyber */
+    .cyber-grid{grid-template-columns:1fr;gap:18px;}
+    .cyber-stage{height:340px;}
+    .device-pc{width:78%;transform:translate(-50%,-58%);}
+    .device-phone{width:32%;right:5%;bottom:16px;}
+    .cyber-tag{font-size:9px;padding:4px 8px;}
+    .cyber-map{font-size:8px;gap:8px;flex-wrap:wrap;}
+    .cyber-feat{grid-template-columns:1fr;}
+    /* Composer */
+    .composer-side .console{padding:18px 14px;}
+    .console h5{font-size:11px;letter-spacing:2px;}
+    .wp-tier-row{padding:8px 10px;flex-wrap:wrap;gap:8px;}
+    .wp-tier{padding:5px 10px;font-size:11px;}
+    .dial-grid{grid-template-columns:1fr !important;gap:14px;}
+    .dial{padding:18px 14px;}
+    .dial-svg{max-width:220px;}
+    .eq-wrap{width:56px;height:200px;}
+    .eq-scale{font-size:9px;right:-38px;}
+    .console-actions{flex-direction:column;}
+    .console-foot{font-size:11px;gap:14px;}
+    /* Capability rows */
+    .cap-row{grid-template-columns:1fr;gap:24px;margin-bottom:48px;}
+    .cap-row.reverse{direction:ltr;}
+    .cap-text h3{font-size:22px;}
+    .cap-text p,.cap-text li{font-size:13.5px;}
+    .cap-visual{padding:14px;}
+    /* Vibe */
+    .vibe-grid{grid-template-columns:1fr !important;gap:14px;}
+    .vibe-card{padding:20px;}
+    .chat,.terminal{font-size:11px;padding:12px;}
+    /* Journey */
+    .journey{flex-direction:column;gap:12px;}
+    .journey::before{display:none;}
+    .journey-step{min-width:0 !important;padding:18px;}
+    /* Stack */
+    .stack-grid{grid-template-columns:1fr 1fr;gap:10px;}
+    .stack-card{padding:18px 14px;}
+    .stack-card h4{font-size:14px;}
+    .stack-card p{font-size:12px;}
+    .stack-tag{font-size:11px;letter-spacing:1px;}
+    .stack-tag .plus{font-size:14px;margin:0 6px;}
+    /* Roadmap */
+    .roadmap{grid-template-columns:1fr 1fr;gap:10px;}
+    .step{padding:18px 14px;}
+    /* CTA */
+    .cta{padding:70px 0;}
+    /* Footer */
+    footer{font-size:10px;padding:24px 18px;}
+  }
+  @media (max-width:480px){
+    .hero h1{font-size:44px !important;}
+    .hero h1 .arrow{font-size:34px;}
+    .stack-grid{grid-template-columns:1fr;}
+    .roadmap{grid-template-columns:1fr;}
+    .tele-grid{grid-template-columns:1fr 1fr;}
+    .device-pc{width:88%;}
+    .device-phone{width:36%;}
+    .cyber-stage{height:300px;}
+  }
+
+  /* === CYBER ARENA (双端 mockup) === */
+  .cyber-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:32px;margin-top:32px;align-items:center;}
+  @media (max-width:900px){.cyber-grid{grid-template-columns:1fr;}}
+  .cyber-stage{position:relative;height:560px;background:radial-gradient(ellipse at center,rgba(85,170,255,.15),transparent 60%),linear-gradient(160deg,#0a1428,#040810);border:1px solid var(--line);border-radius:18px;overflow:hidden;}
+  .cyber-stage::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(85,170,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(85,170,255,.06) 1px,transparent 1px);background-size:30px 30px;mask:radial-gradient(ellipse at center,#000 30%,transparent 70%);-webkit-mask:radial-gradient(ellipse at center,#000 30%,transparent 70%);}
+  /* PC 显示器 */
+  .device-pc{position:absolute;top:50%;left:50%;transform:translate(-58%,-50%);width:62%;}
+  .pc-screen{background:#0a1428;border:8px solid #1a2540;border-radius:8px 8px 2px 2px;padding:6px;box-shadow:0 20px 60px rgba(0,0,0,.7),0 0 40px rgba(85,170,255,.2);}
+  .pc-stand{height:14px;background:linear-gradient(180deg,#1a2540,#0a1428);width:30%;margin:0 auto;border-radius:0 0 8px 8px;}
+  .pc-base{height:6px;background:#0a1428;width:45%;margin:0 auto;border-radius:50%;box-shadow:0 12px 24px rgba(0,0,0,.7);}
+  .pc-content{background:#06090f;border-radius:3px;padding:10px;height:200px;font-family:"SF Mono",monospace;font-size:8px;color:var(--dim);position:relative;overflow:hidden;}
+  .pc-titlebar{display:flex;align-items:center;gap:3px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--line);}
+  .pc-dot{width:6px;height:6px;border-radius:50%;}
+  .pc-dot.r{background:#f55;} .pc-dot.y{background:#fc6;} .pc-dot.g{background:#5fa;}
+  .pc-tab{font-size:8px;color:var(--pri);margin-left:8px;letter-spacing:1px;}
+  .pc-row{display:flex;gap:6px;margin-bottom:4px;}
+  .pc-mini{flex:1;background:#0a1428;border:1px solid var(--line);border-radius:3px;padding:6px;}
+  .pc-mini .lab{font-size:6px;color:var(--mute);letter-spacing:.5px;}
+  .pc-mini .v{font-size:11px;color:var(--ok);font-weight:700;}
+  .pc-track{height:60px;background:#020409;border-radius:3px;margin-top:4px;position:relative;overflow:hidden;}
+  .pc-track svg{width:100%;height:100%;}
+  /* 手机 */
+  .device-phone{position:absolute;bottom:32px;right:6%;width:24%;}
+  .phone-frame{background:#1a2540;border:3px solid #2a3a5a;border-radius:24px;padding:8px 5px;position:relative;box-shadow:0 20px 50px rgba(0,0,0,.7),0 0 30px rgba(255,200,100,.18);}
+  .phone-notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:50%;height:14px;background:#0a1428;border-radius:0 0 12px 12px;z-index:2;}
+  .phone-screen{background:#06090f;border-radius:18px;padding:22px 8px 8px;font-family:-apple-system,sans-serif;color:#fff;}
+  .phone-statusbar{display:flex;justify-content:space-between;font-size:6px;color:var(--dim);padding:0 6px 4px;}
+  .phone-header{background:linear-gradient(135deg,#2a6fff,#5af);padding:6px;border-radius:4px;margin-bottom:6px;text-align:center;font-size:7px;font-weight:700;letter-spacing:1px;}
+  .phone-card{background:#0a1428;border:1px solid var(--line);border-radius:4px;padding:5px;margin-bottom:4px;}
+  .phone-card .lab{font-size:5px;color:var(--mute);}
+  .phone-card .v{font-size:9px;font-weight:700;color:var(--pri);}
+  .phone-stick{width:80%;height:40px;margin:6px auto;background:radial-gradient(circle at center,#1a2540 30%,#0a1428 60%);border:2px solid var(--line);border-radius:50%;position:relative;}
+  .phone-stick::after{content:'';position:absolute;top:50%;left:50%;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#5af,#5fa);transform:translate(-50%,-50%);box-shadow:0 0 12px #5af;}
+  .phone-btns{display:flex;gap:3px;}
+  .phone-btn{flex:1;height:14px;background:#1a2540;border:1px solid var(--line);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:6px;color:var(--pri);font-weight:700;}
+  .phone-btn.start{background:linear-gradient(135deg,#0a4,#5fa);color:#fff;}
+  /* 连接线 */
+  .cyber-line{position:absolute;top:40%;left:30%;width:50%;height:2px;background:linear-gradient(90deg,transparent,#5af 30%,#fc6 70%,transparent);opacity:.6;}
+  .cyber-tag{position:absolute;top:14px;left:18px;font-size:10px;color:var(--ok);letter-spacing:2px;font-family:"SF Mono",monospace;background:rgba(0,30,15,.6);padding:5px 10px;border-radius:14px;border:1px solid #154;}
+  .cyber-tag .live-d{display:inline-block;width:6px;height:6px;background:var(--ok);border-radius:50%;margin-right:6px;animation:pulse 1.4s infinite;box-shadow:0 0 8px var(--ok);}
+  .cyber-feat{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px;}
+  .cyber-feat-card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;transition:.2s;}
+  .cyber-feat-card:hover{border-color:var(--pri);transform:translateY(-3px);}
+  .cyber-feat-card .ic{font-size:22px;margin-bottom:8px;}
+  .cyber-feat-card h5{font-size:14px;font-weight:700;margin-bottom:6px;color:var(--pri);}
+  .cyber-feat-card p{font-size:12px;color:var(--dim);line-height:1.65;}
+  .cyber-map{position:absolute;bottom:20px;left:20px;display:flex;gap:14px;font-size:10px;color:var(--dim);}
+  .cyber-map span{display:flex;align-items:center;gap:5px;}
+  .cyber-map span::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--pri);box-shadow:0 0 8px var(--pri);}
+
+  /* === DIAL CONSOLE (Drive Composer 三表盘) === */
+  .composer-side .console{background:linear-gradient(160deg,#0a1322,#070b14);border:1px solid var(--line);border-radius:16px;padding:32px 36px;position:relative;overflow:hidden;}
+  .composer-side .console::before{content:'';position:absolute;inset:-1px;background:linear-gradient(135deg,rgba(85,170,255,.18),transparent 60%);border-radius:16px;pointer-events:none;}
+  .composer-side .console::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#5af 30%,#5fa 70%,transparent);}
+  /* Console 内部统一字体栈 — 科技 mono + 数字等宽 */
+  .composer-side .console,.composer-side .console *{font-feature-settings:"tnum","ss01";}
+  .console h5{font-size:14px;color:var(--pri);letter-spacing:4px;margin-bottom:24px;font-weight:600;display:flex;justify-content:space-between;align-items:center;text-transform:uppercase;}
+  .console h5 .title{display:flex;align-items:center;gap:10px;}
+  .console h5 .title::before{content:'';display:inline-block;width:6px;height:14px;background:linear-gradient(180deg,#5af,#5fa);border-radius:2px;}
+  .console h5 #curWpLbl{font-size:15px;background:#020409;padding:7px 16px;border:1px solid #1c3050;border-radius:8px;letter-spacing:2px;font-family:"JetBrains Mono","SF Mono",Consolas,monospace;font-weight:500;color:var(--ok);box-shadow:inset 0 0 12px rgba(95,255,170,.08);}
+  .wp-tier-row{display:flex;gap:12px;align-items:center;margin-bottom:14px;padding:10px 14px;background:#020409;border:1px solid #1c2740;border-radius:10px;}
+  .wp-tier-lbl{font-size:10px;color:var(--mute);letter-spacing:3px;font-weight:600;}
+  .wp-tier-chips{display:flex;gap:6px;margin-left:auto;}
+  .wp-tier{padding:6px 14px;background:#0a1428;border:1px solid #1c2740;color:var(--dim);border-radius:6px;font-size:12px;cursor:pointer;font-family:"JetBrains Mono","SF Mono",monospace;font-weight:600;transition:.12s;}
+  .wp-tier:hover{border-color:var(--pri);color:var(--pri);}
+  .wp-tier.active{background:linear-gradient(135deg,#2a6fff,#5af);border-color:#5af;color:#fff;box-shadow:0 0 12px rgba(85,170,255,.4);}
+  .wp-chips{display:flex;flex-wrap:wrap;gap:6px;max-height:92px;overflow-y:auto;background:#020409;border:1px solid #1c2740;border-radius:10px;padding:12px;margin-bottom:26px;}
+  .wp-chips::-webkit-scrollbar{width:4px;}.wp-chips::-webkit-scrollbar-thumb{background:#2a3550;border-radius:2px;}
+  .wp-chip{padding:6px 12px;background:#0a1428;border:1px solid #1c2740;color:var(--dim);border-radius:6px;font-size:11px;font-family:"JetBrains Mono","SF Mono",Consolas,monospace;cursor:pointer;transition:.12s;font-weight:500;letter-spacing:.5px;}
+  .wp-chip:hover{border-color:var(--pri);color:var(--pri);}
+  .wp-chip.active{background:linear-gradient(135deg,#2a6fff,#5af);border-color:#5af;color:#fff;font-weight:600;box-shadow:0 0 14px rgba(85,170,255,.55);}
+  .dial-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;}
+  .dial{background:#020409;border:1px solid #1c2740;border-radius:14px;padding:24px 18px;display:flex;flex-direction:column;align-items:center;position:relative;transition:.2s;}
+  .dial:hover{border-color:var(--pri);box-shadow:0 0 20px rgba(85,170,255,.15);}
+  .dial-lbl{font-size:10px;color:var(--mute);letter-spacing:4px;margin-bottom:14px;font-weight:600;text-transform:uppercase;}
+  .dial-val{font-size:22px;color:var(--pri);font-family:"JetBrains Mono","SF Mono",Consolas,monospace;font-weight:500;margin-top:14px;letter-spacing:.5px;font-variant-numeric:tabular-nums;}
+  .dial-svg{width:100%;max-width:240px;aspect-ratio:1;cursor:pointer;touch-action:none;}
+  /* 垂直 EQ Bar (Speed) — 颜色按数值显示对应区间 */
+  .eq-wrap{width:64px;height:240px;background:#020409;border-radius:10px;position:relative;overflow:hidden;border:1px solid #1c2740;cursor:pointer;touch-action:none;}
+  .eq-grad{position:absolute;inset:0;background:linear-gradient(180deg,#f44 0%,#f80 14%,#fc6 28%,#fd5 42%,#dfa 56%,#5fa 70%,#5cf 84%,#5af 100%);opacity:.18;}
+  .eq-fill{position:absolute;bottom:0;left:0;right:0;border-top:3px solid #fff;box-shadow:0 -2px 16px currentColor,0 0 20px currentColor;transition:height .12s ease-out,background .15s,color .15s;}
+  .eq-ticks{position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent 0,transparent 11px,rgba(255,255,255,.06) 11px,rgba(255,255,255,.06) 12px);pointer-events:none;}
+  .eq-scale{position:absolute;right:-44px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:space-between;font-size:9px;color:var(--mute);font-family:"SF Mono",monospace;letter-spacing:1px;}
+  .eq-scale span{display:flex;align-items:center;gap:4px;}
+  .eq-scale span::before{content:'';display:inline-block;width:4px;height:1px;background:var(--mute);}
+  .console-actions{display:flex;gap:12px;margin-top:24px;}
+  .console-actions .btn{flex:1;padding:14px;font-size:13.5px;}
+  .console-actions.mini{margin-top:10px;gap:8px;}
+  .console-actions.mini .btn-mini{flex:1;padding:9px 6px;font-size:12px;background:#0e1628;color:var(--dim);border:1px solid var(--line);border-radius:6px;cursor:pointer;font-weight:500;transition:.15s;letter-spacing:.5px;font-family:inherit;}
+  .console-actions.mini .btn-mini:hover{border-color:var(--pri);color:var(--pri);}
+  .console-actions.mini .btn-mini.warn:hover{border-color:var(--hot);color:var(--hot);}
+  .console-foot{margin-top:18px;font-size:12px;color:var(--mute);line-height:1.8;letter-spacing:.5px;display:flex;gap:24px;flex-wrap:wrap;}
+  /* dial 精确数字输入 */
+  .dial-input-row{margin-top:10px;display:flex;align-items:center;gap:6px;background:#070b14;border:1px solid #1c2740;border-radius:7px;padding:4px 8px;width:100%;max-width:160px;}
+  .dial-input-row label{font-size:9px;color:var(--mute);letter-spacing:1.5px;font-weight:600;}
+  .dial-input-row .dial-input{flex:1;background:transparent;border:none;outline:none;color:var(--pri);font-family:"JetBrains Mono","SF Mono",Consolas,monospace;font-size:13px;text-align:right;padding:3px 2px;font-weight:600;width:100%;min-width:0;-moz-appearance:textfield;}
+  .dial-input-row .dial-input::-webkit-outer-spin-button,.dial-input-row .dial-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+  .dial-input-row .dial-input:focus{color:var(--ok);}
+  .dial-input-row .dial-unit{font-size:10px;color:var(--mute);font-family:"SF Mono",monospace;}
+  .dial-input-row.pos{max-width:200px;}
+  .dial-input-row.pos .sep{color:var(--mute);font-size:11px;}
+  /* save flash */
+  .cmp-flash{position:fixed;bottom:24px;right:24px;background:linear-gradient(135deg,#0d2a18,#1a4530);color:var(--ok);padding:12px 20px;border:1px solid #2a6840;border-radius:8px;font-size:13px;font-weight:600;box-shadow:0 6px 24px rgba(0,0,0,.4);z-index:9999;opacity:0;transform:translateY(20px);transition:.25s cubic-bezier(.16,.84,.44,1);pointer-events:none;}
+  .cmp-flash.show{opacity:1;transform:translateY(0);}
+  .cmp-flash.err{background:linear-gradient(135deg,#2a0d0d,#451a1a);color:var(--hot);border-color:#683030;}
+  /* === AI ROBOT DRIVER · CRAYXUS AI PILOT === */
+  .pilot-hero{margin-top:36px;display:grid;grid-template-columns:1.1fr 1fr;gap:32px;align-items:center;}
+  .pilot-hero-img{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:radial-gradient(circle at 50% 50%,#1a3050,#06090f 80%);}
+  .pilot-hero-img img{display:block;width:100%;height:auto;}
+  .pilot-hero-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(6,9,15,.5),transparent 60%);pointer-events:none;}
+  .pilot-tag{position:absolute;top:18px;left:18px;background:rgba(2,4,9,.85);border:1px solid #5af;border-radius:20px;padding:6px 14px;font-size:11px;color:var(--ok);letter-spacing:2px;font-family:"SF Mono",monospace;font-weight:700;backdrop-filter:blur(8px);}
+  .pilot-tag .live-d{display:inline-block;width:7px;height:7px;background:var(--ok);border-radius:50%;margin-right:6px;vertical-align:middle;animation:pilotPulse 1.4s ease-in-out infinite;box-shadow:0 0 8px var(--ok);}
+  @keyframes pilotPulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+  .pilot-spec{display:flex;flex-direction:column;gap:18px;}
+  .pilot-id{background:linear-gradient(160deg,#0a1322,#070b14);border:1px solid var(--line);border-left:3px solid var(--ok);border-radius:12px;padding:22px 26px;}
+  .pilot-id .label{font-size:10.5px;color:var(--mute);letter-spacing:2.5px;font-weight:700;font-family:"SF Mono",monospace;margin-bottom:8px;}
+  .pilot-id h3{font-size:32px;color:var(--txt);letter-spacing:-.5px;margin-bottom:6px;font-weight:800;line-height:1.1;}
+  .pilot-id h3 span{background:linear-gradient(135deg,#5af,#5fa);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .pilot-id .tagline{font-size:13.5px;color:var(--dim);line-height:1.7;letter-spacing:.3px;}
+  .pilot-id .tagline b{color:var(--ok);}
+  .pilot-traits{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+  .pilot-trait{background:#0a121e;border:1px solid var(--line);border-radius:10px;padding:14px 16px;}
+  .pilot-trait .ico{font-size:18px;margin-bottom:4px;line-height:1;}
+  .pilot-trait .t-name{font-size:12px;color:var(--pri);font-weight:700;letter-spacing:.5px;margin-bottom:2px;}
+  .pilot-trait .t-desc{font-size:11px;color:var(--dim);line-height:1.55;}
+  .pilot-modes{margin-top:36px;}
+  .pilot-modes-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:14px;margin-top:18px;}
+  .pilot-mode{background:linear-gradient(160deg,#0a1322,#070b14);border:1px solid var(--line);border-radius:14px;padding:24px 26px;position:relative;overflow:hidden;transition:.2s;}
+  .pilot-mode:hover{transform:translateY(-3px);border-color:var(--pri);}
+  .pilot-mode.primary{border-color:#fc6;box-shadow:0 0 22px rgba(252,198,102,.18);}
+  .pilot-mode.primary::before{content:'PRIMARY · 主营';position:absolute;top:12px;right:14px;font-size:9px;color:var(--warn);background:rgba(252,198,102,.12);border:1px solid #5a4a30;border-radius:10px;padding:2px 8px;letter-spacing:1px;font-family:"SF Mono",monospace;font-weight:700;}
+  .pilot-mode .m-ico{font-size:32px;margin-bottom:10px;line-height:1;}
+  .pilot-mode h5{font-size:18px;color:var(--txt);margin-bottom:4px;font-weight:700;letter-spacing:-.3px;}
+  .pilot-mode .m-en{font-size:11px;color:var(--mute);letter-spacing:2px;margin-bottom:12px;font-family:"SF Mono",monospace;}
+  .pilot-mode p{font-size:12.5px;color:var(--dim);line-height:1.7;}
+  .pilot-mode p b{color:var(--ok);}
+  .pilot-lineup{margin-top:36px;background:linear-gradient(160deg,#0a1322,#070b14);border:1px solid var(--line);border-radius:14px;padding:28px;}
+  .pilot-lineup h3{font-size:18px;color:var(--txt);margin-bottom:8px;font-weight:700;}
+  .pilot-lineup .lineup-sub{font-size:12.5px;color:var(--dim);letter-spacing:.3px;margin-bottom:24px;}
+  .pilot-lineup .lineup-sub b{color:var(--pri);}
+  .pilot-lineup-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+  .pilot-car{background:#0a121e;border:1px solid var(--line);border-radius:12px;padding:20px 18px;text-align:center;transition:.15s;position:relative;}
+  .pilot-car:hover{transform:translateY(-3px);border-color:var(--pri);}
+  .pilot-car .car-ico{font-size:34px;margin-bottom:8px;line-height:1;}
+  .pilot-car .car-size{font-size:10px;color:var(--mute);letter-spacing:1.5px;font-family:"SF Mono",monospace;margin-bottom:4px;}
+  .pilot-car h6{font-size:15px;color:var(--txt);margin-bottom:6px;font-weight:700;letter-spacing:-.3px;}
+  .pilot-car .car-pilot{font-size:11px;color:var(--ok);letter-spacing:.5px;margin-bottom:8px;font-family:"JetBrains Mono",monospace;}
+  .pilot-car p{font-size:11.5px;color:var(--dim);line-height:1.55;}
+  .pilot-yongkang{margin-top:28px;padding:22px 28px;background:linear-gradient(135deg,rgba(252,198,102,.06),rgba(85,170,255,.04));border:1px solid var(--line);border-left:3px solid var(--warn);border-radius:14px;}
+  .pilot-yongkang h4{font-size:14px;color:var(--warn);letter-spacing:1.5px;margin-bottom:10px;font-weight:700;display:flex;align-items:center;gap:8px;}
+  .pilot-yongkang p{font-size:13px;color:var(--dim);line-height:1.7;}
+  .pilot-yongkang p b{color:var(--txt);}
+  .pilot-yongkang .split{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:14px;}
+  .pilot-yongkang .col h5{font-size:11px;color:var(--pri);letter-spacing:2px;margin-bottom:8px;font-weight:700;}
+  .pilot-yongkang .col ul{list-style:none;padding:0;margin:0;}
+  .pilot-yongkang .col li{font-size:12px;color:var(--dim);line-height:1.85;padding-left:14px;position:relative;}
+  .pilot-yongkang .col li::before{content:'▸';position:absolute;left:0;color:var(--warn);}
+  @media(max-width:980px){
+    .pilot-hero{grid-template-columns:1fr;}
+    .pilot-modes-grid{grid-template-columns:1fr;}
+    .pilot-lineup-grid{grid-template-columns:1fr 1fr;}
+    .pilot-yongkang .split{grid-template-columns:1fr;gap:14px;}
+  }
+  @media(max-width:560px){
+    .pilot-traits{grid-template-columns:1fr;}
+    .pilot-lineup-grid{grid-template-columns:1fr;}
+  }
+  /* === BUSINESS · 商业模型与增长路径 === */
+  .biz-streams{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:32px 0;}
+  .biz-stream{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px;transition:.2s;position:relative;overflow:hidden;}
+  .biz-stream:hover{border-color:var(--pri);transform:translateY(-3px);}
+  .biz-stream .biz-tier{position:absolute;top:14px;right:14px;font-size:10px;color:var(--ok);letter-spacing:.5px;}
+  .biz-stream .biz-num{font-family:"SF Mono",monospace;color:var(--mute);font-size:10.5px;letter-spacing:2.5px;margin-bottom:8px;}
+  .biz-stream h5{font-size:14px;color:var(--pri);margin-bottom:8px;font-weight:700;}
+  .biz-stream p{font-size:11.5px;color:var(--dim);line-height:1.6;margin-bottom:10px;min-height:38px;}
+  .biz-stream .biz-meta{display:flex;gap:10px;font-size:10px;color:var(--mute);font-family:"SF Mono",monospace;letter-spacing:.5px;border-top:1px dashed var(--line);padding-top:8px;}
+  .biz-stream .m-margin{color:var(--ok);}
+  .biz-stream .m-time{color:var(--warn);}
+  .biz-phases{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:14px;}
+  .biz-phase{background:linear-gradient(160deg,#0a1322,#070b14);border:1px solid var(--line);border-radius:14px;padding:22px;position:relative;}
+  .biz-phase::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#5af,#5fa);border-radius:14px 14px 0 0;opacity:.5;}
+  .biz-phase .biz-stage{font-size:10.5px;color:var(--pri);letter-spacing:2.5px;font-weight:700;margin-bottom:4px;font-family:"SF Mono",monospace;}
+  .biz-phase .biz-when{font-size:11px;color:var(--mute);margin-bottom:14px;letter-spacing:1px;font-family:"SF Mono",monospace;}
+  .biz-phase h5{font-size:15px;color:var(--txt);margin-bottom:10px;font-weight:700;}
+  .biz-phase p{font-size:12px;color:var(--dim);line-height:1.7;}
+  .biz-market{margin-top:32px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:28px 32px;background:rgba(85,170,255,.04);border:1px solid var(--line);border-radius:14px;}
+  .biz-mkt{text-align:center;}
+  .biz-mkt .num{font-family:"Inter","SF Pro Display","HarmonyOS Sans",-apple-system,"PingFang SC",sans-serif;font-weight:800;line-height:1;margin-bottom:10px;font-variant-numeric:tabular-nums;letter-spacing:-1.2px;color:var(--ok);display:inline-flex;align-items:baseline;gap:2px;}
+  .biz-mkt .num .cur{font-size:18px;color:var(--mute);font-weight:600;margin-right:2px;letter-spacing:0;}
+  .biz-mkt .num .big{font-size:38px;}
+  .biz-mkt .num .unit{font-size:17px;color:var(--dim);font-weight:700;margin-left:3px;letter-spacing:.5px;}
+  .biz-mkt .num .dash{font-size:24px;color:var(--mute);font-weight:500;margin:0 4px;}
+  .biz-mkt .lbl{font-size:11px;color:var(--pri);letter-spacing:1.8px;margin-bottom:4px;font-weight:600;font-family:"SF Mono",monospace;}
+  .biz-mkt .desc{font-size:11.5px;color:var(--dim);letter-spacing:.3px;}
+  .biz-edge{margin-top:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+  .biz-edge-card{background:#0a121e;border:1px solid var(--line);border-radius:12px;padding:18px 20px;border-left:3px solid var(--pri);transition:.15s;}
+  .biz-edge-card:hover{border-left-color:var(--ok);transform:translateX(2px);}
+  .biz-edge-card .ico{font-size:22px;margin-bottom:8px;line-height:1;}
+  .biz-edge-card h6{font-size:13.5px;color:var(--txt);margin-bottom:6px;font-weight:700;}
+  .biz-edge-card p{font-size:11.5px;color:var(--dim);line-height:1.65;}
+  .biz-sub-h{font-size:18px;color:var(--txt);margin:32px 0 16px;font-weight:700;display:flex;align-items:center;gap:10px;}
+  /* 估值阶梯 */
+  .biz-valuation{margin-top:14px;display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
+  .biz-val{background:linear-gradient(160deg,#0a1322,#070b14);border:1px solid var(--line);border-radius:12px;padding:20px 14px;text-align:center;position:relative;transition:.2s;}
+  .biz-val:hover{transform:translateY(-3px);}
+  .biz-val:nth-child(1){border-color:#1c3050;}
+  .biz-val:nth-child(2){border-color:#2a5070;}
+  .biz-val:nth-child(3){border-color:#5af;box-shadow:0 0 16px rgba(85,170,255,.15);}
+  .biz-val:nth-child(4){border-color:#5fa;box-shadow:0 0 16px rgba(95,255,170,.15);}
+  .biz-val:nth-child(5){border-color:#fc6;box-shadow:0 0 16px rgba(252,198,102,.2);}
+  .biz-val .v-stage{font-size:10px;color:var(--mute);letter-spacing:2px;font-weight:700;font-family:"SF Mono",monospace;margin-bottom:6px;}
+  .biz-val .v-when{font-size:10.5px;color:var(--dim);margin-bottom:14px;letter-spacing:.5px;}
+  .biz-val .v-num{font-family:"Inter","SF Pro Display","HarmonyOS Sans",-apple-system,"PingFang SC",sans-serif;font-weight:800;line-height:1.05;margin-bottom:10px;font-variant-numeric:tabular-nums;letter-spacing:-0.8px;color:var(--ok);display:flex;align-items:baseline;justify-content:center;gap:1px;flex-wrap:wrap;}
+  .biz-val .v-num .cur{font-size:14px;color:var(--mute);font-weight:600;margin-right:3px;letter-spacing:0;}
+  .biz-val .v-num .big{font-size:26px;}
+  .biz-val .v-num .unit{font-size:13px;color:var(--dim);font-weight:700;margin-left:2px;letter-spacing:.5px;}
+  .biz-val .v-num .dash{font-size:18px;color:var(--mute);font-weight:500;margin:0 4px;}
+  .biz-val:nth-child(5) .v-num{color:#fc6;}
+  .biz-val:nth-child(5) .v-num .unit{color:#fc6;opacity:.7;}
+  .biz-val .v-base{font-size:10.5px;color:var(--mute);line-height:1.55;letter-spacing:.3px;}
+  /* 营收预测表 */
+  .biz-rev-table{margin-top:14px;background:linear-gradient(160deg,#0a1322,#070b14);border:1px solid var(--line);border-radius:14px;padding:22px 26px;overflow-x:auto;}
+  .biz-rev-table table{width:100%;border-collapse:collapse;min-width:620px;font-variant-numeric:tabular-nums;}
+  .biz-rev-table th{font-size:10.5px;color:var(--pri);letter-spacing:1.8px;padding:12px 10px;border-bottom:1px dashed var(--line);font-weight:700;text-align:right;font-family:"SF Mono","JetBrains Mono",monospace;}
+  .biz-rev-table th:first-child{text-align:left;}
+  .biz-rev-table td{font-size:13px;padding:13px 10px;border-bottom:1px solid #1c2740;text-align:right;font-family:"Inter","SF Pro Display",-apple-system,sans-serif;font-weight:600;letter-spacing:-0.2px;}
+  .biz-rev-table td:first-child{text-align:left;color:var(--txt);font-weight:600;letter-spacing:.2px;}
+  .biz-rev-table td.n{color:var(--dim);}
+  .biz-rev-table td.n0{color:var(--mute);font-weight:400;}
+  .biz-rev-table td.n1{color:#8aa0c2;}
+  .biz-rev-table td.n2{color:#5af;}
+  .biz-rev-table td.n3{color:var(--ok);font-weight:700;}
+  .biz-rev-table td.n4{color:#5fa;font-weight:800;}
+  .biz-rev-table td.dash{color:#3a4868;font-weight:400;}
+  .biz-rev-table tr:hover td{background:rgba(85,170,255,.03);}
+  .biz-rev-table tr.total td{font-size:15px;color:#fc6;font-weight:800;border-bottom:none;border-top:2px solid #2a5070;padding-top:16px;letter-spacing:-0.3px;}
+  .biz-rev-table tr.total td:first-child{color:#fc6;letter-spacing:.3px;}
+  .biz-rev-table .yr-tag{display:inline-block;font-size:9.5px;color:var(--mute);background:#0a121e;padding:1px 6px;border-radius:3px;margin-left:6px;letter-spacing:.5px;font-family:"SF Mono",monospace;font-weight:500;}
+  .biz-rev-table .unit{font-size:11px;color:var(--mute);text-align:right;margin-top:8px;letter-spacing:.5px;font-family:"SF Mono",monospace;}
+  @media(max-width:980px){
+    .biz-valuation{grid-template-columns:1fr 1fr;}
+  }
+  @media(max-width:560px){
+    .biz-valuation{grid-template-columns:1fr;}
+  }
+  /* === FOUNDER · 创始团队 === */
+  .founder-grid{display:grid;grid-template-columns:380px 1fr;gap:20px;margin-top:32px;}
+  .founder-bio{background:linear-gradient(160deg,#0a1322,#070b14);border:1px solid var(--line);border-radius:14px;padding:28px;text-align:center;position:relative;overflow:hidden;}
+  .founder-bio::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#5af,#5fa);}
+  .founder-avatar{width:72px;height:72px;background:linear-gradient(135deg,#2a6fff,#5af);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:34px;margin-bottom:14px;box-shadow:0 0 32px rgba(85,170,255,.5);}
+  .founder-bio h3{font-size:19px;color:var(--txt);margin-bottom:4px;font-weight:700;}
+  .founder-bio .founder-role{font-size:11.5px;color:var(--pri);letter-spacing:1.5px;margin-bottom:18px;font-family:"JetBrains Mono",monospace;}
+  .founder-tags{list-style:none;padding:0;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:18px;}
+  .founder-tags li{font-size:10.5px;background:rgba(85,170,255,.08);border:1px solid #1c3050;border-radius:14px;padding:4px 10px;color:var(--dim);letter-spacing:.3px;}
+  .founder-bio>p{font-size:12px;color:var(--dim);line-height:1.7;text-align:left;}
+  .founder-projects{background:linear-gradient(160deg,#0a1322,#070b14);border:1px solid var(--line);border-radius:14px;padding:24px 28px;}
+  .founder-projects h4{font-size:13px;color:var(--pri);letter-spacing:2px;margin-bottom:16px;font-weight:700;display:flex;align-items:center;gap:8px;}
+  .founder-projects h4::before{content:'';width:4px;height:14px;background:linear-gradient(180deg,#5af,#5fa);border-radius:2px;}
+  .proj-list{display:flex;flex-direction:column;gap:10px;}
+  .proj{background:#0a121e;border:1px solid var(--line);border-radius:10px;padding:13px 16px;border-left:3px solid var(--ok);transition:.15s;}
+  .proj:hover{border-left-color:var(--pri);transform:translateX(3px);}
+  .proj .p-name{font-size:13px;color:var(--txt);font-weight:700;margin-bottom:4px;font-family:"JetBrains Mono",monospace;letter-spacing:.3px;}
+  .proj .p-desc{font-size:11.5px;color:var(--dim);line-height:1.55;}
+  .founder-edge{margin-top:18px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+  .fe-card{background:#0a121e;border:1px solid var(--line);border-radius:12px;padding:18px 20px;border-left:3px solid var(--pri);transition:.15s;}
+  .fe-card:hover{border-left-color:var(--ok);transform:translateY(-2px);}
+  .fe-card .ico{font-size:24px;margin-bottom:8px;line-height:1;}
+  .fe-card h6{font-size:13.5px;color:var(--txt);margin-bottom:6px;font-weight:700;}
+  .fe-card p{font-size:11.5px;color:var(--dim);line-height:1.65;}
+  @media(max-width:980px){
+    .founder-grid{grid-template-columns:1fr;}
+    .founder-edge{grid-template-columns:1fr 1fr;}
+  }
+  @media(max-width:560px){
+    .founder-edge{grid-template-columns:1fr;}
+  }
+  @media(max-width:980px){
+    .biz-streams,.biz-phases,.biz-edge{grid-template-columns:1fr 1fr;}
+    .biz-market{grid-template-columns:1fr;gap:18px;}
+  }
+  @media(max-width:560px){
+    .biz-streams,.biz-phases,.biz-edge{grid-template-columns:1fr;}
+  }
+  /* === IP MOAT · 专利与知识产权 === */
+  .ip-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin:36px 0;}
+  .ip-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;transition:.2s;display:flex;flex-direction:column;}
+  .ip-card:hover{border-color:var(--pri);transform:translateY(-3px);}
+  .ip-card .ip-num{font-family:"SF Mono",monospace;color:var(--mute);font-size:11px;letter-spacing:3px;margin-bottom:8px;}
+  .ip-card h4{font-size:15px;color:var(--pri);margin-bottom:4px;font-weight:700;}
+  .ip-card>p{font-size:11.5px;color:var(--mute);margin-bottom:14px;letter-spacing:.3px;}
+  .ip-card ul{list-style:none;padding:0;margin:0;border-top:1px dashed var(--line);padding-top:12px;flex:1;}
+  .ip-card ul li{font-size:12px;color:var(--dim);line-height:1.85;padding-left:14px;position:relative;}
+  .ip-card ul li::before{content:'▸';position:absolute;left:0;color:var(--pri);font-weight:600;}
+  .ip-patent-list{margin-top:36px;padding:28px;background:linear-gradient(160deg,#0a1322,#070b14);border:1px solid var(--line);border-radius:16px;position:relative;overflow:hidden;}
+  .ip-patent-list::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#fc6 30%,#f55 70%,transparent);}
+  .ip-patent-head{margin-bottom:20px;}
+  .ip-patent-head h3{font-size:19px;color:var(--txt);margin-bottom:6px;font-weight:700;}
+  .ip-patent-head .ip-sub{font-size:12px;color:var(--mute);letter-spacing:.3px;}
+  .ip-patent-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+  .ip-patent{background:#0a121e;border:1px solid var(--line);border-radius:10px;padding:18px 20px;border-left:3px solid var(--pri);transition:.15s;}
+  .ip-patent:hover{border-left-color:var(--ok);transform:translateX(2px);}
+  .ip-patent .no{font-family:"SF Mono",monospace;color:var(--ok);font-size:11px;font-weight:700;letter-spacing:1.5px;margin-bottom:6px;}
+  .ip-patent h5{font-size:14px;color:var(--txt);margin-bottom:8px;font-weight:700;}
+  .ip-patent p{font-size:12px;color:var(--dim);line-height:1.65;}
+  .ip-timeline{margin-top:36px;}
+  .ip-timeline h3{font-size:17px;margin-bottom:16px;color:var(--txt);font-weight:700;}
+  .ip-tl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  .ip-tl{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;}
+  .ip-tl-tag{display:inline-block;padding:4px 12px;border-radius:6px;font-size:10.5px;font-weight:700;letter-spacing:1.5px;margin-bottom:12px;font-family:"SF Mono",monospace;}
+  .ip-tl h6{font-size:14px;color:var(--txt);margin-bottom:6px;font-weight:700;}
+  .ip-tl p{font-size:12px;color:var(--dim);line-height:1.65;}
+  .ip-bottom{margin-top:28px;padding:22px 26px;background:rgba(85,170,255,.04);border:1px solid var(--line);border-radius:14px;border-left:3px solid var(--pri);}
+  .ip-bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:32px;}
+  .ip-bottom-col h5{font-size:12px;color:var(--pri);margin-bottom:10px;letter-spacing:1.5px;font-weight:700;}
+  .ip-bottom-col ul{list-style:none;padding:0;margin:0;}
+  .ip-bottom-col li{font-size:12px;color:var(--dim);line-height:1.85;padding-left:18px;position:relative;}
+  .ip-bottom-col.policy li::before{content:'✓';position:absolute;left:0;color:var(--ok);font-weight:700;}
+  .ip-bottom-col.compliance li::before{content:'⚖';position:absolute;left:0;color:var(--warn);}
+  @media(max-width:980px){
+    .ip-grid{grid-template-columns:1fr 1fr;}
+    .ip-tl-grid{grid-template-columns:1fr;}
+    .ip-patent-grid{grid-template-columns:1fr;}
+    .ip-bottom-row{grid-template-columns:1fr;gap:18px;}
+  }
+  @media(max-width:560px){
+    .ip-grid{grid-template-columns:1fr;}
+  }
+  /* === Composer 新布局: 顶部 WP / 中间 Canvas+三表盘 / 底部按钮 === */
+  .composer-layout{margin-top:24px;display:flex;flex-direction:column;gap:14px;}
+  .cmp-top{background:linear-gradient(160deg,#0a1322,#070b14);border:1px solid var(--line);border-radius:14px;padding:16px 22px;position:relative;overflow:hidden;}
+  .cmp-top::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#5af 30%,#5fa 70%,transparent);}
+  .cmp-top-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:18px;flex-wrap:wrap;}
+  .cmp-top-head h5{font-size:12px;color:var(--pri);letter-spacing:3px;font-weight:600;display:flex;align-items:center;gap:10px;text-transform:uppercase;margin:0;}
+  .cmp-top-head h5::before{content:'';display:inline-block;width:5px;height:14px;background:linear-gradient(180deg,#5af,#5fa);border-radius:2px;}
+  .cmp-top-head #curWpLbl{margin-left:6px;background:#020409;padding:4px 12px;border:1px solid #1c3050;border-radius:6px;font-family:"JetBrains Mono","SF Mono",Consolas,monospace;color:var(--ok);font-size:12.5px;letter-spacing:1.5px;}
+  .cmp-top .wp-chips{margin-bottom:0;max-height:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(56px,1fr));gap:6px;padding:10px;}
+  .cmp-top .wp-chip{padding:7px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1;transition:.15s;}
+  .cmp-top .wp-chip .wpn{font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--txt);}
+  .cmp-top .wp-chip .wpv{font-size:9.5px;color:var(--mute);font-family:"JetBrains Mono",monospace;letter-spacing:.3px;}
+  .cmp-top .wp-chip.active .wpn,.cmp-top .wp-chip.active .wpv{color:#fff;}
+  .cmp-top .wp-chip.active{outline:2px solid #5af;outline-offset:-2px;box-shadow:0 0 14px rgba(85,170,255,.55);transform:scale(1.04);}
+  .cmp-top .wp-chip:hover{transform:translateY(-1px);}
+  .wp-nav{display:flex;align-items:center;gap:8px;background:#020409;border:1px solid #1c3050;border-radius:8px;padding:3px;}
+  .wp-nav-btn{background:transparent;border:none;color:var(--pri);font-size:13px;padding:6px 10px;cursor:pointer;border-radius:5px;transition:.15s;font-family:inherit;}
+  .wp-nav-btn:hover{background:rgba(85,170,255,.15);color:var(--ok);}
+  .wp-nav-btn:active{transform:scale(0.92);}
+  .wp-count{font-family:"JetBrains Mono",monospace;font-size:11.5px;color:var(--ok);letter-spacing:1.5px;min-width:64px;text-align:center;}
+  .wp-chips-strip{position:relative;}
+  .wp-legend{display:flex;align-items:center;font-size:10px;color:var(--mute);padding:8px 12px 6px;letter-spacing:.5px;border-bottom:1px dashed #1c2740;margin-bottom:4px;flex-wrap:wrap;}
+  .wp-legend .lg-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px;vertical-align:middle;}
+  .cmp-mid{display:grid;grid-template-columns:1fr 260px;grid-template-areas:"canvas dials" "bottom dials" "result dials";gap:14px;align-items:stretch;}
+  .cmp-canvas-wrap{grid-area:canvas;position:relative;}
+  .cmp-dials{grid-area:dials;align-self:start;display:flex;flex-direction:column;gap:12px;}
+  .cmp-mid .cmp-bottom{grid-area:bottom;}
+  .cmp-mid .cmp-result{grid-area:result;}
+  .cmp-dials .dial{padding:14px 10px;background:linear-gradient(160deg,#0a1322,#070b14);border-radius:14px;}
+  .cmp-dials .dial-svg{max-width:140px;}
+  .cmp-dials .dial-lbl{font-size:9.5px;margin-bottom:8px;letter-spacing:3px;}
+  .cmp-dials .dial-val{font-size:16px;margin-top:8px;}
+  .cmp-dials .eq-wrap{height:120px;width:44px;}
+  .cmp-dials .eq-scale{font-size:8px;right:-30px;letter-spacing:.5px;}
+  .cmp-dials .dial-input-row{margin-top:7px;max-width:150px;}
+  .cmp-bottom{background:linear-gradient(160deg,#0a1322,#070b14);border:1px solid var(--line);border-radius:14px;padding:14px 22px;}
+  .cmp-bottom .legend-row{display:flex;gap:16px;font-size:12px;color:var(--dim);padding-bottom:10px;border-bottom:1px dashed var(--line);margin-bottom:12px;flex-wrap:wrap;align-items:center;}
+  .cmp-bottom .legend-row .legend-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle;}
+  .cmp-actions-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .cmp-actions-row .btn{padding:11px 22px;font-size:13px;flex:0 1 auto;}
+  .cmp-actions-row .btn-mini{padding:9px 14px;font-size:12px;background:#0e1628;color:var(--dim);border:1px solid var(--line);border-radius:6px;cursor:pointer;font-weight:500;transition:.15s;letter-spacing:.5px;font-family:inherit;flex:0 1 auto;}
+  .cmp-actions-row .btn-mini:hover{border-color:var(--pri);color:var(--pri);}
+  .cmp-actions-row .btn-mini.warn:hover{border-color:var(--hot);color:var(--hot);}
+  .cmp-actions-row .gap{flex:1;}
+  .cmp-actions-row .ttip{font-size:11px;color:var(--mute);margin-left:8px;}
+  .cmp-result{display:flex;align-items:center;gap:16px;padding:14px 18px;background:rgba(95,255,170,.04);border:1px dashed #1c3050;border-radius:12px;}
+  .cmp-result img{width:160px;height:auto;border-radius:6px;border:1px solid var(--line);flex-shrink:0;}
+  .cmp-result .txt{font-size:12.5px;color:var(--dim);line-height:1.7;}
+  @media(max-width:980px){
+    .cmp-mid{grid-template-columns:1fr;grid-template-areas:"canvas" "dials" "bottom" "result";}
+    .cmp-dials{flex-direction:row;flex-wrap:wrap;}
+    .cmp-dials .dial{flex:1;min-width:180px;}
+  }
+  @media(max-width:560px){
+    .cmp-result{flex-direction:column;align-items:flex-start;}
+    .cmp-result img{width:100%;max-width:280px;}
+  }
+  .console-foot span{display:flex;align-items:center;gap:6px;}
+  .console-foot b{color:var(--pri);}
+
+  /* === JOURNEY (学习流程) === */
+  .journey{display:flex;gap:14px;margin-top:24px;position:relative;}
+  .journey::before{content:'';position:absolute;left:5%;right:5%;top:32px;height:2px;background:linear-gradient(90deg,#5af 0%,#5fa 25%,#fc6 50%,#f55 75%,#a5c 100%);opacity:.4;z-index:0;}
+  .journey-step{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:22px 18px;position:relative;z-index:1;transition:.2s;}
+  .journey-step:hover{transform:translateY(-4px);border-color:var(--pri);}
+  .journey-step .lv{display:inline-block;width:32px;height:32px;line-height:30px;text-align:center;border-radius:50%;font-weight:800;font-size:14px;color:#fff;margin-bottom:14px;border:2px solid #fff;}
+  .journey-step h4{font-size:15px;margin-bottom:4px;font-weight:700;}
+  .journey-step .sub{font-size:11px;color:var(--mute);letter-spacing:1.5px;margin-bottom:10px;}
+  .journey-step p{font-size:12.5px;color:var(--dim);line-height:1.65;}
+  .journey-step .hint{margin-top:10px;padding:7px 10px;background:#06090f;border-left:2px solid var(--pri);border-radius:4px;font-size:11px;color:var(--ok);font-family:"SF Mono",monospace;}
+  .journey-step .step-meta{margin-top:10px;display:flex;flex-direction:column;gap:5px;font-size:10.5px;color:var(--dim);line-height:1.5;border-top:1px dashed var(--line);padding-top:9px;}
+  .journey-step .step-meta>div{display:flex;gap:5px;align-items:flex-start;}
+  .journey-step .step-meta .ico{flex-shrink:0;width:14px;color:var(--mute);font-size:10px;}
+  .journey-step .step-meta b{color:var(--txt);font-weight:600;}
+
+  /* === TIER (版本对比) === */
+  .tier-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-top:24px;}
+  .tier{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:28px 22px;position:relative;overflow:hidden;transition:.2s;}
+  .tier:hover{transform:translateY(-4px);}
+  .tier.pro{border-color:var(--pri);box-shadow:0 0 24px rgba(85,170,255,.18);}
+  .tier.pro::before{content:'POPULAR';position:absolute;top:14px;right:-32px;transform:rotate(35deg);background:var(--pri2);color:#fff;font-size:9px;letter-spacing:2px;padding:3px 36px;font-weight:700;}
+  .tier.vip{background:linear-gradient(160deg,#1a0f2a,#0e1628);border-color:#a5c;}
+  .tier.vip::before{content:'VIP';position:absolute;top:14px;right:-26px;transform:rotate(35deg);background:linear-gradient(135deg,#a5c,#fc6);color:#000;font-size:10px;font-weight:800;letter-spacing:2px;padding:3px 32px;}
+  .tier-name{font-size:11px;color:var(--mute);letter-spacing:3px;margin-bottom:8px;font-weight:600;}
+  .tier-title{font-size:22px;font-weight:800;margin-bottom:10px;}
+  .tier-wp{font-size:46px;font-weight:900;font-family:"SF Mono",monospace;background:var(--grad-cool);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1;margin-bottom:6px;}
+  .tier.vip .tier-wp{background:linear-gradient(135deg,#a5c,#fc6,#fff);-webkit-background-clip:text;background-clip:text;}
+  .tier-wp-unit{font-size:13px;color:var(--mute);margin-bottom:18px;letter-spacing:1.5px;}
+  .tier ul{list-style:none;}
+  .tier li{padding:8px 0;font-size:13px;color:var(--txt);border-bottom:1px solid #131d33;display:flex;align-items:center;gap:8px;}
+  .tier li:last-child{border:none;}
+  .tier li .ic{color:var(--ok);font-weight:800;}
+  .tier li.muted{color:var(--mute);}
+  .tier li.muted .ic{color:var(--mute);}
+  .tier-foot{margin-top:18px;padding-top:14px;border-top:1px solid var(--line);font-size:11px;color:var(--mute);letter-spacing:1px;text-align:center;}
+  .tier-foot b{color:var(--pri);}
+
+  /* === VIBE CODING === */
+  .vibe-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px;}
+  .vibe-card{background:linear-gradient(160deg,#0c1a2e,#06090f);border:1px solid var(--line);border-radius:14px;padding:28px;position:relative;overflow:hidden;}
+  .vibe-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad-cool);}
+  .vibe-head{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+  .vibe-icon{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#2a6fff,#5af);display:flex;align-items:center;justify-content:center;font-size:20px;}
+  .vibe-card h4{font-size:18px;font-weight:700;margin-bottom:2px;}
+  .vibe-card .vibe-lv{font-size:10px;color:var(--pri);letter-spacing:2px;font-weight:600;}
+  .vibe-card p{font-size:13px;color:var(--dim);line-height:1.7;margin-bottom:18px;}
+  .chat{background:#020409;border:1px solid #1c2740;border-radius:10px;padding:14px;font-family:"SF Mono",monospace;font-size:12px;line-height:1.7;}
+  .chat-line{display:flex;gap:8px;margin-bottom:8px;}
+  .chat-line:last-child{margin-bottom:0;}
+  .chat-avatar{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:#1c2740;display:flex;align-items:center;justify-content:center;font-size:11px;}
+  .chat-avatar.kid{background:linear-gradient(135deg,#fc6,#f55);}
+  .chat-avatar.ai{background:linear-gradient(135deg,#5af,#5fa);}
+  .chat-bubble{flex:1;background:#0e1628;border-radius:8px;padding:8px 12px;color:var(--txt);}
+  .chat-bubble .cmd{color:var(--ok);}
+  .chat-bubble .kw{color:var(--warn);}
+  .chat-bubble .comment{color:var(--mute);font-style:italic;}
+  .terminal{background:#020409;border:1px solid #1c2740;border-radius:10px;padding:14px;font-family:"SF Mono",monospace;font-size:11.5px;line-height:1.7;}
+  .terminal .prompt{color:var(--ok);}
+  .terminal .out{color:var(--dim);}
+  .terminal .warn-line{color:var(--warn);}
+  .terminal .key{color:var(--pri);}
+  .blink{animation:blink 1s steps(2) infinite;}
+  @keyframes blink{0%,49%{opacity:1;}50%,100%{opacity:0;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <div class="logo">CRAYXUS<span class="dot">·</span>CYBER<span class="dot">·</span>AI GP</div>
+    <div class="nav-links">
+      <a href="#composer">🔥 Composer</a>
+      <a href="#cyber">⚡ Arena</a>
+      <a href="#ai">🧠 AI</a>
+      <a href="#gp">🏁 赛事</a>
+      <a href="#pilot">🤖 PILOT</a>
+      <a href="#journey">学习路径</a>
+      <a href="#ip">🛡 IP</a>
+      <a href="#founder">⚡ 创始人</a>
+      <a href="#business">💸 商业</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="bg"></div>
+  <div class="streak"></div>
+  <div class="streak s2"></div>
+  <div class="streak s3"></div>
+  <span class="particle" style="top:25%;left:42%;animation-delay:1.5s;"></span>
+  <span class="particle" style="top:45%;left:58%;animation-delay:2.3s;"></span>
+  <span class="particle" style="top:65%;left:38%;animation-delay:3.1s;"></span>
+  <span class="particle" style="top:35%;left:72%;animation-delay:0.8s;"></span>
+  <span class="particle" style="top:78%;left:64%;animation-delay:2.8s;"></span>
+  <div class="container">
+    <div class="hero-pill">ANALOG → DIGITAL · 面向 K12 的 AI 自动驾驶赛事 IP</div>
+    <h1><span class="hl">Cyber · AI · GP</span></h1>
+    <p class="sub" style="font-size:42px;color:#fff;margin-bottom:6px;font-weight:800;letter-spacing:10px;text-shadow:0 0 24px rgba(85,170,255,.4);">放手一搏</p>
+    <p class="sub" style="font-size:22px;color:var(--txt);margin-bottom:8px;font-weight:500;letter-spacing:.5px;">Code Your Champion · Drive Your Future</p>
+    <p class="sub" style="font-size:14px;color:var(--mute);margin-bottom:18px;letter-spacing:1.8px;font-family:'SF Mono',monospace;">// 放开遥控的双手 → AI 接管赛道 · Analog → Digital</p>
+    <p class="sub" style="font-size:16px;color:var(--dim);">把客厅遥控车从「模拟操控」升级为「数字智能」 —— 围绕四大支柱:<b style="color:var(--pri);">Drive Composer</b> · <b style="color:var(--pri);">Remote Arena</b> · <b style="color:var(--pri);">AI Algorithms</b> · <b style="color:var(--pri);">GP Tournament</b></p>
+    <div class="pillars">
+      <div class="pillar"><b>01</b>Drive Composer · 拖动驾驶</div>
+      <div class="pillar"><b>02</b>Remote Arena · 远程同场</div>
+      <div class="pillar"><b>03</b>AI Algorithms · 路径求解</div>
+      <div class="pillar"><b>04</b>GP Tournament · 赛事 IP</div>
+    </div>
+    <div class="hero-cta">
+      <a href="#composer" class="btn btn-pri">🔥 体验 Drive Composer</a>
+      <a href="#cyber" class="btn btn-ghost">查看远程接入 →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DRIVE COMPOSER (核心 1 · 拖动驾驶) ============ -->
+<section class="s alt" id="composer">
+  <div class="container">
+    <div class="eyebrow">CORE 01 · PREMIUM · 拖动驾驶</div>
+    <h2>Drive Composer —— <span class="hl">拖一拖,AI 学会新路线</span></h2>
+    <p class="lede">每个红点是车要经过的位置。鼠标 / 触屏拖动或<b style="color:var(--pri);">数字精确填充</b> → 实时改路径 → 按"应用"自动烧到车上。每一步都可 <b style="color:var(--pri);">Undo / Save / Load / Reset</b> —— 世界级 AI 赛车研发工具的简化版,K12 学生也能玩。</p>
+
+    <div class="composer-layout">
+      <!-- 顶部: WP TUNER 头 + 全部 WP chips -->
+      <div class="cmp-top">
+        <div class="cmp-top-head">
+          <h5>WP TUNER <span id="curWpLbl">#00</span></h5>
+          <div class="wp-nav">
+            <button class="wp-nav-btn" onclick="navWp(-1)" title="上一个 WP (键盘 [)">◀</button>
+            <span class="wp-count" id="wpCount">#00 / 24</span>
+            <button class="wp-nav-btn" onclick="navWp(1)" title="下一个 WP (键盘 ])">▶</button>
+          </div>
+          <div class="wp-tier-row">
+            <span class="wp-tier-lbl">WAYPOINTS</span>
+            <div class="wp-tier-chips">
+              <button class="wp-tier" data-n="8" onclick="setWpCount(8)">8</button>
+              <button class="wp-tier" data-n="16" onclick="setWpCount(16)">16</button>
+              <button class="wp-tier active" data-n="24" onclick="setWpCount(24)">24</button>
+            </div>
+          </div>
+        </div>
+        <div class="wp-chips-strip">
+          <div class="wp-legend"><span class="lg-dot" style="background:hsl(0,65%,50%);"></span>慢 0 m/s &nbsp;&nbsp;<span class="lg-dot" style="background:hsl(60,65%,50%);"></span>中 1.75 m/s &nbsp;&nbsp;<span class="lg-dot" style="background:hsl(120,65%,50%);"></span>快 3.5 m/s</div>
+          <div class="wp-chips" id="wpChips"></div>
+        </div>
+      </div>
+
+      <!-- 中部: 赛道 (左) + 三表盘纵向 (右) -->
+      <div class="cmp-mid">
+        <div class="cmp-canvas-wrap">
+          <canvas id="cmpCv" width="900" height="480" style="display:block;width:100%;background:linear-gradient(180deg,#0a121e,#06090f);border:1px solid var(--line);border-radius:12px;touch-action:none;cursor:crosshair;"></canvas>
+        </div>
+        <div class="cmp-dials">
+          <!-- HEADING 表盘 -->
+          <div class="dial">
+            <div class="dial-lbl">HEADING</div>
+            <svg class="dial-svg" id="dialHead" viewBox="0 0 100 100">
+              <defs>
+                <radialGradient id="hgrad" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#0a1a36"/>
+                  <stop offset="100%" stop-color="#020409"/>
+                </radialGradient>
+                <linearGradient id="hring" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#5af"/>
+                  <stop offset="100%" stop-color="#5fa"/>
+                </linearGradient>
+              </defs>
+              <circle cx="50" cy="50" r="44" fill="url(#hgrad)" stroke="url(#hring)" stroke-width="2"/>
+              <g id="hTicks"></g>
+              <g id="hCar" transform="translate(50 50)">
+                <path d="M-3 -14 L3 -14 L5 -8 L7 4 L7 10 L-7 10 L-7 4 L-5 -8 Z" fill="#fff" stroke="#5af" stroke-width=".8"/>
+                <rect x="-9" y="-5" width="3" height="3" fill="#5af"/>
+                <rect x="6" y="-5" width="3" height="3" fill="#5af"/>
+                <rect x="-9" y="6" width="3" height="3" fill="#5af"/>
+                <rect x="6" y="6" width="3" height="3" fill="#5af"/>
+                <circle cx="0" cy="-5" r="1.5" fill="#fc6"/>
+              </g>
+              <line id="hNeedle" x1="50" y1="50" x2="50" y2="10" stroke="#fc6" stroke-width="1.5" opacity=".6" stroke-linecap="round"/>
+            </svg>
+            <div class="dial-val" id="hVal">0°</div>
+            <div class="dial-input-row">
+              <label>VAL</label>
+              <input class="dial-input" type="number" id="hInput" step="1" min="0" max="359" onchange="setHeadingInput(this.value)" onkeydown="if(event.key==='Enter')setHeadingInput(this.value)">
+              <span class="dial-unit">°</span>
+            </div>
+          </div>
+          <!-- SPEED EQ -->
+          <div class="dial">
+            <div class="dial-lbl">SPEED</div>
+            <div style="position:relative;display:flex;align-items:center;">
+              <div class="eq-wrap" id="eqWrap">
+                <div class="eq-grad"></div>
+                <div class="eq-ticks"></div>
+                <div class="eq-fill" id="eqFill" style="height:50%;background:#5fa;color:#5fa;"></div>
+              </div>
+              <div class="eq-scale">
+                <span>3.5</span><span>3.0</span><span>2.5</span><span>2.0</span><span>1.5</span><span>1.0</span><span>0.5</span><span>0.0</span>
+              </div>
+            </div>
+            <div class="dial-val" id="vVal">1.00 m/s</div>
+            <div class="dial-input-row">
+              <label>VAL</label>
+              <input class="dial-input" type="number" id="vInput" step="0.05" min="0" max="3.5" onchange="setSpeedInput(this.value)" onkeydown="if(event.key==='Enter')setSpeedInput(this.value)">
+              <span class="dial-unit">m/s</span>
+            </div>
+          </div>
+          <!-- POSITION pad -->
+          <div class="dial">
+            <div class="dial-lbl">POSITION</div>
+            <svg class="dial-svg" id="dialPos" viewBox="0 0 100 100">
+              <defs>
+                <radialGradient id="pgrad" cx="50%" cy="50%" r="55%">
+                  <stop offset="0%" stop-color="#0a1a36"/>
+                  <stop offset="100%" stop-color="#020409"/>
+                </radialGradient>
+              </defs>
+              <rect x="6" y="6" width="88" height="88" rx="6" fill="url(#pgrad)" stroke="#5af" stroke-width="1.5"/>
+              <g stroke="#1c2740" stroke-width=".4">
+                <line x1="25" y1="6" x2="25" y2="94"/><line x1="50" y1="6" x2="50" y2="94"/><line x1="75" y1="6" x2="75" y2="94"/>
+                <line x1="6" y1="25" x2="94" y2="25"/><line x1="6" y1="50" x2="94" y2="50"/><line x1="6" y1="75" x2="94" y2="75"/>
+              </g>
+              <circle cx="50" cy="50" r="1" fill="#5af" opacity=".4"/>
+              <circle id="pDot" cx="50" cy="50" r="5" fill="#fc6" stroke="#fff" stroke-width="1.5">
+                <animate attributeName="r" values="5;6.5;5" dur="1.4s" repeatCount="indefinite"/>
+              </circle>
+            </svg>
+            <div class="dial-val" id="pVal">0.00 / 0.00</div>
+            <div class="dial-input-row pos">
+              <label>X</label>
+              <input class="dial-input" type="number" id="xInput" step="0.05" min="0" max="16" onchange="setPosInput(0,this.value)" onkeydown="if(event.key==='Enter')setPosInput(0,this.value)">
+              <span class="sep">·</span>
+              <label>Y</label>
+              <input class="dial-input" type="number" id="yInput" step="0.05" min="0" max="8" onchange="setPosInput(1,this.value)" onkeydown="if(event.key==='Enter')setPosInput(1,this.value)">
+              <span class="dial-unit">m</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 底部 (左列): legend + 按钮组 -->
+        <div class="cmp-bottom">
+          <div class="legend-row">
+            <span><span class="legend-dot" style="background:#0a4;"></span>Plan A 参考</span>
+            <span><span class="legend-dot" style="background:#f44;"></span>实际 WP (拖动)</span>
+            <span><span class="legend-dot" style="background:#0ff;"></span>车实时位置</span>
+            <span style="margin-left:auto;color:var(--mute);">25 WP · 24 段 · 全可回滚</span>
+          </div>
+          <div class="cmp-actions-row">
+            <button class="btn btn-pri" onclick="cmpApply()">🔥 应用到车</button>
+            <button class="btn btn-ghost" onclick="cmpRunLap()">▶ 跑一圈</button>
+            <button class="btn-mini" onclick="cmpMarkHere()" title="用真车当前 UWB 位置覆盖选中 WP (现场调试)" style="background:linear-gradient(135deg,#3a5a30,#4a7a40);color:var(--ok);border-color:#4a7a40;">📍 标定到此</button>
+            <span class="gap"></span>
+            <button class="btn-mini" onclick="cmpUndo()" title="撤销上一步 (拖动 / 输入 / Reset 均可撤销)">⤺ Undo</button>
+            <button class="btn-mini" onclick="cmpSave()" title="保存到浏览器本地">💾 Save</button>
+            <button class="btn-mini" onclick="cmpLoad()" title="读取上次保存">📂 Load</button>
+            <button class="btn-mini warn" onclick="cmpReset()" title="恢复 Map A 原始 25 个 WP">⟲ Reset</button>
+          </div>
+        </div>
+
+        <!-- 配图 (左列): Apply + UWB 现场调试 -->
+        <div class="cmp-result">
+          <img src="demo_lap.png" alt="AI 学完后的真实跑圈">
+          <div class="txt">
+            <b style="color:var(--ok);">✓ 现场调试 · 三步走</b><br>
+            <b style="color:var(--pri);">📍 标定到此</b> 把车推到位置 → 按按钮记录 UWB 当前坐标到选中 WP &nbsp;|&nbsp;
+            <b style="color:var(--pri);">🔥 应用到车</b> 24 段路径推送 ESP32 RAM &nbsp;|&nbsp;
+            <b style="color:var(--pri);">▶ 跑一圈</b> 真车开跑,UWB 50Hz 实时回传蓝点轨迹<br>
+            <span style="color:var(--mute);">// 把"手感"调试变成"数据"调试 — Analog → Digital 的核心。键盘 [ ] 切 WP / 输入框精确填值。</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CYBER ARENA (核心 2 · 远程接入) ============ -->
+<section class="s" id="cyber">
+  <div class="container">
+    <div class="eyebrow">CYBER ARENA · 云控竞技场</div>
+    <h2><span class="hl">Cyber · AI · GP</span> —— 全国车手线上同场,角逐杭州主赛场</h2>
+    <p class="lede">主赛场永远在杭州,但赛手可以在任何一座城市。小程序 + 浏览器双端云控通道,北京的小学生、深圳的中学生、成都的高中生 —— 同时接入杭州的真车,在同一条赛道上实时竞速。<b style="color:var(--pri);">真车实跑、毫秒级同步、实时计分</b>—— 不是录像比拼,是真实竞技。</p>
+
+    <div class="cyber-grid">
+      <div class="cyber-stage">
+        <div class="cyber-tag"><span class="live-d"></span>CYBER LINK · 北京 → 杭州赛场 · 27ms</div>
+        <div class="cyber-line"></div>
+        <!-- PC 设备 mockup -->
+        <div class="device-pc">
+          <div class="pc-screen">
+            <div class="pc-content">
+              <div class="pc-titlebar">
+                <span class="pc-dot r"></span><span class="pc-dot y"></span><span class="pc-dot g"></span>
+                <span class="pc-tab">CRAYXUS · CYBER COCKPIT</span>
+              </div>
+              <div class="pc-row">
+                <div class="pc-mini"><div class="lab">SPEED</div><div class="v">2.87 m/s</div></div>
+                <div class="pc-mini"><div class="lab">LAP</div><div class="v">17.42s</div></div>
+                <div class="pc-mini"><div class="lab">LATENCY</div><div class="v" style="color:var(--warn);">27ms</div></div>
+                <div class="pc-mini"><div class="lab">POSITION</div><div class="v">P1</div></div>
+              </div>
+              <div class="pc-track">
+                <svg viewBox="0 0 280 60" preserveAspectRatio="none">
+                  <path d="M10 40 Q 60 10 110 30 T 210 30 T 270 25" stroke="#5af" stroke-width="2" fill="none" opacity=".4"/>
+                  <path d="M10 40 Q 60 10 110 30 T 210 30 T 270 25" stroke="url(#pcg)" stroke-width="2" fill="none" stroke-dasharray="6 12">
+                    <animate attributeName="stroke-dashoffset" from="0" to="-36" dur="1s" repeatCount="indefinite"/>
+                  </path>
+                  <defs><linearGradient id="pcg"><stop offset="0" stop-color="#fc6"/><stop offset="1" stop-color="#5fa"/></linearGradient></defs>
+                  <circle cx="180" cy="28" r="3" fill="#fc6"><animate attributeName="cx" from="10" to="270" dur="3s" repeatCount="indefinite"/></circle>
+                </svg>
+              </div>
+              <div class="pc-row" style="margin-top:4px;">
+                <div class="pc-mini" style="background:linear-gradient(135deg,#0e1628,#1a2540);"><div class="lab">PID</div><div class="v" style="font-size:9px;">1.20 / 0.05 / 0.30</div></div>
+                <div class="pc-mini" style="background:linear-gradient(135deg,#0e1628,#1a2540);"><div class="lab">RACE MODE</div><div class="v" style="font-size:9px;color:var(--ok);">⚡ LIVE</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="pc-stand"></div>
+          <div class="pc-base"></div>
+        </div>
+        <!-- 手机 mockup -->
+        <div class="device-phone">
+          <div class="phone-frame">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="phone-statusbar"><span>9:41</span><span>● ▲ 🔋</span></div>
+              <div class="phone-header">CYBER · AI · GP</div>
+              <div class="phone-card">
+                <div class="lab">CAR · WUZHEN-A1</div>
+                <div class="v">⚡ ONLINE</div>
+              </div>
+              <div class="phone-card">
+                <div class="lab">CURRENT LAP</div>
+                <div class="v">17.42s</div>
+              </div>
+              <div class="phone-stick"></div>
+              <div class="phone-btns">
+                <div class="phone-btn">PID</div>
+                <div class="phone-btn start">START</div>
+                <div class="phone-btn">LOG</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="cyber-map">
+          <span>北京 · 选手</span>
+          <span>深圳 · 选手</span>
+          <span>成都 · 选手</span>
+          <span style="color:var(--warn);">杭州 · 主赛场</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="cyber-feat">
+          <div class="cyber-feat-card">
+            <div class="ic">📱</div>
+            <h5>微信小程序</h5>
+            <p>免下载、扫码即用。家长在朋友圈分享一条链接,孩子就能在客厅遥控杭州赛场的车 —— 真正的"零摩擦"体验。</p>
+          </div>
+          <div class="cyber-feat-card">
+            <div class="ic">💻</div>
+            <h5>PC 控制台</h5>
+            <p>Cyber Cockpit 提供专业级仪表盘:实时遥测、参数微调、多机位回放,适合训练营和家长备战赛事。</p>
+          </div>
+          <div class="cyber-feat-card">
+            <div class="ic">🌐</div>
+            <h5>全国线上同场</h5>
+            <p>主赛场永远在杭州,选手散布全国。WebRTC + 边缘服务器 30ms 内同步车况,北京、深圳、成都的孩子同时接入杭州真车 —— 实跑实算积分,真实竞技。</p>
+          </div>
+          <div class="cyber-feat-card">
+            <div class="ic">🛰</div>
+            <h5>云端 AI 教练</h5>
+            <p>每场比赛实时生成 AI 复盘报告:T3 入弯晚了 0.2s、刹车点偏后 5cm —— 像私教站在背后帮你看每一帧。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LIVE DEMO (远程接入 · 我的车队) ============ -->
+<section class="s alt" id="demo">
+  <div class="container">
+    <div class="eyebrow">REMOTE GARAGE · 远程接管你的赛车</div>
+    <h2>打开网页，<span class="hl">全国任何地方远程控制你的赛车</span></h2>
+    <p class="lede">小程序扫码绑车 · 本地 Wi-Fi 或云端 Cyber ID 双模式接入 · 多车自由切换 —— 杭州主赛场、北京家里、学校教室的车都在同一面板,毫秒级遥测 50Hz,一键启动 / 急停。</p>
+
+    <div class="live-grid">
+      <div class="live-panel">
+        <h4>CAR CONNECTION <span class="remote-tag">REMOTE</span></h4>
+        <div class="conn-row">
+          <input id="carIp" placeholder="192.168.4.1 或 172.20.10.4" value="172.20.10.4">
+          <button class="conn-btn" onclick="connect()">CONNECT</button>
+        </div>
+        <div class="conn-mode-row">
+          <button class="conn-mode-btn active" title="本地 Wi-Fi 直连 (低延迟,赛事现场)">📶 本地 Wi-Fi</button>
+          <button class="conn-mode-btn" title="云端 Cyber ID 远程接入 (任何地方)">🛰 云端 Cyber</button>
+          <button class="conn-mode-btn" title="小程序扫码一键绑车">📱 扫码绑车</button>
+        </div>
+        <div class="conn-status" id="connStatus" style="margin-top:10px;"><span class="ind"></span><span id="connText">未连接 — 请输入 ESP32 IP / Cyber ID</span></div>
+
+        <h4 style="margin-top:20px;">OPS · 主控</h4>
+        <div class="live-ops">
+          <button class="ops-btn ops-start" onclick="cmd('F')">
+            <span class="ico">🏁</span>
+            <span>START LAP</span>
+            <span class="desc">开始跑圈</span>
+          </button>
+          <button class="ops-btn ops-stop" onclick="cmd('S')">
+            <span class="ico">⏹</span>
+            <span>E-STOP</span>
+            <span class="desc">急停</span>
+          </button>
+        </div>
+        <div class="live-ops-row">
+          <button class="sec-btn" onclick="cmd('S')" title="暂停当前指令">⏸ PAUSE</button>
+          <button class="sec-btn" onclick="test('reset')" title="回到起点">🔄 RESET</button>
+        </div>
+
+        <h4 style="margin-top:6px;">DRIVE · 方向</h4>
+        <div class="dpad">
+          <div class="empty"></div>
+          <button onmousedown="cmd('F')" onmouseup="cmd('S')" ontouchstart="cmd('F')" ontouchend="cmd('S')">▲</button>
+          <div class="empty"></div>
+          <button onmousedown="cmd('L')" onmouseup="cmd('C')">◀</button>
+          <button class="stop" onclick="cmd('S')">STOP</button>
+          <button onmousedown="cmd('R')" onmouseup="cmd('C')">▶</button>
+          <div class="empty"></div>
+          <button onmousedown="cmd('B')" onmouseup="cmd('S')">▼</button>
+          <div class="empty"></div>
+        </div>
+        <div class="speed-row">
+          <label>SPEED <b id="spdLbl">26000</b></label>
+          <input type="range" min="0" max="65535" value="26000" id="spd" oninput="setSpeed(this.value)">
+        </div>
+
+        <h4 style="margin-top:14px;">CALIBRATION</h4>
+        <div class="test-row">
+          <button class="test-btn" onclick="test('accel')">▶ TEST ACCEL <span class="desc">直线全油门 3 秒 · 标定加速度</span></button>
+          <button class="test-btn" onclick="test('brake')">▶ TEST BRAKE <span class="desc">加速 2s 反向制动 1s · 标定减速度</span></button>
+          <button class="test-btn" onclick="test('circle')">▶ TEST CIRCLE <span class="desc">定舵机角全速 · 标定转弯半径</span></button>
+        </div>
+      </div>
+
+      <div class="telemetry">
+        <div>
+          <div class="tele-head">
+            <h4>TELEMETRY · 50Hz</h4>
+            <div class="badge" id="liveBadge">OFFLINE</div>
+          </div>
+          <div class="tele-grid">
+            <div class="tele-cell"><div class="lbl">MODE</div><div class="val" id="tMode">—</div></div>
+            <div class="tele-cell"><div class="lbl">CMD</div><div class="val" id="tCmd">—</div></div>
+            <div class="tele-cell"><div class="lbl">SPEED</div><div class="val" id="tSpd">— <span class="u">duty</span></div></div>
+            <div class="tele-cell"><div class="lbl">COUNT</div><div class="val" id="tCnt">0</div></div>
+          </div>
+        </div>
+        <div class="log" id="log" style="height:160px;">
+          <div><span class="ts">--:--:--</span><span class="info">▶ Waiting for connection...</span></div>
+        </div>
+
+        <!-- REMOTE LINK 云端通道质量 -->
+        <div class="remote-link">
+          <h4>REMOTE LINK · 云端通道</h4>
+          <div class="rl-grid">
+            <div class="rl-cell"><div class="lbl">UPLINK</div><div class="val">240<span class="u">kbps</span></div></div>
+            <div class="rl-cell"><div class="lbl">DOWNLINK</div><div class="val">480<span class="u">kbps</span></div></div>
+            <div class="rl-cell"><div class="lbl">RTT</div><div class="val">27<span class="u">ms</span></div></div>
+            <div class="rl-cell"><div class="lbl">LOSS</div><div class="val">0.0<span class="u">%</span></div></div>
+          </div>
+        </div>
+
+        <!-- MY GARAGE 我的车队 -->
+        <div class="garage">
+          <h4>MY GARAGE · 我的车队</h4>
+          <div class="garage-list">
+            <div class="garage-row active" onclick="">
+              <span class="dot ok"></span>
+              <div class="g-name">WUZHEN-A1</div>
+              <div class="g-loc">杭州主赛场</div>
+              <div class="g-status">⚡ ONLINE</div>
+            </div>
+            <div class="garage-row" onclick="">
+              <span class="dot ok"></span>
+              <div class="g-name">HOME-DESK</div>
+              <div class="g-loc">北京客厅</div>
+              <div class="g-status">⚡ ONLINE</div>
+            </div>
+            <div class="garage-row sleep" onclick="">
+              <span class="dot warn"></span>
+              <div class="g-name">SCHOOL-B</div>
+              <div class="g-loc">学校教室</div>
+              <div class="g-status">SLEEP</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LIVE LEADERBOARD 实时排名 (撑底) -->
+        <div class="leader">
+          <h4>LIVE LEADERBOARD · 实时排名 <span class="live-dot"></span><span class="live-txt">LIVE</span></h4>
+          <div class="leader-list">
+            <div class="leader-row">
+              <span class="pos p1">🥇 P1</span>
+              <span class="name">LU_XINYI</span>
+              <span class="time">17.42s</span>
+              <span class="gap-t">+0.00</span>
+            </div>
+            <div class="leader-row">
+              <span class="pos p2">🥈 P2</span>
+              <span class="name">CHEN_JIA</span>
+              <span class="time">17.61s</span>
+              <span class="gap-t">+0.19</span>
+            </div>
+            <div class="leader-row">
+              <span class="pos p3">🥉 P3</span>
+              <span class="name">WANG_MIN</span>
+              <span class="time">17.89s</span>
+              <span class="gap-t">+0.47</span>
+            </div>
+            <div class="leader-row you">
+              <span class="pos">P4</span>
+              <span class="name">YOU · HOME-DESK</span>
+              <span class="time">18.05s</span>
+              <span class="gap-t">+0.63</span>
+            </div>
+            <div class="leader-row">
+              <span class="pos">P5</span>
+              <span class="name">ZHAO_PENG</span>
+              <span class="time">18.21s</span>
+              <span class="gap-t">+0.79</span>
+            </div>
+            <div class="leader-row">
+              <span class="pos">P6</span>
+              <span class="name">LIU_HAO</span>
+              <span class="time">18.43s</span>
+              <span class="gap-t">+1.01</span>
+            </div>
+            <div class="leader-row dnf">
+              <span class="pos">P7</span>
+              <span class="name">LI_ZI</span>
+              <span class="time">—</span>
+              <span class="gap-t dnf">DNF</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AI 路径策略 (核心 3 · 算法求解 + 数字孪生) ============ -->
+<section class="s" id="ai">
+  <div class="container">
+    <div class="eyebrow">CORE 03 · AI ALGORITHMS · 算法求解</div>
+    <h2>AI 路径策略优化 —— <span class="hl">每条赛道都解一次方程</span></h2>
+    <p class="lede">不是预设几条"赛道线"了事。我们用 Dijkstra / 最小曲率 / CMA-ES / Apex 优化器对每张赛道求解，输出贴合车辆动力学的真正最快线。算法 + 数字孪生 = AI 自动驾驶的内核。</p>
+
+    <div class="cap-row reverse">
+      <div class="cap-text">
+        <div class="num">03A · Racing Line Solver</div>
+        <h3>5 种算法并行，<span class="hl">单圈 0.3s 提速</span></h3>
+        <p>同一张赛道，5 种求解器给出不同风格的最佳线：<b>最小曲率</b>稳健、<b>Apex</b>激进、<b>CMA-ES</b>全局最优。学员可以学着"读"算法差异，理解工程权衡。</p>
+        <ul>
+          <li><b>赛道扫描</b>：CAD/DXF 文件秒级转换为可计算赛道</li>
+          <li><b>速度规划</b>：考虑摩擦圆、引擎扭矩、刹车非线性</li>
+          <li><b>仿真验证</b>：每条线在虚拟桌面跑 1000 圈再下发真车</li>
+        </ul>
+      </div>
+      <div class="cap-visual">
+        <img src="racing_line.png" alt="optimized racing line">
+        <div class="cap">RACING LINE · 多算法求解叠加</div>
+      </div>
+    </div>
+
+    <div class="cap-row">
+      <div class="cap-text">
+        <div class="num">03B · Virtual Training</div>
+        <h3>先在仿真里赢一百次,<span class="hl"> 再去真赛道</span></h3>
+        <p>每张赛道有 1:1 数字孪生。学员的策略代码先在浏览器仿真里训练、调参、对战 —— 周末再带着完整数据集到现场比赛。Analog 客厅 → Digital 训练场。</p>
+        <ul>
+          <li><b>16m × 8m</b> 桌面赛道一比一映射</li>
+          <li><b>多车混战</b>支持，最多 8 车同场仿真</li>
+          <li><b>Episode 数据集</b>:每圈轨迹、动作、奖励全记录</li>
+        </ul>
+      </div>
+      <div class="cap-visual">
+        <img src="sim_lap.png" alt="simulated lap">
+        <div class="cap">VIRTUAL TWIN · 桌面级数字孪生</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GP 赛事 (核心 4 · 专业化赛事 IP) ============ -->
+<section class="s alt" id="gp">
+  <div class="container">
+    <div class="eyebrow">CORE 04 · GP TOURNAMENT · 专业化赛事 IP</div>
+    <h2>AI GP 赛事系统 —— <span class="hl">F1 + NBA 三级积分制</span></h2>
+    <p class="lede">不只是卖车，更是一个完整的赛事 IP：8 站致敬版赛道、6 机位直播转播、三级 PK（学校杯 / 班级杯 / 个人车手榜）。把客厅遥控变成全国直播赛事。</p>
+
+    <div class="cap-row reverse">
+      <div class="cap-text">
+        <div class="num">04 · Tribute Edition Tracks</div>
+        <h3>8 站世界经典赛道,<span class="hl"> 致敬复刻合法</span></h3>
+        <p>摩纳哥 · 上海 · 银石 · 蒙扎 · 铃鹿 · 斯帕 · 新加坡 + 杭州西湖原创。几何复刻属地理事实，绝不使用 F1 / Formula 1 / Grand Prix 商标，每场物料标注非官方授权。</p>
+        <ul>
+          <li><b>3D 打印模块化</b>：用户自有 Bambu A1 即可生产</li>
+          <li><b>BLE + Wi-Fi 双协议</b>：现场无网络也能开赛</li>
+          <li><b>家庭版套装</b>：客厅地毯就能搭一段铃鹿 S 弯</li>
+        </ul>
+      </div>
+      <div class="cap-visual">
+        <img src="track_map.png" alt="track preview">
+        <div class="cap">TRACK · 桌面级模块化拼装</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AI ROBOT DRIVER · CRAYXUS AI PILOT ============ -->
+<section class="s" id="pilot">
+  <div class="container">
+    <div class="eyebrow">AI ROBOT DRIVER · 给所有赛车装上 AI 车手</div>
+    <h2><span class="hl">CRAYXUS AI PILOT</span> —— 不是为一辆车做 AI,是给所有类似车辆加 AI 机器人</h2>
+    <p class="lede">CRAYXUS AI PILOT 是一套 <b style="color:var(--pri);">AI 机器人车手 IP 系统</b>,镜面头盔 + 青色 LED 光带 + 薄荷绿 / 黄铜金主色 —— 从 30 cm 桌面小车到真人卡丁车再到 F1 风超跑,同一套 AI 软件栈,机器人按比例缩放。<b style="color:var(--ok);">主营赛事</b>,兼容陪玩教练与训练对手两大场景。</p>
+
+    <!-- HERO 头图 + 身份卡 -->
+    <div class="pilot-hero">
+      <div class="pilot-hero-img">
+        <div class="pilot-tag"><span class="live-d"></span>CRAYXUS AI PILOT · v1.0</div>
+        <img src="ai_pilot_01_core.png" alt="CRAYXUS AI PILOT · AI 赛车机器人车手 v1.0">
+      </div>
+      <div class="pilot-spec">
+        <div class="pilot-id">
+          <div class="label">IDENTITY · IP 身份</div>
+          <h3><span>CRAYXUS</span> PILOT</h3>
+          <p class="tagline">未来主义 AI 赛车机器人车手 IP · 永不疲倦、永不失手、永远在线。<br><b>给所有类似车辆加一个 AI 机器人 —— 训练对手、陪玩教练、赛事车手三合一</b>。</p>
+        </div>
+        <div class="pilot-traits">
+          <div class="pilot-trait"><div class="ico">🪖</div><div class="t-name">MIRROR HELMET</div><div class="t-desc">镜面头盔 + 青色 LED 横向光带</div></div>
+          <div class="pilot-trait"><div class="ico">🎨</div><div class="t-name">MINT × BRASS</div><div class="t-desc">薄荷绿 + 黄铜金 IP 色系</div></div>
+          <div class="pilot-trait"><div class="ico">🤖</div><div class="t-name">AUTO PILOT</div><div class="t-desc">L2-L4 级 AI 自动驾驶</div></div>
+          <div class="pilot-trait"><div class="ico">🔄</div><div class="t-name">SCALABLE</div><div class="t-desc">30cm → 2m 全车型适配</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 大模式 -->
+    <div class="pilot-modes">
+      <h3 class="biz-sub-h">🎯 3 大业务模式 · 赛事为主</h3>
+      <div class="pilot-modes-grid">
+        <div class="pilot-mode primary">
+          <div class="m-ico">🏆</div>
+          <h5>RACE · 赛事车手</h5>
+          <div class="m-en">PRIMARY MODE · 核心营收</div>
+          <p>多车 CRAYXUS AI PILOT 在 <b>Cyber Arena 同场竞速</b>;跨城联赛,全国直播变现。<b>每一辆赛车都有一个明星 AI 车手 IP</b>,赛事赞助 / 周边 / 直播门票全 IP 化运营。这是项目<b>商业引擎</b>。</p>
+        </div>
+        <div class="pilot-mode">
+          <div class="m-ico">🎓</div>
+          <h5>COACH · 陪玩教练</h5>
+          <div class="m-en">SECONDARY · K12 教育</div>
+          <p>给孩子配一个<b>永远不累的 AI 教练</b>,讲规则、做示范、陪练、复盘 —— 学员从一开始就和 IP 形象共同成长,而不是和冰冷传感器对话。</p>
+        </div>
+        <div class="pilot-mode">
+          <div class="m-ico">📊</div>
+          <h5>TRAIN · 训练对手</h5>
+          <div class="m-en">TERTIARY · 真人陪练</div>
+          <p>真人车手用 AI 机器人作<b>对手陪练</b>;AI 学习真人风格 → 模拟竞争对手,数据复盘提升真人成绩。卡丁车场 / 驾校 / 真人 F1 训练通用。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 全车型适配 -->
+    <div class="pilot-lineup">
+      <h3>🚗 全车型适配 · 同一套 AI · 按比例缩放</h3>
+      <p class="lineup-sub">CRAYXUS AI PILOT 不绑死任何单一硬件 —— <b>同一套 AI 软件栈 + Drive Composer + Cyber Arena 云端</b>,机器人外观按车型缩放,从课堂小车到永康真人卡丁车再到旗舰概念车,全产品线覆盖。</p>
+      <div class="pilot-lineup-grid">
+        <div class="pilot-car">
+          <div class="car-ico">🏎️</div>
+          <div class="car-size">30 cm</div>
+          <h6>桌面小车</h6>
+          <div class="car-pilot">PILOT JUNIOR</div>
+          <p>K12 课堂 + 家庭娱乐 · ¥1,500-3,000</p>
+        </div>
+        <div class="pilot-car">
+          <div class="car-ico">🏁</div>
+          <div class="car-size">1.5-2 m</div>
+          <h6>真人卡丁车</h6>
+          <div class="car-pilot">PILOT KARTING</div>
+          <p>永康联合 · 户外赛事 / 卡丁车场 · ¥3-8 万</p>
+        </div>
+        <div class="pilot-car">
+          <div class="car-ico">🏎️</div>
+          <div class="car-size">3-4 m</div>
+          <h6>街跑改装</h6>
+          <div class="car-pilot">PILOT STREET</div>
+          <p>俱乐部 / 改装车文化 · ¥15-30 万</p>
+        </div>
+        <div class="pilot-car">
+          <div class="car-ico">🚀</div>
+          <div class="car-size">4-5 m</div>
+          <h6>旗舰概念车</h6>
+          <div class="car-pilot">PILOT APEX</div>
+          <p>电竞 / 直播 / 旗舰 IP · ¥50-200 万</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 永康合作模式 -->
+    <div class="pilot-yongkang">
+      <h4>🤝 PROPOSAL · 与永康联合打造「AI 卡丁车」</h4>
+      <p>永康是<b>中国卡丁车之乡</b>,有完整产业链 + 量产能力 + 渠道。CRAYXUS 提供 AI 软件栈与赛事 IP,联合打造首款<b>有 IP 辨识度的 AI 机器人卡丁车</b> —— 不做廉价玩具,做能上抖音热搜、办全国联赛、走高端家庭市场的旗舰款。</p>
+      <div class="split">
+        <div class="col">
+          <h5>⚙️ 永康承担</h5>
+          <ul>
+            <li>车身 / 车架 / 电池 / 电机硬件研发</li>
+            <li>模具 / 量产 / 供应链管理</li>
+            <li>卡丁车场地资源 + 经销商渠道</li>
+            <li>本地售后 / 维修 / 检测体系</li>
+          </ul>
+        </div>
+        <div class="col">
+          <h5>🧠 CRAYXUS 承担</h5>
+          <ul>
+            <li>AI 算法 + Drive Composer + 路径求解器</li>
+            <li>Cyber Arena 云端 + 跨城同场系统</li>
+            <li>CRAYXUS AI PILOT IP 形象 + 工业设计</li>
+            <li>赛事 IP 运营 + 直播 / 周边 / 赞助</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VIBE CODING ============ -->
+<section class="s alt" id="vibe">
+  <div class="container">
+    <div class="eyebrow">VIBE CODING · 一句话开车</div>
+    <h2>不会写代码也能指挥赛车 —— <span class="hl">让 AI 帮你执行</span></h2>
+    <p class="lede">最难的不是写代码,是知道想表达什么。我们把 CLI、大模型与真车三件事打通 —— 孩子用自然语言下达任务,AI 自动翻译为代码、烧录到车上、即时演示结果。</p>
+
+    <div class="vibe-grid">
+      <div class="vibe-card">
+        <div class="vibe-head">
+          <div class="vibe-icon">🎤</div>
+          <div>
+            <div class="vibe-lv">LV.1 · 启航班</div>
+            <h4>语音对话 · 跟 AI 司机说话</h4>
+          </div>
+        </div>
+        <p>小学低年级零代码起步。一句话下任务,AI 司机翻译成动作并执行 —— 第一次感受"我让 AI 替我开"的力量。</p>
+        <div class="chat">
+          <div class="chat-line">
+            <div class="chat-avatar kid">👦</div>
+            <div class="chat-bubble">"小启,<span class="kw">跑一圈给我看</span>!"</div>
+          </div>
+          <div class="chat-line">
+            <div class="chat-avatar ai">🤖</div>
+            <div class="chat-bubble"><span class="comment">// 已识别任务: full_lap</span><br>"收到!我用 <span class="kw">最小曲率</span>路线跑一圈,预计 <span class="cmd">17.8 秒</span>,开始🏁"</div>
+          </div>
+          <div class="chat-line">
+            <div class="chat-avatar kid">👦</div>
+            <div class="chat-bubble">"再来一次,这次 <span class="kw">慢一点</span>,T2 弯里别打滑"</div>
+          </div>
+          <div class="chat-line">
+            <div class="chat-avatar ai">🤖</div>
+            <div class="chat-bubble"><span class="comment">// PARAM: max_speed=1.8m/s, tire_friction_warn=on</span><br>"明白,T2 入弯我会提前刹车,速度降 18%"</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="vibe-card">
+        <div class="vibe-head">
+          <div class="vibe-icon">⌨️</div>
+          <div>
+            <div class="vibe-lv">LV.2 · 智控班</div>
+            <h4>Prompt 编程 · 直接写指令给大脑</h4>
+          </div>
+        </div>
+        <p>高年级解锁终端。用 CLI 写自然语言 prompt,大模型实时生成 Python / C++ 代码烧到车上,Vibe Coding 让孩子真正"驯服"AI。</p>
+        <div class="terminal">
+          <div><span class="prompt">crayxus &gt;</span> <span class="key">prompt</span> "写一个程序,在 T3 弯检测到内侧路缘时,让车微向外漂移 5cm 后回正"</div>
+          <div class="out">⠋ 正在调用 GLM-4 生成策略代码...</div>
+          <div class="out">✓ 已生成 <span class="key">drift_recovery.py</span> (37 lines)</div>
+          <div class="out">✓ 已编译,烧录至 ESP32-S3 RAM</div>
+          <div><span class="prompt">crayxus &gt;</span> <span class="key">run</span> --laps 3 --record</div>
+          <div class="out">🏁 LAP 1 · <span class="key">18.42s</span> · T3 漂移成功</div>
+          <div class="out">🏁 LAP 2 · <span class="key">17.91s</span> · T3 漂移成功</div>
+          <div class="out">🏁 LAP 3 · <span class="key">17.65s</span> · 个人最佳!</div>
+          <div><span class="prompt">crayxus &gt;</span> <span class="blink">█</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ JOURNEY (学习路径) ============ -->
+<section class="s alt" id="journey">
+  <div class="container">
+    <div class="eyebrow">LEARNING PATH · 五段成长</div>
+    <h2>从 <span class="hl">一句话开车</span>,到训练自己的 <span class="hl">AI 车神</span></h2>
+    <p class="lede">不是单节课、不是兴趣班,是 5-6 年完整成长路径。每段都有清晰的"能解锁什么",孩子知道前方还有什么在等他。</p>
+
+    <div class="journey">
+      <div class="journey-step">
+        <div class="lv" style="background:#95a5a6;">1</div>
+        <h4>启航班</h4>
+        <div class="sub">PROGRAMMING BASICS</div>
+        <p>积木编程 + 语音控车。零代码,跟 AI 说话就能让赛车跑 8 字、画名字、巡线避障。</p>
+        <div class="hint">🎤 解锁:一句话给 AI 司机下任务</div>
+        <div class="step-meta">
+          <div><span class="ico">📅</span><span><b>小学 1-3 年级</b> · 24 课时/学期</span></div>
+          <div><span class="ico">🎯</span><span>项目:8 字绕行 / 名字轨迹 / 巡线避障</span></div>
+          <div><span class="ico">✓</span><span>考核:完成 3 个语音任务 + 课堂展示</span></div>
+          <div><span class="ico">📘</span><span>对标:信息科技·算法与程序(小学段)</span></div>
+        </div>
+      </div>
+      <div class="journey-step">
+        <div class="lv" style="background:#4aa8ff;">2</div>
+        <h4>智控班</h4>
+        <div class="sub">LLM-CONTROLLED</div>
+        <p>云端大模型接管。学写 Prompt,让 ChatGPT / 通义直接开车;开始理解 API、JSON、多轮对话。</p>
+        <div class="hint">🌐 解锁:CLI Vibe Coding · Prompt 即代码</div>
+        <div class="step-meta">
+          <div><span class="ico">📅</span><span><b>小学 4-6 年级</b> · 36 课时/学期</span></div>
+          <div><span class="ico">🎯</span><span>项目:Prompt 调通单圈 + 自然语言改 PID</span></div>
+          <div><span class="ico">✓</span><span>考核:提交 5 个有效 Prompt + 单圈成绩榜</span></div>
+          <div><span class="ico">📘</span><span>对标:计算思维 / API / JSON / 多轮对话</span></div>
+        </div>
+      </div>
+      <div class="journey-step">
+        <div class="lv" style="background:#2ecc71;">3</div>
+        <h4>视觉班</h4>
+        <div class="sub">CV + RC</div>
+        <p>给车装上眼睛。OpenCV 识别赛道标记、Apex 锥桶、对手车辆 —— 第一次让 AI"看见"真实赛场。</p>
+        <div class="hint">👁 解锁:摄像头闭环 · 实时路况决策</div>
+        <div class="step-meta">
+          <div><span class="ico">📅</span><span><b>初一 - 初二</b> · 48 课时/学期</span></div>
+          <div><span class="ico">🎯</span><span>项目:锥桶/对手识别 + 视觉闭环避障</span></div>
+          <div><span class="ico">✓</span><span>考核:闭环 demo 通过率 ≥ 80% + 报告答辩</span></div>
+          <div><span class="ico">📘</span><span>对标:信息科技·人工智能模块(初中段)</span></div>
+        </div>
+      </div>
+      <div class="journey-step">
+        <div class="lv" style="background:#f39c12;">4</div>
+        <h4>决策班</h4>
+        <div class="sub">REINFORCEMENT LEARNING</div>
+        <p>训练自己的策略网络。PPO / DQN 在仿真桌面跑 10000 圈,再 sim2real 烧进真车 —— 孩子第一次"造 AI"。</p>
+        <div class="hint">🧠 解锁:自训驾驶员 · 反超教练 AI</div>
+        <div class="step-meta">
+          <div><span class="ico">📅</span><span><b>初三 - 高一</b> · 60 课时/学期</span></div>
+          <div><span class="ico">🎯</span><span>项目:PPO 训练私人策略 + sim2real 落地</span></div>
+          <div><span class="ico">✓</span><span>考核:真车单圈成绩 ≥ 基线教练 AI</span></div>
+          <div><span class="ico">📘</span><span>对标:高中信息技术·算法与人工智能选必</span></div>
+        </div>
+      </div>
+      <div class="journey-step">
+        <div class="lv" style="background:#C8102E;">5</div>
+        <h4>大师班</h4>
+        <div class="sub">RESEARCH-GRADE</div>
+        <p>VLA 多模态大模型、行为克隆、自然语言对策 —— 接近大学研究院级别。冠军门票 · 国家少年队选拔。</p>
+        <div class="hint">🏆 解锁:全国冠军车手 · 大师段位认证</div>
+        <div class="step-meta">
+          <div><span class="ico">📅</span><span><b>高二 - 高三</b> · 72 课时 + 集训营</span></div>
+          <div><span class="ico">🎯</span><span>项目:VLA 多模态策略 + 创新论文</span></div>
+          <div><span class="ico">✓</span><span>考核:白名单赛事获奖 / 强基综评作品集</span></div>
+          <div><span class="ico">📘</span><span>出口:强基计划 / 综合评价 / 特长招生</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CAPABILITIES ============ -->
+<section class="s" id="tune">
+  <div class="container">
+    <div class="eyebrow">CAPABILITY · 01</div>
+    <h2>Software Fine-Tune —— <span class="hl">改一行参数，秒变新车</span></h2>
+    <p class="lede">从 PID 系数到舵机映射、从马达 duty 上限到 sim2real 回放，我们把车的"性格"完全做进软件层。换硬件不重写代码，调参数即可适配。</p>
+
+    <div class="cap-row">
+      <div class="cap-text">
+        <div class="num">01 · OTA Tuning</div>
+        <h3>无需重烧固件，<span class="hl">浏览器即可调参</span></h3>
+        <p>PID 三系数、转向曲线、加速曲线、刹车响应 —— 所有"性格参数"都通过 HTTP 端点动态下发。比赛日老师改完按"应用"，全场 30 台车 5 秒同步。</p>
+        <ul>
+          <li><b>50+ 可调参数</b>覆盖动力 / 转向 / 感知 / 决策</li>
+          <li><b>参数预设</b>：新手模式 / 竞技模式 / 教学模式 一键切换</li>
+          <li><b>sim2real 回放</b>：仿真生成的最优时序，真车按 50Hz 精准重演</li>
+        </ul>
+      </div>
+      <div class="cap-visual">
+        <img src="esp32_macro.png" alt="ESP32-S3 控制板特写">
+        <div class="cap">ESP32-S3 · OLED 实时遥测 + 网页 HUD 参数微调</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI 路径策略 与 GP 赛事 sections 已上移至 LIVE DEMO 之后 -->
+<!-- ============ FULL STACK ============ -->
+<section class="s alt" id="stack">
+  <div class="container">
+    <div class="eyebrow">FULL-STACK CAPABILITY</div>
+    <h2>从神经网络到电机驱动 —— <span class="hl">全栈自研</span></h2>
+    <p class="lede">国内做赛车机器人的多,但能同时把 AI 算法、嵌入式固件、数字孪生、赛事系统四件事做齐的 —— 我们是唯一一家。这是不可被复制的技术纵深。</p>
+
+    <div class="stack-img"><img src="brain_body.png" alt="CRAYXUS Full Stack"></div>
+
+    <div class="stack-grid">
+      <div class="stack-card">
+        <div class="stack-num">01</div>
+        <h4>AI 算法层</h4>
+        <p>Hybrid A* / 最小曲率 / CMA-ES / Apex 多算法并行求解 · 模仿学习 + RL (PPO/DQN) · TensorRT 推理</p>
+        <div class="specs">
+          <div class="row"><span>路径求解算法</span><span class="val">5 路并行</span></div>
+          <div class="row"><span>路径收敛耗时</span><span class="val">&lt; 500 ms</span></div>
+          <div class="row"><span>策略网络推理</span><span class="val">&lt; 8 ms / 帧</span></div>
+          <div class="row"><span>仿真训练规模</span><span class="val">10⁵ episode</span></div>
+        </div>
+      </div>
+      <div class="stack-card">
+        <div class="stack-num">02</div>
+        <h4>云端智能</h4>
+        <p>Fleet Learning 跨车型数据汇聚 · OTA 热升级 · 学员段位与赛事积分 · WebRTC 多机位直播</p>
+        <div class="specs">
+          <div class="row"><span>云控双端</span><span class="val">小程序+Web</span></div>
+          <div class="row"><span>OTA 升级耗时</span><span class="val">&lt; 5 s</span></div>
+          <div class="row"><span>跨城同场延迟</span><span class="val">&lt; 30 ms</span></div>
+          <div class="row"><span>遥测采样率</span><span class="val">50 Hz</span></div>
+        </div>
+      </div>
+      <div class="stack-card">
+        <div class="stack-num">03</div>
+        <h4>嵌入式固件</h4>
+        <p>ESP32-S3 双核 240MHz 主控 · IMU 6 轴姿态融合 · 50Hz 实时控制 · Wi-Fi + BLE 双协议栈</p>
+        <div class="specs">
+          <div class="row"><span>主控算力</span><span class="val">2× 240 MHz</span></div>
+          <div class="row"><span>控制环路</span><span class="val">50 Hz · jitter &lt; 2 ms</span></div>
+          <div class="row"><span>姿态融合</span><span class="val">IMU 6 轴</span></div>
+          <div class="row"><span>无线协议</span><span class="val">Wi-Fi + BLE</span></div>
+        </div>
+      </div>
+      <div class="stack-card">
+        <div class="stack-num">04</div>
+        <h4>硬件平台</h4>
+        <p>4WD 麦克纳姆轮 (4× 编码器电机) · FOC 驱动 · 铝合金可调避震 · 自研整车 ID 与模具能力</p>
+        <div class="specs">
+          <div class="row"><span>驱动方式</span><span class="val">4WD 麦轮</span></div>
+          <div class="row"><span>PWM 精度</span><span class="val">65535 级</span></div>
+          <div class="row"><span>整车质量</span><span class="val">&lt; 1.5 kg</span></div>
+          <div class="row"><span>单次续航</span><span class="val">≈ 25 min</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stack-tag">
+      <b>SOFTWARE INTELLIGENCE</b> <span class="plus">+</span> <b>HARDWARE EXCELLENCE</b> <span class="plus">=</span> <b class="hl-grad">UNBEATABLE PERFORMANCE</b>
+    </div>
+  </div>
+</section>
+
+<!-- ============ IP MOAT · 专利与知识产权矩阵 ============ -->
+<section class="s" id="ip">
+  <div class="container">
+    <div class="eyebrow">IP MOAT · 技术护城河</div>
+    <h2>4 类 IP 矩阵 —— <span class="hl">不是 demo,是不可复制的工程纵深</span></h2>
+    <p class="lede">把客厅遥控车做成 AI 赛事 IP,核心不是单点功能,而是整套"软件 + 硬件 + 赛道 + 算法"的工程深度。我们已规划 <b style="color:var(--pri);">6 项核心发明专利 + 5 项实用新型 + 5 项外观设计 + 6 项软件著作权 + 7 项商标</b>,首批将于产品对外公开前完成申报。</p>
+
+    <!-- 四类 IP 矩阵 -->
+    <div class="ip-grid">
+      <div class="ip-card">
+        <div class="ip-num">01</div>
+        <h4>发明专利 · 6 项</h4>
+        <p>核心方法与系统 · 保护期 20 年</p>
+        <ul>
+          <li>Drive Composer 拖动重生成路径方法</li>
+          <li>跨地域云端同场竞技系统</li>
+          <li>大模型 + 儿童编程车辆控制</li>
+          <li>多策略融合路径求解</li>
+          <li>OTA 多车实时一致性同步</li>
+          <li>3D 打印模块化赛道与拼接</li>
+        </ul>
+      </div>
+      <div class="ip-card">
+        <div class="ip-num">02</div>
+        <h4>实用新型 · 5+ 项</h4>
+        <p>硬件构造 · 保护期 10 年</p>
+        <ul>
+          <li>4WD 麦轮车架与避震结构</li>
+          <li>ESP32+IMU+OLED 一体主控板</li>
+          <li>模块化赛道卡扣 / 磁吸连接件</li>
+          <li>BLE 现场检录装置</li>
+          <li>车辆与充电基座对位结构</li>
+        </ul>
+      </div>
+      <div class="ip-card">
+        <div class="ip-num">03</div>
+        <h4>外观设计 · 5+ 项</h4>
+        <p>工业设计 · 保护期 15 年</p>
+        <ul>
+          <li>赛车整车 ID</li>
+          <li>赛道单元外观</li>
+          <li>Drive Composer GUI 外观</li>
+          <li>小程序 UI 外观</li>
+          <li>奖杯 / 勋章 / 包装盒</li>
+        </ul>
+      </div>
+      <div class="ip-card">
+        <div class="ip-num">04</div>
+        <h4>软著 + 商标 · 13 项</h4>
+        <p>立即可拿 · 30 天初审下证</p>
+        <ul>
+          <li>软著: Drive Composer / Cyber Cockpit</li>
+          <li>软著: 路径求解器 / 仿真桌面</li>
+          <li>软著: 赛事小程序 / AI 教练复盘</li>
+          <li>商标: CRAYXUS · CRAYXUS AI GP</li>
+          <li>商标: Drive Composer · 五级班名</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 6 项核心发明专利 -->
+    <div class="ip-patent-list">
+      <div class="ip-patent-head">
+        <h3>🎯 6 项核心发明专利清单</h3>
+        <span class="ip-sub">绑定硬件 + 方法 + 装置三件套 · 符合中国专利法新颖性、创造性、实用性三要素</span>
+      </div>
+      <div class="ip-patent-grid">
+        <div class="ip-patent">
+          <div class="no">#01 · CORE</div>
+          <h5>基于交互式拖动重生成路径的赛车控制方法</h5>
+          <p>从触屏 WP 拖动 → 平滑求解 → OTA 烧录 → 真车闭环 → 单圈结果回传,全链路方法权利要求 + 装置权利要求。</p>
+        </div>
+        <div class="ip-patent">
+          <div class="no">#02 · CORE</div>
+          <h5>跨地域云端同场赛车竞技系统</h5>
+          <p>WebRTC 边缘节点 + 真车镜像 + 30ms 同步 + 实时计分;覆盖"远程驾驶 → 本地真车 → 全国直播"完整链路。</p>
+        </div>
+        <div class="ip-patent">
+          <div class="no">#03</div>
+          <h5>基于大语言模型的儿童编程教学车辆控制方法</h5>
+          <p>自然语言 → Prompt → 代码生成 → 安全沙箱 → 烧录真车,绑定具体硬件控制接口避免"智力规则"驳回。</p>
+        </div>
+        <div class="ip-patent">
+          <div class="no">#04</div>
+          <h5>多策略融合的赛车最优路径求解方法</h5>
+          <p>Dijkstra + 最小曲率 + CMA-ES + Apex 优化器集成投票,输出贴合车辆动力学的真正最快线。</p>
+        </div>
+        <div class="ip-patent">
+          <div class="no">#05</div>
+          <h5>基于 OTA 的多车实时参数一致性同步方法</h5>
+          <p>比赛日全场 N 台车同步参数 5 秒收敛 + 校验回执,确保赛事公平性。</p>
+        </div>
+        <div class="ip-patent">
+          <div class="no">#06</div>
+          <h5>基于 3D 打印的模块化教学赛道及其拼接方法</h5>
+          <p>卡扣几何 + 磁吸感应 + 自动拓扑识别,适合 K12 课堂 5 分钟拼装一条完整赛道。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 申请节奏 -->
+    <div class="ip-timeline">
+      <h3>📅 申请节奏 · 三阶段</h3>
+      <div class="ip-tl-grid">
+        <div class="ip-tl">
+          <div class="ip-tl-tag" style="background:#0a4530;color:var(--ok);">PHASE 1 · 1 月内</div>
+          <h6>抢申第一波</h6>
+          <p>2 项核心发明 + 3 项实用新型 + 3 项外观设计 + 6 项软著 + 5 项商标 —— 赶在产品大范围公开前完成新颖性锁定。</p>
+        </div>
+        <div class="ip-tl">
+          <div class="ip-tl-tag" style="background:#2a4030;color:var(--pri);">PHASE 2 · 3-6 月</div>
+          <h6>追加深度 + PCT 准备</h6>
+          <p>追加 4 项发明专利,启动 PCT 国际申请准备(优先权 12 个月内有效),向白名单赛事备案。</p>
+        </div>
+        <div class="ip-tl">
+          <div class="ip-tl-tag" style="background:#1a2540;color:var(--dim);">PHASE 3 · 6-12 月</div>
+          <h6>国际布局 + 标准化</h6>
+          <p>PCT 进入主要市场(美 / 日 / 韩 / 欧),向行业标准组织提交教育级 AI 自动驾驶赛事协议草案。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 政策利好 + 合规承诺 -->
+    <div class="ip-bottom">
+      <div class="ip-bottom-row">
+        <div class="ip-bottom-col policy">
+          <h5>🏛 POLICY · 政策利好</h5>
+          <ul>
+            <li>杭州知识产权保护中心 · K12+AI 教育快速预审通道 (3-6 个月授权)</li>
+            <li>杭州市 / 西湖区 IP 资助 · 部分官费可补贴</li>
+            <li>校企联合申请 · 教授 + 院校 + 公司三方权属 (学术产出双赢)</li>
+            <li>纳入"双减"后科技类课程清单 · 政策友好</li>
+          </ul>
+        </div>
+        <div class="ip-bottom-col compliance">
+          <h5>⚖️ COMPLIANCE · 合规承诺</h5>
+          <ul>
+            <li>首次公开窗口 6 个月内完成核心专利申报,避免新颖性失效</li>
+            <li>所有发明绑定具体硬件 / 装置权利要求,规避"智力规则"驳回</li>
+            <li>对外宣传严格遵守专利公示与商标授权,不滥用"中国首个"</li>
+            <li>致敬版赛道几何复刻 ≠ 商标侵权,所有物料标注非官方授权</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOUNDER · 创始团队与技术领导力 ============ -->
+<section class="s alt" id="founder">
+  <div class="container">
+    <div class="eyebrow">FOUNDER · 技术创始人 · 跨澳-中</div>
+    <h2>不是 PPT 创业 —— <span class="hl">硬件 + AI + 产品三栖工程师领衔</span></h2>
+    <p class="lede">Drive Composer / Cyber Arena / 多算法路径求解能在 <b style="color:var(--pri);">6 周</b> 做出真车可跑的 demo,而别的团队还在画 PPT —— 因为创始人有完整的工业级 AI 项目交付记录,从神经网络到电机驱动、从赛事规则到产品落地全栈自研。</p>
+
+    <div class="founder-grid">
+      <div class="founder-bio">
+        <div class="founder-avatar">⚡</div>
+        <h3>Jayzee · Technical Co-Founder</h3>
+        <div class="founder-role">CTO / 主架构师 · CRAYXUS AI GP</div>
+        <ul class="founder-tags">
+          <li>🇦🇺 澳洲 PR</li>
+          <li>🧠 Deep RL / CFR</li>
+          <li>⚙️ ESP32 嵌入式</li>
+          <li>🎮 全栈产品</li>
+          <li>🏁 赛事规则</li>
+          <li>🧊 3D / CAD</li>
+          <li>📱 小程序 / Web</li>
+          <li>🎨 工业设计</li>
+        </ul>
+        <p>10+ 年软件 / AI 工程经验,横跨硬件嵌入式、深度学习、产品交互、赛事 IP 四大领域。本项目从算法到电机、从小程序到赛事系统的<b style="color:var(--ok);">全部技术栈由其一人主导</b>,跨澳-中两地资源叠加。</p>
+      </div>
+
+      <div class="founder-projects">
+        <h4>📦 已交付 / 在线项目 · 信任证明</h4>
+        <div class="proj-list">
+          <div class="proj">
+            <div class="p-name">WSOPMTT · AlphaGo 级 MTT 扑克 AI</div>
+            <div class="p-desc">9.2M 参数 Deep CFR + GPU ICM 流水线 · Phase2 ROI <b style="color:var(--ok);">+445%</b> vs ExpertBot · 工业级 RL 项目</div>
+          </div>
+          <div class="proj">
+            <div class="p-name">AlphaDan · 1v1 掼蛋 AI</div>
+            <div class="p-desc">3 档难度神经网络(普通 / 上帝 / 神级) · 抖音直播版「人类大战 AlphaDan」</div>
+          </div>
+          <div class="proj">
+            <div class="p-name">AI 蛋吧 · 一体机硬件 + 在线 Quiz</div>
+            <div class="p-desc">aiguandan.au 已上线 · 定制 108 键 OLED 翻盖一体机 · 主板 / 键帽 / 外壳全自研</div>
+          </div>
+          <div class="proj">
+            <div class="p-name">SoccerBurst · 足球盘口分析系统</div>
+            <div class="p-desc">实时因子调试 + 30 场样本权重校准 · 数据驱动决策系统</div>
+          </div>
+          <div class="proj">
+            <div class="p-name">Crayxus Code · CLI AI Agent</div>
+            <div class="p-desc">类 Claude Code 终端助手 · GLM-4.6 后端 · Node + TS · 工程化 LLM 应用</div>
+          </div>
+          <div class="proj">
+            <div class="p-name">CRAYXUS AI GP · 本项目</div>
+            <div class="p-desc">2026-05 启动 · <b style="color:var(--ok);">6 周</b> 做出真车 + Drive Composer + 全栈网站 + 6 项专利清单</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="founder-edge">
+      <div class="fe-card">
+        <div class="ico">🧬</div>
+        <h6>独家技术栈深度</h6>
+        <p>跨 AI 算法 / 嵌入式固件 / 产品交互 / 赛事规则四个领域全栈,在国内 K12 赛道极其稀缺。</p>
+      </div>
+      <div class="fe-card">
+        <div class="ico">🚀</div>
+        <h6>交付速度极快</h6>
+        <p>本项目 6 周完成真车 + 拖动 IDE + 全栈网站 + 专利清单;别的团队还在 PPT。</p>
+      </div>
+      <div class="fe-card">
+        <div class="ico">🌏</div>
+        <h6>跨国资源叠加</h6>
+        <p>澳洲身份 + 国内落地团队 · 后期对接东南亚 / 澳洲 / 大洋洲教育市场,海外授权先发。</p>
+      </div>
+      <div class="fe-card">
+        <div class="ico">🎯</div>
+        <h6>多项目能力背书</h6>
+        <p>已交付多个工业级 AI 项目(扑克 / 掼蛋 / 足球 / 一体机 / CLI Agent) · 不是第一次创业。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ACADEMIC PARTNERS ============ -->
+<section class="s" id="partners">
+  <div class="container">
+    <div class="eyebrow">ACADEMIC & POLICY · 学术 / 政策对接</div>
+    <h2>从 <span class="hl">课程标准</span>到 <span class="hl">大赛通道</span> —— 站在权威肩膀上</h2>
+    <p class="lede">课程体系对齐《中小学人工智能课程指南》，赛事通道对接教育部白名单与杭州市 AI 教育示范专项，关键节点皆由高校学术顾问把关，确保 K12 学员的每一步都"有出口、有背书、有学分价值"。</p>
+
+    <div class="stack-grid" style="margin-top:36px;">
+      <div class="stack-card">
+        <div class="stack-num">01</div>
+        <h4>学术顾问委员会</h4>
+        <p style="color:var(--dim);font-size:13.5px;line-height:1.7;">
+          <b style="color:var(--txt);">[ 教授姓名 · 待官宣 ]</b><br>
+          <span style="color:var(--pri);font-weight:600;">浙江大学 AI 研究院</span><br>
+          研究方向:自动驾驶决策 / 强化学习<br>
+          负责课程学术把关、赛题设计、学员升学通道
+        </p>
+      </div>
+      <div class="stack-card">
+        <div class="stack-num">02</div>
+        <h4>对接课程标准</h4>
+        <p style="color:var(--dim);font-size:13.5px;line-height:1.7;">
+          ▸ 《中小学人工智能课程指南（2024）》<br>
+          ▸ 信息科技课程标准 · 算法与编程模块<br>
+          ▸ CSTA K-12 Computer Science Standards<br>
+          ▸ 双减后课后服务·科技类目录
+        </p>
+      </div>
+      <div class="stack-card">
+        <div class="stack-num">03</div>
+        <h4>大赛白名单通道</h4>
+        <p style="color:var(--dim);font-size:13.5px;line-height:1.7;">
+          ▸ 全国青少年人工智能创新大赛<br>
+          ▸ 中国青少年机器人竞赛<br>
+          ▸ 世界机器人大会青少年挑战赛<br>
+          ▸ <span style="color:var(--mute);">（教育部白名单内赛事，可申报特长生与综合素质评价）</span>
+        </p>
+      </div>
+      <div class="stack-card">
+        <div class="stack-num">04</div>
+        <h4>政府 / 产学研对接</h4>
+        <p style="color:var(--dim);font-size:13.5px;line-height:1.7;">
+          ▸ 杭州市科技局 · AI 教育示范专项<br>
+          ▸ 杭州市教育局 · 课后服务课程<br>
+          ▸ <b style="color:var(--pri);">浙江大学 AI 研究院</b> · 产学研合作 (主对接)<br>
+          ▸ 西湖大学 · 实验室协同<br>
+          ▸ <span style="color:var(--mute);">（部分对接洽谈中，最终以签约为准）</span>
+        </p>
+      </div>
+    </div>
+
+    <div style="margin-top:32px;padding:18px 22px;background:rgba(85,170,255,.06);border:1px solid var(--line);border-left:3px solid var(--pri);border-radius:8px;color:var(--dim);font-size:13px;line-height:1.7;">
+      <b style="color:var(--pri);">学术承诺</b> · 所有课程章节、考核标准、赛题设计在公开发布前均经学术顾问委员会评审；项目宣传材料中涉及合作院校、政策项目的表述以最终签约文件为准。
+    </div>
+  </div>
+</section>
+
+<!-- ============ BUSINESS MODEL · 商业模型与增长路径 ============ -->
+<section class="s alt" id="business">
+  <div class="container">
+    <div class="eyebrow">BUSINESS MODEL · 商业模型与增长路径</div>
+    <h2>7 条营收线 · <span class="hl">3 年三级跳</span> —— 不是单产品,是 IP 生态</h2>
+    <p class="lede">从训练营现金流起步,到政府 / 学校 ToB 订单,到赛事 IP 商业化,再到 SaaS + 海外授权;每一级都有明确的市场锚定与毛利结构 —— <b style="color:var(--pri);">先现金流,后估值</b>。</p>
+
+    <h3 class="biz-sub-h">💰 7 条营收线 · 按 ROI / 起步速度排序</h3>
+    <div class="biz-streams">
+      <div class="biz-stream">
+        <div class="biz-tier">★★★★★</div>
+        <div class="biz-num">01</div>
+        <h5>训练营学费</h5>
+        <p>暑假 + 周末 + 寒假集训;预收款式现金流。</p>
+        <div class="biz-meta"><span class="m-margin">毛利 ~65%</span><span class="m-time">起步 1 月</span></div>
+      </div>
+      <div class="biz-stream">
+        <div class="biz-tier">★★★★★</div>
+        <div class="biz-num">02</div>
+        <h5>政府 / 学校 ToB</h5>
+        <p>双减课后服务 + AI 实验室建设 + 教育局专项。</p>
+        <div class="biz-meta"><span class="m-margin">毛利 ~50%</span><span class="m-time">起步 6-12 月</span></div>
+      </div>
+      <div class="biz-stream">
+        <div class="biz-tier">★★★★</div>
+        <div class="biz-num">03</div>
+        <h5>硬件套件</h5>
+        <p>整车 + 家庭版赛道;训练营 + 家庭电商双渠道。</p>
+        <div class="biz-meta"><span class="m-margin">毛利 ~35%</span><span class="m-time">起步 6 月</span></div>
+      </div>
+      <div class="biz-stream">
+        <div class="biz-tier">★★★★</div>
+        <div class="biz-num">04</div>
+        <h5>赛事赞助</h5>
+        <p>车企 / 视觉 / 新能源 Tier 2 + 政府 Tier 3。</p>
+        <div class="biz-meta"><span class="m-margin">毛利 ~80%</span><span class="m-time">起步 12 月</span></div>
+      </div>
+      <div class="biz-stream">
+        <div class="biz-tier">★★★</div>
+        <div class="biz-num">05</div>
+        <h5>Cyber Arena SaaS</h5>
+        <p>云端订阅 + AI 教练复盘 + 数据回放,月费制。</p>
+        <div class="biz-meta"><span class="m-margin">毛利 ~90%</span><span class="m-time">起步 18 月</span></div>
+      </div>
+      <div class="biz-stream">
+        <div class="biz-tier">★★</div>
+        <div class="biz-num">06</div>
+        <h5>直播 + IP 衍生</h5>
+        <p>抖音 / B 站直播 + 周边商品 / 奖牌 / 卡牌。</p>
+        <div class="biz-meta"><span class="m-margin">毛利 ~70%</span><span class="m-time">起步 24 月</span></div>
+      </div>
+      <div class="biz-stream">
+        <div class="biz-tier">★★</div>
+        <div class="biz-num">07</div>
+        <h5>数据 / 海外授权</h5>
+        <p>数据集授权高校 / 车企 + 东南亚区域品牌授权。</p>
+        <div class="biz-meta"><span class="m-margin">毛利 ~95%</span><span class="m-time">起步 36 月</span></div>
+      </div>
+    </div>
+
+    <h3 class="biz-sub-h">📈 4 阶段增长路径</h3>
+    <div class="biz-phases">
+      <div class="biz-phase">
+        <div class="biz-stage">PHASE 1</div>
+        <div class="biz-when">0 - 6 月</div>
+        <h5>现金流先行</h5>
+        <p>训练营 + 硬件预收款。专利受理通知 → 估值素材。<b style="color:var(--ok);">先收钱再开课。</b></p>
+      </div>
+      <div class="biz-phase">
+        <div class="biz-stage">PHASE 2</div>
+        <div class="biz-when">6 - 12 月</div>
+        <h5>杭州站 + 政府订单</h5>
+        <p>学校 ToB 落地 2-3 家 + 杭州站赛事打响 + 抓 1 家 Tier 2 赞助。Pre-A 估值起跳。</p>
+      </div>
+      <div class="biz-phase">
+        <div class="biz-stage">PHASE 3</div>
+        <div class="biz-when">12 - 24 月</div>
+        <h5>全国复制 + SaaS</h5>
+        <p>上海 / 北京 / 深圳复制 + Cyber Arena SaaS 上线 + 家庭版套装电商。</p>
+      </div>
+      <div class="biz-phase">
+        <div class="biz-stage">PHASE 4</div>
+        <div class="biz-when">24 - 36 月</div>
+        <h5>IP 化 + 资产化</h5>
+        <p>5-8 城全国联赛 + 直播商业化 + 海外授权探索 → A / B 轮估值放大。</p>
+      </div>
+    </div>
+
+    <h3 class="biz-sub-h">🎯 市场规模锚定</h3>
+    <div class="biz-market">
+      <div class="biz-mkt">
+        <div class="num"><span class="cur">¥</span><span class="big">14</span><span class="unit">亿</span></div>
+        <div class="lbl">TAM · 杭州 STEM / 年</div>
+        <div class="desc">杭州市 K12 科技教育总盘</div>
+      </div>
+      <div class="biz-mkt">
+        <div class="num"><span class="cur">¥</span><span class="big">1.5</span><span class="dash">–</span><span class="big">2</span><span class="unit">亿</span></div>
+        <div class="lbl">SAM · 竞赛机器人 / 年</div>
+        <div class="desc">细分赛道可及市场</div>
+      </div>
+      <div class="biz-mkt">
+        <div class="num"><span class="cur">¥</span><span class="big">3,000</span><span class="dash">–</span><span class="big">5,000</span><span class="unit">万</span></div>
+        <div class="lbl">SOM · 3 年目标</div>
+        <div class="desc">公司 3 年年收入目标</div>
+      </div>
+    </div>
+
+    <h3 class="biz-sub-h">💎 4 个独特溢价点 · 估值乘数高于同行</h3>
+    <div class="biz-edge">
+      <div class="biz-edge-card">
+        <div class="ico">🧬</div>
+        <h6>三位一体</h6>
+        <p>硬件 + 软件 + 赛事 IP;PSR 比单一品类高 30-50%。</p>
+      </div>
+      <div class="biz-edge-card">
+        <div class="ico">🛡</div>
+        <h6>专利护城河</h6>
+        <p>6 项发明专利 + 11+ 实用外观;不是 PPT 公司。</p>
+      </div>
+      <div class="biz-edge-card">
+        <div class="ico">🛰</div>
+        <h6>跨城云端同场</h6>
+        <p>AI + IoT + 教育三标签稀缺叙事;资本易讲。</p>
+      </div>
+      <div class="biz-edge-card">
+        <div class="ico">⚡</div>
+        <h6>Analog → Digital</h6>
+        <p>客厅玩具 → AI 训练场;一句话传播 IP 启动力。</p>
+      </div>
+    </div>
+
+    <h3 class="biz-sub-h">💸 估值阶梯 · 5 轮路径</h3>
+    <div class="biz-valuation">
+      <div class="biz-val">
+        <div class="v-stage">SEED</div>
+        <div class="v-when">2026 Q2</div>
+        <div class="v-num"><span class="cur">¥</span><span class="big">2,000</span><span class="dash">–</span><span class="big">4,000</span><span class="unit">万</span></div>
+        <div class="v-base">MVP + 杭州落地<br>+ 6 项专利申报</div>
+      </div>
+      <div class="biz-val">
+        <div class="v-stage">PRE-A</div>
+        <div class="v-when">2026 Q4</div>
+        <div class="v-num"><span class="cur">¥</span><span class="big">6,000</span><span class="unit">万</span><span class="dash">–</span><span class="cur">¥</span><span class="big">1.2</span><span class="unit">亿</span></div>
+        <div class="v-base">杭州 200 学员<br>+ 政府订单</div>
+      </div>
+      <div class="biz-val">
+        <div class="v-stage">A 轮</div>
+        <div class="v-when">2027</div>
+        <div class="v-num"><span class="cur">¥</span><span class="big">2</span><span class="dash">–</span><span class="big">4</span><span class="unit">亿</span></div>
+        <div class="v-base">3 城复制<br>+ ARR ¥500-800 万</div>
+      </div>
+      <div class="biz-val">
+        <div class="v-stage">B 轮</div>
+        <div class="v-when">2028-29</div>
+        <div class="v-num"><span class="cur">¥</span><span class="big">5</span><span class="dash">–</span><span class="big">12</span><span class="unit">亿</span></div>
+        <div class="v-base">8 城联赛<br>+ ARR ¥3-5 千万<br>+ SaaS 起量</div>
+      </div>
+      <div class="biz-val">
+        <div class="v-stage">IPO / M&amp;A</div>
+        <div class="v-when">2030+</div>
+        <div class="v-num"><span class="cur">¥</span><span class="big">20</span><span class="dash">–</span><span class="big">50</span><span class="unit">亿</span></div>
+        <div class="v-base">全国 + 海外<br>+ ARR ¥1.5-3 亿</div>
+      </div>
+    </div>
+    <p style="margin-top:14px;font-size:11.5px;color:var(--mute);text-align:right;letter-spacing:.3px;">基于可比公司 PSR 8-15x · 童心制物 / 编程猫 / 火花思维 等 K12 赛道锚定</p>
+
+    <h3 class="biz-sub-h">📊 5 年营收预测 · Bull Case</h3>
+    <div class="biz-rev-table">
+      <table>
+        <thead>
+          <tr>
+            <th>营收线</th>
+            <th>Y1 <span class="yr-tag">2026</span></th>
+            <th>Y2 <span class="yr-tag">2027</span></th>
+            <th>Y3 <span class="yr-tag">2028</span></th>
+            <th>Y4 <span class="yr-tag">2029</span></th>
+            <th>Y5 <span class="yr-tag">2030</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>训练营 / 培训</td><td class="n n0">80</td><td class="n n1">300</td><td class="n n2">1,200</td><td class="n n3">3,000</td><td class="n n4">6,000</td></tr>
+          <tr><td>政府 / 学校 ToB</td><td class="n n0">40</td><td class="n n1">250</td><td class="n n2">900</td><td class="n n3">2,500</td><td class="n n4">5,000</td></tr>
+          <tr><td>硬件套件</td><td class="n n0">30</td><td class="n n1">150</td><td class="n n2">600</td><td class="n n3">1,500</td><td class="n n4">3,500</td></tr>
+          <tr><td>赛事赞助</td><td class="n n0">30</td><td class="n n1">120</td><td class="n n2">500</td><td class="n n3">1,500</td><td class="n n4">4,000</td></tr>
+          <tr><td>SaaS 云端订阅</td><td class="dash">—</td><td class="n n0">30</td><td class="n n1">200</td><td class="n n2">800</td><td class="n n3">2,500</td></tr>
+          <tr><td>直播 + IP 衍生</td><td class="dash">—</td><td class="dash">—</td><td class="n n0">100</td><td class="n n1">500</td><td class="n n3">2,000</td></tr>
+          <tr><td>数据 / 海外授权</td><td class="dash">—</td><td class="dash">—</td><td class="dash">—</td><td class="n n0">200</td><td class="n n2">1,000</td></tr>
+          <tr class="total"><td>合计 ARR</td><td>180</td><td>850</td><td>3,500</td><td>10,000</td><td>24,000</td></tr>
+        </tbody>
+      </table>
+      <div class="unit">单位:万元人民币 · Bull Case · 实际以杭州站表现校准</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ROADMAP ============ -->
+<section class="s" id="roadmap">
+  <div class="container">
+    <div class="eyebrow">ROADMAP</div>
+    <h2>从今天的<span class="hl">真车 demo</span>到 2026 暑假首发</h2>
+    <p class="lede">软件栈已跑通,硬件合作进入选型期。下面是从 MVP 到首届赛事的关键里程碑。</p>
+
+    <div class="roadmap">
+      <div class="step now">
+        <div class="when">2026 Q2</div>
+        <h4>MVP 真车跑通</h4>
+        <p>4WD 麦轮 + ESP32-S3 + 浏览器控制 + 仿真桌面,demo 已可现场演示。</p>
+      </div>
+      <div class="step">
+        <div class="when">2026 Q3</div>
+        <h4>量产版定型</h4>
+        <p>整车 ID 设计完成,模具开发启动,首批量产 500 台投产备赛。</p>
+      </div>
+      <div class="step">
+        <div class="when">2026 暑假</div>
+        <h4>首届杭州站</h4>
+        <p>8 站致敬版赛道首发,6 机位直播,首批 200 学员开赛。</p>
+      </div>
+      <div class="step">
+        <div class="when">2027+</div>
+        <h4>全国联赛 IP</h4>
+        <p>复制到上海 / 北京 / 深圳,家庭版赛道走 C 端,赞助商 Tier 2 入场。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    © 2026 <b>CRAYXUS AI GP</b> · 面向 K12 的 AI 自动驾驶赛事 IP · 落地乌镇 · 共创未来<br>
+    本网站演示中所涉 F1 / Formula 1 / Grand Prix 等名称仅为致敬性描述,本项目与上述商标持有方无任何授权关系
+  </div>
+</footer>
+
+<script>
+  // === 真车 WiFi 控制 ===
+  let carBase = '';
+  let isConnected = false;
+  let pollTimer = null;
+
+  function logLine(msg, cls){
+    const log = document.getElementById('log');
+    const t = new Date().toTimeString().split(' ')[0];
+    const div = document.createElement('div');
+    div.innerHTML = `<span class="ts">${t}</span><span class="${cls||''}">${msg}</span>`;
+    log.appendChild(div);
+    log.scrollTop = log.scrollHeight;
+    while(log.children.length > 80) log.removeChild(log.firstChild);
+  }
+
+  function setConn(state, txt){
+    const el = document.getElementById('connStatus');
+    el.className = 'conn-status ' + state;
+    document.getElementById('connText').textContent = txt;
+    const b = document.getElementById('liveBadge');
+    if(state==='ok'){ b.textContent='LIVE'; b.classList.add('live'); }
+    else { b.textContent='OFFLINE'; b.classList.remove('live'); }
+  }
+
+  async function connect(){
+    const ip = document.getElementById('carIp').value.trim();
+    if(!ip){ alert('请输入 ESP32 IP'); return; }
+    carBase = ip.startsWith('http') ? ip : 'http://' + ip;
+    setConn('', '连接中…');
+    logLine('▶ 尝试连接 ' + carBase, 'info');
+    try {
+      const r = await fetch(carBase + '/c?x=Q', {mode:'cors'});
+      if(!r.ok) throw new Error('HTTP ' + r.status);
+      const j = await r.json();
+      isConnected = true;
+      setConn('ok', '已连接 · ' + carBase);
+      logLine('✓ CONNECTED · mode=' + j.mode, 'ok');
+      updateTele(j);
+      if(pollTimer) clearInterval(pollTimer);
+      pollTimer = setInterval(poll, 1000);
+    } catch(e){
+      isConnected = false;
+      setConn('err', '连接失败 — ' + e.message);
+      logLine('✗ 连接失败: ' + e.message + ' (浏览器可能因 CORS 拦截,但请求已发出,可改用同源代理或在 ESP32 上加 CORS 头)', 'err');
+    }
+  }
+
+  async function poll(){
+    if(!isConnected) return;
+    try {
+      const r = await fetch(carBase + '/status', {mode:'cors'});
+      const j = await r.json();
+      updateTele(j);
+    } catch(e){ /* silent */ }
+  }
+
+  function updateTele(j){
+    if(j.mode) document.getElementById('tMode').textContent = j.mode;
+    if(j.cmd)  document.getElementById('tCmd').textContent = j.cmd;
+    if(j.speed!==undefined) document.getElementById('tSpd').innerHTML = j.speed + ' <span class="u">duty</span>';
+    if(j.count!==undefined) document.getElementById('tCnt').textContent = j.count;
+  }
+
+  async function cmd(x){
+    if(!isConnected){ logLine('⚠ 未连接,演示模式: cmd=' + x, 'info'); return; }
+    try {
+      const r = await fetch(carBase + '/c?x=' + x, {mode:'cors'});
+      const j = await r.json();
+      updateTele(j);
+      logLine('→ CMD ' + x + ' · ' + j.cmd, 'ok');
+    } catch(e){ logLine('✗ CMD ' + x + ' 失败: ' + e.message, 'err'); }
+  }
+
+  async function setSpeed(v){
+    document.getElementById('spdLbl').textContent = v;
+    if(!isConnected) return;
+    try {
+      await fetch(carBase + '/v?s=' + v, {mode:'cors'});
+    } catch(e){}
+  }
+
+  async function test(name){
+    if(!isConnected){ logLine('⚠ 未连接,无法运行标定: ' + name, 'err'); return; }
+    if(!confirm('运行标定测试: ' + name + ' ?\n(请确保车前方有 3 米空地)')) return;
+    logLine('▶ TEST ' + name.toUpperCase() + ' 启动...', 'info');
+    try {
+      const r = await fetch(carBase + '/test/' + name, {method:'POST', mode:'cors'});
+      const j = await r.json();
+      logLine('✓ TEST ' + name + ' 完成: ' + JSON.stringify(j), 'ok');
+    } catch(e){ logLine('✗ TEST ' + name + ' 失败: ' + e.message, 'err'); }
+  }
+
+  // 键盘控制
+  document.addEventListener('keydown', e=>{
+    const map = {ArrowUp:'F', ArrowDown:'B', ArrowLeft:'L', ArrowRight:'R', ' ':'S'};
+    if(map[e.key]){ e.preventDefault(); cmd(map[e.key]); }
+  });
+  document.addEventListener('keyup', e=>{
+    if(['ArrowUp','ArrowDown'].includes(e.key)) cmd('S');
+    if(['ArrowLeft','ArrowRight'].includes(e.key)) cmd('C');
+  });
+
+  logLine('▶ 系统就绪 · 请输入 ESP32 IP 并连接', 'info');
+  logLine('  键盘: ↑↓←→ = 方向 · 空格 = STOP', 'info');
+
+  // ===== DRIVE COMPOSER (Map A 标准赛道 — 与 sim 数据一致) =====
+  const CMP_V = 2.00;
+  // Map A 真实赛道几何 (从 sim_dashboard PLAN_DATA.A 下采样)
+  const MAPA_OUTER=[[0.45,4.0],[0.32,4.02],[0.16,4.1],[0.05,4.24],[0.01,4.36],[0.0,7.49],[0.05,7.66],[0.13,7.77],[0.28,7.87],[0.45,7.9],[15.54,7.89],[15.7,7.82],[15.82,7.7],[15.88,7.58],[15.9,0.45],[15.87,0.28],[15.8,0.16],[15.66,0.05],[15.49,0.0],[12.41,0.0],[12.24,0.05],[12.1,0.16],[12.03,0.28],[12.0,0.45],[12.02,3.08],[12.08,3.2],[12.2,3.32],[12.36,3.39],[12.51,3.4],[12.71,3.47],[12.87,3.6],[12.96,3.74],[13.0,3.95],[12.98,4.61],[12.91,4.76],[12.76,4.91],[12.56,4.99],[11.45,5.0],[11.24,4.96],[11.06,4.84],[10.94,4.66],[10.9,4.51],[10.91,3.84],[10.99,3.64],[11.1,3.52],[11.29,3.42],[11.49,3.4],[11.62,3.37],[11.77,3.27],[11.87,3.12],[11.9,2.99],[11.89,0.36],[11.82,0.2],[11.74,0.1],[11.58,0.02],[0.45,0.0],[0.32,0.02],[0.16,0.1],[0.05,0.24],[0.01,0.36],[0.0,3.49],[0.05,3.66],[0.13,3.77],[0.28,3.87],[0.45,3.9],[6.06,3.91],[6.26,3.99],[6.41,4.14],[6.48,4.29],[6.5,4.51],[6.43,4.71],[6.34,4.84],[6.16,4.96],[5.95,5.0],[4.84,4.99],[4.64,4.91],[4.49,4.76],[4.42,4.61],[4.4,4.41],[4.35,4.24]];
+  const MAPA_INNER=[[14.27,6.27],[14.08,6.38],[9.36,6.39],[9.16,6.3],[9.02,6.08],[9.0,3.41],[9.1,3.16],[9.28,3.03],[9.56,2.99],[9.8,2.88],[9.98,2.61],[9.99,2.34],[9.84,2.06],[9.61,1.92],[1.84,1.91],[1.56,2.06],[1.42,2.29],[1.42,2.61],[1.56,2.84],[1.84,2.99],[3.06,2.99],[3.34,2.84],[3.48,2.61],[3.52,2.32],[3.63,2.13],[3.86,2.01],[7.54,2.01],[7.77,2.13],[7.88,2.32],[7.89,6.04],[7.77,6.27],[7.58,6.38],[3.86,6.39],[3.66,6.3],[3.52,6.08],[3.49,5.84],[3.34,5.56],[3.11,5.42],[1.84,5.41],[1.6,5.53],[1.42,5.79],[1.41,6.06],[1.56,6.34],[1.79,6.48],[14.06,6.49],[14.34,6.34],[14.48,6.11],[14.49,1.84],[14.37,1.6],[14.11,1.42],[13.84,1.41],[13.56,1.56],[13.42,1.79],[13.42,2.11],[13.56,2.34],[13.84,2.49],[14.08,2.52],[14.3,2.66],[14.39,2.86],[14.38,6.08]];
+  const MAPA_WPS=[[5.75,0.96],[8.46,0.96],[10.84,1.41],[10.19,3.74],[10.8,5.68],[13.37,5.51],[13.41,3.19],[12.87,1.04],[15.06,1.11],[15.2,3.74],[15.18,6.44],[13.07,7.21],[10.37,7.21],[7.66,7.21],[4.96,7.21],[2.25,7.21],[0.69,5.89],[2.39,4.75],[4.54,5.63],[6.99,5.39],[6.75,3.11],[4.22,3.2],[1.63,3.45],[0.77,1.54],[3.05,0.96]];
+  const REF = MAPA_WPS;
+  const WP  = MAPA_WPS.map(p=>[p[0],p[1]]); // 拷贝可变副本
+  let cmpCarX = 0, cmpCarY = 0, cmpPath = [], cmpLast = 0, cmpRunning = false;
+  // Map A 坐标系: 15.9m x 7.9m, 让赛道居中在 900x480 画布
+  // cx(x) = x*48 + 68.4 让 x=0~15.9 映射到 68.4~831.6
+  // cy(y) = 450 - (y+0.425)*48 让 y=0~7.9 映射到 429.6~50.4
+  const CMP_S = 48, CMP_OX = 0.8, CMP_OY = 0.425, CMP_MX = 30, CMP_MY = 30;
+  function cx(x){return (x+CMP_OX)*CMP_S+CMP_MX;}
+  function cy(y){return 450-(y+CMP_OY)*CMP_S;}
+  function sx2x(s){return (s-CMP_MX)/CMP_S-CMP_OX;}
+  function sy2y(s){return (450-s)/CMP_S-CMP_OY;}
+  let cmpFlow = 0; let cmpCurSeg = -1;
+  // 每个 WP 一个 speed (m/s)，默认 CMP_V
+  const WP_SPD = new Array(24).fill(2.0);
+  // 档位切换: 从 MAPA_WPS 下采样
+  function setWpCount(n){
+    const total = MAPA_WPS.length;
+    const step = total / n;
+    WP.length = 0;
+    for(let i=0;i<n;i++){
+      const src = MAPA_WPS[Math.floor(i*step)];
+      WP.push([src[0], src[1]]);
+    }
+    if(n > WP_SPD.length){ while(WP_SPD.length<n) WP_SPD.push(2.0); }
+    else { WP_SPD.length = n; }
+    curWP = 0;
+    document.querySelectorAll('.wp-tier').forEach(b=>b.classList.toggle('active', +b.dataset.n===n));
+    renderCmpTbl();
+  }
+  // === 平滑曲线辅助 (Catmull-Rom 风格中点平滑) ===
+  function smoothPath(ctx, pts, closed){
+    const n = pts.length; if(n<2) return;
+    if(closed){
+      // 闭合曲线：所有段都用 quadratic 中点
+      const ext = [pts[n-1],...pts,pts[0]];
+      ctx.moveTo((cx(ext[0][0])+cx(ext[1][0]))/2, (cy(ext[0][1])+cy(ext[1][1]))/2);
+      for(let i=1;i<ext.length-1;i++){
+        const cpx=cx(ext[i][0]), cpy=cy(ext[i][1]);
+        const nx=cx(ext[i+1][0]), ny=cy(ext[i+1][1]);
+        const mx=(cpx+nx)/2, my=(cpy+ny)/2;
+        ctx.quadraticCurveTo(cpx,cpy,mx,my);
+      }
+    } else {
+      ctx.moveTo(cx(pts[0][0]),cy(pts[0][1]));
+      for(let i=1;i<n-1;i++){
+        const cpx=cx(pts[i][0]), cpy=cy(pts[i][1]);
+        const nx=cx(pts[i+1][0]), ny=cy(pts[i+1][1]);
+        const mx=(cpx+nx)/2, my=(cpy+ny)/2;
+        ctx.quadraticCurveTo(cpx,cpy,mx,my);
+      }
+      ctx.lineTo(cx(pts[n-1][0]),cy(pts[n-1][1]));
+    }
+  }
+  function spdColor(v,alpha){
+    const r = Math.max(0,Math.min(1, v/3.5));
+    const hue = r*120; // 0=red, 1=green
+    return alpha!==undefined?`hsla(${hue},85%,55%,${alpha})`:`hsl(${hue},85%,55%)`;
+  }
+  // 法线偏移 (用于生成内岛)
+  function offsetPath(pts, dist){
+    const n=pts.length, out=[];
+    for(let i=0;i<n;i++){
+      const prev=pts[(i-1+n)%n], next=pts[(i+1)%n];
+      const dx=next[0]-prev[0], dy=next[1]-prev[1];
+      const len=Math.hypot(dx,dy)||1;
+      const nx=-dy/len, ny=dx/len;
+      out.push([pts[i][0]+nx*dist, pts[i][1]+ny*dist]);
+    }
+    return out;
+  }
+  // Map A 真实赛道边界数据 (已 inline)
+  const OUTER_BD = MAPA_OUTER;
+  const INNER_BD = MAPA_INNER;
+  function drawCmp(curSeg){
+    if(curSeg!==undefined) cmpCurSeg = curSeg;
+    const cv = document.getElementById('cmpCv'); if(!cv) return;
+    const ctx = cv.getContext('2d'); ctx.clearRect(0,0,cv.width,cv.height);
+    // 网格 (深邃科技网格)
+    ctx.strokeStyle='#0a1428'; ctx.lineWidth=1;
+    for(let x=-9;x<=5;x++){ctx.beginPath();ctx.moveTo(cx(x),0);ctx.lineTo(cx(x),cv.height);ctx.stroke();}
+    for(let y=-2;y<=4;y++){ctx.beginPath();ctx.moveTo(0,cy(y));ctx.lineTo(cv.width,cy(y));ctx.stroke();}
+
+    ctx.lineCap='round';ctx.lineJoin='round';
+    // === 完美闭环赛道 (大圆角矩形外墙 + REF 内岛, evenodd 镂空) ===
+    // 1) 外光晕
+    ctx.strokeStyle='rgba(85,170,255,.07)';ctx.lineWidth=14;
+    ctx.beginPath(); smoothPath(ctx, OUTER_BD, true); ctx.stroke();
+    // 2) 柏油填充 — 外墙圆角矩形内 + 内岛轮廓挖空
+    ctx.fillStyle='#1a2540';
+    ctx.beginPath();
+    smoothPath(ctx, OUTER_BD, true);
+    smoothPath(ctx, INNER_BD.slice().reverse(), true);
+    ctx.fill('evenodd');
+    // 3) 柏油纹理 (顶部亮 底部暗)
+    const trkGrad = ctx.createLinearGradient(0,0,0,cv.height);
+    trkGrad.addColorStop(0,'rgba(50,68,100,.35)');
+    trkGrad.addColorStop(1,'rgba(10,16,32,.35)');
+    ctx.fillStyle=trkGrad;
+    ctx.beginPath();
+    smoothPath(ctx, OUTER_BD, true);
+    smoothPath(ctx, INNER_BD.slice().reverse(), true);
+    ctx.fill('evenodd');
+    // 4) 外墙 — 亮绿描边 + 外发光 (sim 风格)
+    ctx.strokeStyle='rgba(60,200,80,.3)';ctx.lineWidth=12;
+    ctx.beginPath(); smoothPath(ctx, OUTER_BD, true); ctx.stroke();
+    ctx.strokeStyle='#3c3';ctx.lineWidth=3;
+    ctx.beginPath(); smoothPath(ctx, OUTER_BD, true); ctx.stroke();
+    // 5) 外墙路缘红白条纹流动
+    ctx.strokeStyle='#fff';ctx.lineWidth=5;
+    ctx.setLineDash([14,14]);ctx.lineDashOffset=cmpFlow*0.6;
+    ctx.beginPath(); smoothPath(ctx, OUTER_BD, true); ctx.stroke();
+    ctx.strokeStyle='#f44';ctx.lineDashOffset=cmpFlow*0.6+14;
+    ctx.beginPath(); smoothPath(ctx, OUTER_BD, true); ctx.stroke();
+    ctx.setLineDash([]);
+    // 6) 内岛 — 红色实线 + 外发光
+    ctx.strokeStyle='rgba(255,90,90,.3)';ctx.lineWidth=12;
+    ctx.beginPath(); smoothPath(ctx, INNER_BD, true); ctx.stroke();
+    ctx.strokeStyle='#f33';ctx.lineWidth=3;
+    ctx.beginPath(); smoothPath(ctx, INNER_BD, true); ctx.stroke();
+
+    // === 赛车线 (闭合平滑曲线 + 流动光效) ===
+    // 1) 最外层光晕 (大范围辐射)
+    ctx.strokeStyle='rgba(255,200,100,.10)';ctx.lineWidth=42;
+    ctx.beginPath(); smoothPath(ctx, WP, true); ctx.stroke();
+    // 2) 外层光晕
+    ctx.strokeStyle='rgba(255,180,80,.22)';ctx.lineWidth=28;
+    ctx.beginPath(); smoothPath(ctx, WP, true); ctx.stroke();
+    // 3) 中层光晕
+    ctx.strokeStyle='rgba(255,160,60,.35)';ctx.lineWidth=18;
+    ctx.beginPath(); smoothPath(ctx, WP, true); ctx.stroke();
+    // 4) 主线 (按 canvas 渐变上色,赛博风)
+    const grad = ctx.createLinearGradient(0,0,cv.width,cv.height);
+    grad.addColorStop(0,'#ff4d6e');grad.addColorStop(.3,'#fa3');grad.addColorStop(.6,'#5fa');grad.addColorStop(1,'#5af');
+    ctx.strokeStyle=grad;ctx.lineWidth=11;
+    ctx.beginPath(); smoothPath(ctx, WP, true); ctx.stroke();
+    // 5) 内层高光 (亮白)
+    ctx.strokeStyle='rgba(255,255,255,.65)';ctx.lineWidth=3.5;
+    ctx.beginPath(); smoothPath(ctx, WP, true); ctx.stroke();
+    // 6) 流动白光点 (循环动画)
+    ctx.strokeStyle='rgba(255,255,255,1)';ctx.lineWidth=2.5;
+    ctx.setLineDash([12,32]);ctx.lineDashOffset=-cmpFlow;
+    ctx.beginPath(); smoothPath(ctx, WP, true); ctx.stroke();
+    ctx.setLineDash([]);
+    // 7) 每段中点速度色标 (闭合路径,最后段连接 WP[0])
+    const N = WP.length;
+    for(let i=0;i<N;i++){
+      const j = (i+1)%N;
+      const mx = (cx(WP[i][0])+cx(WP[j][0]))/2;
+      const my = (cy(WP[i][1])+cy(WP[j][1]))/2;
+      const v = WP_SPD[i];
+      const c = spdColor(v);
+      ctx.fillStyle = spdColor(v,.4);
+      ctx.beginPath();ctx.arc(mx,my,10,0,6.28);ctx.fill();
+      ctx.fillStyle = c;
+      ctx.beginPath();ctx.arc(mx,my,4.5,0,6.28);ctx.fill();
+      ctx.strokeStyle='rgba(255,255,255,.85)';ctx.lineWidth=1.2;ctx.stroke();
+    }
+    // WP 点
+    WP.forEach((p,i)=>{
+      const isCur=cmpCurSeg===i;
+      // glow
+      if(isCur){
+        ctx.fillStyle='rgba(255,221,85,.35)';
+        ctx.beginPath();ctx.arc(cx(p[0]),cy(p[1]),16,0,6.28);ctx.fill();
+      }
+      ctx.fillStyle=isCur?'#fd5':'#fff';
+      ctx.beginPath();ctx.arc(cx(p[0]),cy(p[1]),isCur?8:5,0,6.28);ctx.fill();
+      ctx.strokeStyle=isCur?'#fff':'#1a2540';ctx.lineWidth=isCur?2:1;ctx.stroke();
+      ctx.fillStyle=isCur?'#000':'#5af';ctx.font=`bold ${isCur?10:9}px monospace`;
+      ctx.fillText(i,cx(p[0])-(i>9?5:3),cy(p[1])+3);
+    });
+    // 起点 S
+    ctx.fillStyle='#5af';ctx.beginPath();ctx.arc(cx(WP[0][0]),cy(WP[0][1]),11,0,6.28);ctx.fill();
+    ctx.fillStyle='#000';ctx.font='bold 11px sans-serif';ctx.fillText('S',cx(WP[0][0])-3,cy(WP[0][1])+4);
+    // 实际车轨迹 (cyan)
+    if(cmpPath.length>1){
+      ctx.strokeStyle='rgba(0,255,255,.85)';ctx.lineWidth=2.5;ctx.lineCap='round';
+      ctx.beginPath();
+      cmpPath.forEach((p,i)=>{i==0?ctx.moveTo(cx(p[0]),cy(p[1])):ctx.lineTo(cx(p[0]),cy(p[1]));});
+      ctx.stroke();
+    }
+    if(cmpRunning){
+      ctx.fillStyle='#ff0';ctx.strokeStyle='#000';ctx.lineWidth=2;
+      ctx.beginPath();ctx.arc(cx(cmpCarX),cy(cmpCarY),8,0,6.28);ctx.fill();ctx.stroke();
+    }
+  }
+  // 流动动画
+  function cmpAnimate(){cmpFlow=(cmpFlow+1.2)%9999;drawCmp();requestAnimationFrame(cmpAnimate);}
+  let curWP = 0;
+  function renderCmpTbl(){
+    // WP chips - 按速度上色 (red 慢 → green 快)
+    const chips = WP.map((p,i)=>{
+      const v = WP_SPD[i] || 2.0;
+      const hue = Math.max(0, Math.min(120, (v/3.5)*120));
+      const bg = `hsla(${hue},65%,40%,.18)`;
+      const bd = `hsla(${hue},65%,50%,.45)`;
+      const isActive = i===curWP;
+      return `<div class="wp-chip ${isActive?'active':''}" `+
+             `style="background:${bg};border-color:${bd};" `+
+             `onclick="selectWp(${i})" title="WP${String(i).padStart(2,'0')} · ${v.toFixed(2)} m/s">`+
+             `<span class="wpn">${String(i).padStart(2,'0')}</span>`+
+             `<span class="wpv">${v.toFixed(1)}</span>`+
+             `</div>`;
+    }).join('');
+    document.getElementById('wpChips').innerHTML = chips;
+    // 更新计数
+    const cntEl = document.getElementById('wpCount');
+    if(cntEl) cntEl.textContent = `#${String(curWP).padStart(2,'0')} / ${WP.length}`;
+    // 自动滚动当前 chip 到可见
+    const activeChip = document.querySelector('.wp-chips .wp-chip.active');
+    if(activeChip) activeChip.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});
+    updateDials();
+  }
+  function selectWp(i){curWP=i; renderCmpTbl();}
+  function navWp(d){
+    let n = curWP + d;
+    if(n < 0) n = WP.length - 1;
+    if(n >= WP.length) n = 0;
+    selectWp(n);
+  }
+  // 键盘 ← → 切换 WP (Drive Composer 焦点内)
+  document.addEventListener('keydown', e=>{
+    if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;
+    if(!document.getElementById('cmpCv')) return;
+    if(e.key==='[' || e.key===','){ navWp(-1); e.preventDefault(); }
+    if(e.key===']' || e.key==='.'){ navWp(1); e.preventDefault(); }
+  });
+  // 计算当前 WP heading (到下一个 WP)
+  function wpHeading(i){
+    const j = i<WP.length-1?i+1:i-1;
+    const dx = WP[j][0]-WP[i][0], dy = WP[j][1]-WP[i][1];
+    let h = Math.atan2(dy,dx)*180/Math.PI;
+    if(i===WP.length-1) h += 180;
+    return ((h%360)+360)%360;
+  }
+  function updateDials(){
+    const p = WP[curWP];
+    document.getElementById('curWpLbl').textContent = '#'+String(curWP).padStart(2,'0');
+    // Heading 表盘
+    const h = wpHeading(curWP);
+    document.getElementById('hCar').setAttribute('transform',`translate(50 50) rotate(${h-90})`);
+    document.getElementById('hNeedle').setAttribute('transform',`rotate(${h-90} 50 50)`);
+    document.getElementById('hVal').textContent = h.toFixed(0)+'°';
+    // Speed EQ — 颜色按速度值映射 (蓝-青-绿-黄-橙-红)
+    const v = WP_SPD[curWP];
+    const pct = Math.max(2,Math.min(98, (v/3.5)*100));
+    const hue = Math.round(240 - pct * 2.4); // 0% blue (240) → 100% red (0)
+    const color = `hsl(${hue},90%,60%)`;
+    const eqFill = document.getElementById('eqFill');
+    eqFill.style.height = pct+'%';
+    eqFill.style.background = color;
+    eqFill.style.color = color;
+    document.getElementById('vVal').textContent = v.toFixed(2)+' m/s';
+    document.getElementById('vVal').style.color = color;
+    // Position pad: Map A 0~16, 0~8 映射到 svg 6-94
+    const px = 6 + (p[0]/16)*88;
+    const py = 94 - (p[1]/8)*88;
+    document.getElementById('pDot').setAttribute('cx',Math.max(6,Math.min(94,px)));
+    document.getElementById('pDot').setAttribute('cy',Math.max(6,Math.min(94,py)));
+    document.getElementById('pVal').textContent = p[0].toFixed(2)+' / '+p[1].toFixed(2);
+    // 同步数字输入框 (避免在输入框 focus 时覆盖用户输入)
+    const focused = document.activeElement;
+    const hi=document.getElementById('hInput'); if(hi && focused!==hi) hi.value = h.toFixed(0);
+    const vi=document.getElementById('vInput'); if(vi && focused!==vi) vi.value = v.toFixed(2);
+    const xi=document.getElementById('xInput'); if(xi && focused!==xi) xi.value = p[0].toFixed(2);
+    const yi=document.getElementById('yInput'); if(yi && focused!==yi) yi.value = p[1].toFixed(2);
+  }
+  function cmpUpd(i,axis,v){WP[i][axis]=parseFloat(v)||0;renderCmpTbl();}
+  function cmpNudge(i,axis,d){WP[i][axis]=Math.round((WP[i][axis]+d)*100)/100;renderCmpTbl();}
+
+  // === Composer 历史 / Save / Load / Reset ===
+  const cmpHistory = [];
+  const HIST_MAX = 50;
+  function pushHist(){
+    cmpHistory.push({wp: WP.map(p=>[p[0],p[1]]), spd: WP_SPD.slice()});
+    if(cmpHistory.length>HIST_MAX) cmpHistory.shift();
+  }
+  function cmpFlash(msg, err){
+    let el = document.getElementById('cmpFlash');
+    if(!el){ el=document.createElement('div'); el.id='cmpFlash'; el.className='cmp-flash'; document.body.appendChild(el); }
+    el.className = 'cmp-flash ' + (err?'err show':'show');
+    el.textContent = msg;
+    clearTimeout(el._t);
+    el._t = setTimeout(()=>el.classList.remove('show'), 1500);
+  }
+  function cmpUndo(){
+    if(cmpHistory.length===0){ cmpFlash('⚠ 已经是最早状态', true); return; }
+    const snap = cmpHistory.pop();
+    WP.length=0; snap.wp.forEach(p=>WP.push([p[0],p[1]]));
+    WP_SPD.length=0; snap.spd.forEach(v=>WP_SPD.push(v));
+    if(curWP>=WP.length) curWP = WP.length-1;
+    renderCmpTbl(); drawCmp(-1);
+    cmpFlash('⤺ 已撤销 ('+cmpHistory.length+' 步可用)');
+  }
+  function cmpSave(){
+    try {
+      const slot = {wp: WP.map(p=>[p[0],p[1]]), spd: WP_SPD.slice(), n: WP.length, t: Date.now()};
+      localStorage.setItem('cmp_save_v1', JSON.stringify(slot));
+      cmpFlash('💾 已保存 ('+WP.length+' WP)');
+    } catch(e){ cmpFlash('✗ 保存失败: '+e.message, true); }
+  }
+  function cmpLoad(){
+    const raw = localStorage.getItem('cmp_save_v1');
+    if(!raw){ cmpFlash('⚠ 暂无存档', true); return; }
+    try {
+      const j = JSON.parse(raw);
+      if(!j.wp || !j.spd){ throw new Error('bad data'); }
+      pushHist();
+      WP.length=0; j.wp.forEach(p=>WP.push([p[0],p[1]]));
+      WP_SPD.length=0; j.spd.forEach(v=>WP_SPD.push(v));
+      curWP = 0;
+      document.querySelectorAll('.wp-tier').forEach(b=>b.classList.toggle('active', +b.dataset.n===WP.length));
+      renderCmpTbl(); drawCmp(-1);
+      const ago = Math.round((Date.now()-j.t)/1000);
+      cmpFlash('📂 已加载 ('+j.n+' WP · '+ago+'s 前)');
+    } catch(e){ cmpFlash('✗ 加载失败: '+e.message, true); }
+  }
+  function cmpReset(){
+    if(!confirm('恢复 Map A 默认 25 个 WP?\n(可用 Undo 撤回)')) return;
+    pushHist();
+    WP.length=0; MAPA_WPS.forEach(p=>WP.push([p[0],p[1]]));
+    WP_SPD.length=0; for(let i=0;i<25;i++) WP_SPD.push(2.0);
+    curWP = 0;
+    document.querySelectorAll('.wp-tier').forEach(b=>b.classList.toggle('active', +b.dataset.n===25));
+    renderCmpTbl(); drawCmp(-1);
+    cmpFlash('⟲ 已恢复默认 25 WP');
+  }
+  // 数字输入框 → 状态
+  function setHeadingInput(val){
+    const target = ((parseFloat(val)||0)%360+360)%360;
+    const i = curWP, j = i<WP.length-1?i+1:i;
+    if(j===i){ cmpFlash('⚠ 末点无下一段', true); return; }
+    pushHist();
+    const d = Math.hypot(WP[j][0]-WP[i][0],WP[j][1]-WP[i][1])||0.5;
+    const rad = (target-90)*Math.PI/180;
+    WP[j][0] = +(WP[i][0]+d*Math.cos(rad)).toFixed(2);
+    WP[j][1] = +(WP[i][1]+d*Math.sin(rad)).toFixed(2);
+    renderCmpTbl();
+  }
+  function setSpeedInput(val){
+    const v = Math.max(0,Math.min(3.5,parseFloat(val)||0));
+    pushHist();
+    WP_SPD[curWP] = +v.toFixed(2);
+    renderCmpTbl();
+  }
+  function setPosInput(axis, val){
+    const max = axis===0?16:8;
+    const v = Math.max(0,Math.min(max,parseFloat(val)||0));
+    pushHist();
+    WP[curWP][axis] = +v.toFixed(2);
+    renderCmpTbl();
+  }
+
+  // === 表盘交互 ===
+  // 方向表盘: 拖动 → 改变 heading → 移动下一个 WP 让方向匹配
+  function bindDial(){
+    const hd = document.getElementById('dialHead');
+    function hdSet(e){
+      const r = hd.getBoundingClientRect();
+      const t = e.touches?e.touches[0]:e;
+      const dx = (t.clientX-r.left)-r.width/2;
+      const dy = (t.clientY-r.top)-r.height/2;
+      let h = Math.atan2(dy,dx)*180/Math.PI + 90;
+      h = ((h%360)+360)%360;
+      // 改变下一个 WP 位置让 heading 等于 h
+      const j = curWP<WP.length-1?curWP+1:curWP;
+      if(j!==curWP){
+        const d = Math.hypot(WP[j][0]-WP[curWP][0],WP[j][1]-WP[curWP][1])||0.5;
+        const rad = h*Math.PI/180;
+        WP[j][0] = +(WP[curWP][0]+d*Math.cos(rad)).toFixed(2);
+        WP[j][1] = +(WP[curWP][1]+d*Math.sin(rad)).toFixed(2);
+      }
+      updateDials();
+    }
+    let hdDrag = false;
+    hd.addEventListener('mousedown',e=>{pushHist();hdDrag=true;hdSet(e);e.preventDefault();});
+    window.addEventListener('mousemove',e=>{if(hdDrag)hdSet(e);});
+    window.addEventListener('mouseup',()=>hdDrag=false);
+    hd.addEventListener('touchstart',e=>{pushHist();hdDrag=true;hdSet(e);e.preventDefault();},{passive:false});
+    hd.addEventListener('touchmove',e=>{if(hdDrag){hdSet(e);e.preventDefault();}},{passive:false});
+    hd.addEventListener('touchend',()=>hdDrag=false);
+
+    // Speed EQ bar
+    const eq = document.getElementById('eqWrap');
+    function eqSet(e){
+      const r = eq.getBoundingClientRect();
+      const t = e.touches?e.touches[0]:e;
+      const py = (t.clientY-r.top);
+      const pct = Math.max(0,Math.min(1, 1-(py/r.height)));
+      WP_SPD[curWP] = +(pct*3.5).toFixed(2);
+      updateDials();
+    }
+    let eqDrag = false;
+    eq.addEventListener('mousedown',e=>{pushHist();eqDrag=true;eqSet(e);e.preventDefault();});
+    window.addEventListener('mousemove',e=>{if(eqDrag)eqSet(e);});
+    window.addEventListener('mouseup',()=>eqDrag=false);
+    eq.addEventListener('touchstart',e=>{pushHist();eqDrag=true;eqSet(e);e.preventDefault();},{passive:false});
+    eq.addEventListener('touchmove',e=>{if(eqDrag){eqSet(e);e.preventDefault();}},{passive:false});
+    eq.addEventListener('touchend',()=>eqDrag=false);
+
+    // Position pad
+    const pp = document.getElementById('dialPos');
+    function ppSet(e){
+      const r = pp.getBoundingClientRect();
+      const t = e.touches?e.touches[0]:e;
+      const sx = ((t.clientX-r.left)/r.width)*100;
+      const sy = ((t.clientY-r.top)/r.height)*100;
+      const wx = ((sx-6)/88)*16;
+      const wy = -((sy-94)/88)*8;
+      WP[curWP][0] = +Math.max(0,Math.min(16,wx)).toFixed(2);
+      WP[curWP][1] = +Math.max(0,Math.min(8,wy)).toFixed(2);
+      updateDials();
+    }
+    let ppDrag = false;
+    pp.addEventListener('mousedown',e=>{pushHist();ppDrag=true;ppSet(e);e.preventDefault();});
+    window.addEventListener('mousemove',e=>{if(ppDrag)ppSet(e);});
+    window.addEventListener('mouseup',()=>ppDrag=false);
+    pp.addEventListener('touchstart',e=>{pushHist();ppDrag=true;ppSet(e);e.preventDefault();},{passive:false});
+    pp.addEventListener('touchmove',e=>{if(ppDrag){ppSet(e);e.preventDefault();}},{passive:false});
+    pp.addEventListener('touchend',()=>ppDrag=false);
+
+    // 渲染 heading 刻度
+    const ticks = document.getElementById('hTicks');
+    let tsvg = '';
+    for(let deg=0; deg<360; deg+=30){
+      const rad = (deg-90)*Math.PI/180;
+      const x1 = 50+38*Math.cos(rad), y1 = 50+38*Math.sin(rad);
+      const x2 = 50+44*Math.cos(rad), y2 = 50+44*Math.sin(rad);
+      tsvg += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${deg%90===0?'#5af':'#2a3a60'}" stroke-width="${deg%90===0?1.5:.6}"/>`;
+    }
+    ticks.innerHTML = tsvg;
+  }
+  // 拖动
+  let cmpDrag = -1;
+  function cmpEvt(e){
+    const r = document.getElementById('cmpCv').getBoundingClientRect();
+    const t = e.touches?e.touches[0]:e;
+    const scl = document.getElementById('cmpCv').width/r.width;
+    return [(t.clientX-r.left)*scl, (t.clientY-r.top)*scl];
+  }
+  function cmpFind(sx,sy){
+    for(let i=0;i<WP.length;i++) if(Math.hypot(sx-cx(WP[i][0]),sy-cy(WP[i][1]))<15) return i;
+    return -1;
+  }
+  const cmpCv = document.getElementById('cmpCv');
+  cmpCv.addEventListener('mousedown',e=>{const[sx,sy]=cmpEvt(e);cmpDrag=cmpFind(sx,sy);if(cmpDrag>=0){pushHist();e.preventDefault();}});
+  cmpCv.addEventListener('mousemove',e=>{if(cmpDrag<0)return;const[sx,sy]=cmpEvt(e);WP[cmpDrag]=[Math.round(sx2x(sx)*100)/100,Math.round(sy2y(sy)*100)/100];drawCmp(-1);});
+  cmpCv.addEventListener('mouseup',()=>{if(cmpDrag>=0)renderCmpTbl();cmpDrag=-1;});
+  cmpCv.addEventListener('mouseleave',()=>{if(cmpDrag>=0)renderCmpTbl();cmpDrag=-1;});
+  cmpCv.addEventListener('touchstart',e=>{const[sx,sy]=cmpEvt(e);cmpDrag=cmpFind(sx,sy);if(cmpDrag>=0){pushHist();e.preventDefault();}},{passive:false});
+  cmpCv.addEventListener('touchmove',e=>{if(cmpDrag<0)return;const[sx,sy]=cmpEvt(e);WP[cmpDrag]=[Math.round(sx2x(sx)*100)/100,Math.round(sy2y(sy)*100)/100];drawCmp(-1);e.preventDefault();},{passive:false});
+  cmpCv.addEventListener('touchend',()=>{if(cmpDrag>=0)renderCmpTbl();cmpDrag=-1;});
+
+  function cmpComputeLap(){
+    let mapb=[],prev=0;
+    for(let i=0;i<WP.length-1;i++){
+      const dx=WP[i+1][0]-WP[i][0],dy=WP[i+1][1]-WP[i][1];
+      const d=Math.hypot(dx,dy);
+      const h=-Math.atan2(dy,dx)*180/Math.PI;
+      let delta=h-prev;
+      while(delta>180)delta-=360;while(delta<-180)delta+=360;
+      prev+=delta;
+      mapb.push([Math.round(delta*10)/10,Math.floor(d/CMP_V*1000)]);
+    }
+    return mapb;
+  }
+  async function cmpApply(){
+    if(!isConnected){
+      // 离线模式 — 仅本地保存,提示连车
+      cmpSave();
+      cmpFlash('⚠ 未连车 · 已存本地。连车后再 Apply 即下发','err');
+      return;
+    }
+    // 优先尝试新 /set_wp endpoint (xy 格式,服务端转换)
+    const payload = WP.map((p,i)=>p[0].toFixed(2)+','+p[1].toFixed(2)+','+(WP_SPD[i]||2.0).toFixed(2)).join(';');
+    try{
+      let r = await fetch(carBase+'/set_wp?p='+encodeURIComponent(payload),{mode:'cors'});
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      const j = await r.json();
+      if(j.n_wp){
+        cmpFlash('🔥 已下发 '+j.n_wp+' WP · '+j.n_seg+' seg · '+(j.t_ms/1000).toFixed(1)+'s');
+        logLine('🔥 /set_wp ok: '+j.n_wp+' WP → '+j.n_seg+' seg','ok');
+        return;
+      }
+      throw new Error('empty response');
+    }catch(e){
+      logLine('⚠ /set_wp 不可用,回退 /set_lap: '+e.message,'info');
+      // Fallback: 老 /set_lap (客户端先转换)
+      try{
+        const lap = cmpComputeLap();
+        const data = lap.map(s=>s[0]+','+s[1]).join(';');
+        const r2 = await fetch(carBase+'/set_lap?d='+encodeURIComponent(data),{mode:'cors'});
+        const j = await r2.json();
+        cmpFlash('🔥 已下发 '+j.n+' seg / '+(j.t/1000).toFixed(1)+'s (legacy)');
+        logLine('🔥 /set_lap ok: '+j.n+' seg','ok');
+      }catch(e2){
+        cmpFlash('✗ 烧录失败: '+e2.message,true);
+      }
+    }
+  }
+  async function cmpRunLap(){
+    if(!isConnected){cmpFlash('⚠ 请先连接车',true);return;}
+    if(!confirm('🏁 启动一圈?'))return;
+    cmpPath=[];
+    try{
+      await fetch(carBase+'/c?x=MB',{mode:'cors'});
+      cmpFlash('🏁 已启动一圈,UWB 实时回传位置');
+      logLine('🏁 Map B 启动','ok');
+    }catch(e){cmpFlash('✗ 启动失败: '+e.message,true);}
+  }
+  // === 📍 标定当前 UWB 位置到选中的 WP (现场调试杀手锏) ===
+  async function cmpMarkHere(){
+    if(!isConnected){cmpFlash('⚠ 未连车,无 UWB 数据',true);return;}
+    try{
+      const r = await fetch(carBase+'/uwb',{mode:'cors'});
+      const j = await r.json();
+      if(!j.ok){cmpFlash('⚠ UWB 无效 · fresh '+j.fresh_ms+'ms',true);return;}
+      pushHist();
+      WP[curWP][0] = +j.x.toFixed(2);
+      WP[curWP][1] = +j.y.toFixed(2);
+      renderCmpTbl();
+      drawCmp(-1);
+      cmpFlash('📍 WP'+String(curWP).padStart(2,'0')+' 已锚定到 ('+j.x.toFixed(2)+', '+j.y.toFixed(2)+')');
+    }catch(e){cmpFlash('✗ UWB 失败: '+e.message,true);}
+  }
+  // 实时车位置: 优先 UWB (真实定位); UWB 不可用回退 /tm dead-reckon
+  let cmpLastT = null;
+  let cmpUseUwb = true;
+  setInterval(async ()=>{
+    if(!isConnected) return;
+    // 优先 UWB
+    if(cmpUseUwb){
+      try{
+        const r = await fetch(carBase+'/uwb',{mode:'cors'});
+        if(r.ok){
+          const j = await r.json();
+          if(j.ok){
+            cmpCarX = j.x; cmpCarY = j.y;
+            cmpPath.push([cmpCarX, cmpCarY]);
+            if(cmpPath.length > 500) cmpPath.shift();
+            drawCmp(-1);
+            return;
+          }
+        }
+        cmpUseUwb = false; // 标记 UWB 不可用,下次起改走 /tm
+      }catch(e){cmpUseUwb = false;}
+    }
+    // Fallback: /tm + dead-reckon
+    try{
+      const r = await fetch(carBase+'/tm',{mode:'cors'});
+      const j = await r.json();
+      const now = Date.now();
+      cmpRunning = j.running;
+      if(j.running && cmpLastT){
+        const dt = (now-cmpLastT)/1000;
+        const rad = -j.h*Math.PI/180;
+        cmpCarX += CMP_V*dt*Math.cos(rad);
+        cmpCarY += CMP_V*dt*Math.sin(rad);
+        cmpPath.push([cmpCarX,cmpCarY]);
+      }
+      if(!j.running){cmpCarX=WP[0][0];cmpCarY=WP[0][1];}
+      cmpLastT = now;
+      drawCmp(j.step!==undefined?j.step:-1);
+      // 每 5 秒重试 UWB
+      if(now % 5000 < 200) cmpUseUwb = true;
+    }catch(e){}
+  }, 200);
+  setWpCount(24); drawCmp(-1); renderCmpTbl(); bindDial(); cmpAnimate();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <script src="/gate.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>七星·陆园 · 嘉兴湘家荡 150 亩水岸庄园 · 三块建设用地诚邀合作</title>
+<meta name="description" content="嘉兴七星湘家荡约 150 亩水岸庄园 · 三块建设用地：临水酒店与中式古建已建成，余一块待开发，合作方式不限，诚邀合作。">
+
+<!-- Favicons (修复微信/浏览器右下角白图) -->
+<link rel="icon" type="image/png" sizes="32x32" href="images/favicon.png">
+<link rel="shortcut icon" type="image/png" href="images/favicon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+
+<!-- Open Graph · 微信分享卡片读取此组 (改用 500x500 正方形, 右下角缩略图最稳) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="七星·陆园 LUYUAN">
+<meta property="og:title" content="七星·陆园 · 嘉兴湘家荡 150 亩水岸庄园 · 三块建设用地诚邀合作">
+<meta property="og:description" content="嘉兴七星湘家荡约 150 亩水岸庄园 · 三块建设用地：临水酒店与中式古建已建成，余一块待开发，合作方式不限，诚邀合作。">
+<meta property="og:image" content="https://crayxus.com.au/luyuan/images/share-thumb.jpg">
+<meta property="og:image:secure_url" content="https://crayxus.com.au/luyuan/images/share-thumb.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="500">
+<meta property="og:image:height" content="500">
+<meta property="og:image:alt" content="嘉兴湘家荡水岸庄园 · 三块建设用地">
+<meta property="og:url" content="https://crayxus.com.au/luyuan/">
+<meta property="og:locale" content="zh_CN">
+
+<!-- 微信小程序 webview / 老版本微信浏览器兜底 -->
+<meta itemprop="image" content="https://crayxus.com.au/luyuan/images/share-thumb.jpg">
+<meta name="image" content="https://crayxus.com.au/luyuan/images/share-thumb.jpg">
+<link rel="image_src" href="https://crayxus.com.au/luyuan/images/share-thumb.jpg">
+
+<!-- Twitter card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="七星·陆园 · 嘉兴湘家荡 150 亩水岸庄园 · 三块建设用地诚邀合作">
+<meta name="twitter:description" content="嘉兴七星湘家荡约 150 亩水岸庄园 · 三块建设用地：临水酒店与中式古建已建成，余一块待开发，合作方式不限，诚邀合作。">
+<meta name="twitter:image" content="https://crayxus.com.au/luyuan/images/share-thumb.jpg">
+<style>
+  :root {
+    --bg: #fafaf8;
+    --ink: #111;
+    --muted: #6a6a66;
+    --line: #d8d6d0;
+    --accent: #5d6b4a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+  }
+  img { display: block; width: 100%; height: auto; }
+
+  /* Top bar */
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 22px 48px;
+    z-index: 100;
+    mix-blend-mode: difference;
+    color: #fff;
+    font-size: 13px; letter-spacing: 0.12em;
+    pointer-events: none;
+  }
+  .topbar .brand { font-weight: 500; }
+  .topbar nav { display: flex; gap: 32px; pointer-events: auto; }
+  .topbar nav a { color: inherit; text-decoration: none; opacity: 0.85; transition: opacity .2s; }
+  .topbar nav a:hover { opacity: 1; }
+
+  /* Hero */
+  .hero {
+    position: relative; height: 100vh; min-height: 640px;
+    overflow: hidden;
+  }
+  .hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .hero::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,.42) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0) 55%, rgba(0,0,0,.65) 100%);
+  }
+  .hero-text {
+    position: absolute; left: 48px; right: 48px; bottom: 56px;
+    color: #fff; z-index: 2;
+    display: flex; justify-content: space-between; align-items: flex-end; gap: 48px;
+  }
+  .hero-text h1 {
+    font-size: clamp(36px, 5.4vw, 84px);
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+  }
+  .hero-text h1 small {
+    display: block;
+    font-size: clamp(12px, 1vw, 14px);
+    letter-spacing: 0.32em;
+    opacity: 0.7;
+    margin-bottom: 18px;
+    font-weight: 400;
+  }
+  .hero-meta {
+    text-align: right;
+    font-size: 13px; letter-spacing: 0.08em;
+    opacity: 0.88;
+    line-height: 1.9;
+    min-width: 240px;
+  }
+
+  /* Sections */
+  section { padding: 120px 48px; }
+  .container { max-width: 1280px; margin: 0 auto; }
+
+  .section-head {
+    display: flex; align-items: baseline; gap: 24px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 14px;
+    margin-bottom: 64px;
+  }
+  .section-head .num {
+    font-size: 13px; letter-spacing: 0.2em;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .section-head h2 {
+    font-size: clamp(26px, 3vw, 40px);
+    font-weight: 300;
+    letter-spacing: 0.02em;
+  }
+  .section-head .en {
+    margin-left: auto;
+    font-size: 12px; letter-spacing: 0.24em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* Metrics stripe */
+  .metrics {
+    background: #111; color: #fff;
+    padding: 84px 48px;
+  }
+  .metrics-grid {
+    max-width: 1280px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  .metric {
+    padding: 12px 24px;
+    border-left: 1px solid #2a2a2a;
+  }
+  .metric:first-child { border-left: 0; padding-left: 0; }
+  .metric .val {
+    font-size: clamp(34px, 4.2vw, 64px);
+    font-weight: 200;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 14px;
+  }
+  .metric .val sup {
+    font-size: 0.36em; vertical-align: super;
+    font-weight: 300;
+    opacity: 0.7;
+    margin-left: 4px;
+  }
+  .metric .label {
+    font-size: 12px; letter-spacing: 0.16em;
+    color: #888; text-transform: uppercase;
+  }
+  .metric .desc {
+    font-size: 13px; color: #c8c8c8;
+    margin-top: 6px;
+    letter-spacing: 0.02em;
+  }
+
+  /* Intro grid */
+  .intro {
+    display: grid; grid-template-columns: 1fr 1.4fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .intro .lead {
+    font-size: clamp(18px, 1.6vw, 22px);
+    font-weight: 300;
+    color: var(--ink);
+    line-height: 1.75;
+    letter-spacing: 0.01em;
+  }
+  .intro .body {
+    font-size: 15px; color: var(--muted);
+    line-height: 1.95;
+  }
+  .intro .body p + p { margin-top: 16px; }
+
+  /* Estate / aerial section */
+  .estate {
+    display: grid; grid-template-columns: 1fr;
+    gap: 48px;
+  }
+  .estate .figure-wrap {
+    background: #fff;
+    border: 1px solid var(--line);
+    padding: 28px;
+  }
+  .estate img {
+    width: 100%; height: auto;
+    max-height: 720px; object-fit: contain;
+  }
+  .estate-caption {
+    margin-top: 18px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 12px; letter-spacing: 0.14em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .legend {
+    display: flex; gap: 24px;
+    font-size: 12px; letter-spacing: 0.06em;
+    color: var(--ink);
+    text-transform: none;
+  }
+  .legend span {
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .legend i {
+    display: inline-block; width: 14px; height: 14px;
+    border: 1px solid rgba(0,0,0,.3);
+  }
+
+  /* Location split */
+  .location-split {
+    display: grid; grid-template-columns: 1.1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+  .location-split .text { padding: 0 16px; }
+  .location-split h3 {
+    font-size: 22px; font-weight: 400;
+    margin-bottom: 20px;
+    letter-spacing: 0.04em;
+  }
+  .location-split p {
+    font-size: 15px; color: var(--muted);
+    line-height: 1.95;
+  }
+  .location-split p + p { margin-top: 14px; }
+  .figure {
+    background: #fff;
+    border: 1px solid var(--line);
+  }
+  .figure img { display: block; }
+  .figure figcaption {
+    font-size: 12px; letter-spacing: 0.14em;
+    color: var(--muted);
+    padding: 12px 18px;
+    border-top: 1px solid var(--line);
+    text-transform: uppercase;
+  }
+  .distances {
+    margin-top: 28px; padding-top: 24px;
+    border-top: 1px solid var(--line);
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .distances .item .city {
+    font-size: 11px; letter-spacing: 0.2em;
+    color: var(--muted); text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .distances .item .time {
+    font-size: 20px; color: var(--ink);
+    font-weight: 300;
+  }
+
+  /* Gallery */
+  .gallery {
+    display: grid; grid-template-columns: 1fr; gap: 24px;
+  }
+  .gallery .big { position: relative; }
+  .gallery .row2 {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+  }
+  .gallery .caption {
+    position: absolute;
+    left: 24px; bottom: 20px;
+    color: #fff;
+    font-size: 13px; letter-spacing: 0.16em;
+    text-shadow: 0 1px 6px rgba(0,0,0,.45);
+    background: rgba(0,0,0,.32);
+    padding: 8px 14px;
+    backdrop-filter: blur(4px);
+  }
+
+  /* Design / spec table */
+  .design {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .spec-table { width: 100%; border-collapse: collapse; }
+  .spec-table tr { border-bottom: 1px solid var(--line); }
+  .spec-table th, .spec-table td {
+    text-align: left; padding: 16px 0;
+    font-size: 15px; font-weight: 400;
+  }
+  .spec-table th {
+    color: var(--muted);
+    width: 38%;
+    letter-spacing: 0.04em;
+  }
+  .spec-table td {
+    color: var(--ink);
+    font-feature-settings: "tnum";
+  }
+
+  /* Possibilities cards */
+  .possibilities {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    margin-top: 8px;
+  }
+  .card {
+    padding: 36px 32px;
+    background: #fff;
+    border: 1px solid var(--line);
+    transition: background .25s ease;
+  }
+  .card:hover { background: #f3f1ec; }
+  .card .num {
+    font-size: 12px; letter-spacing: 0.24em;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+  .card h3 {
+    font-size: 22px; font-weight: 400;
+    letter-spacing: 0.04em;
+    margin-bottom: 16px;
+    color: var(--ink);
+  }
+  .card p {
+    font-size: 14px; color: var(--muted);
+    line-height: 1.85;
+  }
+
+  /* Garden — videos + photo grid */
+  .garden-block {
+    display: grid; grid-template-columns: 360px 1fr;
+    gap: 32px; align-items: start;
+  }
+  .garden-feature {
+    background: #fff; border: 1px solid var(--line);
+    padding: 12px;
+  }
+  .garden-feature video {
+    width: 100%; height: auto; display: block;
+    background: #000; max-height: 660px;
+  }
+  .gf-cap {
+    font-size: 12px; letter-spacing: 0.14em;
+    color: var(--muted); text-transform: uppercase;
+    padding: 12px 4px 2px;
+  }
+  .garden-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .garden-grid img {
+    width: 100%; aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border: 1px solid var(--line); background: #fff;
+  }
+
+  /* Footer */
+  footer {
+    background: #111; color: #c8c8c8;
+    padding: 64px 48px 40px;
+    font-size: 13px;
+  }
+  footer .container {
+    display: grid; grid-template-columns: 2fr 1.4fr;
+    gap: 60px;
+  }
+  footer h4 {
+    color: #fff; font-size: 13px; font-weight: 500;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  footer p { line-height: 1.9; color: #9c9c9c; }
+  footer .credit {
+    max-width: 1280px; margin: 48px auto 0;
+    padding-top: 24px;
+    border-top: 1px solid #2a2a2a;
+    display: flex; justify-content: space-between;
+    color: #6c6c6c; font-size: 12px; letter-spacing: 0.1em;
+  }
+
+  /* Responsive — tablet 横屏/竖屏过渡 */
+  @media (max-width: 900px) {
+    .topbar { padding: 16px 20px; }
+    .topbar nav { display: none; }
+    .topbar .brand { font-size: 12px; letter-spacing: 0.18em; }
+
+    section { padding: 72px 22px; }
+    .metrics { padding: 56px 22px; }
+
+    .section-head { gap: 16px; padding-bottom: 12px; margin-bottom: 44px; }
+    .section-head .en { display: none; }
+    .section-head h2 { font-size: clamp(24px, 6vw, 32px); }
+
+    .hero { min-height: 560px; }
+    .hero-text {
+      left: 22px; right: 22px; bottom: 36px;
+      flex-direction: column; align-items: flex-start; gap: 28px;
+    }
+    .hero-text h1 { font-size: clamp(34px, 9vw, 54px); line-height: 1.08; }
+    .hero-text h1 small {
+      font-size: 11px; letter-spacing: 0.28em;
+      margin-bottom: 14px;
+    }
+    .hero-meta {
+      text-align: left;
+      font-size: 12px; line-height: 1.85;
+      min-width: 0;
+      opacity: 0.92;
+    }
+
+    .metrics-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px 20px;
+    }
+    .metric { border-left: 0; padding: 0; }
+    .metric .val { font-size: clamp(30px, 9vw, 46px); margin-bottom: 8px; }
+    .metric .desc { font-size: 12px; }
+
+    .intro, .location-split, .design {
+      grid-template-columns: 1fr;
+      gap: 36px;
+    }
+    .intro .lead {
+      font-size: 18px;
+      line-height: 1.65;
+    }
+    .intro .body { font-size: 14px; }
+    .intro .body br { display: none; }
+
+    .estate { gap: 32px; }
+    .estate .figure-wrap { padding: 18px; }
+    .estate img { max-height: none; }
+    .estate-caption {
+      flex-direction: column; align-items: flex-start; gap: 10px;
+      margin-top: 14px;
+    }
+    .legend { gap: 16px; flex-wrap: wrap; font-size: 11px; }
+    /* N/S/W/E 三栏在移动端堆叠 */
+    .orient-grid {
+      grid-template-columns: 1fr !important;
+      gap: 22px !important;
+    }
+
+    .location-split .text { padding: 0; }
+    .location-split h3 { font-size: 19px; margin-bottom: 16px; }
+    .location-split p { font-size: 14px; line-height: 1.85; }
+    .distances {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 22px; padding-top: 20px;
+    }
+    .distances .item .city { font-size: 10px; letter-spacing: 0.16em; }
+    .distances .item .time { font-size: 17px; }
+
+    .gallery { gap: 16px; }
+    .gallery .row2 { grid-template-columns: 1fr; gap: 16px; }
+    .gallery .caption {
+      left: 14px; bottom: 12px;
+      font-size: 11px; letter-spacing: 0.12em;
+      padding: 6px 10px;
+    }
+
+    .spec-table th, .spec-table td {
+      padding: 13px 0; font-size: 14px;
+    }
+    .spec-table th { width: 42%; }
+
+    .possibilities { grid-template-columns: 1fr; gap: 14px; }
+    .garden-block { grid-template-columns: 1fr; gap: 18px; }
+    .garden-feature { padding: 8px; }
+    .garden-feature video { max-height: none; }
+    .card { padding: 26px 24px; }
+    .card h3 { font-size: 19px; margin-bottom: 12px; }
+    .card p { font-size: 13px; line-height: 1.8; }
+
+    footer { padding: 48px 22px 28px; }
+    footer .container { grid-template-columns: 1fr; gap: 28px; }
+    footer .credit {
+      flex-direction: column; gap: 10px;
+      padding: 20px 22px 0;
+      font-size: 11px;
+    }
+  }
+
+  /* 小屏手机 (iPhone SE 等 ≤ 414px) */
+  @media (max-width: 480px) {
+    section { padding: 60px 18px; }
+    .metrics { padding: 48px 18px; }
+    .section-head { margin-bottom: 36px; gap: 12px; }
+    .section-head h2 { font-size: 22px; }
+    .section-head .num { font-size: 11px; letter-spacing: 0.18em; }
+
+    .hero { min-height: 520px; }
+    .hero-text { left: 18px; right: 18px; bottom: 28px; gap: 22px; }
+    .hero-text h1 { font-size: 32px; }
+    .hero-text h1 small { margin-bottom: 12px; font-size: 10px; }
+    .hero-meta { font-size: 11.5px; line-height: 1.8; }
+
+    .metrics-grid { gap: 28px 14px; }
+    .metric .val { font-size: 32px; }
+    .metric .label { font-size: 11px; letter-spacing: 0.12em; }
+    .metric .desc { font-size: 11.5px; }
+
+    .intro .lead { font-size: 17px; }
+    .intro .body { font-size: 13.5px; line-height: 1.85; }
+
+    .distances { gap: 6px; }
+    .distances .item .city { font-size: 9.5px; }
+    .distances .item .time { font-size: 15px; }
+
+    .spec-table th, .spec-table td { padding: 11px 0; font-size: 13.5px; }
+
+    .card { padding: 22px 20px; }
+    .card h3 { font-size: 18px; }
+
+    footer { padding: 40px 18px 24px; }
+    footer h4 { font-size: 12px; letter-spacing: 0.14em; }
+    footer p { font-size: 12.5px; }
+    footer .credit { padding: 18px 18px 0; font-size: 10.5px; letter-spacing: 0.08em; }
+  }
+
+  /* iOS Safari 100vh 修复 (避免地址栏顶到 hero 视觉) */
+  @supports (height: 100dvh) {
+    .hero { height: 100dvh; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">七星 · 陆园 · LUYUAN</div>
+  <nav>
+    <a href="#estate">园区</a>
+    <a href="#parcels">地块</a>
+    <a href="#location">区位</a>
+    <a href="#vision">酒店</a>
+    <a href="#invite">合作</a>
+  </nav>
+</div>
+
+<!-- HERO -->
+<header class="hero">
+  <img src="images/aerial.jpg" alt="陆园水岸庄园鸟瞰">
+  <div class="hero-text">
+    <div>
+      <h1><small>七星 · 湘家荡</small>一百五十亩<br>水岸之上的庄园</h1>
+    </div>
+    <div class="hero-meta">
+      整体用地 &nbsp;约 150 亩<br>
+      三面环河 &nbsp;一面临 320 国道<br>
+      三块建设用地 · 两块已建成<br>
+      合作方式不限 · 诚邀共建
+    </div>
+  </div>
+</header>
+
+<!-- METRICS -->
+<div class="metrics">
+  <div class="metrics-grid">
+    <div class="metric">
+      <div class="val">150<sup>亩</sup></div>
+      <div class="label">Estate</div>
+      <div class="desc">完整独立庄园</div>
+    </div>
+    <div class="metric">
+      <div class="val">3<sup>块</sup></div>
+      <div class="label">Buildable Plots</div>
+      <div class="desc">建设用地 · 两块已建成</div>
+    </div>
+    <div class="metric">
+      <div class="val">2<sup>幢</sup></div>
+      <div class="label">Built</div>
+      <div class="desc">酒店 + 中式古建 · 已建成</div>
+    </div>
+    <div class="metric">
+      <div class="val">18<sup>min</sup></div>
+      <div class="label">To Shanghai</div>
+      <div class="desc">经嘉兴南站 · 高铁直达上海</div>
+    </div>
+  </div>
+</div>
+
+<!-- INTRO -->
+<section id="intro">
+  <div class="container">
+    <div class="section-head">
+      <span class="num">01</span>
+      <h2>关于陆园</h2>
+      <span class="en">The Estate</span>
+    </div>
+    <div class="intro">
+      <div class="lead">
+        约 150 亩完整临水庄园，含三块建设用地，<br>
+        酒店与中式古建已建成，诚邀合作。
+      </div>
+      <div class="body">
+        <p>陆园坐落于嘉兴七星、湘家荡度假区东北，约 150 亩，三面环河、一面临 320 国道，呈半岛状的完整地块。临水而居，周边为产业园区与田园农田，自然本底优良、肌理清晰。</p>
+        <p>庄园分为三块建设用地：约 10,800 ㎡ 的核心建设区已建成一幢临水度假酒店（建筑面积约 1 万余㎡）；约 700 余㎡ 地块已建成一座中式古建院落；余下一块可建设用地尚待开发。</p>
+        <p>地处环沪一小时交通圈，距嘉兴市区约 8 公里、嘉兴南站约 25 分钟车程，沪杭高速与沪昆高铁通达 —— 高铁最快约 18 分钟到上海、25 分钟到杭州；自驾上海、苏州约 1.5 小时，杭州约 1 小时。面向有意向的合作伙伴，我们以开放姿态对接 —— 整体合作、分块开发、租赁经营、合资共建，合作方式不限。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ESTATE / SATELLITE -->
+<section id="estate" style="background:#f3f1ec;">
+  <div class="container">
+    <div class="section-head">
+      <span class="num">02</span>
+      <h2>整体地块</h2>
+      <span class="en">Site Overview</span>
+    </div>
+    <div class="estate">
+      <div class="figure-wrap">
+        <img src="images/estate_satellite.jpg" alt="陆园地块卫星航拍">
+        <div class="estate-caption">
+          <span>SITE · 卫星航拍</span>
+          <div class="legend">
+            <span>约 150 亩 · 三面环河 · 三块建设用地</span>
+          </div>
+        </div>
+      </div>
+      <div class="orient-grid" style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:48px; margin-top:8px;">
+        <div>
+          <div style="font-size:12px; letter-spacing:0.2em; color:var(--muted); text-transform:uppercase; margin-bottom:10px;">North · 城市界面</div>
+          <div style="font-size:15px; color:var(--ink); line-height:1.85;">临湘家荡大道与 320 国道辅道<br>交通可达性良好</div>
+        </div>
+        <div>
+          <div style="font-size:12px; letter-spacing:0.2em; color:var(--muted); text-transform:uppercase; margin-bottom:10px;">South · 田园界面</div>
+          <div style="font-size:15px; color:var(--ink); line-height:1.85;">南接农田 · 临河而居<br>田园景观开阔</div>
+        </div>
+        <div>
+          <div style="font-size:12px; letter-spacing:0.2em; color:var(--muted); text-transform:uppercase; margin-bottom:10px;">East / North · 产业界面</div>
+          <div style="font-size:15px; color:var(--ink); line-height:1.85;">东、北邻产业园区<br>步行可达湘家荡</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PARCELS -->
+<section id="parcels">
+  <div class="container">
+    <div class="section-head">
+      <span class="num">03</span>
+      <h2>三块建设用地</h2>
+      <span class="en">Three Plots</span>
+    </div>
+    <p style="max-width:820px; font-size:16px; color:var(--muted); line-height:1.95; margin-bottom:56px;">
+      庄园分为三块建设用地，其中两块已建成 —— 一幢临水度假酒店与一座中式古建院落；余下一块为可建设空地，业态开放。我们以开放姿态对接有意向的伙伴，合作方式不限。
+    </p>
+    <div class="possibilities">
+      <div class="card">
+        <div class="num">地块一 · 已建成</div>
+        <h3>临水酒店</h3>
+        <p>核心建设区约 10,800 ㎡，已建成临水度假酒店一幢，建筑面积约 1 万余㎡，地上 6 层 / 地下 1 层。沿河岸错落铺展，屋顶设连续园林平台，客房与公共空间朝水而设。</p>
+      </div>
+      <div class="card">
+        <div class="num">地块二 · 已建成</div>
+        <h3>中式古建院落</h3>
+        <p>约 700 余㎡，已建成一座中式古建院落（四合院形制）及配套庭院空间。形制典雅、自成天地，适合雅集接待、文创展陈与小型活动。</p>
+      </div>
+      <div class="card">
+        <div class="num">地块三 · 待开发</div>
+        <h3>可建设空地</h3>
+        <p>余下一块可建设用地尚待开发，业态开放。可承载酒店配套、康养度假、研学教育、文创田园与企业会务等多种方向，诚邀合作方共同擘画。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOCATION -->
+<section id="location">
+  <div class="container">
+    <div class="section-head">
+      <span class="num">04</span>
+      <h2>区位</h2>
+      <span class="en">Location</span>
+    </div>
+    <div class="location-split">
+      <figure class="figure">
+        <img src="images/location.jpg" alt="嘉兴七星镇区位图">
+        <figcaption>嘉兴市区 — 七星镇 — 湘家荡区位</figcaption>
+      </figure>
+      <div class="text">
+        <div style="font-size:12px; letter-spacing:0.22em; color:var(--accent); text-transform:uppercase; margin-bottom:14px;">长三角 · 环沪一小时</div>
+        <h3>嘉兴七星 · 湘家荡度假区</h3>
+        <p>项目地处湘家荡度假区东北、七星境内，临 320 国道。湘家荡是国家 AAAA 级旅游景区、嘉兴市级生态度假区，以湖湾、湿地与林地资源著称，区内集聚度假酒店、康养社区与文旅项目。</p>
+        <p>地处长三角核心、沪杭之间，是环沪都市圈内难得的成片临水庄园 —— 既便于承接上海、杭州、苏州的客流外溢，又保有江南近郊的低密度与自然景观，恰在城市与田园的临界线上。</p>
+        <div class="distances">
+          <div class="item"><div class="city">上海 · 高铁</div><div class="time">约 18 min</div></div>
+          <div class="item"><div class="city">杭州 · 高铁</div><div class="time">约 25 min</div></div>
+          <div class="item"><div class="city">苏州 · 自驾</div><div class="time">约 1.5 h</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VISION / GALLERY -->
+<section id="vision" style="background:#f3f1ec;">
+  <div class="container">
+    <div class="section-head">
+      <span class="num">05</span>
+      <h2>地块一 · 水岸酒店</h2>
+      <span class="en">Waterfront Hotel · Built</span>
+    </div>
+    <div class="gallery">
+      <div class="big">
+        <img src="images/night.jpg" alt="南侧沿河透视 · 夜景">
+        <div class="caption">南侧沿河透视 · 夜</div>
+      </div>
+      <div class="row2">
+        <div class="big">
+          <img src="images/street.jpg" alt="北侧沿湘家荡大道透视">
+          <div class="caption">北侧街景 · 湘家荡大道</div>
+        </div>
+        <div class="big">
+          <img src="images/aerial.jpg" alt="东南侧鸟瞰">
+          <div class="caption">东南侧鸟瞰</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="max-width:760px; margin: 64px auto 0; text-align:center;">
+      <p style="font-size:15px; color:var(--muted); line-height:1.95;">
+        临水度假酒店，建筑面积约 1 万余㎡，沿河岸错落铺展，立面通透，屋顶设连续的园林平台与花境。客房与公共空间朝水而设，建筑与水岸之间预留连续步道与活动场地。<br>
+        现已建成，是三块建设用地中率先落成的一幢。
+      </p>
+    </div>
+
+    <!-- Spec table -->
+    <div class="design" style="margin-top: 96px;">
+      <div>
+        <figure class="figure" style="background:#fff;">
+          <img src="images/site_plan.jpg" alt="水岸酒店总平面图">
+          <figcaption>水岸酒店 · 总平面</figcaption>
+        </figure>
+      </div>
+      <div>
+        <table class="spec-table">
+          <tr><th>项目业态</th><td>临水度假酒店</td></tr>
+          <tr><th>所在地块</th><td>地块一 · 核心建设区约 10,800 ㎡</td></tr>
+          <tr><th>建筑占地</th><td>5,150 ㎡</td></tr>
+          <tr><th>总建筑面积</th><td>10,618.7 ㎡（约 1 万余㎡）</td></tr>
+          <tr><th>地上 / 地下</th><td>8,228 ㎡ &nbsp;/&nbsp; 2,588 ㎡</td></tr>
+          <tr><th>建筑层数</th><td>地上 6 层 &nbsp;/&nbsp; 地下 1 层</td></tr>
+          <tr><th>建筑限高</th><td>23.8 m</td></tr>
+          <tr><th>容积率</th><td>1.60</td></tr>
+          <tr><th>绿地率</th><td>≥ 30%</td></tr>
+          <tr><th>结构形式</th><td>钢筋混凝土框架</td></tr>
+          <tr><th>建设状态</th><td>已建成</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GARDEN -->
+<section id="garden" style="background:#f3f1ec;">
+  <div class="container">
+    <div class="section-head">
+      <span class="num">06</span>
+      <h2>江南牡丹园 · 古树名木</h2>
+      <span class="en">Garden &amp; Heritage</span>
+    </div>
+    <p style="max-width:840px; font-size:16px; color:var(--muted); line-height:1.95; margin-bottom:48px;">
+      七星·陆园 园内辟有一座江南牡丹园，汇集 <strong style="color:var(--ink); font-weight:500;">200 余个牡丹品种</strong>，紫红、粉、白、黄次第绽放；园中散植古树名木，并存一座粉墙黛瓦的中式古建院落 —— 花、树、屋共同构成七星·陆园独有的园林本底。
+    </p>
+
+    <!-- 牡丹园 -->
+    <div class="garden-block">
+      <div class="garden-feature">
+        <video controls playsinline preload="metadata" poster="images/peony_poster.jpg">
+          <source src="videos/peony.mp4" type="video/mp4">
+          您的浏览器不支持视频播放。
+        </video>
+        <div class="gf-cap">江南牡丹园 · 200 余品种</div>
+      </div>
+      <div class="garden-grid">
+        <img src="images/peony_1.jpg" alt="牡丹 · 粉色花丛" loading="lazy">
+        <img src="images/peony_2.jpg" alt="牡丹 · 粉色重瓣特写" loading="lazy">
+        <img src="images/peony_3.jpg" alt="牡丹 · 黄色品种" loading="lazy">
+        <img src="images/peony_4.jpg" alt="牡丹园一隅" loading="lazy">
+      </div>
+    </div>
+
+    <!-- 古树名木 + 古建 -->
+    <div class="garden-block" style="margin-top:40px;">
+      <div class="garden-feature">
+        <video controls playsinline preload="metadata" poster="images/heritage_poster.jpg">
+          <source src="videos/heritage.mp4" type="video/mp4">
+          您的浏览器不支持视频播放。
+        </video>
+        <div class="gf-cap">中式古建院落 · 古树名木</div>
+      </div>
+      <div class="garden-grid">
+        <img src="images/ancient_trees.jpg" alt="古树名木" loading="lazy">
+        <img src="images/heritage_1.jpg" alt="粉墙黛瓦 · 马头墙" loading="lazy">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- POSSIBILITIES -->
+<section id="possibilities">
+  <div class="container">
+    <div class="section-head">
+      <span class="num">07</span>
+      <h2>合作方向</h2>
+      <span class="en">Cooperation</span>
+    </div>
+    <p style="max-width:820px; font-size:16px; color:var(--muted); line-height:1.95; margin-bottom:56px;">
+      两幢已建成建筑与一块待开发用地，加之约 150 亩临水庄园的景观本底，能够承载多元业态的落位与组合。以下方向供参考，具体业态与合作模式均可共同擘画。
+    </p>
+    <div class="possibilities">
+      <div class="card">
+        <div class="num">01</div>
+        <h3>度假酒店 · 康养疗愈</h3>
+        <p>临水度假酒店主楼已建成，可引入酒店运营、康养度假、疗愈休养与精品民宿业态，依托湘家荡度假区的成熟客流与生态资源。</p>
+      </div>
+      <div class="card">
+        <div class="num">02</div>
+        <h3>研学 · 亲子自然</h3>
+        <p>临河田园与园林景观是天然课堂，可承接学校研学、亲子活动与青少年日营，结合四季种植、雨水花园与生态教育，景观即课程场景。</p>
+      </div>
+      <div class="card">
+        <div class="num">03</div>
+        <h3>文创 · 会务</h3>
+        <p>中式古建院落与庭院空间适合雅集接待、文创展陈、企业团建与会议活动，盘活场地、提升综合利用效率。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INVITE -->
+<section id="invite" style="background:#f3f1ec;">
+  <div class="container" style="max-width:840px; text-align:center;">
+    <div style="font-size:12px; letter-spacing:0.24em; color:var(--muted); text-transform:uppercase; margin-bottom:18px;">Cooperation · 诚邀共建</div>
+    <h2 style="font-size:clamp(26px,3.2vw,42px); font-weight:300; letter-spacing:0.02em; margin-bottom:26px;">虚位以待 · 共建陆园</h2>
+    <p style="font-size:16px; color:var(--muted); line-height:2;">
+      两幢已建成、一块待开发，约 150 亩临水庄园敞门相邀。<br>
+      无论整体运营、分块开发、租赁经营还是合资共建，合作方式不限。<br>
+      欢迎有意向的伙伴前来洽谈，一同把陆园经营好。
+    </p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="contact">
+  <div class="container">
+    <div>
+      <h4>七星·陆园</h4>
+      <p>嘉兴南湖陆园农业科技有限公司<br>
+         浙江省嘉兴市南湖区七星镇湘家荡大道南侧</p>
+    </div>
+    <div>
+      <h4>合作洽谈</h4>
+      <p>合作方式不限 · 诚邀共建<br>
+         联系电话 &nbsp; <a href="tel:13758086666" style="color:inherit; text-decoration:none;">137 5808 6666</a><br>
+         邮箱 &nbsp; <a href="mailto:919512@qq.com" style="color:inherit; text-decoration:none;">919512@qq.com</a></p>
+    </div>
+  </div>
+  <div class="credit">
+    <span>© 嘉兴南湖陆园农业科技有限公司</span>
+    <span>LUYUAN · NANHU · JIAXING</span>
+  </div>
+</footer>
+
+<!-- ===== 访问口令门 (PIN 哈希校验, 不存明文) ===== -->
+<style>
+#lugate{position:fixed;inset:0;z-index:2147483600;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(244,241,234,.74);backdrop-filter:blur(18px) saturate(1.05);-webkit-backdrop-filter:blur(18px) saturate(1.05);font-family:"Songti SC","STSong","Microsoft YaHei",serif}
+#lugate .luc{background:#fffdf8;border:1px solid #e8e0d0;border-radius:18px;padding:30px 26px 26px;max-width:330px;width:100%;text-align:center;box-shadow:0 18px 60px rgba(70,55,30,.22)}
+#lugate .lulk{font-size:30px;line-height:1}
+#lugate h3{margin:12px 0 4px;font-size:19px;font-weight:600;color:#3a3026;letter-spacing:3px}
+#lugate p{margin:0 0 18px;font-size:13px;color:#8a7d68;letter-spacing:1px}
+#lugate input{width:100%;padding:12px 14px;border:1px solid #e0d8c8;border-radius:11px;text-align:center;font-size:20px;letter-spacing:8px;color:#3a3026;background:#fff;box-sizing:border-box}
+#lugate button{width:100%;margin-top:12px;padding:12px;border:none;border-radius:11px;background:#7a6a4f;color:#fff;font-size:15px;font-weight:600;cursor:pointer;letter-spacing:3px}
+#lugate button:active{opacity:.88}
+#lugate .lue{display:none;color:#b4452f;font-size:12px;margin-top:10px}
+#lugate.shk .luc{animation:lushk .4s}
+@keyframes lushk{0%,100%{transform:translateX(0)}25%,75%{transform:translateX(-7px)}50%{transform:translateX(7px)}}
+html.lulock{overflow:hidden!important}
+</style>
+<div id="lugate">
+  <div class="luc">
+    <div class="lulk">🔒</div>
+    <h3>七星 · 陆园</h3>
+    <p>内部资料 · 请输入访问口令</p>
+    <input id="lupin" type="password" inputmode="numeric" autocomplete="off" maxlength="6" placeholder="• • • •">
+    <button id="lubtn">进 入</button>
+    <div class="lue" id="luerr">口令不正确，请重试</div>
+  </div>
+</div>
+<script>
+(function(){
+  var H="2ed927e972728bc356c12808c31656d17ce6a4afded459165923d4b5c25ffd4f";
+  var gate=document.getElementById('lugate');
+  document.documentElement.classList.add('lulock');
+  function hex(b){return Array.prototype.map.call(new Uint8Array(b),function(x){return ('0'+x.toString(16)).slice(-2)}).join('')}
+  function open_(){gate.style.display='none';document.documentElement.classList.remove('lulock');try{sessionStorage.setItem('luok','1')}catch(e){}}
+  function chk(p){
+    if(!(window.crypto&&crypto.subtle)){return;}
+    crypto.subtle.digest('SHA-256',new TextEncoder().encode(p)).then(function(b){
+      if(hex(b)===H){open_();}
+      else{var e=document.getElementById('luerr');if(e)e.style.display='block';gate.classList.remove('shk');void gate.offsetWidth;gate.classList.add('shk');}
+    });
+  }
+  document.getElementById('lubtn').onclick=function(){chk(document.getElementById('lupin').value.trim())};
+  document.getElementById('lupin').addEventListener('keydown',function(e){if(e.key==='Enter')chk(e.target.value.trim())});
+  try{if(sessionStorage.getItem('luok'))open_();}catch(e){}
+  setTimeout(function(){var i=document.getElementById('lupin');if(i)i.focus();},60);
+})();
+</script>
+</body>
+</html>

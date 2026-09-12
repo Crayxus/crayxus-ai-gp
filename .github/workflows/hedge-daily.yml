@@ -1,0 +1,39 @@
+name: hedge-daily-refresh
+
+# 每天北京时间 11:00 自动抓当日真实比赛, 重建 hedge 数据并提交 (GitHub Pages 自动部署)
+on:
+  # 已暂停 ESPN 自动抓取 —— 改用真实竞彩截图人工录入(数据更准)。
+  # 需要恢复自动抓取时, 取消下面 schedule 的注释即可。
+  # schedule:
+  #   - cron: '19 3 * * *'    # 11:19 北京
+  #   - cron: '37 4 * * *'    # 12:37 北京 冗余
+  workflow_dispatch:          # 仍可手动触发(ESPN 抓取)
+
+permissions:
+  contents: write
+
+concurrency:
+  group: hedge-daily
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: 生成当日比赛数据
+        run: node hedge/build-data.mjs
+      - name: 有变更则提交并推送
+        run: |
+          git config user.name "crayxus-bot"
+          git config user.email "actions@users.noreply.github.com"
+          if [ -n "$(git status --porcelain hedge/index.html)" ]; then
+            git add hedge/index.html
+            git commit -m "auto: 每日刷新 hedge 当日比赛 ($(date -u +%F))"
+            git push
+          else
+            echo "无变更，跳过提交"
+          fi

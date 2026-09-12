@@ -1,0 +1,454 @@
+{
+  "updated": "2026-06-02 22:29",
+  "source": "eastmoney",
+  "lists": {
+    "stock_steady": [
+      {
+        "code": "600176",
+        "name": "中国巨石",
+        "market": 1,
+        "price": 38.9,
+        "chg": 1.51,
+        "nearLimit": false,
+        "final": 84.23299533580621,
+        "t0": false,
+        "snap": {
+          "total": 77.87817333782945,
+          "vol": 85,
+          "tn": 85,
+          "lq": 86.74086668914723
+        },
+        "trend": {
+          "total": 92,
+          "bull": true,
+          "aboveMa20": true,
+          "ma20": 37.827000000000005
+        }
+      },
+      {
+        "code": "600160",
+        "name": "巨化股份",
+        "market": 1,
+        "price": 38.23,
+        "chg": 5.26,
+        "nearLimit": false,
+        "final": 79.9953584537512,
+        "t0": false,
+        "snap": {
+          "total": 82.44610627954762,
+          "vol": 85,
+          "tn": 85,
+          "lq": 83.52053139773813
+        },
+        "trend": {
+          "total": 77,
+          "bull": false,
+          "aboveMa20": true,
+          "ma20": 35.08650000000001
+        }
+      },
+      {
+        "code": "002241",
+        "name": "歌尔股份",
+        "market": 0,
+        "price": 26.7,
+        "chg": 0.75,
+        "nearLimit": false,
+        "final": 78.35948825865691,
+        "t0": false,
+        "snap": {
+          "total": 67.19906956119436,
+          "vol": 35,
+          "tn": 85,
+          "lq": 81.99534780597185
+        },
+        "trend": {
+          "total": 92,
+          "bull": true,
+          "aboveMa20": true,
+          "ma20": 25.84405
+        }
+      },
+      {
+        "code": "601600",
+        "name": "中国铝业",
+        "market": 1,
+        "price": 11.81,
+        "chg": 4.61,
+        "nearLimit": false,
+        "final": 78.34874270562301,
+        "t0": false,
+        "snap": {
+          "total": 79.4522594647691,
+          "vol": 67.0,
+          "tn": 78.33333333333333,
+          "lq": 82.95129732384552
+        },
+        "trend": {
+          "total": 77,
+          "bull": false,
+          "aboveMa20": true,
+          "ma20": 11.440000000000001
+        }
+      },
+      {
+        "code": "000725",
+        "name": "京东方Ａ",
+        "market": 0,
+        "price": 5.47,
+        "chg": 2.05,
+        "nearLimit": false,
+        "final": 77.505,
+        "t0": false,
+        "snap": {
+          "total": 77.1,
+          "vol": 57.0,
+          "tn": 85,
+          "lq": 90
+        },
+        "trend": {
+          "total": 78,
+          "bull": true,
+          "aboveMa20": true,
+          "ma20": 4.725999999999999
+        }
+      }
+    ],
+    "stock_aggr": [
+      {
+        "code": "600176",
+        "name": "中国巨石",
+        "market": 1,
+        "price": 38.9,
+        "chg": 1.51,
+        "nearLimit": false,
+        "final": 84.23299533580621,
+        "t0": false,
+        "snap": {
+          "total": 77.87817333782945,
+          "vol": 85,
+          "tn": 85,
+          "lq": 86.74086668914723
+        },
+        "trend": {
+          "total": 92,
+          "bull": true,
+          "aboveMa20": true,
+          "ma20": 37.827000000000005
+        }
+      },
+      {
+        "code": "600160",
+        "name": "巨化股份",
+        "market": 1,
+        "price": 38.23,
+        "chg": 5.26,
+        "nearLimit": false,
+        "final": 79.9953584537512,
+        "t0": false,
+        "snap": {
+          "total": 82.44610627954762,
+          "vol": 85,
+          "tn": 85,
+          "lq": 83.52053139773813
+        },
+        "trend": {
+          "total": 77,
+          "bull": false,
+          "aboveMa20": true,
+          "ma20": 35.08650000000001
+        }
+      },
+      {
+        "code": "002241",
+        "name": "歌尔股份",
+        "market": 0,
+        "price": 26.7,
+        "chg": 0.75,
+        "nearLimit": false,
+        "final": 78.35948825865691,
+        "t0": false,
+        "snap": {
+          "total": 67.19906956119436,
+          "vol": 35,
+          "tn": 85,
+          "lq": 81.99534780597185
+        },
+        "trend": {
+          "total": 92,
+          "bull": true,
+          "aboveMa20": true,
+          "ma20": 25.84405
+        }
+      },
+      {
+        "code": "601600",
+        "name": "中国铝业",
+        "market": 1,
+        "price": 11.81,
+        "chg": 4.61,
+        "nearLimit": false,
+        "final": 78.34874270562301,
+        "t0": false,
+        "snap": {
+          "total": 79.4522594647691,
+          "vol": 67.0,
+          "tn": 78.33333333333333,
+          "lq": 82.95129732384552
+        },
+        "trend": {
+          "total": 77,
+          "bull": false,
+          "aboveMa20": true,
+          "ma20": 11.440000000000001
+        }
+      },
+      {
+        "code": "000725",
+        "name": "京东方Ａ",
+        "market": 0,
+        "price": 5.47,
+        "chg": 2.05,
+        "nearLimit": false,
+        "final": 77.505,
+        "t0": false,
+        "snap": {
+          "total": 77.1,
+          "vol": 57.0,
+          "tn": 85,
+          "lq": 90
+        },
+        "trend": {
+          "total": 78,
+          "bull": true,
+          "aboveMa20": true,
+          "ma20": 4.725999999999999
+        }
+      }
+    ],
+    "etf_all": [
+      {
+        "code": "159915",
+        "name": "创业板ETF易方达",
+        "market": 0,
+        "price": 4.071,
+        "chg": 2.7,
+        "nearLimit": false,
+        "final": 88.92734284943585,
+        "t0": false,
+        "snap": {
+          "total": 86.41335063533789,
+          "vol": 85,
+          "tn": 70,
+          "lq": 89.06940254135161
+        },
+        "trend": {
+          "total": 92,
+          "bull": true,
+          "aboveMa20": true,
+          "ma20": 3.96215
+        }
+      },
+      {
+        "code": "159949",
+        "name": "创业板50ETF华安",
+        "market": 0,
+        "price": 1.98,
+        "chg": 3.23,
+        "nearLimit": false,
+        "final": 87.14550085785582,
+        "t0": false,
+        "snap": {
+          "total": 83.17363792337422,
+          "vol": 85,
+          "tn": 70,
+          "lq": 81.4529516934969
+        },
+        "trend": {
+          "total": 92,
+          "bull": true,
+          "aboveMa20": true,
+          "ma20": 1.90425
+        }
+      },
+      {
+        "code": "511880",
+        "name": "银华日利ETF",
+        "market": 1,
+        "price": 100.488,
+        "chg": 0.0,
+        "nearLimit": false,
+        "final": 83.4145,
+        "t0": true,
+        "snap": {
+          "total": 76.38999999999999,
+          "vol": 85,
+          "tn": 70,
+          "lq": 94
+        },
+        "trend": {
+          "total": 92,
+          "bull": true,
+          "aboveMa20": true,
+          "ma20": 100.45559999999998
+        }
+      },
+      {
+        "code": "511360",
+        "name": "短融ETF海富通",
+        "market": 1,
+        "price": 113.526,
+        "chg": 0.0,
+        "nearLimit": false,
+        "final": 83.4145,
+        "t0": true,
+        "snap": {
+          "total": 76.38999999999999,
+          "vol": 85,
+          "tn": 70,
+          "lq": 94
+        },
+        "trend": {
+          "total": 92,
+          "bull": true,
+          "aboveMa20": true,
+          "ma20": 113.475
+        }
+      },
+      {
+        "code": "510300",
+        "name": "沪深300ETF华泰柏瑞",
+        "market": 1,
+        "price": 4.936,
+        "chg": 1.4,
+        "nearLimit": false,
+        "final": 78.84814138392339,
+        "t0": false,
+        "snap": {
+          "total": 80.3602570616789,
+          "vol": 85,
+          "tn": 70,
+          "lq": 83.53862824671559
+        },
+        "trend": {
+          "total": 77,
+          "bull": false,
+          "aboveMa20": true,
+          "ma20": 4.91085
+        }
+      }
+    ],
+    "etf_t0": [
+      {
+        "code": "511880",
+        "name": "银华日利ETF",
+        "market": 1,
+        "price": 100.488,
+        "chg": 0.0,
+        "nearLimit": false,
+        "final": 83.4145,
+        "t0": true,
+        "snap": {
+          "total": 76.38999999999999,
+          "vol": 85,
+          "tn": 70,
+          "lq": 94
+        },
+        "trend": {
+          "total": 92,
+          "bull": true,
+          "aboveMa20": true,
+          "ma20": 100.45559999999998
+        }
+      },
+      {
+        "code": "511360",
+        "name": "短融ETF海富通",
+        "market": 1,
+        "price": 113.526,
+        "chg": 0.0,
+        "nearLimit": false,
+        "final": 83.4145,
+        "t0": true,
+        "snap": {
+          "total": 76.38999999999999,
+          "vol": 85,
+          "tn": 70,
+          "lq": 94
+        },
+        "trend": {
+          "total": 92,
+          "bull": true,
+          "aboveMa20": true,
+          "ma20": 113.475
+        }
+      },
+      {
+        "code": "513100",
+        "name": "纳指ETF国泰",
+        "market": 1,
+        "price": 2.343,
+        "chg": -0.93,
+        "nearLimit": false,
+        "final": 78.11869195178932,
+        "t0": true,
+        "snap": {
+          "total": 66.76125809416237,
+          "vol": 85,
+          "tn": 70,
+          "lq": 75.05703237664949
+        },
+        "trend": {
+          "total": 92,
+          "bull": true,
+          "aboveMa20": true,
+          "ma20": 2.1435000000000004
+        }
+      },
+      {
+        "code": "513180",
+        "name": "恒生科技ETF华夏",
+        "market": 1,
+        "price": 0.652,
+        "chg": 3.82,
+        "nearLimit": false,
+        "final": 76.26576831314391,
+        "t0": true,
+        "snap": {
+          "total": 83.84685147844345,
+          "vol": 85,
+          "tn": 70,
+          "lq": 90.09300591377385
+        },
+        "trend": {
+          "total": 67,
+          "bull": false,
+          "aboveMa20": true,
+          "ma20": 0.63145
+        }
+      },
+      {
+        "code": "511260",
+        "name": "十年国债ETF国泰",
+        "market": 1,
+        "price": 136.14,
+        "chg": 0.04,
+        "nearLimit": false,
+        "final": 75.44031652072776,
+        "t0": true,
+        "snap": {
+          "total": 61.891484583141384,
+          "vol": 45,
+          "tn": 70,
+          "lq": 75.2532983325655
+        },
+        "trend": {
+          "total": 92,
+          "bull": true,
+          "aboveMa20": true,
+          "ma20": 135.55109999999996
+        }
+      }
+    ]
+  }
+}

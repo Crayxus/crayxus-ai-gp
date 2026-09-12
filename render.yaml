@@ -1,0 +1,16 @@
+# Render Blueprint: 把 crayxus.com.au 整站作为静态站托管在 Render
+# 用途: GitHub Pages 在国内时常被封, Render 国内可直连。
+# 用法: Render 后台 → New → Blueprint → 选本仓库 → Apply
+#       然后在该静态站 Settings → Custom Domains 加 crayxus.com.au 与 www.crayxus.com.au
+#       Hostinger DNS: A @ → 216.24.57.1 ; CNAME www → crayxus-site.onrender.com
+services:
+  - type: web
+    name: crayxus-site
+    runtime: static
+    buildCommand: ""
+    staticPublishPath: .
+    pullRequestPreviewsEnabled: false
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: public, max-age=300

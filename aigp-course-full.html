@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Crayxus AI·GP · 完整课程 + 永续成长体系</title>
+<style>
+  :root{
+    --ink:#0e1726; --ink2:#33475f; --mute:#6b7e96; --line:#dde6f0;
+    --blue:#0066ff; --blue-soft:#eaf1ff; --orange:#ff7a00; --orange-soft:#fff2e6;
+    --green:#0a9d6b; --green-soft:#e7f7ef; --purple:#7a4dff; --purple-soft:#efeaff;
+    --gold:#c79200; --gold-soft:#fff6dc; --paper:#fff; --bg:#f4f7fb;
+    --font:'Inter',-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    --mono:'JetBrains Mono','SF Mono',Consolas,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.55;-webkit-font-smoothing:antialiased;}
+  .page{max-width:880px;margin:24px auto;background:var(--paper);padding:40px 50px;box-shadow:0 4px 28px rgba(20,40,70,.08);border-radius:4px;}
+  .page+.page{margin-top:0;}
+  .mast{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid var(--blue);padding-bottom:12px;}
+  .mast .brand{font-family:var(--mono);font-size:12px;letter-spacing:.28em;font-weight:800;color:var(--blue);}
+  .mast .brand .a{color:var(--orange);}
+  .mast .tag{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--mute);text-transform:uppercase;}
+  .doc-title{font-size:28px;font-weight:800;margin:18px 0 4px;}
+  .doc-sub{font-size:14px;color:var(--ink2);}
+  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--blue);font-weight:700;text-transform:uppercase;margin:24px 0 10px;}
+  .kicker.o{color:var(--orange);} .kicker.g{color:var(--green);} .kicker.p{color:var(--purple);} .kicker.d{color:var(--gold);}
+  h2{font-size:20px;font-weight:800;margin:4px 0 8px;}
+  h3{font-size:15px;font-weight:700;margin:14px 0 4px;}
+  p{font-size:13.5px;color:var(--ink2);margin-bottom:8px;}
+  b{color:var(--ink);font-weight:700;}
+
+  /* two-layer model */
+  .layer{border-radius:8px;padding:16px 20px;margin:10px 0;}
+  .layer-1{background:var(--blue-soft);border-left:4px solid var(--blue);}
+  .layer-2{background:var(--gold-soft);border-left:4px solid var(--gold);}
+  .layer .lh{font-weight:800;font-size:16px;margin-bottom:4px;}
+  .layer-1 .lh{color:var(--blue);} .layer-2 .lh{color:var(--gold);}
+  .layer .ld{font-size:13px;color:var(--ink2);}
+  .arrow-down{text-align:center;font-size:20px;color:var(--mute);margin:-2px 0;}
+
+  /* rank ladder */
+  .ladder{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:12px 0;}
+  .rank{border:1px solid var(--line);border-radius:8px;padding:12px 8px;text-align:center;background:#fafcff;}
+  .rank .ic{font-size:26px;line-height:1;}
+  .rank .rn{font-size:14px;font-weight:800;margin-top:6px;}
+  .rank .rc{font-size:11px;color:var(--mute);margin-top:3px;line-height:1.35;}
+  .rank.r5{border-color:var(--gold);background:var(--gold-soft);}
+
+  /* week cards */
+  .wk{border:1px solid var(--line);border-radius:8px;padding:12px 15px;margin:9px 0;background:#fafcff;}
+  .wk.ms{border-color:var(--gold);background:linear-gradient(180deg,#fffaef,#fff);box-shadow:0 0 0 3px rgba(199,146,0,.07);}
+  .wk-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;}
+  .wk-n{font-family:var(--mono);font-size:13px;font-weight:800;color:var(--blue);background:var(--blue-soft);padding:2px 9px;border-radius:5px;}
+  .tag{font-family:var(--mono);font-size:9px;letter-spacing:.06em;padding:2px 8px;border-radius:10px;font-weight:700;}
+  .tag-track{background:var(--blue-soft);color:var(--blue);}
+  .tag-car{background:var(--orange-soft);color:var(--orange);}
+  .tag-race{background:var(--green-soft);color:var(--green);}
+  .wk-t{font-size:15px;font-weight:800;}
+  .ms-badge{font-family:var(--mono);font-size:9px;font-weight:800;background:var(--gold);color:#fff;padding:2px 7px;border-radius:5px;}
+  .wk-do{font-size:13px;color:var(--ink2);}
+  .wk-do ol{margin:3px 0 7px 20px;}
+  .wk-do li{padding:1px 0;}
+  .wk-out{font-size:12px;color:var(--green);font-weight:700;background:var(--green-soft);display:inline-block;padding:3px 10px;border-radius:5px;}
+  .wk-out::before{content:'产出 ▸ ';color:#0a7d56;}
+
+  .part-h{display:flex;align-items:center;gap:10px;margin:18px 0 6px;}
+  .part-h .pn{font-family:var(--mono);font-size:11px;font-weight:800;color:#fff;padding:3px 10px;border-radius:5px;}
+  .pn-1{background:var(--blue);} .pn-2{background:var(--orange);} .pn-3{background:var(--green);}
+  .part-h .pt{font-size:17px;font-weight:800;}
+
+  /* engine grid */
+  .eng{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0;}
+  .ecard{border:1px solid var(--line);border-radius:8px;padding:13px 15px;background:#fafcff;}
+  .ecard .et{font-size:14px;font-weight:800;color:var(--gold);}
+  .ecard .ed{font-size:12.5px;color:var(--ink2);margin-top:4px;}
+  .ecard .ed b{color:var(--ink);}
+
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:12.5px;}
+  thead th{text-align:left;background:#0e1726;color:#fff;padding:8px 10px;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;}
+  tbody td{padding:8px 10px;border-bottom:1px solid var(--line);color:var(--ink2);vertical-align:top;}
+  tbody tr:nth-child(even) td{background:#f8fbff;}
+
+  .callout{background:#0e1726;color:#dce7f5;border-radius:8px;padding:14px 18px;margin:14px 0;font-size:13.5px;}
+  .callout b{color:#ffcf73;}
+  .footer{margin-top:24px;padding-top:12px;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--mute);text-transform:uppercase;}
+  @media print{body{background:#fff;}.page{box-shadow:none;margin:0;max-width:none;padding:12mm 12mm;page-break-after:always;border-radius:0;}.page:last-child{page-break-after:auto;}@page{size:A4 portrait;margin:0;}}
+  @media(max-width:880px){.page{padding:24px 18px;}.ladder{grid-template-columns:1fr 1fr;}.eng{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- ============ PAGE 1 · 设计 + 双层 + 段位 ============ -->
+<section class="page">
+  <div class="mast"><div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div><div class="tag">FULL COURSE + 永续成长体系 · V1.0</div></div>
+  <div class="doc-title">完整课程 + 永续成长体系</div>
+  <div class="doc-sub">学完不是毕业,是拿到"车手执照"—— 然后一直回来刷圈、搞研究、升段位。</div>
+
+  <div class="kicker">设计哲学</div>
+  <p><b>普通培训:</b>上完 16 节课 → 结业 → 学生流失。<b>Crayxus 设计:</b>16 周拿"车手执照"只是<b>入场</b>,之后进入一个像游戏一样<b>永不通关</b>的成长体系 —— 永远有下一个段位、下一个赛季、下一个研究课题、下一个圈速纪录可破。<b>粘性 = 复购(会员/季票)+ 口碑 + 升学作品越攒越厚。</b></p>
+
+  <div class="kicker">两层结构</div>
+  <div class="layer layer-1">
+    <div class="lh">第一层 · 车手执照课程(16 周)</div>
+    <div class="ld">按 3×3 框架:① AI 赛道 → ② AI 赛车 → ③ 赛事/AI Tune。每节课都有"动手产出",每 3–4 周一个里程碑,期末班级杯 + 颁<b>车手执照</b>。</div>
+  </div>
+  <div class="arrow-down">▼</div>
+  <div class="layer layer-2">
+    <div class="lh">第二层 · 永续成长体系(无限)</div>
+    <div class="ld">持执照进入:<b>段位阶梯 + 常驻排行榜 + 赛季制 + 开放实验室 + 研究课题菜单 + 车队传帮带</b>。学生从"上课"变成"做研究 / 刷纪录 / 带队"，越玩越深。</div>
+  </div>
+
+  <div class="kicker d">车手段位阶梯 · 永远有下一级</div>
+  <div class="ladder">
+    <div class="rank"><div class="ic">🥉</div><div class="rn">学员</div><div class="rc">完成执照课程</div></div>
+    <div class="rank"><div class="ic">🥈</div><div class="rn">车手</div><div class="rc">圈速上榜 / 跑进基准线</div></div>
+    <div class="rank"><div class="ic">🥇</div><div class="rn">高级车手</div><div class="rc">圈速前 30% / 完成 1 个研究课题</div></div>
+    <div class="rank"><div class="ic">💎</div><div class="rn">车队长</div><div class="rc">带队 / 做助教 / 完成研究项目</div></div>
+    <div class="rank r5"><div class="ic">👑</div><div class="rn">车王</div><div class="rc">赛季冠军 / 校队代表</div></div>
+  </div>
+  <p style="font-size:12.5px;color:var(--mute);">▸ 段位看得见(车手卡 + 排行榜徽章)、要付出才升、升了有特权(开放实验室时长、优先选赛道、带队资格)—— 这是把学生"留下来"的核心引擎。</p>
+
+  <div class="footer"><span>CRAYXUS AI·GP · 完整课程</span><span>第 1 / 4 页</span></div>
+</section>
+
+<!-- ============ PAGE 2 · W1–W8 ============ -->
+<section class="page">
+  <div class="mast"><div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div><div class="tag">车手执照课程 · W1–W8</div></div>
+  <div class="kicker">第一层 · 16 周逐课 · 每节"干什么"</div>
+
+  <div class="part-h"><span class="pn pn-1">板块 ①</span><span class="pt">AI 赛道 · 原理 → 装配 → 代码</span></div>
+
+  <div class="wk">
+    <div class="wk-h"><span class="wk-n">W1</span><span class="tag tag-track">赛道·原理</span><span class="wk-t">开赛日 · AI·GP 是什么</span></div>
+    <div class="wk-do"><b>干什么:</b><ol><li>看 AI 车自动跑圈 demo,抛问题"它怎么自己开?"</li><li>亲手开一台现成车(钩子,先爽一把)</li><li>拆解"感知 → 决策 → 执行 → 能源"闭环</li><li>每人领车手编号,建立个人数据档案</li></ol></div>
+    <div class="wk-out">车手档案 + 闭环认知工作纸</div>
+  </div>
+  <div class="wk">
+    <div class="wk-h"><span class="wk-n">W2</span><span class="tag tag-track">赛道·装配</span><span class="wk-t">拼第一块智能砖</span></div>
+    <div class="wk-do"><b>干什么:</b><ol><li>认识 Smart Tile 模组(N20 电机/电磁铁/ESP32)</li><li>焊接入门(先在练习板上练)</li><li>组装一整块智能砖</li><li>上电测试:亮灯 + 电磁吸合</li></ol></div>
+    <div class="wk-out">1 块能亮灯 + 吸合的智能砖</div>
+  </div>
+  <div class="wk">
+    <div class="wk-h"><span class="wk-n">W3</span><span class="tag tag-track">赛道·装配+代码</span><span class="wk-t">让赛道自己拼起来</span></div>
+    <div class="wk-do"><b>干什么:</b><ol><li>多人智能砖组合到一起</li><li>烧录固件</li><li>软件下指令,让砖移动 + 吸合自组装</li><li>理解"自主硬件"概念</li></ol></div>
+    <div class="wk-out">一组会自组装的智能砖</div>
+  </div>
+  <div class="wk ms">
+    <div class="wk-h"><span class="wk-n">W4</span><span class="tag tag-track">赛道·代码</span><span class="wk-t">拼出你的第一条赛道</span><span class="ms-badge">★ 里程碑 1</span></div>
+    <div class="wk-do"><b>干什么:</b><ol><li>Scratch 积木编程定义砖运动</li><li>拼成直线 / 椭圆 / S 弯</li><li>调试自组装顺序</li><li>全班第一条赛道验收</li></ol></div>
+    <div class="wk-out">一条可用的赛道</div>
+  </div>
+
+  <div class="part-h"><span class="pn pn-2">板块 ②</span><span class="pt">AI 赛车 · 原理 → 装配 → 代码</span></div>
+
+  <div class="wk">
+    <div class="wk-h"><span class="wk-n">W5</span><span class="tag tag-car">赛车·原理</span><span class="wk-t">车怎么"看见"自己 —— 视觉感知</span></div>
+    <div class="wk-do"><b>干什么:</b><ol><li>AI 赛车五大系统</li><li>头顶相机 + ArUco 标记原理:车怎么被"看见"(这就是 AI 视觉感知)</li><li>现场看相机实时识别 demo</li><li>设计你自己的车号视觉标记</li></ol></div>
+    <div class="wk-out">视觉感知工作纸 + 个人车号标记</div>
+  </div>
+  <div class="wk">
+    <div class="wk-h"><span class="wk-n">W6</span><span class="tag tag-car">赛车·装配</span><span class="wk-t">组装赛车① · 身体与心脏</span></div>
+    <div class="wk-do"><b>干什么:</b><ol><li>车壳 / 四轮 / 底盘</li><li>电源链路:电池 → 升压 → 驱动</li><li>通电自检(不冒烟)</li></ol></div>
+    <div class="wk-out">能通电的车身</div>
+  </div>
+  <div class="wk ms">
+    <div class="wk-h"><span class="wk-n">W7</span><span class="tag tag-car">赛车·装配+代码</span><span class="wk-t">让车第一次动起来</span><span class="ms-badge">★ 里程碑 2</span></div>
+    <div class="wk-do"><b>干什么:</b><ol><li>装 ESP32 大脑 + 接线</li><li>车顶贴视觉标记</li><li>电机 / 舵机标定</li><li>开环跑通一条 2m 直线</li></ol></div>
+    <div class="wk-out">能跑直线的整车</div>
+  </div>
+  <div class="wk">
+    <div class="wk-h"><span class="wk-n">W8</span><span class="tag tag-car">赛车·代码</span><span class="wk-t">视觉定位实战 · 在屏幕上看见自己</span></div>
+    <div class="wk-do"><b>干什么:</b><ol><li>相机识别你的车号</li><li>大屏实时显示你的 x / y / 朝向</li><li>手推车走一圈,看轨迹被记录下来</li><li>对比定位准不准(cm 级)</li></ol></div>
+    <div class="wk-out">实时定位 + 轨迹记录</div>
+  </div>
+
+  <div class="footer"><span>车手执照课程 · W1–W8</span><span>第 2 / 4 页</span></div>
+</section>
+
+<!-- ============ PAGE 3 · W9–W16 ============ -->
+<section class="page">
+  <div class="mast"><div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div><div class="tag">车手执照课程 · W9–W16</div></div>
+
+  <div class="wk ms">
+    <div class="wk-h"><span class="wk-n">W9</span><span class="tag tag-car">赛车·代码</span><span class="wk-t">让车自己沿线走</span><span class="ms-badge">★ 里程碑 3</span></div>
+    <div class="wk-do"><b>干什么:</b><ol><li>理解闭环:看位置 → 算误差 → 纠方向</li><li>PC 端控制让车跟一条线</li><li>调参(太晃 / 漂移怎么办)</li><li>自动跑通一段</li></ol></div>
+    <div class="wk-out">自动沿线行驶的 AI 车</div>
+  </div>
+
+  <div class="part-h"><span class="pn pn-3">板块 ③</span><span class="pt">赛事 · 原理 → 规则 → 调试(AI Tune)</span></div>
+
+  <div class="wk">
+    <div class="wk-h"><span class="wk-n">W10</span><span class="tag tag-race">赛事·原理</span><span class="wk-t">最优线的秘密</span></div>
+    <div class="wk-do"><b>干什么:</b><ol><li>同一弯道,两条线哪条快?投票</li><li>apex 过弯原理</li><li>人手画一条你觉得最快的线</li><li>实跑验证</li></ol></div>
+    <div class="wk-out">手绘最优线 + 实测圈速</div>
+  </div>
+  <div class="wk">
+    <div class="wk-h"><span class="wk-n">W11</span><span class="tag tag-race">赛事·调试 / AI Tune ①</span><span class="wk-t">拖一条最快的线</span></div>
+    <div class="wk-do"><b>干什么:</b><ol><li>AI Tune 拖 8 个 waypoint</li><li>实时圈速 / 撞墙反馈</li><li>三次迭代,填记录表</li><li>对比 AI(CMA-ES)算的最优线</li></ol></div>
+    <div class="wk-out">个人最快线 + 三次迭代表</div>
+  </div>
+  <div class="wk">
+    <div class="wk-h"><span class="wk-n">W12</span><span class="tag tag-race">赛事·调试 / AI Tune ②</span><span class="wk-t">说人话给 AI 听 · Vibe Coding</span></div>
+    <div class="wk-do"><b>干什么:</b><ol><li>"让 WP3 往右 0.5 米""跑一圈"——自然语言发车</li><li>对比:手调 vs AI 优化</li><li>体验 LLM × 机器人最前沿</li><li>扩展一条自己的指令</li></ol></div>
+    <div class="wk-out">自然语言调车记录</div>
+  </div>
+  <div class="wk">
+    <div class="wk-h"><span class="wk-n">W13</span><span class="tag tag-race">赛事·规则</span><span class="wk-t">拿到你的车手执照(笔试)</span></div>
+    <div class="wk-do"><b>干什么:</b><ol><li>计时赛规则 + 起 / 终线检测</li><li>排行榜怎么算 + 积分制</li><li>安全规则(锂电 / 赛道 / 操作)</li><li>车手段位体系介绍 + 执照理论考核</li></ol></div>
+    <div class="wk-out">车手执照笔试通过</div>
+  </div>
+  <div class="wk">
+    <div class="wk-h"><span class="wk-n">W14</span><span class="tag tag-race">赛事·综合</span><span class="wk-t">调校冲刺</span></div>
+    <div class="wk-do"><b>干什么:</b><ol><li>综合本学期所学,把圈速再降 10%</li><li>数据复盘(看自己的 telemetry)</li><li>资格赛排位</li><li>个人最佳上常驻排行榜</li></ol></div>
+    <div class="wk-out">个人最佳圈速 · 首次上榜</div>
+  </div>
+  <div class="wk">
+    <div class="wk-h"><span class="wk-n">W15</span><span class="tag tag-race">赛事</span><span class="wk-t">班级杯 · 资格赛</span></div>
+    <div class="wk-do"><b>干什么:</b><ol><li>分组对决,积分赛(F1+NBA 制)</li><li>选拔决赛席位</li><li>组建战队</li></ol></div>
+    <div class="wk-out">资格赛成绩 + 战队</div>
+  </div>
+  <div class="wk ms">
+    <div class="wk-h"><span class="wk-n">W16</span><span class="tag tag-race">赛事</span><span class="wk-t">班级杯决赛 + 车手执照颁发 + 家长开放日</span><span class="ms-badge">★ 结业 / 入会</span></div>
+    <div class="wk-do"><b>干什么:</b><ol><li>班级杯决赛</li><li>颁<b>车手执照</b> + 段位定级</li><li>个人作品集展示(车 + 数据 + 文档)</li><li>家长开放日</li><li><b>介绍永续成长体系 —— 怎么继续来</b></li></ol></div>
+    <div class="wk-out">车手执照 + 段位 + 作品集 → 进入第二层</div>
+  </div>
+
+  <div class="footer"><span>车手执照课程 · W9–W16</span><span>第 3 / 4 页</span></div>
+</section>
+
+<!-- ============ PAGE 4 · 永续成长体系 ============ -->
+<section class="page">
+  <div class="mast"><div class="brand">CRAYXUS · AI<span class="a">·</span>GP</div><div class="tag">第二层 · 永续成长体系</div></div>
+  <div class="doc-title">永续成长体系 · 学完之后怎么留住</div>
+  <div class="doc-sub">六个粘性引擎,把"结业学生"变成"长期车手 / 研究者 / 队长"。</div>
+
+  <div class="kicker d">六大粘性引擎</div>
+  <div class="eng">
+    <div class="ecard"><div class="et">① 常驻圈速排行榜</div><div class="ed">个人最佳(PB)<b>永久记录</b>,随时来刷。班级榜 / 校榜 / 全国榜。像 Strava 一样,看到别人破纪录就想回来再战。</div></div>
+    <div class="ecard"><div class="et">② 赛季制</div><div class="ed">每赛季(约一学期)<b>换新赛道 + 新规则 + 新挑战</b>,排名部分重置。老车手永远有新目标 → <b>季票 / 会员复购</b>。</div></div>
+    <div class="ecard"><div class="et">③ 开放实验室(车手俱乐部)</div><div class="ed">课后 / 周末<b>开放时段</b>,凭段位进入,自由调车、刷圈、做研究。<b>会员制 = 持续收入</b>,也是社群发酵地。</div></div>
+    <div class="ecard"><div class="et">④ 研究课题菜单</div><div class="ed">学完基础后开放<b>开放式课题</b>(见下表)。学生从"上课"变成<b>"做研究"</b>—— 这正是"继续研究和提高"的载体。</div></div>
+    <div class="ecard"><div class="et">⑤ 车队 + 传帮带</div><div class="ed">组车队,老车手当<b>助教 / 队长</b>带新人。给身份与归属,跨校战队 PK —— 同时<b>降低你的人力成本</b>。</div></div>
+    <div class="ecard"><div class="et">⑥ 个人数据档案 + 作品集</div><div class="ed">telemetry 历史 + 作品集<b>持续累积、越来越厚</b> → 沉没成本留人 + <b>升学背景提升</b>(写进 IB/EPQ/申请)。</div></div>
+  </div>
+
+  <div class="kicker o">研究课题菜单 · 学完随便挑(对应 3×3 的深化)</div>
+  <table>
+    <thead><tr><th>课题</th><th>研究什么</th><th>3×3 深化</th></tr></thead>
+    <tbody>
+      <tr><td>🏎 让车更快</td><td>PID/Pure Pursuit 调参极限、车身轻量化、电机升级</td><td>赛车·代码</td></tr>
+      <tr><td>👁 视觉进阶</td><td>多车识别、避碰、用视觉做更精的定位 / 测速</td><td>赛车·代码(AI 感知)</td></tr>
+      <tr><td>🧠 AI 进阶</td><td>自己训练最优线(CMA-ES / 强化学习)、改进 AI Tune 算法</td><td>赛事·调试</td></tr>
+      <tr><td>🛣 赛道设计</td><td>自己设计赛道几何,研究什么赛道最难 / 最快</td><td>赛道·原理+代码</td></tr>
+      <tr><td>🗣 Vibe Coding 进阶</td><td>扩展自然语言指令集,让 AI 听懂更复杂的话</td><td>赛事·调试</td></tr>
+      <tr><td>🤖 自动驾驶</td><td>单车视觉 / 激光雷达 全自动绕圈(高阶才上 LiDAR)</td><td>赛车·代码</td></tr>
+      <tr><td>🏆 赛事运营</td><td>学生自己当裁判 / 导播 / 办一场赛</td><td>赛事·规则</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <b>为什么这样设计有粘性 / 有生意:</b> 16 周课程是<b>一次性收入</b>;段位 + 排行榜 + 赛季 + 开放实验室是<b>持续收入</b>(会员 / 季票 / 进阶课题包)。学生有<b>身份(段位)、目标(下一个赛季 / 纪录)、归属(车队)、沉没成本(数据档案)</b>—— 四个都指向"不想走"。这也是把单校客单价从"一学期"拉成"多年"的关键。
+  </div>
+
+  <div class="footer"><span>永续成长体系 · 六引擎 + 课题菜单</span><span>第 4 / 4 页</span></div>
+</section>
+
+</body>
+</html>

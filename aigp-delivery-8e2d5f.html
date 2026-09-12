@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="赛道、赛车、遥控车改造套件、iPad、软件平台与课程一体化交付，六周完成部署。激光雷达与视觉识别双技术路线均已跑通。">
+<meta name="theme-color" content="#101317">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="择大 AI·GP">
+<meta property="og:title" content="择大 AI·GP · 智能赛车教育系统交付方案">
+<meta property="og:description" content="赛道、赛车、遥控车改造套件、iPad、软件平台与课程一体化交付，六周完成部署。激光雷达与视觉识别双技术路线均已跑通。">
+<meta property="og:image" content="https://crayxus.com.au/og-aigp-delivery.jpg?v=2">
+<meta property="og:image:secure_url" content="https://crayxus.com.au/og-aigp-delivery.jpg?v=2">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="800">
+<meta property="og:image:height" content="800">
+<meta property="og:image:alt" content="择大 AI·GP · 智能赛车教育系统交付方案">
+<meta property="og:url" content="https://crayxus.com.au/aigp-delivery-8e2d5f.html">
+<meta property="og:locale" content="zh_CN">
+<meta itemprop="image" content="https://crayxus.com.au/og-aigp-delivery.jpg?v=2">
+<meta name="image" content="https://crayxus.com.au/og-aigp-delivery.jpg?v=2">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="择大 AI·GP · 智能赛车教育系统交付方案">
+<meta name="twitter:description" content="赛道、赛车、遥控车改造套件、iPad、软件平台与课程一体化交付，六周完成部署。激光雷达与视觉识别双技术路线均已跑通。">
+<meta name="twitter:image" content="https://crayxus.com.au/og-aigp-delivery.jpg?v=2">
+<title>择大 AI·GP 智能赛车教育系统 · 交付方案</title>
+<style>
+:root{
+  --bg:#f7f8f9; --panel:#ffffff; --sunk:#eef0f2; --line:#d8dce0; --line-soft:#e7eaed;
+  --ink:#14181c; --body:#3d454d; --dim:#727c86;
+  --sig:#c8801a; --sig-soft:#f7ead4;
+  --deep:#1e3a4c; --ok:#2f7a52;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#101317; --panel:#171b20; --sunk:#1d2228; --line:#2c333a; --line-soft:#232a31;
+    --ink:#e9edf1; --body:#b3bcc5; --dim:#7d8791;
+    --sig:#e0a04a; --sig-soft:#2b2214; --deep:#7fb3cc; --ok:#5cb98a;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#101317; --panel:#171b20; --sunk:#1d2228; --line:#2c333a; --line-soft:#232a31;
+  --ink:#e9edf1; --body:#b3bcc5; --dim:#7d8791;
+  --sig:#e0a04a; --sig-soft:#2b2214; --deep:#7fb3cc; --ok:#5cb98a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--body);
+  font-family:"Source Han Sans SC","Microsoft YaHei","PingFang SC",system-ui,sans-serif;
+  font-size:15px;line-height:1.75;-webkit-font-smoothing:antialiased}
+.wrap{max-width:920px;margin:0 auto;padding:0 24px 90px}
+
+/* ── 开篇视频 ── */
+.hero{margin:0 -24px 0;position:relative;background:#05070a;overflow:hidden}
+.hero video{display:block;width:100%;height:auto;max-height:58vh;object-fit:cover}
+.hero .veil{position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(5,7,10,.45) 0%,transparent 24%,transparent 52%,rgba(5,7,10,.9) 100%)}
+.hero .cap{position:absolute;left:24px;right:24px;bottom:16px;display:flex;
+  justify-content:space-between;align-items:flex-end;gap:14px;flex-wrap:wrap}
+.hero .cap .t{color:#fff;font-size:20px;font-weight:800;letter-spacing:.02em;
+  text-shadow:0 2px 16px rgba(0,0,0,.65)}
+.hero .cap .s{color:rgba(255,255,255,.66);font-size:11.5px;letter-spacing:.06em}
+.snd{position:absolute;right:24px;top:18px;z-index:2;display:flex;align-items:center;gap:7px;
+  background:rgba(8,11,15,.6);border:1px solid rgba(255,255,255,.26);color:#fff;
+  border-radius:999px;padding:7px 15px 7px 12px;font:inherit;font-size:12.5px;
+  letter-spacing:.06em;cursor:pointer;backdrop-filter:blur(6px);transition:background .18s,border-color .18s}
+.snd:hover{background:rgba(8,11,15,.85);border-color:rgba(255,255,255,.5)}
+.snd:focus-visible{outline:2px solid #fff;outline-offset:2px}
+@media(prefers-reduced-motion:reduce){.snd{transition:none}}
+
+/* ── 抬头 ── */
+.doc-head{padding:34px 0 30px;border-bottom:2px solid var(--ink)}
+.brand{height:34px;width:auto;margin-bottom:18px;display:block}
+.eyebrow{font-size:11.5px;letter-spacing:.32em;color:var(--sig);font-weight:700;margin-bottom:12px}
+h1{font-size:32px;line-height:1.25;color:var(--ink);font-weight:800;letter-spacing:-.01em;text-wrap:balance}
+.lede{margin-top:14px;color:var(--body);font-size:15.5px;max-width:64ch}
+.meta{display:flex;gap:26px;flex-wrap:wrap;margin-top:22px;font-size:12.5px;color:var(--dim)}
+.meta b{color:var(--ink);font-weight:600}
+
+section{margin-top:52px}
+.sec-no{font-size:11.5px;letter-spacing:.2em;color:var(--sig);font-weight:700}
+h2{font-size:21px;color:var(--ink);font-weight:700;margin:5px 0 6px;letter-spacing:-.005em}
+.sec-note{color:var(--dim);font-size:13.5px;margin-bottom:18px;max-width:66ch}
+
+figure{margin:22px 0 0;border:1px solid var(--line);border-radius:11px;overflow:hidden;background:var(--panel)}
+figure img{display:block;width:100%;height:auto}
+figure.shot{position:relative}
+figure.shot .fade{position:absolute;left:0;right:0;bottom:34px;height:70px;pointer-events:none;
+  background:linear-gradient(180deg,transparent,var(--panel))}
+figcaption{font-size:12.5px;color:var(--dim);padding:10px 15px;border-top:1px solid var(--line-soft);
+  background:var(--panel);position:relative;z-index:1}
+figure.diagram{padding:18px 16px 0}
+figure.diagram svg{display:block;width:100%;height:auto}
+figure.diagram figcaption{margin:14px -16px 0;padding:10px 16px}
+
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:560px}
+thead th{background:var(--sunk);color:var(--ink);font-weight:700;font-size:12px;letter-spacing:.05em;
+  text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:11px 14px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+tbody tr:last-child td{border-bottom:none}
+td.k{color:var(--ink);font-weight:600;white-space:nowrap}
+td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--ink)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.card h3{font-size:14.5px;color:var(--ink);font-weight:700;margin-bottom:6px}
+.card p{font-size:13px;color:var(--body)}
+.card .tag{font-size:11px;letter-spacing:.14em;color:var(--sig);font-weight:700;margin-bottom:8px}
+.card.mark{border-color:var(--sig)}
+
+.phases{display:flex;flex-direction:column;border-left:2px solid var(--line);margin-left:8px}
+.ph{position:relative;padding:0 0 22px 26px}
+.ph::before{content:"";position:absolute;left:-7px;top:7px;width:12px;height:12px;border-radius:50%;
+  background:var(--panel);border:2px solid var(--sig)}
+.ph:last-child{padding-bottom:0}
+.ph .wk{font-size:11.5px;letter-spacing:.12em;color:var(--sig);font-weight:700}
+.ph .t{font-size:15px;color:var(--ink);font-weight:700;margin:1px 0 3px}
+.ph .d{font-size:13.5px;color:var(--body)}
+
+.note{background:var(--sunk);border:1px solid var(--line-soft);border-radius:10px;
+  padding:14px 17px;font-size:13.5px;margin-top:16px}
+.note b{color:var(--ink)}
+.rule{border-left:3px solid var(--sig);background:var(--sig-soft);border-radius:0 8px 8px 0;
+  padding:13px 16px;font-size:13.5px;margin-top:16px}
+.rule b{color:var(--ink)}
+
+ul.clean{list-style:none;display:flex;flex-direction:column;gap:7px;margin-top:10px}
+ul.clean li{padding-left:18px;position:relative;font-size:13.5px}
+ul.clean li::before{content:"";position:absolute;left:0;top:9px;width:6px;height:6px;
+  border-radius:1px;background:var(--sig)}
+
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:16px}
+.step{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.step .no{font-size:11px;letter-spacing:.16em;color:var(--sig);font-weight:700}
+.step .h{font-size:14px;color:var(--ink);font-weight:700;margin:3px 0 4px}
+.step .p{font-size:12.8px;color:var(--body)}
+
+footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);
+  font-size:12.5px;color:var(--dim);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+/* 横向可滚内容的提示条 */
+.tbl,.scrollx{position:relative}
+.swipe{display:none;font-size:11.5px;color:var(--dim);margin:7px 2px 0;letter-spacing:.04em}
+.swipe::before{content:"↔ ";color:var(--sig)}
+
+
+/* 改装流程窄屏竖排版 */
+.flow-m{display:none;flex-direction:column;gap:0;padding:2px 0 4px}
+.flow-m .fs{background:var(--sunk);border:1px solid var(--line);border-radius:9px;
+  padding:10px 13px}
+.flow-m .fs.on{background:var(--sig-soft);border-color:var(--sig)}
+.flow-m .fs b{display:block;color:var(--ink);font-size:14.5px}
+.flow-m .fs span{font-size:12.5px;color:var(--dim)}
+.flow-m .fa{color:var(--sig);font-size:12px;text-align:center;padding:6px 0;line-height:1.6}
+/* 图例(HTML 版, 供窄屏使用: SVG 缩小时图内文字会不可读) */
+.legend{display:none;gap:8px 18px;flex-wrap:wrap;padding:0 2px 2px;
+  font-size:12px;color:var(--dim)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:18px;height:5px;border-radius:2.5px;display:inline-block}
+.legend i.dot{width:9px;height:9px;border-radius:50%;background:var(--sig)}
+@media(max-width:700px){
+  /* ── 表格 → 卡片: 不再横滑 ── */
+  .tbl{border:none;background:transparent;overflow:visible;border-radius:0}
+  table{display:block;min-width:0;font-size:13px}
+  thead{display:none}
+  tbody{display:block}
+  tbody tr{display:block;background:var(--panel);border:1px solid var(--line);
+    border-radius:10px;padding:11px 14px;margin-bottom:9px}
+  tbody tr:last-child{margin-bottom:0}
+  tbody td{display:block;border:none;padding:4px 0;vertical-align:baseline}
+  tbody tr:last-child td{border:none}
+  tbody td::before{content:attr(data-l);display:block;font-size:10px;
+    letter-spacing:.12em;color:var(--dim);margin-bottom:1px;font-weight:600}
+  /* 分组名(原 rowspan 单元格)提为卡片内的标签 */
+  tbody td[rowspan]{color:var(--sig);font-weight:700;font-size:11px;
+    letter-spacing:.14em;padding:0 0 7px;white-space:normal}
+  tbody td[rowspan]::before{display:none}
+  td.k{white-space:normal}
+  td.n{text-align:left;font-weight:600}
+  .swipe{display:none}
+  /* ── 图表: 图例外置为 HTML, SVG 自适应缩放 ── */
+  .scrollx{overflow:visible}
+  figure.diagram svg{min-width:0}
+  .legend{display:flex}
+  figure.retrofit .scrollx{display:none}
+  .flow-m{display:flex}
+  .svg-legend-hide{display:none}
+}
+@media(max-width:640px){
+  .wrap{padding:0 16px 70px}
+  h1{font-size:25px}
+  .lede{font-size:14.5px}
+  .doc-head{padding:26px 0 24px}
+  .brand{height:29px;margin-bottom:14px}
+  .eyebrow{letter-spacing:.22em}
+  section{margin-top:40px}
+  h2{font-size:19px}
+  .sec-note{font-size:13px}
+  /* 抬头信息竖排, 避免挤成一行溢出 */
+  .meta{flex-direction:column;gap:6px;margin-top:18px}
+  /* 视频区 */
+  .hero{margin:0 -16px 0}
+  .hero .cap{left:16px;right:16px;bottom:12px;flex-direction:column;align-items:flex-start;gap:3px}
+  .hero .cap .t{font-size:17px}
+  .hero .cap .s{font-size:10.5px}
+  .snd{right:14px;top:12px;padding:6px 12px 6px 10px;font-size:11.5px;letter-spacing:.02em}
+  /* 表格: 缩字号与内边距, 让常见列不必横滚 */
+  table{font-size:12.5px;min-width:480px}
+  thead th{padding:9px 10px;font-size:11px}
+  td{padding:9px 10px}
+  td.k{white-space:normal}
+  figure{margin-top:18px}
+  figure.diagram{padding:14px 12px 0}
+  figure.diagram figcaption{margin:12px -12px 0;padding:9px 12px}
+  figcaption{font-size:11.5px;padding:9px 12px}
+  .card{padding:14px 15px}
+  .steps{gap:10px}
+  .ph .d,.note,.rule,ul.clean li{font-size:13px}
+  footer{flex-direction:column;gap:6px;font-size:11.5px}
+}
+@media(max-width:400px){
+  h1{font-size:22px}
+  .hero .cap .t{font-size:15px}
+  .snd span:last-child{display:none}
+  .snd{padding:7px 10px}
+  table{min-width:420px}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<div class="hero">
+  <video id="heroVid" autoplay muted loop playsinline preload="none" poster="https://crayxus.com.au/aigp-delivery/poster.jpg" src="https://crayxus.com.au/aigp-delivery/hero.mp4"></video>
+  <div class="veil"></div>
+  <button class="snd" id="sndBtn" aria-label="开启声音"><span id="sndIco">🔇</span><span id="sndTxt">开启声音</span></button>
+  <div class="cap">
+    <div class="t">圈速即实力</div>
+    <div class="s">形象演示画面 · 非产品实拍</div>
+  </div>
+</div>
+
+<header class="doc-head">
+  <img class="brand" src="https://crayxus.com.au/aigp-delivery/logo.png" alt="择大教育">
+  <div class="eyebrow">择大 AI·GP</div>
+  <h1>智能赛车教育系统<br>整体交付方案</h1>
+  <p class="lede">一套面向学校与教育机构的自动驾驶实训系统。含赛道场地、赛车整车、改造套件、交互终端、软件平台与配套课程，交付即可开课。</p>
+  <div class="meta">
+    <span>版本 <b>2026.08</b></span>
+    <span>技术路线 <b>激光雷达 + 视觉识别（双路线已验证）</b></span>
+    <span>报价 <b>以商务报价单为准</b></span>
+  </div>
+</header>
+
+<section>
+  <div class="sec-no">01</div>
+  <h2>套餐构成</h2>
+  <p class="sec-note">系统按六个模块交付，模块之间已完成联调，非零散设备集合。</p>
+  <div class="grid">
+    <div class="card">
+      <div class="tag">MODULE A</div>
+      <h3>赛道与场地系统</h3>
+      <p>标准室内环线赛道，含围栏组件、路面标识、起跑线与维修区划分，以及场地建图标定服务。</p>
+    </div>
+    <div class="card">
+      <div class="tag">MODULE B</div>
+      <h3>AI 赛车整车</h3>
+      <p>阿克曼转向底盘，配激光雷达、机载运算单元与驱动控制板；结构件由本项目自主设计并制造。</p>
+    </div>
+    <div class="card mark">
+      <div class="tag">MODULE C</div>
+      <h3>整车改造套件</h3>
+      <p>把普通遥控车改造成自动驾驶平台的完整套件与教具，含免焊线束、结构件与烧录工具——五天营的动手主线。</p>
+    </div>
+    <div class="card">
+      <div class="tag">MODULE D</div>
+      <h3>交互终端</h3>
+      <p>学生端平板（iPad）用于调校对话与遥测查看；赛场大屏用于实时轨迹、成绩榜与赛事呈现。</p>
+    </div>
+    <div class="card">
+      <div class="tag">MODULE E</div>
+      <h3>软件平台</h3>
+      <p>网页驾驶舱、AI 调校工程师、仿真预演与安全审查、计时赛事系统、数据回放平台、微信小程序。</p>
+    </div>
+    <div class="card">
+      <div class="tag">MODULE F</div>
+      <h3>课程与师资</h3>
+      <p>两小时体验课与五天营完整教案、学生手册、带教手册、讲解幻灯，以及现场师资培训与带教认证。</p>
+    </div>
+  </div>
+
+  <figure class="diagram">
+<div class="scrollx"><svg viewBox="0 0 900 470" role="img" aria-label="标准赛道布局与赛车线">
+<path d="M41.8 81.2L42.6 74.1L44.1 67.8L48.1 61.5L52.0 56.0L57.5 52.0L63.9 48.1L70.2 46.5L77.3 45.7L765.0 45.7L772.1 46.5L778.4 48.1L784.7 52.0L790.2 56.0L794.2 61.5L798.1 67.8L799.7 74.1L800.5 81.2L800.5 392.7L799.7 399.8L798.1 406.1L794.2 412.5L790.2 418.0L784.7 421.9L778.4 425.9L772.1 427.4L765.0 428.2L571.8 428.2L565.5 427.4L558.4 425.9L552.0 421.9L547.3 418.0L542.6 412.5L539.4 406.1L537.1 399.8L536.3 392.7L536.3 268.1L378.5 268.1L378.5 392.7L378.5 399.8L376.2 406.1L373.0 412.5L368.3 418.0L363.6 421.9L357.2 425.9L350.1 427.4L343.0 428.2L77.3 428.2L70.2 427.4L63.9 425.9L57.5 421.9L52.0 418.0L48.1 412.5L44.1 406.1L42.6 399.8L41.8 392.7Z" fill="none" stroke="var(--line)" stroke-width="2.4" stroke-linejoin="round"/>
+<path d="M182.9 281.5L277.6 281.5L277.6 186.9L182.9 186.9Z" fill="none" stroke="var(--line)" stroke-width="2.4" stroke-linejoin="round"/>
+<path d="M277.6 202.7L641.2 202.7L641.2 313.9L653.8 313.9L653.8 193.2L277.6 193.2Z" fill="none" stroke="var(--line)" stroke-width="2.4" stroke-linejoin="round"/>
+<line x1="286.3" y1="59.9" x2="286.3" y2="186.1" stroke="var(--ink)" stroke-width="2.6" stroke-dasharray="7 6" opacity=".75"/>
+<line x1="323.3" y1="145.9" x2="311.5" y2="145.9" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="311.5" y1="145.9" x2="300.5" y2="141.9" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="300.5" y1="141.9" x2="292.6" y2="133.3" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="292.6" y1="133.3" x2="283.9" y2="124.6" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="283.9" y1="124.6" x2="274.4" y2="118.3" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="274.4" y1="118.3" x2="262.6" y2="116.7" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="262.6" y1="116.7" x2="250.8" y2="115.9" stroke="#66b7e8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="250.8" y1="115.9" x2="238.9" y2="115.9" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="238.9" y1="115.9" x2="227.1" y2="115.9" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="227.1" y1="115.9" x2="215.3" y2="115.9" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="215.3" y1="115.9" x2="203.5" y2="115.9" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="203.5" y1="115.9" x2="191.6" y2="115.9" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="191.6" y1="115.9" x2="179.8" y2="118.3" stroke="#66b7e8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="179.8" y1="118.3" x2="170.3" y2="124.6" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="170.3" y1="124.6" x2="163.2" y2="133.3" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="163.2" y1="133.3" x2="157.7" y2="144.3" stroke="#66b7e8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="157.7" y1="144.3" x2="151.4" y2="154.6" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="151.4" y1="154.6" x2="143.5" y2="162.4" stroke="#66b7e8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="143.5" y1="162.4" x2="133.3" y2="169.5" stroke="#66b7e8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="133.3" y1="169.5" x2="123.8" y2="175.8" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="123.8" y1="175.8" x2="116.7" y2="185.3" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="116.7" y1="185.3" x2="113.5" y2="196.4" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="113.5" y1="196.4" x2="112.8" y2="208.2" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="112.8" y1="208.2" x2="112.8" y2="220.0" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="112.8" y1="220.0" x2="112.8" y2="231.8" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="112.8" y1="231.8" x2="112.8" y2="243.7" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="112.8" y1="243.7" x2="112.8" y2="256.3" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="112.8" y1="256.3" x2="112.8" y2="267.3" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="112.8" y1="267.3" x2="115.1" y2="279.2" stroke="#66b7e8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="115.1" y1="279.2" x2="119.9" y2="290.2" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="119.9" y1="290.2" x2="127.7" y2="298.1" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="127.7" y1="298.1" x2="137.2" y2="306.0" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="137.2" y1="306.0" x2="141.9" y2="316.2" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="141.9" y1="316.2" x2="145.1" y2="327.3" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="145.1" y1="327.3" x2="152.2" y2="336.0" stroke="#66b7e8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="152.2" y1="336.0" x2="160.9" y2="344.6" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="160.9" y1="344.6" x2="171.9" y2="341.5" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="171.9" y1="341.5" x2="180.6" y2="333.6" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="180.6" y1="333.6" x2="191.6" y2="331.2" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="191.6" y1="331.2" x2="203.5" y2="333.6" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="203.5" y1="333.6" x2="215.3" y2="335.2" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="215.3" y1="335.2" x2="227.1" y2="334.4" stroke="#66b7e8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="227.1" y1="334.4" x2="238.2" y2="332.8" stroke="#66b7e8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="238.2" y1="332.8" x2="250.0" y2="329.6" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="250.0" y1="329.6" x2="260.2" y2="333.6" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="260.2" y1="333.6" x2="267.3" y2="343.0" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="267.3" y1="343.0" x2="276.8" y2="348.6" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="276.8" y1="348.6" x2="286.3" y2="342.3" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="286.3" y1="342.3" x2="292.6" y2="332.8" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="292.6" y1="332.8" x2="300.5" y2="324.9" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="300.5" y1="324.9" x2="309.9" y2="317.0" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="309.9" y1="317.0" x2="316.2" y2="307.6" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="316.2" y1="307.6" x2="323.3" y2="298.1" stroke="#66b7e8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="323.3" y1="298.1" x2="324.9" y2="286.3" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="324.9" y1="286.3" x2="328.1" y2="274.4" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="328.1" y1="274.4" x2="329.6" y2="263.4" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="329.6" y1="263.4" x2="334.4" y2="252.4" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="334.4" y1="252.4" x2="343.8" y2="245.3" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="343.8" y1="245.3" x2="354.9" y2="240.5" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="354.9" y1="240.5" x2="365.9" y2="237.4" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="365.9" y1="237.4" x2="377.8" y2="235.0" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="377.8" y1="235.0" x2="389.6" y2="234.2" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="389.6" y1="234.2" x2="401.4" y2="234.2" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="401.4" y1="234.2" x2="413.2" y2="234.2" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="413.2" y1="234.2" x2="425.1" y2="234.2" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="425.1" y1="234.2" x2="436.9" y2="234.2" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="436.9" y1="234.2" x2="448.7" y2="234.2" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="448.7" y1="234.2" x2="460.6" y2="234.2" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="460.6" y1="234.2" x2="472.4" y2="234.2" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="472.4" y1="234.2" x2="484.2" y2="235.0" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="484.2" y1="235.0" x2="496.1" y2="235.0" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="496.1" y1="235.0" x2="507.9" y2="235.0" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="507.9" y1="235.0" x2="519.7" y2="234.2" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="519.7" y1="234.2" x2="531.5" y2="235.0" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="531.5" y1="235.0" x2="543.4" y2="236.6" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="543.4" y1="236.6" x2="554.4" y2="238.9" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="554.4" y1="238.9" x2="565.5" y2="243.7" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="565.5" y1="243.7" x2="574.9" y2="250.8" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="574.9" y1="250.8" x2="583.6" y2="258.7" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="583.6" y1="258.7" x2="586.8" y2="269.7" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="586.8" y1="269.7" x2="586.8" y2="281.5" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="586.8" y1="281.5" x2="590.7" y2="292.6" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="590.7" y1="292.6" x2="590.7" y2="304.4" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="590.7" y1="304.4" x2="590.7" y2="316.2" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="590.7" y1="316.2" x2="594.6" y2="327.3" stroke="#66b7e8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="594.6" y1="327.3" x2="598.6" y2="338.3" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="598.6" y1="338.3" x2="603.3" y2="349.4" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="603.3" y1="349.4" x2="610.4" y2="358.8" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="610.4" y1="358.8" x2="620.7" y2="364.3" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="620.7" y1="364.3" x2="631.7" y2="367.5" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="631.7" y1="367.5" x2="643.5" y2="369.1" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="643.5" y1="369.1" x2="654.6" y2="365.9" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="654.6" y1="365.9" x2="664.8" y2="358.8" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="664.8" y1="358.8" x2="673.5" y2="351.7" stroke="#66b7e8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="673.5" y1="351.7" x2="683.0" y2="343.8" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="683.0" y1="343.8" x2="694.0" y2="341.5" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="694.0" y1="341.5" x2="705.8" y2="338.3" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="705.8" y1="338.3" x2="715.3" y2="332.0" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="715.3" y1="332.0" x2="715.3" y2="321.8" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="715.3" y1="321.8" x2="707.4" y2="313.1" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="707.4" y1="313.1" x2="706.6" y2="301.2" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="706.6" y1="301.2" x2="710.6" y2="290.2" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="710.6" y1="290.2" x2="713.7" y2="279.2" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="713.7" y1="279.2" x2="716.1" y2="267.3" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="716.1" y1="267.3" x2="716.1" y2="255.5" stroke="#66b7e8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="716.1" y1="255.5" x2="715.3" y2="243.7" stroke="#66b7e8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="715.3" y1="243.7" x2="712.2" y2="231.8" stroke="#66b7e8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="712.2" y1="231.8" x2="709.0" y2="220.8" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="709.0" y1="220.8" x2="705.8" y2="209.0" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="705.8" y1="209.0" x2="712.2" y2="200.3" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="712.2" y1="200.3" x2="719.2" y2="191.6" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="719.2" y1="191.6" x2="715.3" y2="181.4" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="715.3" y1="181.4" x2="706.6" y2="172.7" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="706.6" y1="172.7" x2="699.5" y2="163.2" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="699.5" y1="163.2" x2="690.9" y2="155.3" stroke="#66b7e8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="690.9" y1="155.3" x2="679.8" y2="149.8" stroke="#66b7e8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="679.8" y1="149.8" x2="670.4" y2="143.5" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="670.4" y1="143.5" x2="660.9" y2="136.4" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="660.9" y1="136.4" x2="653.0" y2="127.7" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="653.0" y1="127.7" x2="642.7" y2="121.4" stroke="#66b7e8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="642.7" y1="121.4" x2="630.9" y2="119.9" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="630.9" y1="119.9" x2="619.1" y2="119.1" stroke="#66b7e8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="619.1" y1="119.1" x2="607.3" y2="119.1" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="607.3" y1="119.1" x2="595.4" y2="119.1" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="595.4" y1="119.1" x2="583.6" y2="119.1" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="583.6" y1="119.1" x2="571.8" y2="119.1" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="571.8" y1="119.1" x2="559.9" y2="120.6" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="559.9" y1="120.6" x2="552.0" y2="128.5" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="552.0" y1="128.5" x2="545.0" y2="138.0" stroke="#66b7e8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="545.0" y1="138.0" x2="535.5" y2="145.9" stroke="#66b7e8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="535.5" y1="145.9" x2="524.4" y2="148.2" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="524.4" y1="148.2" x2="512.6" y2="149.0" stroke="#3f7fa8" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="512.6" y1="149.0" x2="500.8" y2="148.2" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="500.8" y1="148.2" x2="489.0" y2="148.2" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="489.0" y1="148.2" x2="477.1" y2="148.2" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="477.1" y1="148.2" x2="465.3" y2="148.2" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="465.3" y1="148.2" x2="453.5" y2="147.5" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="453.5" y1="147.5" x2="441.6" y2="147.5" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="441.6" y1="147.5" x2="429.8" y2="147.5" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="429.8" y1="147.5" x2="418.0" y2="147.5" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="418.0" y1="147.5" x2="406.1" y2="146.7" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="406.1" y1="146.7" x2="394.3" y2="146.7" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="394.3" y1="146.7" x2="382.5" y2="146.7" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="382.5" y1="146.7" x2="370.7" y2="146.7" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="370.7" y1="146.7" x2="358.8" y2="145.9" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="358.8" y1="145.9" x2="347.0" y2="145.9" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="347.0" y1="145.9" x2="335.2" y2="145.9" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<line x1="335.2" y1="145.9" x2="323.3" y2="145.9" stroke="#aadcff" stroke-width="3.4" stroke-linecap="round"/>
+<circle cx="325.7" cy="151.4" r="7" fill="var(--sig)" stroke="var(--panel)" stroke-width="2"/>
+<g class="svg-legend-hide"><rect x="32" y="22" width="22" height="5" rx="2.5" fill="#aadcff"/>
+<text x="61" y="28" fill="var(--dim)" font-size="12.5" font-family="inherit">直道 0.45 m/s</text>
+<rect x="222" y="22" width="22" height="5" rx="2.5" fill="#66b7e8"/>
+<text x="251" y="28" fill="var(--dim)" font-size="12.5" font-family="inherit">中弯 0.38</text>
+<rect x="412" y="22" width="22" height="5" rx="2.5" fill="#3f7fa8"/>
+<text x="441" y="28" fill="var(--dim)" font-size="12.5" font-family="inherit">急弯 / 窄巷 0.30</text>
+<circle cx="610" cy="24" r="5" fill="var(--sig)"/>
+<text x="622" y="28" fill="var(--dim)" font-size="12.5" font-family="inherit">发车位</text>
+</g></svg></div>
+    <div class="legend">
+      <span><i style="background:#aadcff"></i>直道 0.45 m/s</span>
+      <span><i style="background:#66b7e8"></i>中弯 0.38</span>
+      <span><i style="background:#3f7fa8"></i>急弯 / 窄巷 0.30</span>
+      <span><i class="dot"></i>发车位</span>
+    </div>
+    <figcaption>标准环线赛道布局：金点为发车位，虚线为起跑线，赛车线按逐点目标速度着色——弯道与窄巷段由系统强制锁速</figcaption>
+  </figure>
+
+  <figure class="shot">
+    <img src="https://crayxus.com.au/aigp-delivery/track.jpg" alt="赛道现场与 AI 赛车">
+    <div class="fade"></div>
+    <figcaption>场地实景：标准环线赛道、可拆装围栏与路面标识，AI 赛车正在赛道上运行</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="sec-no">02</div>
+  <h2>整车改造：从遥控车到人工智能赛车</h2>
+  <p class="sec-note">这是本系统区别于成品教具的核心能力，也是五天营的动手主线——学生亲手完成全部改造。</p>
+
+  <figure class="diagram retrofit">
+    <div class="scrollx"><svg viewBox="0 0 900 300" role="img" aria-label="遥控车改造为自动驾驶平台的流程">
+      <defs><marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+        <path d="M0 0L8 4.5L0 9z" fill="var(--sig)"/></marker></defs>
+      <g font-family="inherit">
+        <rect x="8" y="86" width="186" height="84" rx="10" fill="var(--sunk)" stroke="var(--line)"/>
+        <text x="101" y="120" text-anchor="middle" fill="var(--ink)" font-size="16" font-weight="700">普通遥控车</text>
+        <text x="101" y="142" text-anchor="middle" fill="var(--dim)" font-size="12.5">接收机 + 电调 + 舵机</text>
+
+        <rect x="242" y="86" width="186" height="84" rx="10" fill="var(--sunk)" stroke="var(--line)"/>
+        <text x="335" y="120" text-anchor="middle" fill="var(--ink)" font-size="16" font-weight="700">移除接收机</text>
+        <text x="335" y="142" text-anchor="middle" fill="var(--dim)" font-size="12.5">断开人工遥控输入</text>
+
+        <rect x="476" y="86" width="186" height="84" rx="10" fill="var(--sunk)" stroke="var(--line)"/>
+        <text x="569" y="120" text-anchor="middle" fill="var(--ink)" font-size="16" font-weight="700">单片机接管</text>
+        <text x="569" y="142" text-anchor="middle" fill="var(--dim)" font-size="12.5">输出同一类控制信号</text>
+
+        <rect x="710" y="86" width="182" height="84" rx="10" fill="var(--sig-soft)" stroke="var(--sig)" stroke-width="1.6"/>
+        <text x="801" y="120" text-anchor="middle" fill="var(--ink)" font-size="16" font-weight="700">自动驾驶平台</text>
+        <text x="801" y="142" text-anchor="middle" fill="var(--dim)" font-size="12.5">感知 · 决策 · 执行</text>
+
+        <line x1="194" y1="128" x2="236" y2="128" stroke="var(--sig)" stroke-width="2.2" marker-end="url(#ar)"/>
+        <line x1="428" y1="128" x2="470" y2="128" stroke="var(--sig)" stroke-width="2.2" marker-end="url(#ar)"/>
+        <line x1="662" y1="128" x2="704" y2="128" stroke="var(--sig)" stroke-width="2.2" marker-end="url(#ar)"/>
+
+        <text x="450" y="42" text-anchor="middle" fill="var(--sig)" font-size="13.5">遥控车的油门与转向信号，与自动驾驶车辆执行层为同一类信号</text>
+
+        <rect x="242" y="212" width="186" height="66" rx="10" fill="var(--panel)" stroke="var(--line)"/>
+        <text x="335" y="240" text-anchor="middle" fill="var(--ink)" font-size="14">加装感知单元</text>
+        <text x="335" y="260" text-anchor="middle" fill="var(--dim)" font-size="12">激光雷达 / 相机</text>
+
+        <rect x="476" y="212" width="186" height="66" rx="10" fill="var(--panel)" stroke="var(--line)"/>
+        <text x="569" y="240" text-anchor="middle" fill="var(--ink)" font-size="14">加装运算单元</text>
+        <text x="569" y="260" text-anchor="middle" fill="var(--dim)" font-size="12">机载决策计算机</text>
+
+        <line x1="335" y1="212" x2="700" y2="172" stroke="var(--sig)" stroke-width="1.8" stroke-dasharray="5 5" marker-end="url(#ar)" opacity=".75"/>
+        <line x1="620" y1="212" x2="730" y2="174" stroke="var(--sig)" stroke-width="1.8" stroke-dasharray="5 5" marker-end="url(#ar)" opacity=".75"/>
+      </g>
+    </svg></div>
+    <div class="flow-m">
+      <div class="fs"><b>普通遥控车</b><span>接收机 + 电调 + 舵机</span></div>
+      <div class="fa">↓</div>
+      <div class="fs"><b>移除接收机</b><span>断开人工遥控输入</span></div>
+      <div class="fa">↓</div>
+      <div class="fs"><b>单片机接管</b><span>输出同一类控制信号</span></div>
+      <div class="fa">↓ 加装感知单元（激光雷达 / 相机）<br>↓ 加装运算单元（机载决策计算机）</div>
+      <div class="fs on"><b>自动驾驶平台</b><span>感知 · 决策 · 执行</span></div>
+    </div>
+    <figcaption>底盘结构无需改动，替换的是指令来源——这也是改造门槛远低于预期的原因</figcaption>
+  </figure>
+
+  <div class="steps">
+    <div class="step"><div class="no">DAY 1</div><div class="h">执行层</div>
+      <div class="p">拆除接收机、接管油门与转向、烧录固件，当天车辆即可由计算机操控。</div></div>
+    <div class="step"><div class="no">DAY 2</div><div class="h">感知层</div>
+      <div class="p">安装自研结构件与激光雷达、装载运算单元，车辆开始"看见"环境。</div></div>
+    <div class="step"><div class="no">DAY 3</div><div class="h">决策层</div>
+      <div class="p">部署软件栈、建立本车地图、设计并启用赛车线。</div></div>
+    <div class="step"><div class="no">DAY 4</div><div class="h">标定与调校</div>
+      <div class="p">转向中点、限位与里程标定，首次自主发车并进行参数调校。</div></div>
+    <div class="step"><div class="no">DAY 5</div><div class="h">交付与竞赛</div>
+      <div class="p">安全系统实操、整车交付检查签字、结营大奖赛。</div></div>
+  </div>
+
+  <div class="rule"><b>教学价值：</b>学生带走的不是一台成品教具，而是一套可复制的工程能力——设备损坏能自行排查，改造方法可迁移到其他车辆平台。改造套件亦可单独采购，用于存量车辆升级。</div>
+</section>
+
+<section>
+  <div class="sec-no">03</div>
+  <h2>交付清单</h2>
+  <p class="sec-note">下表为标准套餐配置。数量依场地规模与班级人数调整，最终以商务报价单为准。</p>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>模块</th><th>交付内容</th><th>规格说明</th><th style="text-align:right">数量</th></tr></thead>
+    <tbody>
+      <tr><td data-l="模块" class="k" rowspan="4">赛道场地</td><td data-l="交付内容">标准环线赛道组件</td><td data-l="规格说明">室内平面环线，含窄巷弯道段；围栏为拼版印刷，可拆装收纳</td><td data-l="数量" class="n">1 套</td></tr>
+      <tr><td data-l="交付内容">起跑线与发车位标识</td><td data-l="规格说明">含发车点定位标记、维修区（P 房）划分</td><td data-l="数量" class="n">1 套</td></tr>
+      <tr><td data-l="交付内容">视觉计时装置</td><td data-l="规格说明">自研计圈盒，无线接入赛事系统</td><td data-l="数量" class="n">1 台</td></tr>
+      <tr><td data-l="交付内容">场地建图与标定服务</td><td data-l="规格说明">现场实施：赛道建图、参考线录制、多点定位标定验收</td><td data-l="数量" class="n">1 次</td></tr>
+
+      <tr><td data-l="模块" class="k" rowspan="3">AI 赛车</td><td data-l="交付内容">整车（激光雷达路线）</td><td data-l="规格说明">阿克曼底盘 + 激光雷达 + 机载运算单元 + 驱动控制板</td><td data-l="数量" class="n">按班级配置</td></tr>
+      <tr><td data-l="交付内容">自研结构件</td><td data-l="规格说明">雷达支架、传感器塔架等，3D 打印制造，含备件</td><td data-l="数量" class="n">随车</td></tr>
+      <tr><td data-l="交付内容">动力与充电组件</td><td data-l="规格说明">电池组、充电设备、轮换配组</td><td data-l="数量" class="n">随车</td></tr>
+
+      <tr><td data-l="模块" class="k" rowspan="3">改造套件</td><td data-l="交付内容">整车改造套件</td><td data-l="规格说明">免焊线束、驱动控制板、结构件与固件烧录工具；每组一套</td><td data-l="数量" class="n">按分组配置</td></tr>
+      <tr><td data-l="交付内容">视觉识别套件</td><td data-l="规格说明">车载相机模组与配套结构件，含数据采集与模型训练工具链</td><td data-l="数量" class="n">可选</td></tr>
+      <tr><td data-l="交付内容">装配检查单与工具</td><td data-l="规格说明">标准化装配流程卡、专用工具与常用备件</td><td data-l="数量" class="n">随套件</td></tr>
+
+      <tr><td data-l="模块" class="k" rowspan="2">交互终端</td><td data-l="交付内容">学生端平板（iPad）</td><td data-l="规格说明">调校对话、遥测查看、工程师笔记；每组一台</td><td data-l="数量" class="n">按分组配置</td></tr>
+      <tr><td data-l="交付内容">赛场大屏</td><td data-l="规格说明">实时轨迹、预计圈速、成绩榜与赛事画面</td><td data-l="数量" class="n">1 套</td></tr>
+
+      <tr><td data-l="模块" class="k" rowspan="5">软件平台</td><td data-l="交付内容">网页驾驶舱</td><td data-l="规格说明">实时遥测、参数调校、路线编辑、急停控制</td><td data-l="数量" class="n">不限终端</td></tr>
+      <tr><td data-l="交付内容">AI 调校工程师</td><td data-l="规格说明">自然语言调校，多模型可选，服务端参数安全校验</td><td data-l="数量" class="n">含账号</td></tr>
+      <tr><td data-l="交付内容">仿真预演与安全审查</td><td data-l="规格说明">参数与路线写入前闭环仿真验证，并预报圈速</td><td data-l="数量" class="n">内置</td></tr>
+      <tr><td data-l="交付内容">赛事与成绩系统</td><td data-l="规格说明">正赛计时、判罚规则、车手榜、微信扫码上车</td><td data-l="数量" class="n">内置</td></tr>
+      <tr><td data-l="交付内容">数据回放平台</td><td data-l="规格说明">全程逐帧记录，支持轨迹与遥测复盘</td><td data-l="数量" class="n">内置</td></tr>
+
+      <tr><td data-l="模块" class="k" rowspan="4">课程师资</td><td data-l="交付内容">两小时体验课程包</td><td data-l="规格说明">讲解幻灯、带教流程、学生手册、赛事规则</td><td data-l="数量" class="n">1 套</td></tr>
+      <tr><td data-l="交付内容">五天营课程包</td><td data-l="规格说明">逐日教案、改装任务书、复盘题、结营赛制</td><td data-l="数量" class="n">1 套</td></tr>
+      <tr><td data-l="交付内容">师资培训</td><td data-l="规格说明">现场培训与带教认证，覆盖设备操作、安全规程与教学实施</td><td data-l="数量" class="n">1 期</td></tr>
+      <tr><td data-l="交付内容">运维手册</td><td data-l="规格说明">日常检查、故障排查、参数复检工具与操作规程</td><td data-l="数量" class="n">1 套</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-no">04</div>
+  <h2>两条技术路线均已跑通</h2>
+  <p class="sec-note">标准套餐以激光雷达路线开课；视觉识别路线可随主套餐交付，亦可作为二期扩展。</p>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>对比项</th><th>激光雷达路线</th><th>视觉识别路线</th></tr></thead>
+    <tbody>
+      <tr><td data-l="对比项" class="k">工作方式</td><td data-l="激光雷达路线">建图与扫描匹配定位，沿赛车线规划行驶</td><td data-l="视觉识别路线">相机图像经预处理送入神经网络，直接输出转向</td></tr>
+      <tr><td data-l="对比项" class="k">学生调整对象</td><td data-l="激光雷达路线">物理量：极速、前瞻、刹车点</td><td data-l="视觉识别路线">训练数据：采集质量与模型迭代</td></tr>
+      <tr><td data-l="对比项" class="k">可解释性</td><td data-l="激光雷达路线">决策链路每一步可查、可复盘</td><td data-l="视觉识别路线">网络内部不可直接解释，以实测评估</td></tr>
+      <tr><td data-l="对比项" class="k">光线影响</td><td data-l="激光雷达路线">不受影响，暗光环境照常运行</td><td data-l="视觉识别路线">受影响，需按光照条件分别训练模型</td></tr>
+      <tr><td data-l="对比项" class="k">课时匹配</td><td data-l="激光雷达路线">营期内可完成完整闭环</td><td data-l="视觉识别路线">需额外采集与训练周期，建议进阶营</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <figure class="shot">
+    <img src="https://crayxus.com.au/aigp-delivery/cnn.jpg" alt="视觉识别路线自动驾驶回放">
+    <figcaption>视觉识别路线运行回放：网络实时输出决策与转向量，并与人工驾驶数据对照</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="sec-no">05</div>
+  <h2>交付周期</h2>
+  <p class="sec-note">自合同生效起计。周期内的场地准备由校方配合完成，具体节点在实施排期中确认。</p>
+  <div class="phases">
+    <div class="ph"><div class="wk">第 1 周</div><div class="t">需求确认与场地勘察</div>
+      <div class="d">确认场地尺寸、地面条件、供电与网络；确定班级规模、课时安排与套餐配置，输出实施排期表。</div></div>
+    <div class="ph"><div class="wk">第 2–3 周</div><div class="t">硬件备货与整车装配</div>
+      <div class="d">底盘、传感器与运算单元采购到位；结构件制造；整车装配、固件烧录与出厂测试；围栏拼版印刷。</div></div>
+    <div class="ph"><div class="wk">第 4 周</div><div class="t">场地施工与系统安装</div>
+      <div class="d">赛道铺设、围栏组装、大屏与网络部署；车辆、终端与软件平台联调。</div></div>
+    <div class="ph"><div class="wk">第 5 周</div><div class="t">建图标定与系统验收</div>
+      <div class="d">赛道建图、参考线录制、多点定位标定；全参数组合安全复检；连续完赛测试通过后进入验收。</div></div>
+    <div class="ph"><div class="wk">第 6 周</div><div class="t">师资培训与首课交付</div>
+      <div class="d">带教培训与认证；陪同完成首场公开课，现场移交运维手册与应急规程。</div></div>
+  </div>
+  <div class="note"><b>标准交付周期约六周。</b>若场地需改造、或视觉识别套件同期交付，周期相应顺延，在排期表中明确标注。</div>
+</section>
+
+<section>
+  <div class="sec-no">06</div>
+  <h2>更新升级与服务</h2>
+  <p class="sec-note">软件与课程在服务期内持续更新，不额外收费；硬件按标准质保执行。</p>
+  <div class="tbl">
+  <table>
+    <thead><tr><th>项目</th><th>服务内容</th><th>周期</th></tr></thead>
+    <tbody>
+      <tr><td data-l="项目" class="k">软件平台更新</td><td data-l="服务内容">驾驶舱、赛事系统、仿真与安全模块的功能更新与缺陷修复；远程推送，不影响既有数据</td><td data-l="周期">服务期内持续</td></tr>
+      <tr><td data-l="项目" class="k">AI 工程师模型更新</td><td data-l="服务内容">随大模型迭代同步升级，含新增可选模型接入</td><td data-l="周期">服务期内持续</td></tr>
+      <tr><td data-l="项目" class="k">课程内容更新</td><td data-l="服务内容">教案、手册与讲解材料的版本更新；新增教学模块优先向存量客户开放</td><td data-l="周期">服务期内持续</td></tr>
+      <tr><td data-l="项目" class="k">远程技术支持</td><td data-l="服务内容">工作日响应；含远程诊断、参数复检与故障定位</td><td data-l="周期">服务期内</td></tr>
+      <tr><td data-l="项目" class="k">硬件质保</td><td data-l="服务内容">非人为损坏的整车与传感器质保；结构件因自主制造，可快速补件</td><td data-l="周期">标准质保期</td></tr>
+      <tr><td data-l="项目" class="k">现场巡检</td><td data-l="服务内容">定期上门检查设备状态、重做标定、复训带教</td><td data-l="周期">按服务方案约定</td></tr>
+      <tr><td data-l="项目" class="k">改造套件补充</td><td data-l="服务内容">耗材与备件按需补充；新版套件向存量客户开放升级</td><td data-l="周期">按需</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="rule"><b>系统具备自主维护条件。</b>软件与结构件均为自主实现，故障可自行排查与补件，不受外部供应链制约——这也是校方队伍能够长期自主运行的前提。</div>
+</section>
+
+<section>
+  <div class="sec-no">07</div>
+  <h2>验收标准</h2>
+  <p class="sec-note">以下项目全部通过，方视为交付完成。验收数据随系统一并移交。</p>
+  <ul class="clean">
+    <li>定位精度：多点标定全部通过，实测定位误差符合约定指标</li>
+    <li>参数安全：全部可调参数组合经仿真复检，无触碰围栏或触发保护停车的组合</li>
+    <li>教学有效性：各调校参数对圈速产生可测量的差异，学生调整后能获得明确反馈</li>
+    <li>连续完赛：标准赛制下连续完成规定场次，无事故、无人工干预</li>
+    <li>赛事链路：扫码上车、实时轨迹、计时判罚、成绩上榜全流程贯通</li>
+    <li>改造验收：学员完成的改造车辆通过装配检查单逐项验收并可自主运行</li>
+    <li>师资认证：带教人员独立完成一场完整课程演练</li>
+  </ul>
+</section>
+
+<footer>
+  <span>择大教育 · AI·GP 智能赛车教育系统</span>
+  <span>本方案为标准配置说明，最终配置与报价以商务报价单为准</span>
+</footer>
+
+</div>
+
+<script>
+(function () {
+  var v = document.getElementById('heroVid');
+  var b = document.getElementById('sndBtn');
+  var i = document.getElementById('sndIco');
+  var t = document.getElementById('sndTxt');
+  if (!v || !b) return;
+  b.addEventListener('click', function () {
+    v.muted = !v.muted;
+    if (!v.muted) { v.volume = 0.55; v.play().catch(function () {}); }
+    i.textContent = v.muted ? '\u{1F507}' : '\u{1F50A}';
+    t.textContent = v.muted ? '开启声音' : '静音';
+    b.setAttribute('aria-label', t.textContent);
+  });
+})();
+</script>
+</body>
+</html>

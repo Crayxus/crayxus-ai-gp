@@ -1,0 +1,11 @@
+name: keep-safegate-warm
+on:
+  schedule:
+    - cron: "*/10 * * * *"   # 每10分钟保温, 防Render免费实例休眠清盘
+  workflow_dispatch:
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ping healthz
+        run: curl -s --max-time 30 https://safegate-2rw7.onrender.com/healthz || true
