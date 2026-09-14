@@ -4,26 +4,26 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>EI TOKEN 天使轮</title>
-<meta name="description" content="EI TOKEN 天使轮商业计划书：插上设备，它就能写代码、跑起来。">
+<meta name="description" content="EI TOKEN 天使轮商业计划书：连接真实硬件，驱动具身智能。">
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="EI TOKEN">
 <meta property="og:title" content="EI TOKEN · 天使轮商业计划书">
-<meta property="og:description" content="插上设备，它就能写代码、跑起来。本轮 ¥200 万，出让 10%。">
-<meta property="og:image" content="https://crayxus.com.au/og-eitoken-bp.jpg?v=1">
-<meta property="og:image:secure_url" content="https://crayxus.com.au/og-eitoken-bp.jpg?v=1">
+<meta property="og:description" content="连接真实硬件，驱动具身智能。面向具身智能时代的通用 AI 工程平台。">
+<meta property="og:image" content="https://crayxus.com.au/og-eitoken-bp-v2.jpg?v=2">
+<meta property="og:image:secure_url" content="https://crayxus.com.au/og-eitoken-bp-v2.jpg?v=2">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="800">
 <meta property="og:image:height" content="800">
 <meta property="og:image:alt" content="EI TOKEN · 天使轮商业计划书">
 <meta property="og:url" content="https://crayxus.com.au/eitoken-bp-3f9a2c.html">
 <meta property="og:locale" content="zh_CN">
-<meta itemprop="image" content="https://crayxus.com.au/og-eitoken-bp.jpg?v=1">
-<meta name="image" content="https://crayxus.com.au/og-eitoken-bp.jpg?v=1">
-<link rel="image_src" href="https://crayxus.com.au/og-eitoken-bp.jpg?v=1">
+<meta itemprop="image" content="https://crayxus.com.au/og-eitoken-bp-v2.jpg?v=2">
+<meta name="image" content="https://crayxus.com.au/og-eitoken-bp-v2.jpg?v=2">
+<link rel="image_src" href="https://crayxus.com.au/og-eitoken-bp-v2.jpg?v=2">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="EI TOKEN · 天使轮商业计划书">
-<meta name="twitter:image" content="https://crayxus.com.au/og-eitoken-bp.jpg?v=1">
+<meta name="twitter:image" content="https://crayxus.com.au/og-eitoken-bp-v2.jpg?v=2">
 <meta name="robots" content="noindex,nofollow">
 
 <style>
@@ -94,6 +94,21 @@ figcaption{font-size:12.5px;color:var(--mute)}
 .terms-line{display:flex;flex-wrap:wrap;gap:8px}
 .pill{font-size:13.5px;font-weight:700;padding:6px 12px;border-radius:3px;background:var(--acc-soft);color:var(--acc);white-space:nowrap}
 .pill.n{background:var(--sheet-2);color:var(--ink);border:1px solid var(--line);font-weight:500}
+.cover-split{grid-template-columns:1.35fr 1fr}
+.cover .thesis{font-size:clamp(26px,3.3vw,44px)}
+.tagline{font-size:clamp(15px,1.5vw,19px);font-weight:700;color:var(--dim)}
+.pillars{display:grid;grid-template-columns:repeat(3,1fr);border-top:2px solid var(--ink)}
+.pillars > div{padding:10px 12px 0 0;display:flex;flex-direction:column;gap:2px}
+.pillars > div + div{padding-left:12px;border-left:1px solid var(--line)}
+.pillars b{font-size:15px;font-weight:900}
+.pillars span{font-size:12.5px;color:var(--dim)}
+.poster{align-self:stretch;justify-content:center}
+.poster img{width:auto;max-height:min(560px,52vw);margin-inline:auto;border-radius:14px;box-shadow:0 18px 50px rgba(20,60,140,.18)}
+.trio{display:flex;flex-direction:column;border-top:2px solid var(--ink)}
+.trio > div{display:grid;grid-template-columns:44px 1fr;gap:14px;padding:16px 0;border-bottom:1px solid var(--line);align-items:center}
+.trio svg{width:40px;height:40px;fill:none;stroke:var(--acc);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;background:var(--acc-soft);border-radius:8px;padding:8px}
+.trio b{display:block;font-size:18px;font-weight:900}
+.trio span{font-size:14.5px;color:var(--dim)}
 
 /* lists */
 .pts{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
@@ -240,7 +255,13 @@ td .s{display:block;font-size:12px;color:var(--mute);font-weight:400}
   .split,.split.even,.split.wide{grid-template-columns:1fr}
   .road{grid-template-columns:1fr}
 }
+@media (max-width:1000px){
+  .cover-split{grid-template-columns:1fr}
+  .poster img{max-height:none;width:100%;max-width:420px}
+}
 @media (max-width:560px){
+  .pillars{grid-template-columns:1fr}
+  .pillars > div + div{padding-left:0;border-left:0;border-top:1px solid var(--line);padding-top:8px}
   body{padding-inline:14px;padding-block:14px 40px}
   .pts li{grid-template-columns:1fr;gap:2px}
   .flow li{grid-template-columns:2em 1fr}
@@ -264,15 +285,20 @@ td .s{display:block;font-size:12px;color:var(--mute);font-weight:400}
 <!-- 01 -->
 <section class="slide" tabindex="-1" aria-label="封面">
   <div class="bar"><span class="pg">EI TOKEN</span><span>天使轮商业计划书</span><span class="rule"></span><span>2026 · 09</span></div>
-  <div class="split">
+  <div class="split cover-split">
     <div class="txt cover">
       <div><div class="kick">Embodied Intelligence</div><h1>EI TOKEN</h1></div>
-      <p class="thesis">插上设备，<br>它就能<span class="em">写代码、跑起来</span>。</p>
+      <p class="thesis em">连接真实硬件，<br>驱动具身智能</p>
+      <p class="tagline">面向具身智能时代的通用 AI 工程平台</p>
+      <div class="pillars">
+        <div><b>零门槛</b><span>插上即识别</span></div>
+        <div><b>自然语言写代码</b><span>自动调用真实接口</span></div>
+        <div><b>一键运行</b><span>编译 · 烧录 · 运行</span></div>
+      </div>
       <div class="terms-line"><span class="pill">天使轮 ¥200 万</span><span class="pill">出让 10%</span><span class="pill n">3 个月冲刺</span></div>
     </div>
-    <figure>
-      <div class="shot"><div class="chrome"><i></i><i></i><i></i></div><img src="eitoken-bp/img/code.jpg" alt="EI TOKEN 开发平台：代码、任务界面预览与 AI 开发助手"></div>
-      <figcaption>EI TOKEN 开发平台 · 代码与界面</figcaption>
+    <figure class="poster">
+      <img src="eitoken-bp/img/poster.jpg" alt="EI TOKEN 主视觉：笔记本识别机械臂并生成抓取代码">
     </figure>
   </div>
 </section>
@@ -300,14 +326,13 @@ td .s{display:block;font-size:12px;color:var(--mute);font-weight:400}
 <!-- 03 -->
 <section class="slide" tabindex="-1" aria-label="解决方案">
   <div class="bar"><span class="pg">03</span><span>解决方案</span><span class="rule"></span><span>Solution</span></div>
-  <h2>四步，<span class="em">从插上到跑起来</span>。</h2>
+  <h2>连接真实硬件，<span class="em">三件事一次做完</span>。</h2>
   <div class="split">
-    <ol class="flow">
-      <li><span class="n">01</span><b>插上就认</b><span>串口、蓝牙、网络设备自动出现</span></li>
-      <li><span class="n">02</span><b>看清内部</b><span>读出固件、模块和可用接口</span></li>
-      <li><span class="n">03</span><b>一句话写代码</b><span>按这台设备的真实接口生成</span></li>
-      <li><span class="n">04</span><b>烧进去跑</b><span>编译、烧录、调试，报错自动修正</span></li>
-    </ol>
+    <div class="trio">
+      <div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3v5M15 3v5M6 8h12v3a6 6 0 0 1-12 0V8zM12 17v4"/></svg><div><b>零门槛</b><span>插上即识别，串口、蓝牙、网络设备自动出现</span></div></div>
+      <div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4V5z"/><path d="M8.5 10.5h.01M12 10.5h.01M15.5 10.5h.01"/></svg><div><b>自然语言写代码</b><span>一句话描述任务，自动调用设备真实接口</span></div></div>
+      <div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/></svg><div><b>一键运行</b><span>自动编译、烧录、运行，报错自动修正</span></div></div>
+    </div>
     <figure>
       <div class="shot"><div class="chrome"><i></i><i></i><i></i></div><img src="eitoken-bp/img/devices.jpg" alt="设备中心：实机连接列表"></div>
       <figcaption>设备中心 · 插上自动识别</figcaption>
@@ -467,18 +492,20 @@ td .s{display:block;font-size:12px;color:var(--mute);font-weight:400}
 <!-- 11 -->
 <section class="slide" tabindex="-1" aria-label="团队">
   <div class="bar"><span class="pg">11</span><span>团队</span><span class="rule"></span><span>Team</span></div>
-  <h2>一人研发，<span class="em">本身就是产品效率的证明</span>。</h2>
+  <h2>超级 OPC 个体：<span class="em">一个人，就是一支工程团队</span>。</h2>
   <div class="split">
     <div class="txt">
-      <div class="person"><span class="lab">创始人 · 研发</span><span class="nm">Jerhyn Zhang</span><p>精算背景，Crown Melbourne 高级分析师 12 年。独立完成 AI 自动驾驶赛车、SITAS 影像存证、AI 消防头盔等软硬件产品线。</p></div>
+      <div class="person"><span class="lab">创始人 · 研发</span><span class="nm">Jerhyn Zhang</span>
+        <div class="chips"><span class="chip">工程交付</span><span class="chip">软硬件核心技术</span><span class="chip">多年 AI 经验</span></div>
+        <p>独立完成 SITAS 实验室影像存证系统的软硬件商用交付：存证相机、硬件密钥签名、第三方时间戳与审计链，算法、固件、硬件到交付全栈一人完成。</p></div>
       <div class="person"><span class="lab">合伙人 · 市场与客户</span><span class="nm"><span class="fillin">合伙人姓名</span></span><p>负责机构渠道，承诺带来首批付费客户。<span class="fillin">补充履历</span></p></div>
       <div class="qa">
         <div><b>关键人风险？</b>代码与踩坑库文档化、归属公司；Pre-A 后扩研发。</div>
       </div>
     </div>
     <figure class="photo">
-      <img src="eitoken-bp/img/helmet.jpg" alt="AI 智能消防头盔效果图">
-      <figcaption>创始人主导的产品线之一：AI 智能消防头盔（效果图）</figcaption>
+      <img src="eitoken-bp/img/sitas.jpg" alt="SITAS 存证相机产品图">
+      <figcaption>已交付：SITAS 实验室影像可信存证 · 存证相机</figcaption>
     </figure>
   </div>
 </section>
@@ -582,10 +609,11 @@ td .s{display:block;font-size:12px;color:var(--mute);font-weight:400}
   <div class="bar"><span class="pg">15</span><span>EI TOKEN</span><span class="rule"></span><span>crayxus.com.au/eitoken</span></div>
   <div class="split wide">
     <div class="txt">
-      <p class="big">让每一台插上电脑的设备，<br><span class="em">都有一位认得它的工程师</span>。</p>
+      <p class="big">连接真实硬件，<br><span class="em">驱动具身智能</span>。</p>
+      <p class="tagline">面向具身智能时代的通用 AI 工程平台</p>
       <p class="foot">EI TOKEN · 天使轮 ¥200 万 · 出让 10% · 仅供意向投资人评估，请勿转发</p>
     </div>
-    <figure class="photo"><img src="https://crayxus.com.au/og-eitoken-bp.jpg?v=1" onerror="this.onerror=null;this.src='og-eitoken-bp.jpg'" alt="EI TOKEN 超级 AI 工程师" style="aspect-ratio:1/1;max-width:340px;margin-left:auto"></figure>
+    <figure class="photo"><img src="eitoken-bp/img/poster.jpg" alt="EI TOKEN 主视觉" style="aspect-ratio:3/4;max-width:300px;margin-left:auto"></figure>
   </div>
 </section>
 
