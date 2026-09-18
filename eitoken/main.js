@@ -99,7 +99,8 @@ $('#menuBtn').onclick = () => document.getElementById('app').classList.toggle('m
 /* 设备轮询：桥接在就 3 秒一次；不在就用演示设备，但标出来 */
 let hwTimer = null, prevKeys = null;
 async function pollHw() {
-  const r = await bridge.get('/api/hw', { timeout: 6000 });
+  // 云端体验版：HTTPS 页面连不上本机 HTTP 桥接（会卡到超时才失败），直接用演示设备，别让首屏等它
+  const r = CLOUD ? { ok: false } : await bridge.get('/api/hw', { timeout: 6000 });
   if (r.ok) {
     const list = normalizeHw(r);
     const keys = list.map((d) => d.key).join('|');
@@ -134,10 +135,10 @@ async function boot() {
   applyQuery();
   const wantLogin = loginDeepLink();
   paintTheme(); paintNav(); paintFoot(); paintStatus();
-  const [h, sv] = await Promise.all([bridge.get('/api/health', { timeout: 2500 }), server.get('/api/health', { timeout: 2500 })]);
+  const [h, sv] = await Promise.all([CLOUD ? { ok: false } : bridge.get('/api/health', { timeout: 2500 }), server.get('/api/health', { timeout: 2500 })]);
   set({ bridge: !!h.ok, server: !!sv.ok });
   await pollHw();
-  hwTimer = setInterval(pollHw, 3000);
+  if (!CLOUD) hwTimer = setInterval(pollHw, 3000);
   await loadMe();
   import('./core/api.js').then((m) => m.loadCases()).then((c) => set({ cases: c.cases }));
   await render();
