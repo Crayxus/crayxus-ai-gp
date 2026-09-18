@@ -1,9 +1,0 @@
-/* 本地字体：离线可用（Windows 版不联网也要好看）。中文用 MiSans 分片（vendor/misans/*.css） */
-@font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 400; font-display: swap;
-  src: url("../vendor/jetbrains-mono-latin-400-normal.woff2") format("woff2"); }
-@font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 600; font-display: swap;
-  src: url("../vendor/jetbrains-mono-latin-600-normal.woff2") format("woff2"); }
-@font-face { font-family: "Space Grotesk"; font-style: normal; font-weight: 500; font-display: swap;
-  src: url("../vendor/space-grotesk-latin-500-normal.woff2") format("woff2"); }
-@font-face { font-family: "Space Grotesk"; font-style: normal; font-weight: 700; font-display: swap;
-  src: url("../vendor/space-grotesk-latin-700-normal.woff2") format("woff2"); }
