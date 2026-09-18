@@ -55,8 +55,8 @@
   /* progress */
   .top{position:sticky;top:0;z-index:20;padding:12px 0 10px;background:linear-gradient(180deg,rgba(9,4,28,.96),rgba(9,4,28,.82) 70%,rgba(9,4,28,0));display:none}
   .steps{display:flex;gap:4px}
-  .steps i{flex:1;height:5px;border-radius:5px;background:rgba(255,255,255,.1);transition:.25s}
-  .steps i.on{background:linear-gradient(90deg,var(--cyan),var(--pink))}
+  .steps i{flex:1;height:21px;border-top:8px solid transparent;border-bottom:8px solid transparent;background-clip:padding-box;border-radius:5px;background-color:rgba(255,255,255,.1);transition:.25s}
+  .steps i.on{background:linear-gradient(90deg,var(--cyan),var(--pink));background-clip:padding-box}
   .stitle{display:flex;justify-content:space-between;align-items:baseline;margin-top:10px}
   .stitle b{font-size:19px}
   .stitle small{font-size:12px;color:var(--dim)}
@@ -143,7 +143,8 @@
   var $ = function(id){ return document.getElementById(id); };
   var form = $('form');
 
-  S.forEach(function(){ var i = document.createElement('i'); $('steps').appendChild(i); });
+  S.forEach(function(_, n){ var i = document.createElement('i'); i.title = S[n].title; i.style.cursor = 'pointer';
+    i.addEventListener('click', function(){ if (cur >= 0) go(n); }); $('steps').appendChild(i); });
 
   function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
 
@@ -207,28 +208,40 @@
 
   function showErr(d, msg){ d.classList.add('invalid'); d.querySelector('.err').textContent = msg; }
 
-  function validate(){
-    var first = null;
-    S[cur].items.forEach(function(q){
+  // 只在最后提交时校验；逐页检查，停在第一个有漏填的页面
+  function errorsOf(n){
+    var errs = [];
+    S[n].items.forEach(function(q){
       if (!visible(q)) return;
-      var d = form.querySelector('[data-k="' + q.k + '"]'), v = A[q.k], msg = '';
+      var v = A[q.k], msg = '';
       var empty = v == null || v === '' || (Array.isArray(v) && !v.length);
       if (q.req && empty) msg = q.type === 'text' ? '请填写' : '请选择';
-      if (!msg && q.tel && !/^1\d{10}$/.test(String(v).replace(/\D/g, ''))) msg = '请填写 11 位手机号';
+      if (!msg && q.tel && !empty && !/^1\d{10}$/.test(String(v).replace(/\D/g, ''))) msg = '请填写 11 位手机号';
       if (!msg && q.showIf && empty) msg = '请填写';
-      if (msg) { showErr(d, msg); first = first || d; }
+      if (msg) errs.push({ k: q.k, msg: msg });
     });
-    if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    return !first;
+    return errs;
+  }
+
+  function validateAll(){
+    for (var n = 0; n < S.length; n++) {
+      var errs = errorsOf(n);
+      if (!errs.length) continue;
+      if (n !== cur) go(n);
+      var first = null;
+      errs.forEach(function(e){ var d = form.querySelector('[data-k="' + e.k + '"]'); if (d) { showErr(d, e.msg); first = first || d; } });
+      if (first) setTimeout(function(){ first.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 50);
+      return false;
+    }
+    return true;
   }
 
   function go(n){ cur = n; render(); window.scrollTo(0, 0); }
 
   $('next').addEventListener('click', function(){
     if (cur < 0) { $('intro').style.display = 'none'; $('top').style.display = 'block'; go(0); return; }
-    if (!validate()) return;
     if (cur < S.length - 1) { go(cur + 1); return; }
-    submit();
+    if (validateAll()) submit();
   });
   $('prev').addEventListener('click', function(){ if (cur > 0) go(cur - 1); });
 
