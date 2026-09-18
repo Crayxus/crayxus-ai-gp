@@ -33,6 +33,12 @@
 <link rel="stylesheet" href="styles/components.css">
 <link rel="stylesheet" href="styles/pages.css">
 <link rel="stylesheet" href="styles/auth.css">
+<style>
+  .boot-splash{min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#8A94AD;font-size:15px;letter-spacing:.04em}
+  .boot-splash small{font-size:12px;opacity:.7}
+  .boot-dot{width:10px;height:10px;border-radius:50%;background:#22D3EE;box-shadow:0 0 14px #22D3EE;animation:bootPulse 1.2s ease-in-out infinite}
+  @keyframes bootPulse{0%,100%{transform:scale(.7);opacity:.5}50%{transform:scale(1.2);opacity:1}}
+</style>
 <script>
   // 主题在第一帧前定下来，避免深浅闪一下
   try { const q = new URLSearchParams(location.search).get('theme'); if (q === 'day' || q === 'night') localStorage.setItem('eit1.theme', JSON.stringify(q)); if (new URLSearchParams(location.search).get('ob') === 'skip') localStorage.setItem('eit1.obSkip', '1'); } catch (e) {}
@@ -59,7 +65,7 @@
       <div class="top-status" id="topStatus"></div>
       <button class="icon-btn" id="themeBtn" aria-label="切换深浅主题"></button>
     </header>
-    <main class="view" id="view" tabindex="-1"></main>
+    <main class="view" id="view" tabindex="-1"><div class="boot-splash" aria-live="polite"><span class="boot-dot"></span>正在加载 EI TOKEN…<small>首次打开要下载界面资源，慢线路可能要等十几秒</small></div></main>
   </div>
 </div>
 <div id="layer"></div>
