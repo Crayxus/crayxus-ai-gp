@@ -76,7 +76,7 @@
   </div>
   <div class="tabs"><span class="tab on" data-t="list">学员列表</span><span class="tab" data-t="groups">分组建议</span></div>
   <div id="vList"><div class="tw"><table>
-    <thead><tr><th>#</th><th>姓名</th><th>性别</th><th>年级 / 学校</th><th>画像</th><th>总分</th><th>强项</th><th>带教提示</th><th>提交时间</th></tr></thead>
+    <thead><tr><th>#</th><th>姓名</th><th>画像</th><th>总分</th><th>强项</th><th>带教提示</th><th>提交时间</th></tr></thead>
     <tbody id="tbody"></tbody></table></div></div>
   <div id="vGroups" style="display:none">
     <div class="bar" style="margin-top:0"><span class="sub">按总分蛇形分配，每组强弱搭配；男女、性格请在此基础上人工微调。</span>
@@ -129,13 +129,12 @@
     $('tbody').innerHTML = list.map(function(r, i){
       var a = r.answers, p = r.profile;
       return '<tr class="row" data-id="' + esc(r.id) + '"><td>' + (i+1) + '</td><td><b>' + esc(a.name) + '</b>' + (r.test ? ' <span class="tag t">测试</span>' : '') + '</td>' +
-        '<td>' + esc(a.gender) + '</td><td>' + esc(a.grade) + '<br><span class="sub">' + esc(a.school || a.schoolType) + '</span></td>' +
         '<td><span class="lv lv-' + p.lv + '">' + p.lv + '</span></td><td>' + p.total + '</td>' +
         '<td>' + p.strong.map(function(s){ return '<span class="tag">' + esc(s) + '</span>'; }).join('') + '</td>' +
         '<td>' + p.alert.map(function(s){ return '<span class="tag al">' + esc(s) + '</span>'; }).join('') +
                  p.flags.map(function(s){ return '<span class="tag">' + esc(s) + '</span>'; }).join('') + '</td>' +
         '<td class="sub">' + t(r.submittedAt) + '</td></tr>';
-    }).join('') || '<tr><td colspan="9" class="sub" style="text-align:center;padding:30px">还没有提交</td></tr>';
+    }).join('') || '<tr><td colspan="7" class="sub" style="text-align:center;padding:30px">还没有提交</td></tr>';
     document.querySelectorAll('tr.row').forEach(function(tr){ tr.onclick = function(){ detail(tr.dataset.id); }; });
     drawGroups();
   }
@@ -146,7 +145,7 @@
     $('groups').innerHTML = CAMP.suggestGroups(list, n).map(function(g, i){
       var sum = g.reduce(function(s, r){ return s + r.profile.total; }, 0);
       return '<div class="grp"><h3>第 ' + (i+1) + ' 组<small>' + g.length + ' 人 · 均分 ' + (g.length ? (sum / g.length).toFixed(1) : '-') + '</small></h3><ul>' +
-        g.map(function(r){ return '<li><span>' + esc(r.answers.name) + ' <span class="sub">' + esc(r.answers.gender || '') + '</span></span><span><span class="lv lv-' + r.profile.lv + '">' + r.profile.total + '</span></span></li>'; }).join('') +
+        g.map(function(r){ return '<li><span>' + esc(r.answers.name) + '</span><span><span class="lv lv-' + r.profile.lv + '">' + r.profile.total + '</span></span></li>'; }).join('') +
         '</ul></div>';
     }).join('');
   }
