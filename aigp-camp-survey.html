@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0b0620">
+<title>AI·GP 2026 国庆营 · 开营前背景调查</title>
+<meta name="description" content="10 月 2–6 日 · 杭州。学员本人填写，约 6 分钟，用于分组与分层带教。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CRAYXUS AI·GP">
+<meta property="og:title" content="AI·GP 2026 国庆营 · 开营前背景调查">
+<meta property="og:description" content="10 月 2–6 日 · 杭州。学员本人填写，约 6 分钟，用于分组与分层带教。">
+<meta property="og:image" content="https://crayxus.com.au/og-aigp-camp.jpg?v=1">
+<meta property="og:image:secure_url" content="https://crayxus.com.au/og-aigp-camp.jpg?v=1">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="800">
+<meta property="og:image:height" content="800">
+<meta property="og:image:alt" content="AI·GP 2026 国庆营 · 开营前背景调查">
+<meta property="og:url" content="https://crayxus.com.au/aigp-camp-survey.html">
+<meta property="og:locale" content="zh_CN">
+<meta itemprop="image" content="https://crayxus.com.au/og-aigp-camp.jpg?v=1">
+<meta name="image" content="https://crayxus.com.au/og-aigp-camp.jpg?v=1">
+<link rel="image_src" href="https://crayxus.com.au/og-aigp-camp.jpg?v=1">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI·GP 2026 国庆营 · 开营前背景调查">
+<meta name="twitter:image" content="https://crayxus.com.au/og-aigp-camp.jpg?v=1">
+<style>
+  :root{
+    --bg0:#070318; --bg1:#140a35; --bg2:#1d0d4a;
+    --pink:#ff2e9a; --cyan:#19e3ff; --purple:#8b3bff; --gold:#ffcf5c; --red:#ff5d73;
+    --ink:#eef0ff; --dim:#a9a3cf; --line:rgba(255,255,255,.11); --glass:rgba(255,255,255,.045);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html{background:#070318}
+  html,body{min-height:100%}
+  body{font-family:"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;color:var(--ink);line-height:1.55;
+    background:
+      radial-gradient(900px 520px at 10% -8%, rgba(139,59,255,.34), transparent 60%),
+      radial-gradient(700px 420px at 100% 0%, rgba(255,46,154,.20), transparent 55%),
+      linear-gradient(165deg, var(--bg0), var(--bg1) 60%, var(--bg2));
+    background-color:var(--bg0)}
+  .wrap{max-width:620px;margin:0 auto;padding:0 16px 120px}
+
+  /* intro */
+  .intro{padding:34px 0 10px;text-align:center}
+  .share-cover{display:block;width:212px;height:212px;max-width:62%;object-fit:cover;margin:6px auto 22px;
+    border-radius:18px;border:1px solid var(--line);box-shadow:0 18px 50px rgba(0,0,0,.45)}
+  .kicker{letter-spacing:.3em;font-size:12px;color:var(--cyan);font-weight:800}
+  h1{font-size:26px;line-height:1.3;margin:10px 0 8px;font-weight:800}
+  .lead{color:var(--dim);font-size:14.5px;max-width:460px;margin:0 auto}
+  .meta{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin:18px 0 6px}
+  .meta span{font-size:12.5px;padding:5px 11px;border-radius:20px;border:1px solid var(--line);background:var(--glass);color:var(--ink)}
+  .privacy{font-size:12px;color:var(--dim);margin:14px auto 0;max-width:430px}
+
+  /* progress */
+  .top{position:sticky;top:0;z-index:20;padding:12px 0 10px;background:linear-gradient(180deg,rgba(9,4,28,.96),rgba(9,4,28,.82) 70%,rgba(9,4,28,0));display:none}
+  .steps{display:flex;gap:4px}
+  .steps i{flex:1;height:5px;border-radius:5px;background:rgba(255,255,255,.1);transition:.25s}
+  .steps i.on{background:linear-gradient(90deg,var(--cyan),var(--pink))}
+  .stitle{display:flex;justify-content:space-between;align-items:baseline;margin-top:10px}
+  .stitle b{font-size:19px}
+  .stitle small{font-size:12px;color:var(--dim)}
+
+  /* question */
+  .q{margin-top:12px;border-radius:15px;background:var(--glass);border:1px solid var(--line);padding:15px 15px 14px}
+  .q.invalid{border-color:rgba(255,93,115,.7)}
+  .qt{font-size:15.5px;font-weight:700;line-height:1.4}
+  .qt .req{color:var(--pink);margin-left:3px}
+  .hint{font-size:12.5px;color:var(--dim);margin-top:3px}
+  .opts{display:flex;flex-wrap:wrap;gap:8px;margin-top:11px}
+  .opt{padding:9px 13px;border-radius:11px;background:rgba(255,255,255,.035);border:1px solid var(--line);
+    font-size:14px;cursor:pointer;user-select:none;transition:.12s;line-height:1.35}
+  .opt.sel{border-color:var(--pink);background:rgba(255,46,154,.16);box-shadow:0 0 0 1px rgba(255,46,154,.35) inset}
+  .opt.multi::before{content:"";display:inline-block;width:12px;height:12px;border-radius:4px;border:1.6px solid var(--dim);
+    margin-right:7px;vertical-align:-1px}
+  .opt.multi.sel::before{border-color:var(--pink);background:var(--pink)}
+  input[type=text],input[type=tel],textarea{width:100%;margin-top:10px;padding:12px 13px;border-radius:11px;
+    background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--ink);font-size:16px;font-family:inherit}
+  textarea{min-height:88px;resize:vertical}
+  input:focus,textarea:focus{outline:none;border-color:var(--cyan)}
+  .err{color:var(--red);font-size:12.5px;margin-top:7px;display:none}
+  .q.invalid .err{display:block}
+
+  /* bottom bar */
+  .bar{position:fixed;left:0;right:0;bottom:0;z-index:30;padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+    background:linear-gradient(0deg,rgba(9,4,28,.98),rgba(9,4,28,.9) 70%,rgba(9,4,28,0))}
+  .bar .in{max-width:620px;margin:0 auto;display:flex;gap:10px}
+  button{font-family:inherit;border:none;cursor:pointer}
+  .btn{flex:1;padding:15px;border-radius:14px;font-size:16px;font-weight:800;color:#fff;
+    background:linear-gradient(92deg,var(--pink),var(--purple));box-shadow:0 10px 28px rgba(255,46,154,.28)}
+  .btn:disabled{opacity:.55}
+  .ghost{flex:0 0 96px;padding:15px;border-radius:14px;font-size:15px;color:var(--ink);background:rgba(255,255,255,.07);border:1px solid var(--line)}
+
+  .thanks{display:none;text-align:center;padding:90px 10px 40px}
+  .thanks .ic{width:66px;height:66px;margin:0 auto;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-size:32px;background:linear-gradient(150deg,var(--cyan),var(--purple))}
+  .thanks h2{font-size:24px;margin:18px 0 8px}
+  .thanks p{color:var(--dim);font-size:14.5px;max-width:420px;margin:0 auto}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="intro" id="intro">
+    <img class="share-cover" src="https://crayxus.com.au/og-aigp-camp.jpg?v=1" onerror="this.src='og-aigp-camp.jpg'" alt="AI·GP 2026 国庆营">
+    <div class="kicker">AI·GP 2026 国庆营</div>
+    <h1>开营前背景调查</h1>
+    <p class="lead">前七部分由学员本人填写，最后一部分请家长填写联系方式、健康信息与期待。主带工程师将据此安排分组与分层带教。</p>
+    <div class="meta"><span>10 月 2–6 日 · 杭州</span><span>8 个部分</span><span>约 6 分钟</span></div>
+    <p class="privacy">信息仅供本期营地教学与安全保障使用，不对外公开。</p>
+  </section>
+
+  <div class="top" id="top">
+    <div class="steps" id="steps"></div>
+    <div class="stitle"><b id="stTitle"></b><small id="stCount"></small></div>
+  </div>
+  <form id="form" onsubmit="return false"></form>
+
+  <section class="thanks" id="thanks">
+    <div class="ic">✓</div>
+    <h2>提交成功</h2>
+    <p>感谢填写。10 月 2 日 9:30 开营；营期每晚 22:00 前，个人学习反馈将发送至家长手机。</p>
+  </section>
+</div>
+
+<div class="bar" id="bar"><div class="in">
+  <button class="ghost" id="prev" type="button" style="display:none">上一步</button>
+  <button class="btn" id="next" type="button">开始填写</button>
+</div></div>
+
+<script>
+  var API = /^(127\.0\.0\.1|localhost)$/.test(location.hostname) ? 'http://127.0.0.1:8800' : 'https://api.crayxus.com.au';
+  document.write('<script src="' + API + '/api/aigp-camp/schema.js"><\/script>');
+</script>
+<script>
+(function(){
+  if (!window.CAMP) {
+    document.getElementById('next').onclick = function(){ alert('网络连接不稳定，题目没有加载成功，请稍后刷新页面重试。'); };
+    return;
+  }
+  var S = CAMP.STEPS, A = {}, cur = -1, DRAFT = 'aigp-camp-draft-v1';
+  try { A = JSON.parse(localStorage.getItem(DRAFT) || '{}') || {}; } catch(e) { A = {}; }
+  function save(){ try { localStorage.setItem(DRAFT, JSON.stringify(A)); } catch(e) {} }
+  var $ = function(id){ return document.getElementById(id); };
+  var form = $('form');
+
+  S.forEach(function(){ var i = document.createElement('i'); $('steps').appendChild(i); });
+
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+  function visible(q){ return !q.showIf || A[q.showIf[0]] === q.showIf[1]; }
+
+  function render(){
+    var st = S[cur]; form.innerHTML = '';
+    st.items.forEach(function(q){
+      if (!visible(q)) return;
+      var d = document.createElement('div'); d.className = 'q'; d.dataset.k = q.k;
+      var h = '<div class="qt">' + esc(q.t) + (q.req ? '<span class="req">*</span>' : '') + '</div>';
+      if (q.hint) h += '<div class="hint">' + esc(q.hint) + '</div>';
+      if (q.type === 'text') {
+        var v = A[q.k] || '';
+        h += q.long ? '<textarea placeholder="' + esc(q.ph || '') + '">' + esc(v) + '</textarea>'
+                    : '<input type="' + (q.tel ? 'tel' : 'text') + '" placeholder="' + esc(q.ph || '') + '" value="' + esc(v) + '"' + (q.tel ? ' inputmode="numeric" maxlength="13"' : '') + '>';
+      } else {
+        h += '<div class="opts">' + q.o.map(function(o, i){
+          var sel = q.type === 'multi' ? (A[q.k] || []).indexOf(o.v) >= 0 : A[q.k] === o.v;
+          return '<span class="opt' + (q.type === 'multi' ? ' multi' : '') + (sel ? ' sel' : '') + '" data-i="' + i + '">' + esc(o.v) + '</span>';
+        }).join('') + '</div>';
+      }
+      h += '<div class="err"></div>';
+      d.innerHTML = h;
+      var inp = d.querySelector('input,textarea');
+      if (inp) inp.addEventListener('input', function(){ A[q.k] = inp.value.trim(); save(); d.classList.remove('invalid'); });
+      d.querySelectorAll('.opt').forEach(function(el){
+        el.addEventListener('click', function(){ pick(q, q.o[+el.dataset.i], d); });
+      });
+      form.appendChild(d);
+    });
+    $('steps').querySelectorAll('i').forEach(function(i, n){ i.className = n <= cur ? 'on' : ''; });
+    $('stTitle').textContent = st.title;
+    $('stCount').textContent = st.who + ' · ' + (cur + 1) + ' / ' + S.length;
+    $('prev').style.display = cur > 0 ? '' : 'none';
+    $('next').textContent = cur === S.length - 1 ? '提交' : '下一步';
+  }
+
+  function pick(q, o, d){
+    if (q.type === 'single') { A[q.k] = o.v; }
+    else {
+      var arr = (A[q.k] || []).slice(), i = arr.indexOf(o.v);
+      if (i >= 0) arr.splice(i, 1);
+      else {
+        if (o.none) arr = [];
+        else arr = arr.filter(function(v){ return !q.o.some(function(x){ return x.none && x.v === v; }); });
+        if (q.max && arr.length >= q.max) { showErr(d, '最多选 ' + q.max + ' 项'); return; }
+        arr.push(o.v);
+      }
+      A[q.k] = arr;
+    }
+    save();
+    var hasCond = S[cur].items.some(function(x){ return x.showIf && x.showIf[0] === q.k; });
+    if (hasCond) { render(); return; }
+    d.classList.remove('invalid');
+    d.querySelectorAll('.opt').forEach(function(el){
+      var v = q.o[+el.dataset.i].v;
+      el.classList.toggle('sel', q.type === 'multi' ? A[q.k].indexOf(v) >= 0 : A[q.k] === v);
+    });
+  }
+
+  function showErr(d, msg){ d.classList.add('invalid'); d.querySelector('.err').textContent = msg; }
+
+  function validate(){
+    var first = null;
+    S[cur].items.forEach(function(q){
+      if (!visible(q)) return;
+      var d = form.querySelector('[data-k="' + q.k + '"]'), v = A[q.k], msg = '';
+      var empty = v == null || v === '' || (Array.isArray(v) && !v.length);
+      if (q.req && empty) msg = q.type === 'text' ? '请填写' : '请选择';
+      if (!msg && q.tel && !/^1\d{10}$/.test(String(v).replace(/\D/g, ''))) msg = '请填写 11 位手机号';
+      if (!msg && q.showIf && empty) msg = '请填写';
+      if (msg) { showErr(d, msg); first = first || d; }
+    });
+    if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return !first;
+  }
+
+  function go(n){ cur = n; render(); window.scrollTo(0, 0); }
+
+  $('next').addEventListener('click', function(){
+    if (cur < 0) { $('intro').style.display = 'none'; $('top').style.display = 'block'; go(0); return; }
+    if (!validate()) return;
+    if (cur < S.length - 1) { go(cur + 1); return; }
+    submit();
+  });
+  $('prev').addEventListener('click', function(){ if (cur > 0) go(cur - 1); });
+
+  function submit(){
+    var btn = $('next'); btn.disabled = true; btn.textContent = '提交中…';
+    var ans = {};
+    CAMP.FIELDS.forEach(function(q){ if (visible(q) && A[q.k] != null && A[q.k] !== '') ans[q.k] = A[q.k]; });
+    if (ans.parentPhone) ans.parentPhone = String(ans.parentPhone).replace(/\D/g, '');
+    var test = /[?&]test=1/.test(location.search);
+    fetch(API + '/api/aigp-camp/submit', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ answers: ans, test: test }) })
+      .then(function(r){ return r.json(); })
+      .then(function(j){
+        if (!j.ok) throw new Error(j.error || '提交失败');
+        try { localStorage.removeItem(DRAFT); } catch(e) {}
+        form.style.display = 'none'; $('top').style.display = 'none'; $('bar').style.display = 'none';
+        $('thanks').style.display = 'block'; window.scrollTo(0, 0);
+      })
+      .catch(function(e){
+        btn.disabled = false; btn.textContent = '提交';
+        alert('提交没有成功：' + e.message + '\n请检查网络后再点一次，已填内容不会丢失。');
+      });
+  }
+})();
+</script>
+</body>
+</html>

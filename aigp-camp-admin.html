@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>国庆营调查 · 后台</title>
+<style>
+  :root{--bg:#0b0720;--card:rgba(255,255,255,.05);--line:rgba(255,255,255,.11);--ink:#eef0ff;--dim:#a9a3cf;
+    --pink:#ff2e9a;--cyan:#19e3ff;--purple:#8b3bff;--gold:#ffcf5c;--red:#ff5d73;--green:#3ce29a}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.5}
+  .wrap{max-width:1180px;margin:0 auto;padding:22px 16px 60px}
+  h1{font-size:20px;margin-bottom:4px}
+  .sub{color:var(--dim);font-size:12.5px}
+  .gate{max-width:320px;margin:120px auto;text-align:center}
+  .gate input{width:100%;margin:16px 0 10px;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:18px;text-align:center;letter-spacing:.3em}
+  button{font-family:inherit;border:none;cursor:pointer;border-radius:10px;padding:9px 14px;font-size:13.5px;font-weight:700;color:#fff;background:linear-gradient(92deg,var(--pink),var(--purple))}
+  button.g{background:rgba(255,255,255,.08);border:1px solid var(--line);font-weight:500}
+  button.d{background:rgba(255,93,115,.15);border:1px solid rgba(255,93,115,.5);color:#ffb3bf;font-weight:500}
+  .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin:16px 0}
+  .stats{display:flex;gap:8px;flex-wrap:wrap}
+  .stat{padding:7px 12px;border-radius:10px;background:var(--card);border:1px solid var(--line);font-size:13px}
+  .stat b{font-size:16px;margin-left:4px}
+  .tabs{display:flex;gap:6px;margin-bottom:12px}
+  .tab{padding:7px 14px;border-radius:9px;background:var(--card);border:1px solid var(--line);cursor:pointer;color:var(--dim)}
+  .tab.on{color:var(--ink);border-color:var(--pink)}
+  .tw{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+  table{border-collapse:collapse;width:100%;min-width:900px}
+  th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;font-size:13px}
+  th{color:var(--dim);font-weight:600;background:rgba(255,255,255,.03);white-space:nowrap}
+  tr.row{cursor:pointer} tr.row:hover td{background:rgba(255,46,154,.06)}
+  .lv{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap}
+  .lv-进阶{background:rgba(60,226,154,.16);color:var(--green)}
+  .lv-有基础{background:rgba(25,227,255,.14);color:var(--cyan)}
+  .lv-零基础{background:rgba(255,207,92,.15);color:var(--gold)}
+  .tag{display:inline-block;margin:1px 4px 1px 0;padding:1px 7px;border-radius:6px;font-size:11.5px;background:rgba(255,255,255,.07);color:var(--dim)}
+  .tag.al{background:rgba(255,93,115,.16);color:#ffb3bf}
+  .tag.t{background:rgba(255,207,92,.16);color:var(--gold)}
+  .groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+  .grp{border:1px solid var(--line);border-radius:12px;background:var(--card);padding:12px}
+  .grp h3{font-size:14px;margin-bottom:8px;display:flex;justify-content:space-between}
+  .grp h3 small{color:var(--dim);font-weight:400}
+  .grp li{list-style:none;padding:5px 0;border-top:1px solid var(--line);font-size:13px;display:flex;justify-content:space-between;gap:6px}
+  .note{color:var(--dim);font-size:12px;margin-top:10px}
+  .mask{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:flex-start;justify-content:center;z-index:50;overflow-y:auto;padding:30px 12px}
+  .modal{background:#150d34;border:1px solid var(--line);border-radius:16px;max-width:680px;width:100%;padding:20px}
+  .modal h2{font-size:20px;display:flex;align-items:center;gap:10px}
+  .modal h4{margin:16px 0 6px;color:var(--cyan);font-size:13px}
+  .kv{display:grid;grid-template-columns:150px 1fr;gap:5px 12px;font-size:13px}
+  .kv div:nth-child(odd){color:var(--dim)}
+  .score{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .mfoot{display:flex;justify-content:space-between;margin-top:18px}
+  @media (max-width:560px){.kv{grid-template-columns:110px 1fr}}
+</style>
+</head>
+<body>
+<div class="gate" id="gate">
+  <h1>国庆营背景调查 · 后台</h1>
+  <p class="sub">请输入工作人员口令</p>
+  <input id="pin" type="password" inputmode="numeric" autocomplete="off">
+  <button id="login" style="width:100%">进入</button>
+  <p class="sub" id="gerr" style="color:var(--red);margin-top:10px"></p>
+</div>
+
+<div class="wrap" id="app" style="display:none">
+  <h1>AI·GP 2026 国庆营 · 开营前背景调查</h1>
+  <p class="sub">起点画像（满分 60）= 编程 19 + 系统硬件 12 + 竞赛 5 + 动手 6 + 数理英语 11 + AI 7。进阶：≥34 分且编程≥10、系统硬件≥4；有基础：≥18 分；其余零基础。</p>
+  <div class="bar">
+    <div class="stats" id="stats"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <label class="sub" style="display:flex;align-items:center;gap:5px"><input type="checkbox" id="showTest"> 显示测试数据</label>
+      <button class="g" id="reload">刷新</button>
+      <button id="csv">导出 CSV</button>
+    </div>
+  </div>
+  <div class="tabs"><span class="tab on" data-t="list">学员列表</span><span class="tab" data-t="groups">分组建议</span></div>
+  <div id="vList"><div class="tw"><table>
+    <thead><tr><th>#</th><th>姓名</th><th>性别</th><th>年级 / 学校</th><th>画像</th><th>总分</th><th>强项</th><th>带教提示 / 安全</th><th>家长</th><th>提交时间</th></tr></thead>
+    <tbody id="tbody"></tbody></table></div></div>
+  <div id="vGroups" style="display:none">
+    <div class="bar" style="margin-top:0"><span class="sub">按总分蛇形分配，每组强弱搭配；男女、性格请在此基础上人工微调。</span>
+      <label class="sub">组数 <select id="gn" style="background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:3px 6px">
+        <option>4</option><option selected>5</option><option>6</option></select></label></div>
+    <div class="groups" id="groups"></div>
+  </div>
+</div>
+
+<div class="mask" id="mask"><div class="modal" id="modal"></div></div>
+
+<script>
+  var API = /^(127\.0\.0\.1|localhost)$/.test(location.hostname) ? 'http://127.0.0.1:8800' : 'https://api.crayxus.com.au';
+  document.write('<script src="' + API + '/api/aigp-camp/schema.js"><\/script>');
+</script>
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var KEY = '', ALL = [];
+  try { KEY = sessionStorage.getItem('aigp-camp-key') || ''; } catch(e) {}
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  function fmt(v){ return Array.isArray(v) ? v.join('、') : (v || ''); }
+  function t(ts){ var d = new Date(ts); return isNaN(d) ? '' : (d.getMonth()+1) + '/' + d.getDate() + ' ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0'); }
+
+  function load(){
+    return fetch(API + '/api/aigp-camp/list?key=' + encodeURIComponent(KEY)).then(function(r){
+      if (r.status === 403) throw new Error('口令不对');
+      if (r.status === 429) throw new Error('尝试太频繁，请 10 分钟后再试');
+      return r.json();
+    }).then(function(j){ ALL = j.list || []; draw(); });
+  }
+  function login(){
+    KEY = $('pin').value.trim();
+    load().then(function(){
+      try { sessionStorage.setItem('aigp-camp-key', KEY); } catch(e) {}
+      $('gate').style.display = 'none'; $('app').style.display = 'block';
+    }).catch(function(e){ $('gerr').textContent = e.message; });
+  }
+  $('login').onclick = login;
+  $('pin').addEventListener('keydown', function(e){ if (e.key === 'Enter') login(); });
+  if (KEY) load().then(function(){ $('gate').style.display = 'none'; $('app').style.display = 'block'; }).catch(function(){});
+
+  function rows(){ return ALL.filter(function(r){ return $('showTest').checked || !r.test; }); }
+
+  function draw(){
+    var list = rows(), c = { '进阶': 0, '有基础': 0, '零基础': 0 }, al = 0;
+    list.forEach(function(r){ c[r.profile.lv]++; if (r.profile.alert.length) al++; });
+    $('stats').innerHTML = '<span class="stat">已提交<b>' + list.length + '</b></span>' +
+      ['进阶','有基础','零基础'].map(function(k){ return '<span class="stat"><span class="lv lv-' + k + '">' + k + '</span><b>' + c[k] + '</b></span>'; }).join('') +
+      '<span class="stat">需安全关注<b style="color:var(--red)">' + al + '</b></span>';
+    $('tbody').innerHTML = list.map(function(r, i){
+      var a = r.answers, p = r.profile;
+      return '<tr class="row" data-id="' + esc(r.id) + '"><td>' + (i+1) + '</td><td><b>' + esc(a.name) + '</b>' + (r.test ? ' <span class="tag t">测试</span>' : '') + '</td>' +
+        '<td>' + esc(a.gender) + '</td><td>' + esc(a.grade) + '<br><span class="sub">' + esc(a.school || a.schoolType) + '</span></td>' +
+        '<td><span class="lv lv-' + p.lv + '">' + p.lv + '</span></td><td>' + p.total + '</td>' +
+        '<td>' + p.strong.map(function(s){ return '<span class="tag">' + esc(s) + '</span>'; }).join('') + '</td>' +
+        '<td>' + p.alert.map(function(s){ return '<span class="tag al">' + esc(s) + '</span>'; }).join('') +
+                 p.flags.map(function(s){ return '<span class="tag">' + esc(s) + '</span>'; }).join('') + '</td>' +
+        '<td>' + esc(a.parentName) + '<br><span class="sub">' + esc(a.parentPhone) + '</span></td><td class="sub">' + t(r.submittedAt) + '</td></tr>';
+    }).join('') || '<tr><td colspan="10" class="sub" style="text-align:center;padding:30px">还没有提交</td></tr>';
+    document.querySelectorAll('tr.row').forEach(function(tr){ tr.onclick = function(){ detail(tr.dataset.id); }; });
+    drawGroups();
+  }
+
+  function drawGroups(){
+    var list = rows(), n = +$('gn').value;
+    if (!list.length) { $('groups').innerHTML = '<p class="sub">还没有提交</p>'; return; }
+    $('groups').innerHTML = CAMP.suggestGroups(list, n).map(function(g, i){
+      var sum = g.reduce(function(s, r){ return s + r.profile.total; }, 0);
+      return '<div class="grp"><h3>第 ' + (i+1) + ' 组<small>' + g.length + ' 人 · 均分 ' + (g.length ? (sum / g.length).toFixed(1) : '-') + '</small></h3><ul>' +
+        g.map(function(r){ return '<li><span>' + esc(r.answers.name) + ' <span class="sub">' + esc(r.answers.gender || '') + '</span></span><span><span class="lv lv-' + r.profile.lv + '">' + r.profile.total + '</span></span></li>'; }).join('') +
+        '</ul></div>';
+    }).join('');
+  }
+
+  function detail(id){
+    var r = ALL.filter(function(x){ return x.id === id; })[0]; if (!r) return;
+    var a = r.answers, p = r.profile;
+    var h = '<h2>' + esc(a.name) + ' <span class="lv lv-' + p.lv + '">' + p.lv + ' · ' + p.total + ' 分</span></h2>' +
+      '<div class="score">' + CAMP.DIMS.map(function(d){ return '<span class="stat">' + d[1] + '<b>' + p[d[0]] + '</b>/' + d[2] + '</span>'; }).join('') + '</div>';
+    if (p.alert.length) h += '<h4>安全提醒</h4>' + p.alert.map(function(s){ return '<span class="tag al">' + esc(s) + '</span>'; }).join('');
+    if (p.flags.length) h += '<h4>带教提示</h4>' + p.flags.map(function(s){ return '<span class="tag">' + esc(s) + '</span>'; }).join('');
+    CAMP.STEPS.forEach(function(st){
+      h += '<h4>' + esc(st.title) + '</h4><div class="kv">';
+      st.items.forEach(function(q){ if (a[q.k] != null && a[q.k] !== '') h += '<div>' + esc(q.t) + '</div><div>' + esc(fmt(a[q.k])) + '</div>'; });
+      h += '</div>';
+    });
+    h += '<div class="mfoot"><button class="d" id="del">删除这条</button><button class="g" id="close">关闭</button></div>';
+    $('modal').innerHTML = h; $('mask').style.display = 'flex';
+    $('close').onclick = function(){ $('mask').style.display = 'none'; };
+    $('del').onclick = function(){
+      if (!confirm('确定删除 ' + a.name + ' 的记录？删除后无法恢复。')) return;
+      fetch(API + '/api/aigp-camp/record/' + encodeURIComponent(id) + '?key=' + encodeURIComponent(KEY), { method: 'DELETE' })
+        .then(function(r){ return r.json(); }).then(function(j){
+          if (!j.ok) return alert(j.error || '删除失败');
+          $('mask').style.display = 'none'; load();
+        });
+    };
+  }
+  $('mask').onclick = function(e){ if (e.target === $('mask')) $('mask').style.display = 'none'; };
+
+  $('reload').onclick = function(){ load(); };
+  $('showTest').onchange = draw;
+  $('gn').onchange = drawGroups;
+  $('csv').onclick = function(){ location.href = API + '/api/aigp-camp/csv?key=' + encodeURIComponent(KEY); };
+  document.querySelectorAll('.tab').forEach(function(tb){
+    tb.onclick = function(){
+      document.querySelectorAll('.tab').forEach(function(x){ x.classList.toggle('on', x === tb); });
+      $('vList').style.display = tb.dataset.t === 'list' ? '' : 'none';
+      $('vGroups').style.display = tb.dataset.t === 'groups' ? '' : 'none';
+    };
+  });
+})();
+</script>
+</body>
+</html>
