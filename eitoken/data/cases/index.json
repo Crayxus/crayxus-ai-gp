@@ -1,0 +1,2985 @@
+{
+  "generatedAt": "2026-09-16T09:59:14.487Z",
+  "cli": "C:\\Program Files\\Arduino CLI\\arduino-cli.exe",
+  "categories": [
+    {
+      "id": "stackchan",
+      "nm": "桌面机器人"
+    },
+    {
+      "id": "first-light",
+      "nm": "第一次点亮"
+    },
+    {
+      "id": "sensing",
+      "nm": "感知"
+    },
+    {
+      "id": "display",
+      "nm": "显示"
+    },
+    {
+      "id": "motion",
+      "nm": "运动"
+    },
+    {
+      "id": "connect",
+      "nm": "联网"
+    }
+  ],
+  "cases": [
+    {
+      "id": "sc-hello",
+      "title": "开机表情脸",
+      "sub": "一开机就有一张会眨眼的脸，还会挨句跟你打招呼",
+      "category": "stackchan",
+      "tags": [
+        "Avatar",
+        "表情",
+        "屏幕"
+      ],
+      "difficulty": 1,
+      "minutes": 5,
+      "families": [
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:m5stack_cores3",
+          "nm": "M5 StackChan（CoreS3）"
+        }
+      ],
+      "parts": 1,
+      "libraries": [
+        "M5Unified",
+        "StackChan-BSP",
+        "M5Stack_Avatar"
+      ],
+      "sim": false,
+      "cover": {
+        "motif": "stackchan",
+        "hue": "cyan"
+      },
+      "xp": 30,
+      "sketchHash": "1229bc6ac838fb20",
+      "hot": true,
+      "verified": true,
+      "build": {
+        "esp32:esp32:m5stack_cores3": {
+          "ok": true,
+          "seconds": 18.5,
+          "flash": 910178,
+          "flashMax": 3145728,
+          "ram": 26924,
+          "ramMax": 327680,
+          "sketchHash": "1229bc6ac838fb20",
+          "at": "2026-09-16T09:57:12.629Z"
+        }
+      }
+    },
+    {
+      "id": "sc-nod",
+      "title": "点头摇头",
+      "sub": "用脖子上的两个舵机演三套动作：是 / 不是 / 歪头",
+      "category": "stackchan",
+      "tags": [
+        "舵机",
+        "动作",
+        "Motion"
+      ],
+      "difficulty": 1,
+      "minutes": 10,
+      "families": [
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:m5stack_cores3",
+          "nm": "M5 StackChan（CoreS3）"
+        }
+      ],
+      "parts": 1,
+      "libraries": [
+        "M5Unified",
+        "StackChan-BSP"
+      ],
+      "sim": false,
+      "cover": {
+        "motif": "stackchan",
+        "hue": "violet"
+      },
+      "xp": 40,
+      "sketchHash": "005d08c204d4ad4a",
+      "hot": true,
+      "verified": true,
+      "build": {
+        "esp32:esp32:m5stack_cores3": {
+          "ok": true,
+          "seconds": 32.9,
+          "flash": 565478,
+          "flashMax": 3145728,
+          "ram": 26796,
+          "ramMax": 327680,
+          "sketchHash": "005d08c204d4ad4a",
+          "at": "2026-09-16T09:58:42.303Z"
+        }
+      }
+    },
+    {
+      "id": "sc-battery",
+      "title": "电量看板",
+      "sub": "机身上的 INA226 能同时读电压和电流，屏幕上做成一块仪表",
+      "category": "stackchan",
+      "tags": [
+        "INA226",
+        "电量",
+        "屏幕"
+      ],
+      "difficulty": 2,
+      "minutes": 15,
+      "families": [
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:m5stack_cores3",
+          "nm": "M5 StackChan（CoreS3）"
+        }
+      ],
+      "parts": 1,
+      "libraries": [
+        "M5Unified",
+        "StackChan-BSP"
+      ],
+      "sim": false,
+      "cover": {
+        "motif": "stackchan",
+        "hue": "mint"
+      },
+      "xp": 40,
+      "sketchHash": "61e90fc6d68cd3bc",
+      "hot": true,
+      "verified": true,
+      "build": {
+        "esp32:esp32:m5stack_cores3": {
+          "ok": true,
+          "seconds": 14.7,
+          "flash": 565706,
+          "flashMax": 3145728,
+          "ram": 26788,
+          "ramMax": 327680,
+          "sketchHash": "61e90fc6d68cd3bc",
+          "at": "2026-09-16T09:56:54.149Z"
+        }
+      }
+    },
+    {
+      "id": "sc-rgb",
+      "title": "心情灯",
+      "sub": "机身两排共 12 颗 RGB，做呼吸和流水两种效果，按心情换配色",
+      "category": "stackchan",
+      "tags": [
+        "RGB",
+        "WS2812",
+        "灯效"
+      ],
+      "difficulty": 2,
+      "minutes": 15,
+      "families": [
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:m5stack_cores3",
+          "nm": "M5 StackChan（CoreS3）"
+        }
+      ],
+      "parts": 1,
+      "libraries": [
+        "M5Unified",
+        "StackChan-BSP"
+      ],
+      "sim": false,
+      "cover": {
+        "motif": "stackchan",
+        "hue": "mint"
+      },
+      "xp": 40,
+      "sketchHash": "d5fec3ca14ddc27d",
+      "hot": true,
+      "verified": true,
+      "build": {
+        "esp32:esp32:m5stack_cores3": {
+          "ok": true,
+          "seconds": 15.8,
+          "flash": 565034,
+          "flashMax": 3145728,
+          "ram": 26796,
+          "ramMax": 327680,
+          "sketchHash": "d5fec3ca14ddc27d",
+          "at": "2026-09-16T09:58:58.124Z"
+        }
+      }
+    },
+    {
+      "id": "sc-touch",
+      "title": "摸头有反应",
+      "sub": "头顶三个触摸区，摸哪一块就换一种表情、配一套动作",
+      "category": "stackchan",
+      "tags": [
+        "触摸",
+        "Avatar",
+        "交互"
+      ],
+      "difficulty": 2,
+      "minutes": 15,
+      "families": [
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:m5stack_cores3",
+          "nm": "M5 StackChan（CoreS3）"
+        }
+      ],
+      "parts": 1,
+      "libraries": [
+        "M5Unified",
+        "StackChan-BSP",
+        "M5Stack_Avatar"
+      ],
+      "sim": false,
+      "cover": {
+        "motif": "stackchan",
+        "hue": "amber"
+      },
+      "xp": 50,
+      "sketchHash": "f6dda454ebb05293",
+      "hot": true,
+      "verified": true,
+      "build": {
+        "esp32:esp32:m5stack_cores3": {
+          "ok": true,
+          "seconds": 16.3,
+          "flash": 591242,
+          "flashMax": 3145728,
+          "ram": 26916,
+          "ramMax": 327680,
+          "sketchHash": "f6dda454ebb05293",
+          "at": "2026-09-16T09:59:14.465Z"
+        }
+      }
+    },
+    {
+      "id": "sc-ir",
+      "title": "红外遥控",
+      "sub": "先学一个家电遥控器的码，再按头顶把它原样重发出去",
+      "category": "stackchan",
+      "tags": [
+        "红外",
+        "IR",
+        "遥控"
+      ],
+      "difficulty": 3,
+      "minutes": 20,
+      "families": [
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:m5stack_cores3",
+          "nm": "M5 StackChan（CoreS3）"
+        }
+      ],
+      "parts": 2,
+      "libraries": [
+        "M5Unified",
+        "StackChan-BSP",
+        "IRremoteESP8266"
+      ],
+      "sim": false,
+      "cover": {
+        "motif": "stackchan",
+        "hue": "amber"
+      },
+      "xp": 60,
+      "sketchHash": "e19c40efbed01d05",
+      "hot": true,
+      "verified": true,
+      "build": {
+        "esp32:esp32:m5stack_cores3": {
+          "ok": true,
+          "seconds": 24.1,
+          "flash": 644198,
+          "flashMax": 3145728,
+          "ram": 27564,
+          "ramMax": 327680,
+          "sketchHash": "e19c40efbed01d05",
+          "at": "2026-09-16T09:57:36.758Z"
+        }
+      }
+    },
+    {
+      "id": "sc-nfc",
+      "title": "刷卡变身",
+      "sub": "机身里是一颗全功能 NFC，贴一张卡就换一套人设",
+      "category": "stackchan",
+      "tags": [
+        "NFC",
+        "ST25R3916",
+        "读卡"
+      ],
+      "difficulty": 3,
+      "minutes": 20,
+      "families": [
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:m5stack_cores3",
+          "nm": "M5 StackChan（CoreS3）"
+        }
+      ],
+      "parts": 2,
+      "libraries": [
+        "M5Unified",
+        "StackChan-BSP",
+        "M5Unit-NFC",
+        "M5Stack_Avatar"
+      ],
+      "sim": false,
+      "cover": {
+        "motif": "stackchan",
+        "hue": "coral"
+      },
+      "xp": 60,
+      "sketchHash": "c07cfa0ced3c4378",
+      "hot": true,
+      "verified": true,
+      "build": {
+        "esp32:esp32:m5stack_cores3": {
+          "ok": true,
+          "seconds": 32.5,
+          "flash": 1026846,
+          "flashMax": 3145728,
+          "ram": 28740,
+          "ramMax": 327680,
+          "sketchHash": "c07cfa0ced3c4378",
+          "at": "2026-09-16T09:58:09.369Z"
+        }
+      }
+    },
+    {
+      "id": "blink",
+      "title": "闪烁 LED",
+      "sub": "让灯一秒闪一次，确认板子、驱动、烧录全都通了",
+      "category": "first-light",
+      "tags": [
+        "LED",
+        "GPIO",
+        "入门"
+      ],
+      "difficulty": 1,
+      "minutes": 5,
+      "families": [
+        "avr",
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:uno",
+          "nm": "Arduino Uno"
+        },
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:nano",
+          "nm": "Arduino Nano"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32",
+          "nm": "ESP32 DevKit"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32s3",
+          "nm": "ESP32-S3 DevKitC"
+        }
+      ],
+      "parts": 2,
+      "libraries": [],
+      "sim": true,
+      "cover": {
+        "motif": "led",
+        "hue": "cyan"
+      },
+      "xp": 30,
+      "sketchHash": "a86bef20e3b926a9",
+      "verified": true,
+      "build": {
+        "arduino:avr:uno": {
+          "ok": true,
+          "seconds": 13.4,
+          "flash": 2034,
+          "flashMax": 32256,
+          "ram": 218,
+          "ramMax": 2048,
+          "sketchHash": "a86bef20e3b926a9",
+          "at": "2026-09-15T13:18:56.003Z"
+        },
+        "arduino:avr:nano": {
+          "ok": true,
+          "seconds": 13.2,
+          "flash": 2034,
+          "flashMax": 30720,
+          "ram": 218,
+          "ramMax": 2048,
+          "sketchHash": "a86bef20e3b926a9",
+          "at": "2026-09-15T13:18:55.849Z"
+        },
+        "esp32:esp32:esp32": {
+          "ok": true,
+          "seconds": 19.8,
+          "flash": 296094,
+          "flashMax": 1310720,
+          "ram": 20484,
+          "ramMax": 327680,
+          "sketchHash": "a86bef20e3b926a9",
+          "at": "2026-09-15T13:26:33.037Z"
+        },
+        "esp32:esp32:esp32s3": {
+          "ok": true,
+          "seconds": 13.9,
+          "flash": 324642,
+          "flashMax": 1310720,
+          "ram": 20556,
+          "ramMax": 327680,
+          "sketchHash": "a86bef20e3b926a9",
+          "at": "2026-09-15T13:26:46.995Z"
+        }
+      }
+    },
+    {
+      "id": "breathing",
+      "title": "呼吸灯",
+      "sub": "灯光慢慢亮起再慢慢变暗，像在呼吸",
+      "category": "first-light",
+      "tags": [
+        "PWM",
+        "LED"
+      ],
+      "difficulty": 1,
+      "minutes": 8,
+      "families": [
+        "avr",
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:uno",
+          "nm": "Arduino Uno"
+        },
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:nano",
+          "nm": "Arduino Nano"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32",
+          "nm": "ESP32 DevKit"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32s3",
+          "nm": "ESP32-S3 DevKitC"
+        }
+      ],
+      "parts": 2,
+      "libraries": [],
+      "sim": true,
+      "cover": {
+        "motif": "pwm",
+        "hue": "violet"
+      },
+      "xp": 30,
+      "sketchHash": "f4c94cad455266cf",
+      "verified": true,
+      "build": {
+        "arduino:avr:uno": {
+          "ok": true,
+          "seconds": 6,
+          "flash": 2208,
+          "flashMax": 32256,
+          "ram": 214,
+          "ramMax": 2048,
+          "sketchHash": "f4c94cad455266cf",
+          "at": "2026-09-15T13:19:16.169Z"
+        },
+        "arduino:avr:nano": {
+          "ok": true,
+          "seconds": 8.6,
+          "flash": 2208,
+          "flashMax": 30720,
+          "ram": 214,
+          "ramMax": 2048,
+          "sketchHash": "f4c94cad455266cf",
+          "at": "2026-09-15T13:19:18.772Z"
+        },
+        "esp32:esp32:esp32": {
+          "ok": true,
+          "seconds": 21.7,
+          "flash": 303722,
+          "flashMax": 1310720,
+          "ram": 20716,
+          "ramMax": 327680,
+          "sketchHash": "f4c94cad455266cf",
+          "at": "2026-09-15T13:29:17.969Z"
+        },
+        "esp32:esp32:esp32s3": {
+          "ok": true,
+          "seconds": 15.5,
+          "flash": 308766,
+          "flashMax": 1310720,
+          "ram": 20368,
+          "ramMax": 327680,
+          "sketchHash": "f4c94cad455266cf",
+          "at": "2026-09-15T13:29:33.578Z"
+        }
+      }
+    },
+    {
+      "id": "button-led",
+      "title": "按键开关灯",
+      "sub": "按一下灯亮，再按一下灯灭",
+      "category": "first-light",
+      "tags": [
+        "按键",
+        "输入",
+        "消抖"
+      ],
+      "difficulty": 1,
+      "minutes": 10,
+      "families": [
+        "avr",
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:uno",
+          "nm": "Arduino Uno"
+        },
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:nano",
+          "nm": "Arduino Nano"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32",
+          "nm": "ESP32 DevKit"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32s3",
+          "nm": "ESP32-S3 DevKitC"
+        }
+      ],
+      "parts": 3,
+      "libraries": [],
+      "sim": true,
+      "cover": {
+        "motif": "button",
+        "hue": "cyan"
+      },
+      "xp": 30,
+      "sketchHash": "63a2511c666510ff",
+      "verified": true,
+      "build": {
+        "arduino:avr:uno": {
+          "ok": true,
+          "seconds": 6,
+          "flash": 2162,
+          "flashMax": 32256,
+          "ram": 231,
+          "ramMax": 2048,
+          "sketchHash": "63a2511c666510ff",
+          "at": "2026-09-15T13:19:22.273Z"
+        },
+        "arduino:avr:nano": {
+          "ok": true,
+          "seconds": 5.7,
+          "flash": 2162,
+          "flashMax": 30720,
+          "ram": 231,
+          "ramMax": 2048,
+          "sketchHash": "63a2511c666510ff",
+          "at": "2026-09-15T13:19:24.718Z"
+        },
+        "esp32:esp32:esp32": {
+          "ok": true,
+          "seconds": 22.1,
+          "flash": 296266,
+          "flashMax": 1310720,
+          "ram": 20508,
+          "ramMax": 327680,
+          "sketchHash": "63a2511c666510ff",
+          "at": "2026-09-15T13:29:55.763Z"
+        },
+        "esp32:esp32:esp32s3": {
+          "ok": true,
+          "seconds": 17.2,
+          "flash": 324790,
+          "flashMax": 1310720,
+          "ram": 20564,
+          "ramMax": 327680,
+          "sketchHash": "63a2511c666510ff",
+          "at": "2026-09-15T13:30:13.048Z"
+        }
+      }
+    },
+    {
+      "id": "buzzer-melody",
+      "title": "蜂鸣器小曲",
+      "sub": "用无源蜂鸣器弹一段《小星星》",
+      "category": "first-light",
+      "tags": [
+        "蜂鸣器",
+        "tone",
+        "声音"
+      ],
+      "difficulty": 1,
+      "minutes": 10,
+      "families": [
+        "avr",
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:uno",
+          "nm": "Arduino Uno"
+        },
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:nano",
+          "nm": "Arduino Nano"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32",
+          "nm": "ESP32 DevKit"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32s3",
+          "nm": "ESP32-S3 DevKitC"
+        }
+      ],
+      "parts": 1,
+      "libraries": [],
+      "sim": true,
+      "cover": {
+        "motif": "buzzer",
+        "hue": "violet"
+      },
+      "xp": 30,
+      "sketchHash": "4412d09d00a6288a",
+      "verified": true,
+      "build": {
+        "arduino:avr:uno": {
+          "ok": true,
+          "seconds": 5.4,
+          "flash": 4364,
+          "flashMax": 32256,
+          "ram": 263,
+          "ramMax": 2048,
+          "sketchHash": "4412d09d00a6288a",
+          "at": "2026-09-15T13:19:27.725Z"
+        },
+        "arduino:avr:nano": {
+          "ok": true,
+          "seconds": 6.3,
+          "flash": 4364,
+          "flashMax": 30720,
+          "ram": 263,
+          "ramMax": 2048,
+          "sketchHash": "4412d09d00a6288a",
+          "at": "2026-09-15T13:19:31.134Z"
+        },
+        "esp32:esp32:esp32": {
+          "ok": true,
+          "seconds": 20.8,
+          "flash": 301190,
+          "flashMax": 1310720,
+          "ram": 20724,
+          "ramMax": 327680,
+          "sketchHash": "4412d09d00a6288a",
+          "at": "2026-09-15T13:30:34.005Z"
+        },
+        "esp32:esp32:esp32s3": {
+          "ok": true,
+          "seconds": 16,
+          "flash": 305706,
+          "flashMax": 1310720,
+          "ram": 20008,
+          "ramMax": 327680,
+          "sketchHash": "4412d09d00a6288a",
+          "at": "2026-09-15T13:30:50.095Z"
+        }
+      }
+    },
+    {
+      "id": "knob-dimmer",
+      "title": "旋钮调光",
+      "sub": "拧电位器，灯的亮度跟着变",
+      "category": "first-light",
+      "tags": [
+        "电位器",
+        "ADC",
+        "PWM"
+      ],
+      "difficulty": 1,
+      "minutes": 10,
+      "families": [
+        "avr",
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:uno",
+          "nm": "Arduino Uno"
+        },
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:nano",
+          "nm": "Arduino Nano"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32",
+          "nm": "ESP32 DevKit"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32s3",
+          "nm": "ESP32-S3 DevKitC"
+        }
+      ],
+      "parts": 3,
+      "libraries": [],
+      "sim": true,
+      "cover": {
+        "motif": "knob",
+        "hue": "amber"
+      },
+      "xp": 30,
+      "sketchHash": "54da6d6d3143be7e",
+      "verified": true,
+      "build": {
+        "arduino:avr:uno": {
+          "ok": true,
+          "seconds": 6.6,
+          "flash": 2606,
+          "flashMax": 32256,
+          "ram": 220,
+          "ramMax": 2048,
+          "sketchHash": "54da6d6d3143be7e",
+          "at": "2026-09-15T13:19:55.747Z"
+        },
+        "arduino:avr:nano": {
+          "ok": true,
+          "seconds": 7,
+          "flash": 2606,
+          "flashMax": 30720,
+          "ram": 220,
+          "ramMax": 2048,
+          "sketchHash": "54da6d6d3143be7e",
+          "at": "2026-09-15T13:20:00.199Z"
+        },
+        "esp32:esp32:esp32": {
+          "ok": true,
+          "seconds": 21.8,
+          "flash": 310534,
+          "flashMax": 1310720,
+          "ram": 20812,
+          "ramMax": 327680,
+          "sketchHash": "54da6d6d3143be7e",
+          "at": "2026-09-15T13:33:07.853Z"
+        },
+        "esp32:esp32:esp32s3": {
+          "ok": true,
+          "seconds": 16.7,
+          "flash": 319202,
+          "flashMax": 1310720,
+          "ram": 20664,
+          "ramMax": 327680,
+          "sketchHash": "54da6d6d3143be7e",
+          "at": "2026-09-15T13:33:24.673Z"
+        }
+      }
+    },
+    {
+      "id": "rgb-led",
+      "title": "RGB 彩灯",
+      "sub": "一颗灯变出七种颜色",
+      "category": "first-light",
+      "tags": [
+        "RGB",
+        "PWM",
+        "颜色"
+      ],
+      "difficulty": 1,
+      "minutes": 10,
+      "families": [
+        "avr",
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:uno",
+          "nm": "Arduino Uno"
+        },
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:nano",
+          "nm": "Arduino Nano"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32",
+          "nm": "ESP32 DevKit"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32s3",
+          "nm": "ESP32-S3 DevKitC"
+        }
+      ],
+      "parts": 2,
+      "libraries": [],
+      "sim": true,
+      "cover": {
+        "motif": "rgb",
+        "hue": "violet"
+      },
+      "xp": 30,
+      "sketchHash": "d1cc3f50e0081c12",
+      "verified": true,
+      "build": {
+        "arduino:avr:uno": {
+          "ok": true,
+          "seconds": 5.7,
+          "flash": 2340,
+          "flashMax": 32256,
+          "ram": 254,
+          "ramMax": 2048,
+          "sketchHash": "d1cc3f50e0081c12",
+          "at": "2026-09-15T13:20:59.145Z"
+        },
+        "arduino:avr:nano": {
+          "ok": true,
+          "seconds": 5.6,
+          "flash": 2340,
+          "flashMax": 30720,
+          "ram": 254,
+          "ramMax": 2048,
+          "sketchHash": "d1cc3f50e0081c12",
+          "at": "2026-09-15T13:21:00.745Z"
+        },
+        "esp32:esp32:esp32": {
+          "ok": true,
+          "seconds": 121.2,
+          "flash": 304090,
+          "flashMax": 1310720,
+          "ram": 20716,
+          "ramMax": 327680,
+          "sketchHash": "d1cc3f50e0081c12",
+          "at": "2026-09-15T14:11:55.518Z"
+        },
+        "esp32:esp32:esp32s3": {
+          "ok": true,
+          "seconds": 125.9,
+          "flash": 309138,
+          "flashMax": 1310720,
+          "ram": 20368,
+          "ramMax": 327680,
+          "sketchHash": "d1cc3f50e0081c12",
+          "at": "2026-09-15T14:14:02.408Z"
+        }
+      }
+    },
+    {
+      "id": "serial-hello",
+      "title": "串口对话",
+      "sub": "在串口输入 on / off，远程开关灯",
+      "category": "first-light",
+      "tags": [
+        "串口",
+        "命令",
+        "调试"
+      ],
+      "difficulty": 1,
+      "minutes": 8,
+      "families": [
+        "avr",
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:uno",
+          "nm": "Arduino Uno"
+        },
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:nano",
+          "nm": "Arduino Nano"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32",
+          "nm": "ESP32 DevKit"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32s3",
+          "nm": "ESP32-S3 DevKitC"
+        }
+      ],
+      "parts": 1,
+      "libraries": [],
+      "sim": true,
+      "cover": {
+        "motif": "serial",
+        "hue": "cyan"
+      },
+      "xp": 30,
+      "sketchHash": "3bd277b608da3b97",
+      "verified": true,
+      "build": {
+        "arduino:avr:uno": {
+          "ok": true,
+          "seconds": 6.4,
+          "flash": 3658,
+          "flashMax": 32256,
+          "ram": 278,
+          "ramMax": 2048,
+          "sketchHash": "3bd277b608da3b97",
+          "at": "2026-09-15T13:21:05.678Z"
+        },
+        "arduino:avr:nano": {
+          "ok": true,
+          "seconds": 5.9,
+          "flash": 3658,
+          "flashMax": 30720,
+          "ram": 278,
+          "ramMax": 2048,
+          "sketchHash": "3bd277b608da3b97",
+          "at": "2026-09-15T13:21:06.707Z"
+        },
+        "esp32:esp32:esp32": {
+          "ok": true,
+          "seconds": 126.7,
+          "flash": 296790,
+          "flashMax": 1310720,
+          "ram": 20484,
+          "ramMax": 327680,
+          "sketchHash": "3bd277b608da3b97",
+          "at": "2026-09-15T14:16:10.165Z"
+        },
+        "esp32:esp32:esp32s3": {
+          "ok": true,
+          "seconds": 173,
+          "flash": 325318,
+          "flashMax": 1310720,
+          "ram": 20556,
+          "ramMax": 327680,
+          "sketchHash": "3bd277b608da3b97",
+          "at": "2026-09-15T14:19:03.275Z"
+        }
+      }
+    },
+    {
+      "id": "traffic-light",
+      "title": "红绿灯",
+      "sub": "红黄绿三色轮流亮，做一个路口信号灯",
+      "category": "first-light",
+      "tags": [
+        "LED",
+        "状态机"
+      ],
+      "difficulty": 1,
+      "minutes": 12,
+      "families": [
+        "avr",
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:uno",
+          "nm": "Arduino Uno"
+        },
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:nano",
+          "nm": "Arduino Nano"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32",
+          "nm": "ESP32 DevKit"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32s3",
+          "nm": "ESP32-S3 DevKitC"
+        }
+      ],
+      "parts": 2,
+      "libraries": [],
+      "sim": true,
+      "cover": {
+        "motif": "traffic",
+        "hue": "mint"
+      },
+      "xp": 30,
+      "sketchHash": "c0e94da950bc9eb3",
+      "verified": true,
+      "build": {
+        "arduino:avr:uno": {
+          "ok": true,
+          "seconds": 6.8,
+          "flash": 2178,
+          "flashMax": 32256,
+          "ram": 228,
+          "ramMax": 2048,
+          "sketchHash": "c0e94da950bc9eb3",
+          "at": "2026-09-15T13:21:39.411Z"
+        },
+        "arduino:avr:nano": {
+          "ok": true,
+          "seconds": 7.4,
+          "flash": 2178,
+          "flashMax": 30720,
+          "ram": 228,
+          "ramMax": 2048,
+          "sketchHash": "c0e94da950bc9eb3",
+          "at": "2026-09-15T13:21:40.386Z"
+        },
+        "esp32:esp32:esp32": {
+          "ok": true,
+          "seconds": 236.7,
+          "flash": 296218,
+          "flashMax": 1310720,
+          "ram": 20484,
+          "ramMax": 327680,
+          "sketchHash": "c0e94da950bc9eb3",
+          "at": "2026-09-15T14:46:25.191Z"
+        },
+        "esp32:esp32:esp32s3": {
+          "ok": true,
+          "seconds": 436.9,
+          "flash": 324750,
+          "flashMax": 1310720,
+          "ram": 20556,
+          "ramMax": 327680,
+          "sketchHash": "c0e94da950bc9eb3",
+          "at": "2026-09-15T14:53:46.151Z"
+        }
+      }
+    },
+    {
+      "id": "dht-weather",
+      "title": "温湿度计",
+      "sub": "用 DHT22 读出房间温度和湿度",
+      "category": "sensing",
+      "tags": [
+        "DHT22",
+        "温度",
+        "湿度"
+      ],
+      "difficulty": 1,
+      "minutes": 10,
+      "families": [
+        "avr",
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:uno",
+          "nm": "Arduino Uno"
+        },
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:nano",
+          "nm": "Arduino Nano"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32",
+          "nm": "ESP32 DevKit"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32s3",
+          "nm": "ESP32-S3 DevKitC"
+        }
+      ],
+      "parts": 2,
+      "libraries": [
+        "DHT sensor library",
+        "Adafruit Unified Sensor"
+      ],
+      "sim": true,
+      "cover": {
+        "motif": "thermo",
+        "hue": "amber"
+      },
+      "xp": 30,
+      "sketchHash": "00a572af1b497932",
+      "verified": true,
+      "build": {
+        "arduino:avr:uno": {
+          "ok": true,
+          "seconds": 6.1,
+          "flash": 5156,
+          "flashMax": 32256,
+          "ram": 289,
+          "ramMax": 2048,
+          "sketchHash": "00a572af1b497932",
+          "at": "2026-09-15T13:19:41.101Z"
+        },
+        "arduino:avr:nano": {
+          "ok": true,
+          "seconds": 8.2,
+          "flash": 5156,
+          "flashMax": 30720,
+          "ram": 289,
+          "ramMax": 2048,
+          "sketchHash": "00a572af1b497932",
+          "at": "2026-09-15T13:19:45.708Z"
+        },
+        "esp32:esp32:esp32": {
+          "ok": true,
+          "seconds": 21.8,
+          "flash": 298394,
+          "flashMax": 1310720,
+          "ram": 20508,
+          "ramMax": 327680,
+          "sketchHash": "00a572af1b497932",
+          "at": "2026-09-15T13:31:51.032Z"
+        },
+        "esp32:esp32:esp32s3": {
+          "ok": true,
+          "seconds": 15.1,
+          "flash": 326954,
+          "flashMax": 1310720,
+          "ram": 20580,
+          "ramMax": 327680,
+          "sketchHash": "00a572af1b497932",
+          "at": "2026-09-15T13:32:06.439Z"
+        }
+      }
+    },
+    {
+      "id": "light-sensor",
+      "title": "天黑自动开灯",
+      "sub": "光线变暗时，灯自己亮起来",
+      "category": "sensing",
+      "tags": [
+        "光敏",
+        "ADC",
+        "自动控制"
+      ],
+      "difficulty": 1,
+      "minutes": 10,
+      "families": [
+        "avr",
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:uno",
+          "nm": "Arduino Uno"
+        },
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:nano",
+          "nm": "Arduino Nano"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32",
+          "nm": "ESP32 DevKit"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32s3",
+          "nm": "ESP32-S3 DevKitC"
+        }
+      ],
+      "parts": 2,
+      "libraries": [],
+      "sim": true,
+      "cover": {
+        "motif": "light",
+        "hue": "amber"
+      },
+      "xp": 30,
+      "sketchHash": "da877629da632173",
+      "verified": true,
+      "build": {
+        "arduino:avr:uno": {
+          "ok": true,
+          "seconds": 6.3,
+          "flash": 2466,
+          "flashMax": 32256,
+          "ram": 251,
+          "ramMax": 2048,
+          "sketchHash": "da877629da632173",
+          "at": "2026-09-15T13:20:08.443Z"
+        },
+        "arduino:avr:nano": {
+          "ok": true,
+          "seconds": 5.9,
+          "flash": 2466,
+          "flashMax": 30720,
+          "ram": 251,
+          "ramMax": 2048,
+          "sketchHash": "da877629da632173",
+          "at": "2026-09-15T13:20:13.737Z"
+        },
+        "esp32:esp32:esp32": {
+          "ok": true,
+          "seconds": 22.6,
+          "flash": 302998,
+          "flashMax": 1310720,
+          "ram": 20620,
+          "ramMax": 327680,
+          "sketchHash": "da877629da632173",
+          "at": "2026-09-15T13:34:26.915Z"
+        },
+        "esp32:esp32:esp32s3": {
+          "ok": true,
+          "seconds": 20.1,
+          "flash": 335150,
+          "flashMax": 1310720,
+          "ram": 20852,
+          "ramMax": 327680,
+          "sketchHash": "da877629da632173",
+          "at": "2026-09-15T13:34:47.110Z"
+        }
+      }
+    },
+    {
+      "id": "pir-alarm",
+      "title": "有人来了报警",
+      "sub": "人体感应到有人经过，灯亮蜂鸣器响",
+      "category": "sensing",
+      "tags": [
+        "PIR",
+        "报警",
+        "蜂鸣器"
+      ],
+      "difficulty": 1,
+      "minutes": 10,
+      "families": [
+        "avr",
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:uno",
+          "nm": "Arduino Uno"
+        },
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:nano",
+          "nm": "Arduino Nano"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32",
+          "nm": "ESP32 DevKit"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32s3",
+          "nm": "ESP32-S3 DevKitC"
+        }
+      ],
+      "parts": 3,
+      "libraries": [],
+      "sim": true,
+      "cover": {
+        "motif": "pir",
+        "hue": "coral"
+      },
+      "xp": 30,
+      "sketchHash": "f12a30d7ff8144d1",
+      "verified": true,
+      "build": {
+        "arduino:avr:uno": {
+          "ok": true,
+          "seconds": 7,
+          "flash": 2914,
+          "flashMax": 32256,
+          "ram": 249,
+          "ramMax": 2048,
+          "sketchHash": "f12a30d7ff8144d1",
+          "at": "2026-09-15T13:20:53.349Z"
+        },
+        "arduino:avr:nano": {
+          "ok": true,
+          "seconds": 5.8,
+          "flash": 2914,
+          "flashMax": 30720,
+          "ram": 249,
+          "ramMax": 2048,
+          "sketchHash": "f12a30d7ff8144d1",
+          "at": "2026-09-15T13:20:55.035Z"
+        },
+        "esp32:esp32:esp32": {
+          "ok": true,
+          "seconds": 124.8,
+          "flash": 304886,
+          "flashMax": 1310720,
+          "ram": 20724,
+          "ramMax": 327680,
+          "sketchHash": "f12a30d7ff8144d1",
+          "at": "2026-09-15T14:07:37.751Z"
+        },
+        "esp32:esp32:esp32s3": {
+          "ok": true,
+          "seconds": 135.7,
+          "flash": 332598,
+          "flashMax": 1310720,
+          "ram": 20708,
+          "ramMax": 327680,
+          "sketchHash": "f12a30d7ff8144d1",
+          "at": "2026-09-15T14:09:53.664Z"
+        }
+      }
+    },
+    {
+      "id": "soil-moisture",
+      "title": "花盆缺水提醒",
+      "sub": "土壤太干时亮灯提醒你浇水",
+      "category": "sensing",
+      "tags": [
+        "土壤湿度",
+        "ADC",
+        "植物"
+      ],
+      "difficulty": 1,
+      "minutes": 10,
+      "families": [
+        "avr",
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:uno",
+          "nm": "Arduino Uno"
+        },
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:nano",
+          "nm": "Arduino Nano"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32",
+          "nm": "ESP32 DevKit"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32s3",
+          "nm": "ESP32-S3 DevKitC"
+        }
+      ],
+      "parts": 2,
+      "libraries": [],
+      "sim": false,
+      "cover": {
+        "motif": "soil",
+        "hue": "mint"
+      },
+      "xp": 30,
+      "sketchHash": "249a36111bfd589b",
+      "verified": true,
+      "build": {
+        "arduino:avr:uno": {
+          "ok": true,
+          "seconds": 6.5,
+          "flash": 2548,
+          "flashMax": 32256,
+          "ram": 226,
+          "ramMax": 2048,
+          "sketchHash": "249a36111bfd589b",
+          "at": "2026-09-15T13:21:19.367Z"
+        },
+        "arduino:avr:nano": {
+          "ok": true,
+          "seconds": 7.2,
+          "flash": 2548,
+          "flashMax": 30720,
+          "ram": 226,
+          "ramMax": 2048,
+          "sketchHash": "249a36111bfd589b",
+          "at": "2026-09-15T13:21:20.494Z"
+        },
+        "esp32:esp32:esp32": {
+          "ok": true,
+          "seconds": 158.4,
+          "flash": 302990,
+          "flashMax": 1310720,
+          "ram": 20612,
+          "ramMax": 327680,
+          "sketchHash": "249a36111bfd589b",
+          "at": "2026-09-15T14:27:30.636Z"
+        },
+        "esp32:esp32:esp32s3": {
+          "ok": true,
+          "seconds": 199.4,
+          "flash": 335146,
+          "flashMax": 1310720,
+          "ram": 20852,
+          "ramMax": 327680,
+          "sketchHash": "249a36111bfd589b",
+          "at": "2026-09-15T14:30:50.547Z"
+        }
+      }
+    },
+    {
+      "id": "ultrasonic",
+      "title": "超声波测距",
+      "sub": "HC-SR04 测出前方障碍有多远",
+      "category": "sensing",
+      "tags": [
+        "HC-SR04",
+        "距离",
+        "pulseIn"
+      ],
+      "difficulty": 1,
+      "minutes": 10,
+      "families": [
+        "avr",
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:uno",
+          "nm": "Arduino Uno"
+        },
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:nano",
+          "nm": "Arduino Nano"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32",
+          "nm": "ESP32 DevKit"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32s3",
+          "nm": "ESP32-S3 DevKitC"
+        }
+      ],
+      "parts": 2,
+      "libraries": [],
+      "sim": true,
+      "cover": {
+        "motif": "ultrasonic",
+        "hue": "cyan"
+      },
+      "xp": 30,
+      "sketchHash": "4232b426b9479f57",
+      "verified": true,
+      "build": {
+        "arduino:avr:uno": {
+          "ok": true,
+          "seconds": 9.1,
+          "flash": 3734,
+          "flashMax": 32256,
+          "ram": 238,
+          "ramMax": 2048,
+          "sketchHash": "4232b426b9479f57",
+          "at": "2026-09-15T13:21:48.616Z"
+        },
+        "arduino:avr:nano": {
+          "ok": true,
+          "seconds": 7.5,
+          "flash": 3734,
+          "flashMax": 30720,
+          "ram": 238,
+          "ramMax": 2048,
+          "sketchHash": "4232b426b9479f57",
+          "at": "2026-09-15T13:21:48.003Z"
+        },
+        "esp32:esp32:esp32": {
+          "ok": true,
+          "seconds": 189.2,
+          "flash": 297070,
+          "flashMax": 1310720,
+          "ram": 20484,
+          "ramMax": 327680,
+          "sketchHash": "4232b426b9479f57",
+          "at": "2026-09-15T14:56:58.969Z"
+        },
+        "esp32:esp32:esp32s3": {
+          "ok": true,
+          "seconds": 129.8,
+          "flash": 325630,
+          "flashMax": 1310720,
+          "ram": 20556,
+          "ramMax": 327680,
+          "sketchHash": "4232b426b9479f57",
+          "at": "2026-09-15T14:59:09.394Z"
+        }
+      }
+    },
+    {
+      "id": "bme280",
+      "title": "迷你气象站",
+      "sub": "BME280 一次读出温度、湿度和气压",
+      "category": "sensing",
+      "tags": [
+        "BME280",
+        "I2C",
+        "气压"
+      ],
+      "difficulty": 2,
+      "minutes": 12,
+      "families": [
+        "avr",
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:uno",
+          "nm": "Arduino Uno"
+        },
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:nano",
+          "nm": "Arduino Nano"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32",
+          "nm": "ESP32 DevKit"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32s3",
+          "nm": "ESP32-S3 DevKitC"
+        }
+      ],
+      "parts": 1,
+      "libraries": [
+        "Adafruit BME280 Library",
+        "Adafruit Unified Sensor",
+        "Adafruit BusIO"
+      ],
+      "sim": false,
+      "cover": {
+        "motif": "pressure",
+        "hue": "cyan"
+      },
+      "xp": 40,
+      "sketchHash": "d4c08f210345b645",
+      "verified": true,
+      "build": {
+        "arduino:avr:uno": {
+          "ok": true,
+          "seconds": 14.2,
+          "flash": 12346,
+          "flashMax": 32256,
+          "ram": 562,
+          "ramMax": 2048,
+          "sketchHash": "d4c08f210345b645",
+          "at": "2026-09-15T13:19:10.157Z"
+        },
+        "arduino:avr:nano": {
+          "ok": true,
+          "seconds": 14,
+          "flash": 12346,
+          "flashMax": 30720,
+          "ram": 562,
+          "ramMax": 2048,
+          "sketchHash": "d4c08f210345b645",
+          "at": "2026-09-15T13:19:10.093Z"
+        },
+        "esp32:esp32:esp32": {
+          "ok": true,
+          "seconds": 65.1,
+          "flash": 328610,
+          "flashMax": 1310720,
+          "ram": 22012,
+          "ramMax": 327680,
+          "sketchHash": "d4c08f210345b645",
+          "at": "2026-09-15T13:27:52.181Z"
+        },
+        "esp32:esp32:esp32s3": {
+          "ok": true,
+          "seconds": 63.9,
+          "flash": 358222,
+          "flashMax": 1310720,
+          "ram": 22044,
+          "ramMax": 327680,
+          "sketchHash": "d4c08f210345b645",
+          "at": "2026-09-15T13:28:56.166Z"
+        }
+      }
+    },
+    {
+      "id": "ds18b20",
+      "title": "防水温度探头",
+      "sub": "DS18B20 探头测水温、土温都行",
+      "category": "sensing",
+      "tags": [
+        "DS18B20",
+        "单总线",
+        "温度"
+      ],
+      "difficulty": 2,
+      "minutes": 12,
+      "families": [
+        "avr",
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:uno",
+          "nm": "Arduino Uno"
+        },
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:nano",
+          "nm": "Arduino Nano"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32",
+          "nm": "ESP32 DevKit"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32s3",
+          "nm": "ESP32-S3 DevKitC"
+        }
+      ],
+      "parts": 2,
+      "libraries": [
+        "OneWire",
+        "DallasTemperature"
+      ],
+      "sim": true,
+      "cover": {
+        "motif": "thermo",
+        "hue": "cyan"
+      },
+      "xp": 30,
+      "sketchHash": "7ea5aff1454aa7d3",
+      "verified": true,
+      "build": {
+        "arduino:avr:uno": {
+          "ok": true,
+          "seconds": 7.6,
+          "flash": 5894,
+          "flashMax": 32256,
+          "ram": 325,
+          "ramMax": 2048,
+          "sketchHash": "7ea5aff1454aa7d3",
+          "at": "2026-09-15T13:19:48.970Z"
+        },
+        "arduino:avr:nano": {
+          "ok": true,
+          "seconds": 6.7,
+          "flash": 5894,
+          "flashMax": 30720,
+          "ram": 325,
+          "ramMax": 2048,
+          "sketchHash": "7ea5aff1454aa7d3",
+          "at": "2026-09-15T13:19:52.737Z"
+        },
+        "esp32:esp32:esp32": {
+          "ok": true,
+          "seconds": 22.6,
+          "flash": 301334,
+          "flashMax": 1310720,
+          "ram": 20540,
+          "ramMax": 327680,
+          "sketchHash": "7ea5aff1454aa7d3",
+          "at": "2026-09-15T13:32:29.166Z"
+        },
+        "esp32:esp32:esp32s3": {
+          "ok": true,
+          "seconds": 16.7,
+          "flash": 329994,
+          "flashMax": 1310720,
+          "ram": 20612,
+          "ramMax": 327680,
+          "sketchHash": "7ea5aff1454aa7d3",
+          "at": "2026-09-15T13:32:46.009Z"
+        }
+      }
+    },
+    {
+      "id": "mpu6050",
+      "title": "姿态检测",
+      "sub": "MPU6050 算出板子的俯仰和横滚角",
+      "category": "sensing",
+      "tags": [
+        "MPU6050",
+        "I2C",
+        "IMU"
+      ],
+      "difficulty": 2,
+      "minutes": 15,
+      "families": [
+        "avr",
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:uno",
+          "nm": "Arduino Uno"
+        },
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:nano",
+          "nm": "Arduino Nano"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32",
+          "nm": "ESP32 DevKit"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32s3",
+          "nm": "ESP32-S3 DevKitC"
+        }
+      ],
+      "parts": 1,
+      "libraries": [
+        "Adafruit MPU6050",
+        "Adafruit Unified Sensor",
+        "Adafruit BusIO"
+      ],
+      "sim": true,
+      "cover": {
+        "motif": "imu",
+        "hue": "violet"
+      },
+      "xp": 40,
+      "sketchHash": "f591737d418d96b8",
+      "verified": true,
+      "build": {
+        "arduino:avr:uno": {
+          "ok": true,
+          "seconds": 9.4,
+          "flash": 12630,
+          "flashMax": 32256,
+          "ram": 630,
+          "ramMax": 2048,
+          "sketchHash": "f591737d418d96b8",
+          "at": "2026-09-15T13:20:26.310Z"
+        },
+        "arduino:avr:nano": {
+          "ok": true,
+          "seconds": 9.2,
+          "flash": 12630,
+          "flashMax": 30720,
+          "ram": 630,
+          "ramMax": 2048,
+          "sketchHash": "f591737d418d96b8",
+          "at": "2026-09-15T13:20:30.536Z"
+        },
+        "esp32:esp32:esp32": {
+          "ok": true,
+          "seconds": 148.7,
+          "flash": 329014,
+          "flashMax": 1310720,
+          "ram": 21996,
+          "ramMax": 327680,
+          "sketchHash": "f591737d418d96b8",
+          "at": "2026-09-15T13:37:57.113Z"
+        },
+        "esp32:esp32:esp32s3": {
+          "ok": true,
+          "seconds": 166.1,
+          "flash": 358502,
+          "flashMax": 1310720,
+          "ram": 22028,
+          "ramMax": 327680,
+          "sketchHash": "f591737d418d96b8",
+          "at": "2026-09-15T13:40:43.260Z"
+        }
+      }
+    },
+    {
+      "id": "lcd1602",
+      "title": "1602 屏显示文字",
+      "sub": "在 I2C 液晶屏上显示问候和计时",
+      "category": "display",
+      "tags": [
+        "LCD1602",
+        "I2C",
+        "屏幕"
+      ],
+      "difficulty": 1,
+      "minutes": 10,
+      "families": [
+        "avr",
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:uno",
+          "nm": "Arduino Uno"
+        },
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:nano",
+          "nm": "Arduino Nano"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32",
+          "nm": "ESP32 DevKit"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32s3",
+          "nm": "ESP32-S3 DevKitC"
+        }
+      ],
+      "parts": 1,
+      "libraries": [
+        "LiquidCrystal I2C"
+      ],
+      "sim": true,
+      "cover": {
+        "motif": "lcd",
+        "hue": "mint"
+      },
+      "xp": 30,
+      "sketchHash": "270b88c964a5419d",
+      "verified": true,
+      "build": {
+        "arduino:avr:uno": {
+          "ok": true,
+          "seconds": 6,
+          "flash": 4406,
+          "flashMax": 32256,
+          "ram": 484,
+          "ramMax": 2048,
+          "sketchHash": "270b88c964a5419d",
+          "at": "2026-09-15T13:20:01.952Z"
+        },
+        "arduino:avr:nano": {
+          "ok": true,
+          "seconds": 7.1,
+          "flash": 4406,
+          "flashMax": 30720,
+          "ram": 484,
+          "ramMax": 2048,
+          "sketchHash": "270b88c964a5419d",
+          "at": "2026-09-15T13:20:07.522Z"
+        },
+        "esp32:esp32:esp32": {
+          "ok": true,
+          "seconds": 24,
+          "flash": 318830,
+          "flashMax": 1310720,
+          "ram": 21844,
+          "ramMax": 327680,
+          "sketchHash": "270b88c964a5419d",
+          "at": "2026-09-15T13:33:48.687Z"
+        },
+        "esp32:esp32:esp32s3": {
+          "ok": true,
+          "seconds": 15.4,
+          "flash": 324874,
+          "flashMax": 1310720,
+          "ram": 21256,
+          "ramMax": 327680,
+          "sketchHash": "270b88c964a5419d",
+          "at": "2026-09-15T13:34:04.185Z"
+        }
+      }
+    },
+    {
+      "id": "tm1637-counter",
+      "title": "数码管计时器",
+      "sub": "四位数码管显示分:秒，冒号一闪一闪",
+      "category": "display",
+      "tags": [
+        "TM1637",
+        "数码管",
+        "计时"
+      ],
+      "difficulty": 1,
+      "minutes": 10,
+      "families": [
+        "avr",
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:uno",
+          "nm": "Arduino Uno"
+        },
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:nano",
+          "nm": "Arduino Nano"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32",
+          "nm": "ESP32 DevKit"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32s3",
+          "nm": "ESP32-S3 DevKitC"
+        }
+      ],
+      "parts": 1,
+      "libraries": [
+        "TM1637"
+      ],
+      "sim": true,
+      "cover": {
+        "motif": "segment",
+        "hue": "coral"
+      },
+      "xp": 30,
+      "sketchHash": "73ec1c0d7a3cc576",
+      "verified": true,
+      "build": {
+        "arduino:avr:uno": {
+          "ok": true,
+          "seconds": 5.8,
+          "flash": 2958,
+          "flashMax": 32256,
+          "ram": 243,
+          "ramMax": 2048,
+          "sketchHash": "73ec1c0d7a3cc576",
+          "at": "2026-09-15T13:21:32.480Z"
+        },
+        "arduino:avr:nano": {
+          "ok": true,
+          "seconds": 5.9,
+          "flash": 2958,
+          "flashMax": 30720,
+          "ram": 243,
+          "ramMax": 2048,
+          "sketchHash": "73ec1c0d7a3cc576",
+          "at": "2026-09-15T13:21:32.939Z"
+        },
+        "esp32:esp32:esp32": {
+          "ok": true,
+          "seconds": 188.2,
+          "flash": 297586,
+          "flashMax": 1310720,
+          "ram": 20508,
+          "ramMax": 327680,
+          "sketchHash": "73ec1c0d7a3cc576",
+          "at": "2026-09-15T14:39:41.042Z"
+        },
+        "esp32:esp32:esp32s3": {
+          "ok": true,
+          "seconds": 165.1,
+          "flash": 326126,
+          "flashMax": 1310720,
+          "ram": 20564,
+          "ramMax": 327680,
+          "sketchHash": "73ec1c0d7a3cc576",
+          "at": "2026-09-15T14:42:28.322Z"
+        }
+      }
+    },
+    {
+      "id": "ws2812-rainbow",
+      "title": "彩虹灯环",
+      "sub": "WS2812 灯环流动出彩虹光",
+      "category": "display",
+      "tags": [
+        "WS2812",
+        "NeoPixel",
+        "灯效"
+      ],
+      "difficulty": 1,
+      "minutes": 10,
+      "families": [
+        "avr",
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:uno",
+          "nm": "Arduino Uno"
+        },
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:nano",
+          "nm": "Arduino Nano"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32",
+          "nm": "ESP32 DevKit"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32s3",
+          "nm": "ESP32-S3 DevKitC"
+        }
+      ],
+      "parts": 3,
+      "libraries": [
+        "Adafruit NeoPixel"
+      ],
+      "sim": true,
+      "cover": {
+        "motif": "strip",
+        "hue": "violet"
+      },
+      "xp": 30,
+      "sketchHash": "bc0520861433d709",
+      "verified": true,
+      "build": {
+        "arduino:avr:uno": {
+          "ok": true,
+          "seconds": 7.3,
+          "flash": 4244,
+          "flashMax": 32256,
+          "ram": 252,
+          "ramMax": 2048,
+          "sketchHash": "bc0520861433d709",
+          "at": "2026-09-15T13:21:55.459Z"
+        },
+        "arduino:avr:nano": {
+          "ok": true,
+          "seconds": 6.8,
+          "flash": 4244,
+          "flashMax": 30720,
+          "ram": 252,
+          "ramMax": 2048,
+          "sketchHash": "bc0520861433d709",
+          "at": "2026-09-15T13:21:55.570Z"
+        },
+        "esp32:esp32:esp32": {
+          "ok": true,
+          "seconds": 116,
+          "flash": 314242,
+          "flashMax": 1310720,
+          "ram": 21404,
+          "ramMax": 327680,
+          "sketchHash": "bc0520861433d709",
+          "at": "2026-09-15T15:22:03.842Z"
+        },
+        "esp32:esp32:esp32s3": {
+          "ok": true,
+          "seconds": 121.2,
+          "flash": 326422,
+          "flashMax": 1310720,
+          "ram": 20596,
+          "ramMax": 327680,
+          "sketchHash": "bc0520861433d709",
+          "at": "2026-09-15T15:24:05.180Z"
+        }
+      }
+    },
+    {
+      "id": "max7219-matrix",
+      "title": "点阵滚动字",
+      "sub": "8×8 点阵上画出笑脸和爱心",
+      "category": "display",
+      "tags": [
+        "MAX7219",
+        "点阵",
+        "SPI"
+      ],
+      "difficulty": 2,
+      "minutes": 15,
+      "families": [
+        "avr",
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:uno",
+          "nm": "Arduino Uno"
+        },
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:nano",
+          "nm": "Arduino Nano"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32",
+          "nm": "ESP32 DevKit"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32s3",
+          "nm": "ESP32-S3 DevKitC"
+        }
+      ],
+      "parts": 1,
+      "libraries": [
+        "MD_MAX72XX"
+      ],
+      "sim": true,
+      "cover": {
+        "motif": "matrix",
+        "hue": "coral"
+      },
+      "xp": 40,
+      "sketchHash": "98b06c7dc0ff5985",
+      "verified": true,
+      "build": {
+        "arduino:avr:uno": {
+          "ok": true,
+          "seconds": 7.6,
+          "flash": 6286,
+          "flashMax": 32256,
+          "ram": 287,
+          "ramMax": 2048,
+          "sketchHash": "98b06c7dc0ff5985",
+          "at": "2026-09-15T13:20:16.721Z"
+        },
+        "arduino:avr:nano": {
+          "ok": true,
+          "seconds": 7,
+          "flash": 6286,
+          "flashMax": 30720,
+          "ram": 287,
+          "ramMax": 2048,
+          "sketchHash": "98b06c7dc0ff5985",
+          "at": "2026-09-15T13:20:21.195Z"
+        },
+        "esp32:esp32:esp32": {
+          "ok": true,
+          "seconds": 22.5,
+          "flash": 304590,
+          "flashMax": 1310720,
+          "ram": 20636,
+          "ramMax": 327680,
+          "sketchHash": "98b06c7dc0ff5985",
+          "at": "2026-09-15T13:35:10.747Z"
+        },
+        "esp32:esp32:esp32s3": {
+          "ok": true,
+          "seconds": 17.2,
+          "flash": 333458,
+          "flashMax": 1310720,
+          "ram": 20676,
+          "ramMax": 327680,
+          "sketchHash": "98b06c7dc0ff5985",
+          "at": "2026-09-15T13:35:28.311Z"
+        }
+      }
+    },
+    {
+      "id": "oled-ssd1306",
+      "title": "OLED 小屏动画",
+      "sub": "0.96 寸 OLED 上画字、画进度条",
+      "category": "display",
+      "tags": [
+        "SSD1306",
+        "OLED",
+        "I2C"
+      ],
+      "difficulty": 2,
+      "minutes": 12,
+      "families": [
+        "avr",
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:uno",
+          "nm": "Arduino Uno"
+        },
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:nano",
+          "nm": "Arduino Nano"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32",
+          "nm": "ESP32 DevKit"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32s3",
+          "nm": "ESP32-S3 DevKitC"
+        }
+      ],
+      "parts": 1,
+      "libraries": [
+        "Adafruit SSD1306",
+        "Adafruit GFX Library",
+        "Adafruit BusIO"
+      ],
+      "sim": true,
+      "cover": {
+        "motif": "oled",
+        "hue": "cyan"
+      },
+      "xp": 30,
+      "sketchHash": "57d4556b0c13e1f1",
+      "verified": true,
+      "build": {
+        "arduino:avr:uno": {
+          "ok": true,
+          "seconds": 13.6,
+          "flash": 14504,
+          "flashMax": 32256,
+          "ram": 591,
+          "ramMax": 2048,
+          "sketchHash": "57d4556b0c13e1f1",
+          "at": "2026-09-15T13:20:46.085Z"
+        },
+        "arduino:avr:nano": {
+          "ok": true,
+          "seconds": 12.1,
+          "flash": 14504,
+          "flashMax": 30720,
+          "ram": 591,
+          "ramMax": 2048,
+          "sketchHash": "57d4556b0c13e1f1",
+          "at": "2026-09-15T13:20:49.098Z"
+        },
+        "esp32:esp32:esp32": {
+          "ok": true,
+          "seconds": 206.5,
+          "flash": 333522,
+          "flashMax": 1310720,
+          "ram": 22004,
+          "ramMax": 327680,
+          "sketchHash": "57d4556b0c13e1f1",
+          "at": "2026-09-15T14:00:34.094Z"
+        },
+        "esp32:esp32:esp32s3": {
+          "ok": true,
+          "seconds": 298.6,
+          "flash": 363182,
+          "flashMax": 1310720,
+          "ram": 22036,
+          "ramMax": 327680,
+          "sketchHash": "57d4556b0c13e1f1",
+          "at": "2026-09-15T14:05:32.889Z"
+        }
+      }
+    },
+    {
+      "id": "servo-sweep",
+      "title": "舵机来回摆",
+      "sub": "SG90 舵机从 0° 转到 180° 再转回来",
+      "category": "motion",
+      "tags": [
+        "舵机",
+        "SG90",
+        "PWM"
+      ],
+      "difficulty": 1,
+      "minutes": 10,
+      "families": [
+        "avr",
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:uno",
+          "nm": "Arduino Uno"
+        },
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:nano",
+          "nm": "Arduino Nano"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32",
+          "nm": "ESP32 DevKit"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32s3",
+          "nm": "ESP32-S3 DevKitC"
+        }
+      ],
+      "parts": 1,
+      "libraries": [
+        "Servo",
+        "ESP32Servo"
+      ],
+      "sim": true,
+      "cover": {
+        "motif": "servo",
+        "hue": "cyan"
+      },
+      "xp": 30,
+      "sketchHash": "f1867eb779b16bb7",
+      "verified": true,
+      "build": {
+        "arduino:avr:uno": {
+          "ok": true,
+          "seconds": 6.9,
+          "flash": 3156,
+          "flashMax": 32256,
+          "ram": 269,
+          "ramMax": 2048,
+          "sketchHash": "f1867eb779b16bb7",
+          "at": "2026-09-15T13:21:12.714Z"
+        },
+        "arduino:avr:nano": {
+          "ok": true,
+          "seconds": 6.4,
+          "flash": 3156,
+          "flashMax": 30720,
+          "ram": 269,
+          "ramMax": 2048,
+          "sketchHash": "f1867eb779b16bb7",
+          "at": "2026-09-15T13:21:13.224Z"
+        },
+        "esp32:esp32:esp32": {
+          "ok": true,
+          "seconds": 207.8,
+          "flash": 301994,
+          "flashMax": 1310720,
+          "ram": 20884,
+          "ramMax": 327680,
+          "sketchHash": "f1867eb779b16bb7",
+          "at": "2026-09-15T14:22:31.399Z"
+        },
+        "esp32:esp32:esp32s3": {
+          "ok": true,
+          "seconds": 140.3,
+          "flash": 306518,
+          "flashMax": 1310720,
+          "ram": 20136,
+          "ramMax": 327680,
+          "sketchHash": "f1867eb779b16bb7",
+          "at": "2026-09-15T14:24:51.996Z"
+        }
+      }
+    },
+    {
+      "id": "dc-motor",
+      "title": "直流电机调速",
+      "sub": "用 L298N / TB6612 让电机正转、反转、调速",
+      "category": "motion",
+      "tags": [
+        "电机",
+        "H 桥",
+        "PWM"
+      ],
+      "difficulty": 2,
+      "minutes": 15,
+      "families": [
+        "avr",
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:uno",
+          "nm": "Arduino Uno"
+        },
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:nano",
+          "nm": "Arduino Nano"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32",
+          "nm": "ESP32 DevKit"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32s3",
+          "nm": "ESP32-S3 DevKitC"
+        }
+      ],
+      "parts": 3,
+      "libraries": [],
+      "sim": false,
+      "cover": {
+        "motif": "motor",
+        "hue": "coral"
+      },
+      "xp": 40,
+      "sketchHash": "72ccb0e0ff8c85dc",
+      "verified": true,
+      "build": {
+        "arduino:avr:uno": {
+          "ok": true,
+          "seconds": 6.6,
+          "flash": 2414,
+          "flashMax": 32256,
+          "ram": 228,
+          "ramMax": 2048,
+          "sketchHash": "72ccb0e0ff8c85dc",
+          "at": "2026-09-15T13:19:34.962Z"
+        },
+        "arduino:avr:nano": {
+          "ok": true,
+          "seconds": 6.2,
+          "flash": 2414,
+          "flashMax": 30720,
+          "ram": 228,
+          "ramMax": 2048,
+          "sketchHash": "72ccb0e0ff8c85dc",
+          "at": "2026-09-15T13:19:37.417Z"
+        },
+        "esp32:esp32:esp32": {
+          "ok": true,
+          "seconds": 22.6,
+          "flash": 304082,
+          "flashMax": 1310720,
+          "ram": 20716,
+          "ramMax": 327680,
+          "sketchHash": "72ccb0e0ff8c85dc",
+          "at": "2026-09-15T13:31:12.832Z"
+        },
+        "esp32:esp32:esp32s3": {
+          "ok": true,
+          "seconds": 16,
+          "flash": 331786,
+          "flashMax": 1310720,
+          "ram": 20700,
+          "ramMax": 327680,
+          "sketchHash": "72ccb0e0ff8c85dc",
+          "at": "2026-09-15T13:31:29.156Z"
+        }
+      }
+    },
+    {
+      "id": "stepper-28byj",
+      "title": "步进电机精准转一圈",
+      "sub": "28BYJ-48 转整整一圈，再倒回来",
+      "category": "motion",
+      "tags": [
+        "步进电机",
+        "ULN2003",
+        "定位"
+      ],
+      "difficulty": 2,
+      "minutes": 15,
+      "families": [
+        "avr",
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:uno",
+          "nm": "Arduino Uno"
+        },
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:nano",
+          "nm": "Arduino Nano"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32",
+          "nm": "ESP32 DevKit"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32s3",
+          "nm": "ESP32-S3 DevKitC"
+        }
+      ],
+      "parts": 2,
+      "libraries": [
+        "Stepper"
+      ],
+      "sim": false,
+      "cover": {
+        "motif": "stepper",
+        "hue": "mint"
+      },
+      "xp": 40,
+      "sketchHash": "f510f753d378788c",
+      "verified": true,
+      "build": {
+        "arduino:avr:uno": {
+          "ok": true,
+          "seconds": 6.4,
+          "flash": 3324,
+          "flashMax": 32256,
+          "ram": 266,
+          "ramMax": 2048,
+          "sketchHash": "f510f753d378788c",
+          "at": "2026-09-15T13:21:26.566Z"
+        },
+        "arduino:avr:nano": {
+          "ok": true,
+          "seconds": 6.3,
+          "flash": 3324,
+          "flashMax": 30720,
+          "ram": 266,
+          "ramMax": 2048,
+          "sketchHash": "f510f753d378788c",
+          "at": "2026-09-15T13:21:26.932Z"
+        },
+        "esp32:esp32:esp32": {
+          "ok": true,
+          "seconds": 172.8,
+          "flash": 297050,
+          "flashMax": 1310720,
+          "ram": 20532,
+          "ramMax": 327680,
+          "sketchHash": "f510f753d378788c",
+          "at": "2026-09-15T14:33:43.593Z"
+        },
+        "esp32:esp32:esp32s3": {
+          "ok": true,
+          "seconds": 167.7,
+          "flash": 325586,
+          "flashMax": 1310720,
+          "ram": 20604,
+          "ramMax": 327680,
+          "sketchHash": "f510f753d378788c",
+          "at": "2026-09-15T14:36:31.830Z"
+        }
+      }
+    },
+    {
+      "id": "obstacle-car",
+      "title": "避障小车",
+      "sub": "前面有障碍就后退转弯，没有就一直往前开",
+      "category": "motion",
+      "tags": [
+        "小车",
+        "超声波",
+        "电机"
+      ],
+      "difficulty": 3,
+      "minutes": 40,
+      "families": [
+        "avr",
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:uno",
+          "nm": "Arduino Uno"
+        },
+        {
+          "family": "avr",
+          "fqbn": "arduino:avr:nano",
+          "nm": "Arduino Nano"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32",
+          "nm": "ESP32 DevKit"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32s3",
+          "nm": "ESP32-S3 DevKitC"
+        }
+      ],
+      "parts": 4,
+      "libraries": [],
+      "sim": false,
+      "cover": {
+        "motif": "car",
+        "hue": "coral"
+      },
+      "xp": 60,
+      "sketchHash": "93022874cf3edf7a",
+      "verified": true,
+      "build": {
+        "arduino:avr:uno": {
+          "ok": true,
+          "seconds": 5.9,
+          "flash": 3802,
+          "flashMax": 32256,
+          "ram": 244,
+          "ramMax": 2048,
+          "sketchHash": "93022874cf3edf7a",
+          "at": "2026-09-15T13:20:32.272Z"
+        },
+        "arduino:avr:nano": {
+          "ok": true,
+          "seconds": 6.2,
+          "flash": 3802,
+          "flashMax": 30720,
+          "ram": 244,
+          "ramMax": 2048,
+          "sketchHash": "93022874cf3edf7a",
+          "at": "2026-09-15T13:20:36.823Z"
+        },
+        "esp32:esp32:esp32": {
+          "ok": true,
+          "seconds": 66.2,
+          "flash": 304810,
+          "flashMax": 1310720,
+          "ram": 20716,
+          "ramMax": 327680,
+          "sketchHash": "93022874cf3edf7a",
+          "at": "2026-09-15T13:54:58.022Z"
+        },
+        "esp32:esp32:esp32s3": {
+          "ok": true,
+          "seconds": 129.5,
+          "flash": 332530,
+          "flashMax": 1310720,
+          "ram": 20700,
+          "ramMax": 327680,
+          "sketchHash": "93022874cf3edf7a",
+          "at": "2026-09-15T13:57:07.544Z"
+        }
+      }
+    },
+    {
+      "id": "ntp-clock",
+      "title": "联网自动对时",
+      "sub": "连上网自动获取北京时间，每秒打印一次",
+      "category": "connect",
+      "tags": [
+        "WiFi",
+        "NTP",
+        "时间"
+      ],
+      "difficulty": 1,
+      "minutes": 10,
+      "families": [
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32",
+          "nm": "ESP32 DevKit"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32s3",
+          "nm": "ESP32-S3 DevKitC"
+        }
+      ],
+      "parts": 1,
+      "libraries": [],
+      "sim": false,
+      "cover": {
+        "motif": "clock",
+        "hue": "amber"
+      },
+      "xp": 30,
+      "sketchHash": "400c0faeee306b32",
+      "verified": true,
+      "build": {
+        "esp32:esp32:esp32": {
+          "ok": true,
+          "seconds": 141.6,
+          "flash": 907762,
+          "flashMax": 1310720,
+          "ram": 47564,
+          "ramMax": 327680,
+          "sketchHash": "400c0faeee306b32",
+          "at": "2026-09-15T13:51:58.217Z"
+        },
+        "esp32:esp32:esp32s3": {
+          "ok": true,
+          "seconds": 113.6,
+          "flash": 871182,
+          "flashMax": 1310720,
+          "ram": 45116,
+          "ramMax": 327680,
+          "sketchHash": "400c0faeee306b32",
+          "at": "2026-09-15T13:53:51.818Z"
+        }
+      }
+    },
+    {
+      "id": "wifi-scan",
+      "title": "扫描附近 WiFi",
+      "sub": "列出周围所有 WiFi 的名字和信号强度",
+      "category": "connect",
+      "tags": [
+        "WiFi",
+        "ESP32"
+      ],
+      "difficulty": 1,
+      "minutes": 5,
+      "families": [
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32",
+          "nm": "ESP32 DevKit"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32s3",
+          "nm": "ESP32-S3 DevKitC"
+        }
+      ],
+      "parts": 1,
+      "libraries": [],
+      "sim": true,
+      "cover": {
+        "motif": "wifi",
+        "hue": "cyan"
+      },
+      "xp": 30,
+      "sketchHash": "424ff9b86ada6d24",
+      "verified": true,
+      "build": {
+        "esp32:esp32:esp32": {
+          "ok": true,
+          "seconds": 298.3,
+          "flash": 881638,
+          "flashMax": 1310720,
+          "ram": 44984,
+          "ramMax": 327680,
+          "sketchHash": "424ff9b86ada6d24",
+          "at": "2026-09-15T15:15:34.354Z"
+        },
+        "esp32:esp32:esp32s3": {
+          "ok": true,
+          "seconds": 272,
+          "flash": 844578,
+          "flashMax": 1310720,
+          "ram": 43692,
+          "ramMax": 327680,
+          "sketchHash": "424ff9b86ada6d24",
+          "at": "2026-09-15T15:20:07.710Z"
+        }
+      }
+    },
+    {
+      "id": "ble-uart",
+      "title": "蓝牙串口遥控",
+      "sub": "手机蓝牙调试 App 发 on / off，控制板子上的灯",
+      "category": "connect",
+      "tags": [
+        "BLE",
+        "蓝牙",
+        "手机控制"
+      ],
+      "difficulty": 2,
+      "minutes": 20,
+      "families": [
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32",
+          "nm": "ESP32 DevKit"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32s3",
+          "nm": "ESP32-S3 DevKitC"
+        }
+      ],
+      "parts": 2,
+      "libraries": [],
+      "sim": false,
+      "cover": {
+        "motif": "ble",
+        "hue": "violet"
+      },
+      "xp": 50,
+      "sketchHash": "fbfa9491ce66c401",
+      "verified": true,
+      "build": {
+        "esp32:esp32:esp32": {
+          "ok": true,
+          "seconds": 76.8,
+          "flash": 1112386,
+          "flashMax": 1310720,
+          "ram": 40000,
+          "ramMax": 327680,
+          "sketchHash": "fbfa9491ce66c401",
+          "at": "2026-09-15T13:25:40.582Z"
+        },
+        "esp32:esp32:esp32s3": {
+          "ok": true,
+          "seconds": 32.4,
+          "flash": 940630,
+          "flashMax": 1310720,
+          "ram": 48520,
+          "ramMax": 327680,
+          "sketchHash": "fbfa9491ce66c401",
+          "at": "2026-09-15T13:26:13.149Z"
+        }
+      }
+    },
+    {
+      "id": "mqtt-report",
+      "title": "数据上云（MQTT）",
+      "sub": "每 5 秒把芯片温度发到公共 MQTT 服务器",
+      "category": "connect",
+      "tags": [
+        "MQTT",
+        "物联网",
+        "WiFi"
+      ],
+      "difficulty": 2,
+      "minutes": 20,
+      "families": [
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32",
+          "nm": "ESP32 DevKit"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32s3",
+          "nm": "ESP32-S3 DevKitC"
+        }
+      ],
+      "parts": 1,
+      "libraries": [
+        "PubSubClient"
+      ],
+      "sim": false,
+      "cover": {
+        "motif": "mqtt",
+        "hue": "mint"
+      },
+      "xp": 50,
+      "sketchHash": "8f5d07e5cd9b53d4",
+      "verified": true,
+      "build": {
+        "esp32:esp32:esp32": {
+          "ok": true,
+          "seconds": 321.6,
+          "flash": 902394,
+          "flashMax": 1310720,
+          "ram": 46508,
+          "ramMax": 327680,
+          "sketchHash": "8f5d07e5cd9b53d4",
+          "at": "2026-09-15T13:46:04.969Z"
+        },
+        "esp32:esp32:esp32s3": {
+          "ok": true,
+          "seconds": 211.5,
+          "flash": 867430,
+          "flashMax": 1310720,
+          "ram": 45156,
+          "ramMax": 327680,
+          "sketchHash": "8f5d07e5cd9b53d4",
+          "at": "2026-09-15T13:49:36.555Z"
+        }
+      }
+    },
+    {
+      "id": "web-led",
+      "title": "手机网页开关灯",
+      "sub": "手机打开网页，点按钮控制板子上的灯",
+      "category": "connect",
+      "tags": [
+        "WiFi",
+        "Web 服务器",
+        "手机控制"
+      ],
+      "difficulty": 2,
+      "minutes": 15,
+      "families": [
+        "esp32"
+      ],
+      "boards": [
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32",
+          "nm": "ESP32 DevKit"
+        },
+        {
+          "family": "esp32",
+          "fqbn": "esp32:esp32:esp32s3",
+          "nm": "ESP32-S3 DevKitC"
+        }
+      ],
+      "parts": 2,
+      "libraries": [],
+      "sim": false,
+      "cover": {
+        "motif": "web",
+        "hue": "violet"
+      },
+      "xp": 40,
+      "sketchHash": "6406021c66a7e446",
+      "verified": true,
+      "build": {
+        "esp32:esp32:esp32": {
+          "ok": true,
+          "seconds": 347.1,
+          "flash": 931498,
+          "flashMax": 1310720,
+          "ram": 46584,
+          "ramMax": 327680,
+          "sketchHash": "6406021c66a7e446",
+          "at": "2026-09-15T15:04:57.722Z"
+        },
+        "esp32:esp32:esp32s3": {
+          "ok": true,
+          "seconds": 337.4,
+          "flash": 913778,
+          "flashMax": 1310720,
+          "ram": 45668,
+          "ramMax": 327680,
+          "sketchHash": "6406021c66a7e446",
+          "at": "2026-09-15T15:10:35.743Z"
+        }
+      }
+    }
+  ]
+}

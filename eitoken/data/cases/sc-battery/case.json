@@ -1,0 +1,51 @@
+{
+  "id": "sc-battery",
+  "title": "电量看板",
+  "sub": "机身上的 INA226 能同时读电压和电流，屏幕上做成一块仪表",
+  "category": "stackchan",
+  "hot": true,
+  "tags": [
+    "INA226",
+    "电量",
+    "屏幕"
+  ],
+  "difficulty": 2,
+  "minutes": 15,
+  "boards": [
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:m5stack_cores3",
+      "nm": "M5 StackChan（CoreS3）"
+    }
+  ],
+  "parts": [
+    {
+      "nm": "M5 StackChan 本体",
+      "qty": 1
+    }
+  ],
+  "libraries": [
+    "M5Unified",
+    "StackChan-BSP"
+  ],
+  "wiring": [],
+  "pinNotes": {
+    "esp32": "550mAh 电池由机身 INA226 计量；getBatteryCurrent() 返回安培，为正是放电、为负是充电"
+  },
+  "sim": false,
+  "expect": "EIT sc-battery ready",
+  "cover": {
+    "motif": "stackchan",
+    "hue": "mint"
+  },
+  "xp": 40,
+  "learn": [
+    "电流的正负号就是充放电方向",
+    "电压换百分比只是估算，要准得做放电曲线标定",
+    "局部 fillRect + 定点 setCursor 重画，屏幕不会整片闪"
+  ],
+  "aiIdeas": [
+    "低电量时让它自己低头装虚弱",
+    "把电量记进 SD 卡，画一天的放电曲线"
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "id": "soil-moisture",
+  "title": "花盆缺水提醒",
+  "sub": "土壤太干时亮灯提醒你浇水",
+  "category": "sensing",
+  "tags": [
+    "土壤湿度",
+    "ADC",
+    "植物"
+  ],
+  "difficulty": 1,
+  "minutes": 10,
+  "boards": [
+    {
+      "family": "avr",
+      "fqbn": "arduino:avr:uno",
+      "nm": "Arduino Uno"
+    },
+    {
+      "family": "avr",
+      "fqbn": "arduino:avr:nano",
+      "nm": "Arduino Nano"
+    },
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:esp32",
+      "nm": "ESP32 DevKit"
+    },
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:esp32s3",
+      "nm": "ESP32-S3 DevKitC"
+    }
+  ],
+  "parts": [
+    {
+      "nm": "电容式土壤湿度传感器 v1.2",
+      "qty": 1
+    },
+    {
+      "nm": "LED",
+      "qty": 1
+    }
+  ],
+  "libraries": [],
+  "wiring": [
+    {
+      "mcu": "Uno/Nano A0 · ESP32 GPIO34 · S3 GPIO1",
+      "part": "土壤传感器",
+      "pin": "AOUT",
+      "color": "#FBBF24"
+    },
+    {
+      "mcu": "VCC",
+      "part": "土壤传感器",
+      "pin": "VCC",
+      "color": "#F87171",
+      "note": "电容式可用 3.3~5V"
+    },
+    {
+      "mcu": "Uno/Nano 13 · ESP32 GPIO2 · S3 GPIO2",
+      "part": "LED",
+      "pin": "阳极",
+      "color": "#F87171"
+    }
+  ],
+  "pins": {
+    "SOIL_PIN": {
+      "avr": "A0",
+      "esp32": "34",
+      "esp32s3": "1"
+    },
+    "LED_PIN": {
+      "avr": "13",
+      "esp32": "2",
+      "esp32s3": "2"
+    }
+  },
+  "pinNotes": {
+    "avr": "AOUT 接 A0",
+    "esp32": "AOUT 接 ESP32 GPIO34 / S3 GPIO1；先把传感器放空气和水里各读一次，改代码里的 DRY / WET"
+  },
+  "sim": false,
+  "simBoard": null,
+  "expect": "soil",
+  "cover": {
+    "motif": "soil",
+    "hue": "mint"
+  },
+  "xp": 30,
+  "learn": [
+    "传感器要先标定干和湿两个读数",
+    "电容式比电阻式耐腐蚀"
+  ],
+  "aiIdeas": [
+    "太干时自动打开水泵继电器 3 秒",
+    "每小时把湿度发到手机"
+  ]
+}

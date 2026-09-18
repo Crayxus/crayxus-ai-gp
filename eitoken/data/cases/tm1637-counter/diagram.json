@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "author": "EI TOKEN",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-arduino-uno",
+      "id": "uno",
+      "top": 0,
+      "left": 0,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-tm1637-7segment",
+      "id": "seg1",
+      "top": -130,
+      "left": 60,
+      "attrs": {
+        "color": "red"
+      }
+    }
+  ],
+  "connections": [
+    [
+      "uno:0",
+      "$serialMonitor:RX",
+      "",
+      []
+    ],
+    [
+      "uno:1",
+      "$serialMonitor:TX",
+      "",
+      []
+    ],
+    [
+      "seg1:CLK",
+      "uno:2",
+      "blue",
+      []
+    ],
+    [
+      "seg1:DIO",
+      "uno:3",
+      "purple",
+      []
+    ],
+    [
+      "seg1:VCC",
+      "uno:5V",
+      "red",
+      []
+    ],
+    [
+      "seg1:GND",
+      "uno:GND.1",
+      "black",
+      []
+    ]
+  ],
+  "dependencies": {}
+}

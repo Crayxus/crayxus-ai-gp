@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "author": "EI TOKEN",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-arduino-uno",
+      "id": "uno",
+      "top": 0,
+      "left": 0,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-lcd1602",
+      "id": "lcd1",
+      "top": -170,
+      "left": 20,
+      "attrs": {
+        "pins": "i2c"
+      }
+    }
+  ],
+  "connections": [
+    [
+      "uno:0",
+      "$serialMonitor:RX",
+      "",
+      []
+    ],
+    [
+      "uno:1",
+      "$serialMonitor:TX",
+      "",
+      []
+    ],
+    [
+      "lcd1:SDA",
+      "uno:A4",
+      "blue",
+      []
+    ],
+    [
+      "lcd1:SCL",
+      "uno:A5",
+      "purple",
+      []
+    ],
+    [
+      "lcd1:VCC",
+      "uno:5V",
+      "red",
+      []
+    ],
+    [
+      "lcd1:GND",
+      "uno:GND.1",
+      "black",
+      []
+    ]
+  ],
+  "dependencies": {}
+}

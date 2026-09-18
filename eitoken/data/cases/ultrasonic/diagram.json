@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "author": "EI TOKEN",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-arduino-uno",
+      "id": "uno",
+      "top": 0,
+      "left": 0,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-hc-sr04",
+      "id": "us1",
+      "top": -130,
+      "left": 90,
+      "attrs": {
+        "distance": "40"
+      }
+    }
+  ],
+  "connections": [
+    [
+      "uno:0",
+      "$serialMonitor:RX",
+      "",
+      []
+    ],
+    [
+      "uno:1",
+      "$serialMonitor:TX",
+      "",
+      []
+    ],
+    [
+      "us1:TRIG",
+      "uno:9",
+      "blue",
+      []
+    ],
+    [
+      "us1:ECHO",
+      "uno:10",
+      "purple",
+      []
+    ],
+    [
+      "us1:VCC",
+      "uno:5V",
+      "red",
+      []
+    ],
+    [
+      "us1:GND",
+      "uno:GND.1",
+      "black",
+      []
+    ]
+  ],
+  "dependencies": {}
+}

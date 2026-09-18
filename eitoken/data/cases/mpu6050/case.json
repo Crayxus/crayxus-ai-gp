@@ -1,0 +1,95 @@
+{
+  "id": "mpu6050",
+  "title": "姿态检测",
+  "sub": "MPU6050 算出板子的俯仰和横滚角",
+  "category": "sensing",
+  "tags": [
+    "MPU6050",
+    "I2C",
+    "IMU"
+  ],
+  "difficulty": 2,
+  "minutes": 15,
+  "boards": [
+    {
+      "family": "avr",
+      "fqbn": "arduino:avr:uno",
+      "nm": "Arduino Uno"
+    },
+    {
+      "family": "avr",
+      "fqbn": "arduino:avr:nano",
+      "nm": "Arduino Nano"
+    },
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:esp32",
+      "nm": "ESP32 DevKit"
+    },
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:esp32s3",
+      "nm": "ESP32-S3 DevKitC"
+    }
+  ],
+  "parts": [
+    {
+      "nm": "MPU6050 模块（GY-521）",
+      "qty": 1
+    }
+  ],
+  "libraries": [
+    "Adafruit MPU6050",
+    "Adafruit Unified Sensor",
+    "Adafruit BusIO"
+  ],
+  "wiring": [
+    {
+      "mcu": "SDA",
+      "part": "MPU6050",
+      "pin": "SDA",
+      "color": "#22D3EE",
+      "note": "Uno A4 · ESP32 GPIO21 · S3 GPIO8"
+    },
+    {
+      "mcu": "SCL",
+      "part": "MPU6050",
+      "pin": "SCL",
+      "color": "#8B5CF6",
+      "note": "Uno A5 · ESP32 GPIO22 · S3 GPIO9"
+    },
+    {
+      "mcu": "VCC",
+      "part": "MPU6050",
+      "pin": "VCC",
+      "color": "#F87171"
+    },
+    {
+      "mcu": "GND",
+      "part": "MPU6050",
+      "pin": "GND",
+      "color": "#1F2937"
+    }
+  ],
+  "pins": {},
+  "pinNotes": {
+    "avr": "I2C 在 A4(SDA) / A5(SCL)",
+    "esp32": "ESP32 默认 I2C 是 GPIO21/22，S3 默认是 GPIO8/9"
+  },
+  "sim": true,
+  "simBoard": "wokwi-arduino-uno",
+  "expect": "pitch",
+  "cover": {
+    "motif": "imu",
+    "hue": "violet"
+  },
+  "xp": 40,
+  "learn": [
+    "I2C 两根线就能挂多个传感器",
+    "用重力加速度分量算倾角"
+  ],
+  "aiIdeas": [
+    "倾斜超过 30° 报警，做防倒提醒",
+    "用倾角控制舵机，做平衡云台"
+  ]
+}

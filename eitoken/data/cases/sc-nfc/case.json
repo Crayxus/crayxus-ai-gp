@@ -1,0 +1,57 @@
+{
+  "id": "sc-nfc",
+  "title": "刷卡变身",
+  "sub": "机身里是一颗全功能 NFC，贴一张卡就换一套人设",
+  "category": "stackchan",
+  "hot": true,
+  "tags": [
+    "NFC",
+    "ST25R3916",
+    "读卡"
+  ],
+  "difficulty": 3,
+  "minutes": 20,
+  "boards": [
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:m5stack_cores3",
+      "nm": "M5 StackChan（CoreS3）"
+    }
+  ],
+  "parts": [
+    {
+      "nm": "M5 StackChan 本体",
+      "qty": 1
+    },
+    {
+      "nm": "NFC 卡片（官方 Tap to Build 卡或任意 NFC-A 卡）",
+      "qty": 1
+    }
+  ],
+  "libraries": [
+    "M5Unified",
+    "StackChan-BSP",
+    "M5Unit-NFC",
+    "M5Stack_Avatar"
+  ],
+  "wiring": [],
+  "pinNotes": {
+    "esp32": "NFC 天线在机身正面，卡贴在肚子上就能读；走机内 I2C，用 M5UnitUnified 挂载，不用接线"
+  },
+  "sim": false,
+  "expect": "EIT sc-nfc ready",
+  "cover": {
+    "motif": "stackchan",
+    "hue": "coral"
+  },
+  "xp": 60,
+  "learn": [
+    "M5UnitUnified 的 add + begin + update 三步挂载外设",
+    "detect 出一批卡、identify 才知道具体型号，读完要 deactivate",
+    "把卡号哈希成序号，同一张卡永远对同一套人设"
+  ],
+  "aiIdeas": [
+    "做成打卡机：不同的卡对应不同的人，开口叫名字",
+    "把卡当遥控：一张卡一个动作剧本"
+  ]
+}

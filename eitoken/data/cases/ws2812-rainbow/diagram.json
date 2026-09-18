@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "author": "EI TOKEN",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-arduino-uno",
+      "id": "uno",
+      "top": 0,
+      "left": 0,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-led-ring",
+      "id": "ring1",
+      "top": -170,
+      "left": 100,
+      "attrs": {
+        "pixels": "16"
+      }
+    }
+  ],
+  "connections": [
+    [
+      "uno:0",
+      "$serialMonitor:RX",
+      "",
+      []
+    ],
+    [
+      "uno:1",
+      "$serialMonitor:TX",
+      "",
+      []
+    ],
+    [
+      "ring1:DIN",
+      "uno:6",
+      "blue",
+      []
+    ],
+    [
+      "ring1:VCC",
+      "uno:5V",
+      "red",
+      []
+    ],
+    [
+      "ring1:GND",
+      "uno:GND.1",
+      "black",
+      []
+    ]
+  ],
+  "dependencies": {}
+}

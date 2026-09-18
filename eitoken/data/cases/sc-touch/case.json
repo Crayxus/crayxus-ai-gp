@@ -1,0 +1,52 @@
+{
+  "id": "sc-touch",
+  "title": "摸头有反应",
+  "sub": "头顶三个触摸区，摸哪一块就换一种表情、配一套动作",
+  "category": "stackchan",
+  "hot": true,
+  "tags": [
+    "触摸",
+    "Avatar",
+    "交互"
+  ],
+  "difficulty": 2,
+  "minutes": 15,
+  "boards": [
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:m5stack_cores3",
+      "nm": "M5 StackChan（CoreS3）"
+    }
+  ],
+  "parts": [
+    {
+      "nm": "M5 StackChan 本体",
+      "qty": 1
+    }
+  ],
+  "libraries": [
+    "M5Unified",
+    "StackChan-BSP",
+    "M5Stack_Avatar"
+  ],
+  "wiring": [],
+  "pinNotes": {
+    "esp32": "三区触摸面板在头顶，getIntensities() 下标 0/1/2 分别是前 / 中 / 后，值 0 表示没碰、1~3 越按越重"
+  },
+  "sim": false,
+  "expect": "EIT sc-touch ready",
+  "cover": {
+    "motif": "stackchan",
+    "hue": "amber"
+  },
+  "xp": 50,
+  "learn": [
+    "TouchSensor 继承按键类，wasClicked / pressedFor 都能用",
+    "getIntensities() 读三个分区，前后划过还能识别成手势",
+    "用「上一次的状态」做边沿判断，按住不放不会重复触发"
+  ],
+  "aiIdeas": [
+    "摸得越久表情越开心，做一个好感度",
+    "连着摸三下触发一段彩蛋动画"
+  ]
+}

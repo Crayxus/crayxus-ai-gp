@@ -1,0 +1,71 @@
+{
+  "id": "sc-ir",
+  "title": "红外遥控",
+  "sub": "先学一个家电遥控器的码，再按头顶把它原样重发出去",
+  "category": "stackchan",
+  "hot": true,
+  "tags": [
+    "红外",
+    "IR",
+    "遥控"
+  ],
+  "difficulty": 3,
+  "minutes": 20,
+  "boards": [
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:m5stack_cores3",
+      "nm": "M5 StackChan（CoreS3）"
+    }
+  ],
+  "parts": [
+    {
+      "nm": "M5 StackChan 本体",
+      "qty": 1
+    },
+    {
+      "nm": "任意家电红外遥控器（学习用）",
+      "qty": 1
+    }
+  ],
+  "libraries": [
+    "M5Unified",
+    "StackChan-BSP",
+    "IRremoteESP8266"
+  ],
+  "wiring": [
+    {
+      "mcu": "GPIO10",
+      "part": "机身红外接收",
+      "pin": "IR RX",
+      "color": "#22D3EE",
+      "note": "板载，不用接线"
+    },
+    {
+      "mcu": "GPIO5",
+      "part": "机身红外发射",
+      "pin": "IR TX",
+      "color": "#F87171",
+      "note": "板载，不用接线"
+    }
+  ],
+  "pinNotes": {
+    "esp32": "红外收发都在机身上：接收 GPIO10、发射 GPIO5；发射的一瞬间要先关掉接收，否则会收到自己发的"
+  },
+  "sim": false,
+  "expect": "EIT sc-ir ready",
+  "cover": {
+    "motif": "stackchan",
+    "hue": "amber"
+  },
+  "xp": 60,
+  "learn": [
+    "IRrecv 收码、IRsend 发码，同一块板上可以同时装",
+    "存原始时序 rawData 比认协议更通用，什么牌子都能照抄",
+    "家用遥控基本是 38kHz 载波"
+  ],
+  "aiIdeas": [
+    "学多个键存成一套遥控器，用触摸区切换",
+    "到点自动关空调，做一个会动的定时器"
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "id": "oled-ssd1306",
+  "title": "OLED 小屏动画",
+  "sub": "0.96 寸 OLED 上画字、画进度条",
+  "category": "display",
+  "tags": [
+    "SSD1306",
+    "OLED",
+    "I2C"
+  ],
+  "difficulty": 2,
+  "minutes": 12,
+  "boards": [
+    {
+      "family": "avr",
+      "fqbn": "arduino:avr:uno",
+      "nm": "Arduino Uno"
+    },
+    {
+      "family": "avr",
+      "fqbn": "arduino:avr:nano",
+      "nm": "Arduino Nano"
+    },
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:esp32",
+      "nm": "ESP32 DevKit"
+    },
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:esp32s3",
+      "nm": "ESP32-S3 DevKitC"
+    }
+  ],
+  "parts": [
+    {
+      "nm": "0.96 寸 SSD1306 OLED（I2C，128×64）",
+      "qty": 1
+    }
+  ],
+  "libraries": [
+    "Adafruit SSD1306",
+    "Adafruit GFX Library",
+    "Adafruit BusIO"
+  ],
+  "wiring": [
+    {
+      "mcu": "SDA",
+      "part": "OLED",
+      "pin": "SDA",
+      "color": "#22D3EE",
+      "note": "Uno A4 · ESP32 GPIO21 · S3 GPIO8"
+    },
+    {
+      "mcu": "SCL",
+      "part": "OLED",
+      "pin": "SCL",
+      "color": "#8B5CF6",
+      "note": "Uno A5 · ESP32 GPIO22 · S3 GPIO9"
+    },
+    {
+      "mcu": "3V3/5V",
+      "part": "OLED",
+      "pin": "VCC",
+      "color": "#F87171"
+    },
+    {
+      "mcu": "GND",
+      "part": "OLED",
+      "pin": "GND",
+      "color": "#1F2937"
+    }
+  ],
+  "pins": {},
+  "pinNotes": {
+    "avr": "Uno 内存只有 2KB，屏幕缓冲占掉一半，别再开大数组",
+    "esp32": "地址一般 0x3C"
+  },
+  "sim": true,
+  "simBoard": "wokwi-arduino-uno",
+  "expect": "EIT oled-ssd1306 ready",
+  "cover": {
+    "motif": "oled",
+    "hue": "cyan"
+  },
+  "xp": 30,
+  "learn": [
+    "先画到缓冲区，display() 一次刷新",
+    "GFX 库提供文字、线、矩形等绘图函数"
+  ],
+  "aiIdeas": [
+    "显示一个跳动的心形",
+    "做一个表情脸，定时眨眼"
+  ]
+}

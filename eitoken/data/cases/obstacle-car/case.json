@@ -1,0 +1,137 @@
+{
+  "id": "obstacle-car",
+  "title": "避障小车",
+  "sub": "前面有障碍就后退转弯，没有就一直往前开",
+  "category": "motion",
+  "tags": [
+    "小车",
+    "超声波",
+    "电机"
+  ],
+  "difficulty": 3,
+  "minutes": 40,
+  "boards": [
+    {
+      "family": "avr",
+      "fqbn": "arduino:avr:uno",
+      "nm": "Arduino Uno"
+    },
+    {
+      "family": "avr",
+      "fqbn": "arduino:avr:nano",
+      "nm": "Arduino Nano"
+    },
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:esp32",
+      "nm": "ESP32 DevKit"
+    },
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:esp32s3",
+      "nm": "ESP32-S3 DevKitC"
+    }
+  ],
+  "parts": [
+    {
+      "nm": "两轮小车底盘（含 2 个 TT 电机）",
+      "qty": 1
+    },
+    {
+      "nm": "L298N 电机驱动",
+      "qty": 1
+    },
+    {
+      "nm": "HC-SR04 超声波",
+      "qty": 1
+    },
+    {
+      "nm": "18650 电池盒（2 节）",
+      "qty": 1
+    }
+  ],
+  "libraries": [],
+  "wiring": [
+    {
+      "mcu": "ENA / IN1 / IN2",
+      "part": "L298N",
+      "pin": "左电机",
+      "color": "#FBBF24"
+    },
+    {
+      "mcu": "ENB / IN3 / IN4",
+      "part": "L298N",
+      "pin": "右电机",
+      "color": "#22D3EE"
+    },
+    {
+      "mcu": "TRIG_PIN / ECHO_PIN",
+      "part": "HC-SR04",
+      "pin": "Trig / Echo",
+      "color": "#8B5CF6",
+      "note": "ESP32 的 Echo 要分压"
+    }
+  ],
+  "pins": {
+    "ENA": {
+      "avr": "5",
+      "esp32": "18",
+      "esp32s3": "7"
+    },
+    "IN1": {
+      "avr": "7",
+      "esp32": "23",
+      "esp32s3": "16"
+    },
+    "IN2": {
+      "avr": "8",
+      "esp32": "25",
+      "esp32s3": "17"
+    },
+    "ENB": {
+      "avr": "6",
+      "esp32": "19",
+      "esp32s3": "15"
+    },
+    "IN3": {
+      "avr": "4",
+      "esp32": "17",
+      "esp32s3": "6"
+    },
+    "IN4": {
+      "avr": "3",
+      "esp32": "16",
+      "esp32s3": "5"
+    },
+    "TRIG_PIN": {
+      "avr": "11",
+      "esp32": "14",
+      "esp32s3": "39"
+    },
+    "ECHO_PIN": {
+      "avr": "12",
+      "esp32": "13",
+      "esp32s3": "40"
+    }
+  },
+  "pinNotes": {
+    "avr": "左 ENA5 IN1 7 IN2 8；右 ENB6 IN3 4 IN4 3；Trig 11 Echo 12",
+    "esp32": "按代码里 ESP32 / S3 两组引脚接线；电池给 L298N，L298N 的 5V 输出可给 ESP32 VIN"
+  },
+  "sim": false,
+  "simBoard": null,
+  "expect": "forward",
+  "cover": {
+    "motif": "car",
+    "hue": "coral"
+  },
+  "xp": 60,
+  "learn": [
+    "把感知和动作组合成简单行为",
+    "差速转向：两轮一正一反原地转"
+  ],
+  "aiIdeas": [
+    "加一个舵机让超声波左右看，选更空的方向",
+    "蓝牙遥控 + 自动避障两种模式"
+  ]
+}

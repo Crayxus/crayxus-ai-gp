@@ -1,0 +1,81 @@
+{
+  "id": "breathing",
+  "title": "呼吸灯",
+  "sub": "灯光慢慢亮起再慢慢变暗，像在呼吸",
+  "category": "first-light",
+  "tags": [
+    "PWM",
+    "LED"
+  ],
+  "difficulty": 1,
+  "minutes": 8,
+  "boards": [
+    {
+      "family": "avr",
+      "fqbn": "arduino:avr:uno",
+      "nm": "Arduino Uno"
+    },
+    {
+      "family": "avr",
+      "fqbn": "arduino:avr:nano",
+      "nm": "Arduino Nano"
+    },
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:esp32",
+      "nm": "ESP32 DevKit"
+    },
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:esp32s3",
+      "nm": "ESP32-S3 DevKitC"
+    }
+  ],
+  "parts": [
+    {
+      "nm": "LED",
+      "qty": 1
+    },
+    {
+      "nm": "220Ω 电阻",
+      "qty": 1
+    }
+  ],
+  "libraries": [],
+  "wiring": [
+    {
+      "mcu": "Uno/Nano 9 · ESP32 GPIO26 · S3 GPIO18",
+      "part": "LED",
+      "pin": "阳极",
+      "color": "#F87171",
+      "note": "要接支持 PWM 的脚，经 220Ω 电阻"
+    }
+  ],
+  "pins": {
+    "LED_PIN": {
+      "avr": "9",
+      "esp32": "26",
+      "esp32s3": "18"
+    }
+  },
+  "pinNotes": {
+    "avr": "Uno/Nano 只有 3/5/6/9/10/11 能 PWM，这里用 D9",
+    "esp32": "ESP32 几乎所有输出脚都能 PWM"
+  },
+  "sim": true,
+  "simBoard": "wokwi-arduino-uno",
+  "expect": "breath",
+  "cover": {
+    "motif": "pwm",
+    "hue": "violet"
+  },
+  "xp": 30,
+  "learn": [
+    "PWM 用快速开关模拟不同亮度",
+    "analogWrite 的 0~255 对应从灭到最亮"
+  ],
+  "aiIdeas": [
+    "呼吸速度跟着电位器变",
+    "两颗灯交替呼吸"
+  ]
+}

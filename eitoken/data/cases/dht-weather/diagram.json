@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "author": "EI TOKEN",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-arduino-uno",
+      "id": "uno",
+      "top": 0,
+      "left": 0,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "dht1",
+      "top": -120,
+      "left": 120,
+      "attrs": {
+        "temperature": "24.5",
+        "humidity": "55"
+      }
+    }
+  ],
+  "connections": [
+    [
+      "uno:0",
+      "$serialMonitor:RX",
+      "",
+      []
+    ],
+    [
+      "uno:1",
+      "$serialMonitor:TX",
+      "",
+      []
+    ],
+    [
+      "dht1:SDA",
+      "uno:2",
+      "blue",
+      []
+    ],
+    [
+      "dht1:VCC",
+      "uno:5V",
+      "red",
+      []
+    ],
+    [
+      "dht1:GND",
+      "uno:GND.1",
+      "black",
+      []
+    ]
+  ],
+  "dependencies": {}
+}

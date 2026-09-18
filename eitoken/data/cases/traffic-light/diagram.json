@@ -1,0 +1,137 @@
+{
+  "version": 1,
+  "author": "EI TOKEN",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-arduino-uno",
+      "id": "uno",
+      "top": 0,
+      "left": 0,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-led",
+      "id": "ledR",
+      "top": -110,
+      "left": 80,
+      "attrs": {
+        "color": "red"
+      }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "ledY",
+      "top": -110,
+      "left": 130,
+      "attrs": {
+        "color": "yellow"
+      }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "ledG",
+      "top": -110,
+      "left": 180,
+      "attrs": {
+        "color": "green"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": -40,
+      "left": 60,
+      "attrs": {
+        "value": "220"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r2",
+      "top": -40,
+      "left": 120,
+      "attrs": {
+        "value": "220"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r3",
+      "top": -40,
+      "left": 180,
+      "attrs": {
+        "value": "220"
+      }
+    }
+  ],
+  "connections": [
+    [
+      "uno:0",
+      "$serialMonitor:RX",
+      "",
+      []
+    ],
+    [
+      "uno:1",
+      "$serialMonitor:TX",
+      "",
+      []
+    ],
+    [
+      "uno:4",
+      "r1:1",
+      "red",
+      []
+    ],
+    [
+      "r1:2",
+      "ledR:A",
+      "red",
+      []
+    ],
+    [
+      "uno:3",
+      "r2:1",
+      "yellow",
+      []
+    ],
+    [
+      "r2:2",
+      "ledY:A",
+      "yellow",
+      []
+    ],
+    [
+      "uno:2",
+      "r3:1",
+      "green",
+      []
+    ],
+    [
+      "r3:2",
+      "ledG:A",
+      "green",
+      []
+    ],
+    [
+      "ledR:C",
+      "uno:GND.1",
+      "black",
+      []
+    ],
+    [
+      "ledY:C",
+      "uno:GND.1",
+      "black",
+      []
+    ],
+    [
+      "ledG:C",
+      "uno:GND.1",
+      "black",
+      []
+    ]
+  ],
+  "dependencies": {}
+}

@@ -1,0 +1,51 @@
+{
+  "id": "sc-rgb",
+  "title": "心情灯",
+  "sub": "机身两排共 12 颗 RGB，做呼吸和流水两种效果，按心情换配色",
+  "category": "stackchan",
+  "hot": true,
+  "tags": [
+    "RGB",
+    "WS2812",
+    "灯效"
+  ],
+  "difficulty": 2,
+  "minutes": 15,
+  "boards": [
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:m5stack_cores3",
+      "nm": "M5 StackChan（CoreS3）"
+    }
+  ],
+  "parts": [
+    {
+      "nm": "M5 StackChan 本体",
+      "qty": 1
+    }
+  ],
+  "libraries": [
+    "M5Unified",
+    "StackChan-BSP"
+  ],
+  "wiring": [],
+  "pinNotes": {
+    "esp32": "12 颗 WS2812C 由机身 IO 扩展芯片驱动，下标 0~5 在左边、6~11 在右边；setRgbColor 只是写缓存，refreshRgb 才真正发出去"
+  },
+  "sim": false,
+  "expect": "EIT sc-rgb ready",
+  "cover": {
+    "motif": "stackchan",
+    "hue": "mint"
+  },
+  "xp": 40,
+  "learn": [
+    "setRgbColor 写颜色 + refreshRgb 统一刷新的两段式写法",
+    "用正弦函数算亮度，呼吸比线性加减自然得多",
+    "流水效果 = 一个亮点 + 逐颗衰减的尾巴"
+  ],
+  "aiIdeas": [
+    "按当前温度换颜色，冷蓝热红",
+    "接麦克风音量，做成会跟着声音跳的灯"
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "id": "serial-hello",
+  "title": "串口对话",
+  "sub": "在串口输入 on / off，远程开关灯",
+  "category": "first-light",
+  "tags": [
+    "串口",
+    "命令",
+    "调试"
+  ],
+  "difficulty": 1,
+  "minutes": 8,
+  "boards": [
+    {
+      "family": "avr",
+      "fqbn": "arduino:avr:uno",
+      "nm": "Arduino Uno"
+    },
+    {
+      "family": "avr",
+      "fqbn": "arduino:avr:nano",
+      "nm": "Arduino Nano"
+    },
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:esp32",
+      "nm": "ESP32 DevKit"
+    },
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:esp32s3",
+      "nm": "ESP32-S3 DevKitC"
+    }
+  ],
+  "parts": [
+    {
+      "nm": "LED（可用板载灯）",
+      "qty": 1
+    }
+  ],
+  "libraries": [],
+  "wiring": [
+    {
+      "mcu": "Uno/Nano 13 · ESP32 GPIO2 · S3 GPIO2",
+      "part": "LED",
+      "pin": "阳极",
+      "color": "#F87171",
+      "note": "板载灯可不接线"
+    }
+  ],
+  "pins": {
+    "LED_PIN": {
+      "avr": "13",
+      "esp32": "2",
+      "esp32s3": "2"
+    }
+  },
+  "pinNotes": {
+    "avr": "串口监视器波特率选 115200，行尾选换行",
+    "esp32": "S3 用原生 USB 串口时，编译选项要开 USB CDC On Boot"
+  },
+  "sim": true,
+  "simBoard": "wokwi-arduino-uno",
+  "expect": "EIT serial-hello ready",
+  "cover": {
+    "motif": "serial",
+    "hue": "cyan"
+  },
+  "xp": 30,
+  "learn": [
+    "Serial.readStringUntil 读一整行命令",
+    "串口是调试和控制最直接的通道"
+  ],
+  "aiIdeas": [
+    "加一个 blink 3 命令闪 3 下",
+    "回复当前运行了多少秒"
+  ]
+}

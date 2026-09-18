@@ -1,0 +1,98 @@
+{
+  "id": "dht-weather",
+  "title": "温湿度计",
+  "sub": "用 DHT22 读出房间温度和湿度",
+  "category": "sensing",
+  "tags": [
+    "DHT22",
+    "温度",
+    "湿度"
+  ],
+  "difficulty": 1,
+  "minutes": 10,
+  "boards": [
+    {
+      "family": "avr",
+      "fqbn": "arduino:avr:uno",
+      "nm": "Arduino Uno"
+    },
+    {
+      "family": "avr",
+      "fqbn": "arduino:avr:nano",
+      "nm": "Arduino Nano"
+    },
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:esp32",
+      "nm": "ESP32 DevKit"
+    },
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:esp32s3",
+      "nm": "ESP32-S3 DevKitC"
+    }
+  ],
+  "parts": [
+    {
+      "nm": "DHT22（或 DHT11）温湿度传感器",
+      "qty": 1
+    },
+    {
+      "nm": "10kΩ 电阻（裸传感器需要，模块自带）",
+      "qty": 1
+    }
+  ],
+  "libraries": [
+    "DHT sensor library",
+    "Adafruit Unified Sensor"
+  ],
+  "wiring": [
+    {
+      "mcu": "Uno/Nano 2 · ESP32 GPIO4 · S3 GPIO4",
+      "part": "DHT22",
+      "pin": "DATA",
+      "color": "#22D3EE",
+      "note": "数据脚到 VCC 接 10kΩ 上拉（模块自带可省）"
+    },
+    {
+      "mcu": "VCC",
+      "part": "DHT22",
+      "pin": "VCC",
+      "color": "#F87171",
+      "note": "Uno 接 5V，ESP32 接 3V3"
+    },
+    {
+      "mcu": "GND",
+      "part": "DHT22",
+      "pin": "GND",
+      "color": "#1F2937"
+    }
+  ],
+  "pins": {
+    "DHT_PIN": {
+      "avr": "2",
+      "esp32": "4",
+      "esp32s3": "4"
+    }
+  },
+  "pinNotes": {
+    "avr": "数据脚接 D2",
+    "esp32": "数据脚接 GPIO4，供电用 3V3；用 DHT11 把代码里的 DHT22 改成 DHT11"
+  },
+  "sim": true,
+  "simBoard": "wokwi-arduino-uno",
+  "expect": "temp",
+  "cover": {
+    "motif": "thermo",
+    "hue": "amber"
+  },
+  "xp": 30,
+  "learn": [
+    "传感器库帮你处理单总线时序",
+    "DHT22 两次读取至少间隔 2 秒"
+  ],
+  "aiIdeas": [
+    "超过 30°C 蜂鸣器提醒",
+    "把温湿度显示到 OLED 上"
+  ]
+}

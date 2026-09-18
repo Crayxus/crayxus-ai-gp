@@ -1,0 +1,97 @@
+{
+  "id": "ds18b20",
+  "title": "防水温度探头",
+  "sub": "DS18B20 探头测水温、土温都行",
+  "category": "sensing",
+  "tags": [
+    "DS18B20",
+    "单总线",
+    "温度"
+  ],
+  "difficulty": 2,
+  "minutes": 12,
+  "boards": [
+    {
+      "family": "avr",
+      "fqbn": "arduino:avr:uno",
+      "nm": "Arduino Uno"
+    },
+    {
+      "family": "avr",
+      "fqbn": "arduino:avr:nano",
+      "nm": "Arduino Nano"
+    },
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:esp32",
+      "nm": "ESP32 DevKit"
+    },
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:esp32s3",
+      "nm": "ESP32-S3 DevKitC"
+    }
+  ],
+  "parts": [
+    {
+      "nm": "DS18B20 防水探头",
+      "qty": 1
+    },
+    {
+      "nm": "4.7kΩ 电阻",
+      "qty": 1
+    }
+  ],
+  "libraries": [
+    "OneWire",
+    "DallasTemperature"
+  ],
+  "wiring": [
+    {
+      "mcu": "Uno/Nano 2 · ESP32 GPIO4 · S3 GPIO4",
+      "part": "DS18B20",
+      "pin": "DQ（黄线）",
+      "color": "#FBBF24",
+      "note": "DQ 到 VCC 必须接 4.7kΩ 上拉"
+    },
+    {
+      "mcu": "VCC",
+      "part": "DS18B20",
+      "pin": "VDD（红线）",
+      "color": "#F87171"
+    },
+    {
+      "mcu": "GND",
+      "part": "DS18B20",
+      "pin": "GND（黑线）",
+      "color": "#1F2937"
+    }
+  ],
+  "pins": {
+    "ONEWIRE_PIN": {
+      "avr": "2",
+      "esp32": "4",
+      "esp32s3": "4"
+    }
+  },
+  "pinNotes": {
+    "avr": "DQ 接 D2",
+    "esp32": "DQ 接 GPIO4，上拉到 3V3"
+  },
+  "sim": true,
+  "simBoard": "wokwi-arduino-uno",
+  "expect": "EIT ds18b20 ready",
+  "cover": {
+    "motif": "thermo",
+    "hue": "cyan"
+  },
+  "xp": 30,
+  "learn": [
+    "单总线上可以挂多个探头",
+    "上拉电阻决定信号能不能被读到"
+  ],
+  "aiIdeas": [
+    "两个探头同时测进出水温差",
+    "水温达到 40°C 蜂鸣提醒"
+  ]
+}

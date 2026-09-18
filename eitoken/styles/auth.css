@@ -1,0 +1,184 @@
+/* ─────────────────────────────────────────────
+   登录页 · 全屏左右分栏
+   左侧艺术区固定 Circuit Night（两套主题都是深色画布），右侧表单跟主题走
+   ───────────────────────────────────────────── */
+html.au-lock, html.au-lock body { overflow: hidden; }
+
+.auth-screen {
+  position: fixed; inset: 0; z-index: 90;
+  display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(400px, 1fr);
+  background: var(--bg);
+}
+
+/* ── 左：艺术区 ── */
+.au-art {
+  position: relative; overflow: hidden; isolation: isolate;
+  background:
+    radial-gradient(60% 55% at 50% 42%, rgba(34,211,238,.10), transparent 70%),
+    radial-gradient(45% 40% at 78% 80%, rgba(139,92,246,.14), transparent 70%),
+    #0B1020;
+  color: #E6EAF2;
+}
+.au-cv { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; }
+.au-vign { position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(120% 90% at 50% 45%, transparent 45%, rgba(5,8,18,.85) 100%); }
+
+.au-brand { position: absolute; top: 28px; left: 32px; display: flex; align-items: center; gap: 10px;
+  font-family: var(--display); font-size: 17px; letter-spacing: .02em; }
+.au-brand .brand-mark { width: 34px; height: 34px; display: block; }
+.au-brand .brand-mark svg { width: 100%; height: 100%; display: block; }
+
+/* 舞台：芯片居中偏上，卡片围绕 */
+.au-stage { position: absolute; left: 46%; top: 42%; width: 0; height: 0; }
+.au-chip { position: absolute; width: 132px; height: 132px; left: -66px; top: -66px; }
+.au-chip-core {
+  position: absolute; inset: 0; border-radius: 26px;
+  background: linear-gradient(145deg, #1A2440, #0E1428);
+  border: 1px solid rgba(34,211,238,.45);
+  box-shadow: 0 0 0 6px rgba(34,211,238,.05), 0 0 60px -6px rgba(34,211,238,.45), inset 0 1px 0 rgba(255,255,255,.08);
+  display: grid; place-items: center;
+}
+.au-chip-core::before { content: ""; position: absolute; inset: 10px; border-radius: 18px; border: 1px dashed rgba(138,148,173,.25); }
+.au-chip-core svg { width: 58px; height: 58px; filter: drop-shadow(0 0 12px rgba(34,211,238,.6)); }
+.au-chip-ring { position: absolute; inset: -2px; border-radius: 28px; border: 2px solid #22D3EE; opacity: 0; pointer-events: none; }
+
+.au-card {
+  position: absolute; opacity: 0;
+  background: rgba(18,26,46,.78); backdrop-filter: blur(14px) saturate(1.3); -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  border: 1px solid rgba(138,148,173,.18); border-radius: 16px;
+  box-shadow: 0 24px 60px -24px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.05);
+  color: #E6EAF2; will-change: transform, opacity;
+}
+.au-say { left: -300px; top: -150px; display: flex; align-items: center; gap: 10px; padding: 12px 16px 12px 12px; border-radius: 999px 999px 999px 6px; font-size: 15px; white-space: nowrap; }
+.au-say-ic { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(135deg,#22D3EE,#8B5CF6); color: #04121A; flex: none; }
+.au-say-ic svg { width: 16px; height: 16px; }
+.au-caret { display: inline-block; width: 2px; height: 1em; background: #22D3EE; vertical-align: -2px; margin-left: 2px; animation: auBlink 1s steps(1) infinite; }
+@keyframes auBlink { 50% { opacity: 0; } }
+
+.au-code { left: 92px; top: -122px; width: 318px; overflow: hidden; }
+.au-code-h { display: flex; align-items: center; gap: 6px; padding: 10px 12px; border-bottom: 1px solid rgba(138,148,173,.12); }
+.au-code-h > i { width: 8px; height: 8px; border-radius: 50%; background: #26314F; }
+.au-code-h > i:first-child { background: #F87171; } .au-code-h > i:nth-child(2) { background: #FBBF24; } .au-code-h > i:nth-child(3) { background: #34D399; }
+.au-board { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; color: #8A94AD; }
+.au-board i { width: 7px; height: 7px; border-radius: 2px; }
+.au-code-b { margin: 0; padding: 12px 14px 14px; min-height: 76px; font: 12px/1.65 var(--mono); color: #B7C0D4; white-space: pre; }
+.au-code-b b { font-weight: 500; }
+.au-code-b .kw { color: #C4B5FD; } .au-code-b .str { color: #86EFAC; } .au-code-b .num { color: #FCD34D; } .au-code-b .fn { color: #67E8F9; } .au-code-b .pp { color: #F9A8D4; }
+
+.au-flash { left: -330px; top: 70px; width: 270px; padding: 14px 16px; }
+.au-steps { display: flex; gap: 14px; font-size: 12.5px; color: #8A94AD; }
+.au-steps span { display: inline-flex; align-items: center; gap: 5px; transition: color .25s; }
+.au-steps svg { width: 14px; height: 14px; padding: 2px; border-radius: 50%; background: #26314F; color: transparent; transition: background .25s, color .25s; }
+.au-steps span.on { color: #E6EAF2; }
+.au-steps span.on svg { background: #34D399; color: #04121A; }
+.au-bar { height: 6px; border-radius: 99px; background: #1A2440; margin: 12px 0 8px; overflow: hidden; }
+.au-bar i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg,#22D3EE,#8B5CF6); transform-origin: left; transform: scaleX(0); box-shadow: 0 0 16px rgba(34,211,238,.6); }
+.au-flash-f { display: flex; justify-content: space-between; font-size: 12px; }
+.au-pct { font-family: var(--mono); color: #22D3EE; }
+.au-port { color: #8A94AD; }
+
+.au-ach { left: 70px; top: 96px; white-space: nowrap; display: flex; align-items: center; gap: 12px; padding: 12px 16px 12px 12px; }
+.au-ach-ic { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: linear-gradient(135deg,#FBBF24,#F59E0B); color: #1A1204; flex: none; box-shadow: 0 0 24px -4px rgba(251,191,36,.6); }
+.au-ach-ic svg { width: 20px; height: 20px; }
+.au-ach-t { font-size: 13.5px; font-weight: 600; }
+.au-ach-s { font-size: 12px; color: #8A94AD; }
+.au-xp { margin-left: 8px; font: 600 13px var(--mono); color: #34D399; background: rgba(52,211,153,.12); padding: 4px 8px; border-radius: 8px; }
+
+.au-copy { position: absolute; left: 40px; right: 40px; bottom: 40px; }
+.au-copy h2 { margin: 0; font-size: clamp(34px, 3.6vw, 52px); line-height: 1.1; font-weight: 600; letter-spacing: .02em; text-wrap: balance; }
+.au-copy h2 span { background: linear-gradient(135deg,#22D3EE,#8B5CF6); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.au-copy p { margin: 10px 0 14px; color: #B7C0D4; font-size: 16px; letter-spacing: .08em; }
+.au-pts { display: flex; align-items: center; gap: 12px; font-size: 13px; color: #8A94AD; letter-spacing: .12em; }
+.au-pts i { width: 4px; height: 4px; border-radius: 50%; background: #22D3EE; box-shadow: 0 0 8px #22D3EE; }
+
+/* ── 右：表单 ── */
+.au-side { position: relative; display: grid; place-items: center; padding: 48px 32px; background: var(--bg); overflow-y: auto; border-left: 1px solid var(--line); }
+.au-x { position: absolute; top: 20px; right: 20px; }
+.au-form-wrap { width: 100%; max-width: 380px; display: flex; flex-direction: column; gap: 20px; }
+.au-head h1 { margin: 0 0 8px; font-size: 30px; font-weight: 600; letter-spacing: .01em; }
+.au-head p { margin: 0; font-size: 14px; line-height: 1.6; }
+.au-reason { margin: 0; }
+
+.au-seg { position: relative; display: grid; grid-template-columns: 1fr 1fr; padding: 4px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); }
+.au-seg button { position: relative; z-index: 1; height: 38px; border: 0; background: none; color: var(--mute); font: inherit; font-size: 14px; border-radius: 10px; cursor: pointer; transition: color .2s; }
+.au-seg button.on { color: var(--txt); font-weight: 600; }
+.au-seg-ind { position: absolute; left: 4px; top: 4px; bottom: 4px; border-radius: 10px; background: var(--raised-2); box-shadow: 0 0 0 1px var(--line), 0 6px 16px -8px rgba(0,0,0,.5); transition: transform .38s var(--ease), width .38s var(--ease); }
+
+.au-form { display: flex; flex-direction: column; gap: 16px; }
+.au-field label { display: block; font-size: 12.5px; color: var(--txt-2); margin-bottom: 7px; letter-spacing: .02em; }
+.au-in { position: relative; display: flex; align-items: center; height: 50px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); transition: border-color .2s, box-shadow .2s, background .2s; }
+.au-in:hover { border-color: color-mix(in srgb, var(--acc) 35%, var(--line)); }
+.au-in:focus-within { border-color: var(--acc); box-shadow: 0 0 0 4px var(--acc-soft); background: var(--raised); }
+.au-in > svg { width: 18px; height: 18px; margin: 0 10px 0 15px; color: var(--mute); flex: none; transition: color .2s; }
+.au-in:focus-within > svg { color: var(--acc); }
+.au-in input { flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: none; color: var(--txt); font: inherit; font-size: 15px; padding-right: 14px; }
+.au-in input::placeholder { color: var(--mute); opacity: .7; }
+.au-eye { width: 40px; height: 40px; margin-right: 5px; border: 0; border-radius: 10px; background: none; color: var(--mute); display: grid; place-items: center; cursor: pointer; }
+.au-eye svg { width: 18px; height: 18px; }
+.au-eye:hover, .au-eye.on { color: var(--acc); background: var(--acc-soft); }
+.au-eye:focus-visible, .au-seg button:focus-visible, .au-guest:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+
+.au-go {
+  position: relative; overflow: hidden; height: 52px; margin-top: 4px; border: 0; border-radius: 14px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  font: inherit; font-size: 15.5px; font-weight: 600; color: #04121A; letter-spacing: .04em;
+  background: linear-gradient(135deg,#22D3EE 0%,#8B5CF6 100%);
+  box-shadow: 0 12px 30px -12px rgba(34,211,238,.6);
+  transition: transform .2s var(--ease), box-shadow .2s, filter .2s;
+}
+.au-go::after { content: ""; position: absolute; top: 0; bottom: 0; width: 40%; left: -60%; background: linear-gradient(100deg, transparent, rgba(255,255,255,.45), transparent); transform: skewX(-18deg); transition: left .7s var(--ease); }
+.au-go:hover { transform: translateY(-1px); box-shadow: 0 16px 36px -12px rgba(139,92,246,.65); }
+.au-go:hover::after { left: 120%; }
+.au-go:focus-visible { outline: 2px solid var(--txt); outline-offset: 3px; }
+.au-go-ic { display: grid; place-items: center; transition: transform .25s var(--ease); }
+.au-go-ic svg { width: 18px; height: 18px; }
+.au-go:hover .au-go-ic { transform: translateX(3px); }
+.au-go:disabled { cursor: default; }
+.au-go.busy .au-go-ic { animation: auSpin .8s linear infinite; }
+.au-go.busy .au-go-ic svg { display: none; }
+.au-go.busy .au-go-ic::before { content: ""; width: 16px; height: 16px; border-radius: 50%; border: 2px solid rgba(4,18,26,.3); border-top-color: #04121A; }
+.au-go.done { background: linear-gradient(135deg,#34D399,#22D3EE); }
+@keyframes auSpin { to { transform: rotate(360deg); } }
+
+.au-guest { align-self: center; border: 0; background: none; color: var(--mute); font: inherit; font-size: 13.5px; cursor: pointer; padding: 6px 10px; border-radius: 8px; }
+.au-guest:hover { color: var(--txt); }
+.au-foot { margin: 0; font-size: 12px; text-align: center; line-height: 1.6; }
+
+:root[data-theme="day"] .au-go { color: #fff; background: linear-gradient(135deg,#4F46E5,#0EA5E9); }
+:root[data-theme="day"] .au-go.busy .au-go-ic::before { border-color: rgba(255,255,255,.35); border-top-color: #fff; }
+
+/* ── 中等宽度：卡片收紧 ── */
+@media (max-width: 1280px) {
+  .au-say { left: -250px; top: -150px; }
+  .au-code { left: 84px; width: 300px; }
+  .au-code-b { font-size: 11px; }
+  .au-flash { left: -290px; }
+}
+@media (max-width: 1080px) {
+  .auth-screen { grid-template-columns: minmax(0, 1fr) minmax(380px, 440px); }
+  .au-code, .au-flash { display: none; }
+  .au-say { left: -140px; top: -140px; }
+  .au-ach { left: -110px; top: 90px; }
+}
+/* ── 手机：上面一条短横幅，下面表单 ── */
+@media (max-width: 760px) {
+  .auth-screen { grid-template-columns: 1fr; grid-template-rows: 220px 1fr; }
+  .au-side { border-left: 0; border-top: 1px solid var(--line); place-items: start center; padding: 28px 16px 32px; }
+  .au-stage { top: 46%; left: 72%; }
+  .au-chip { width: 84px; height: 84px; left: -42px; top: -42px; }
+  .au-chip-core { border-radius: 18px; }
+  .au-chip-core::before { inset: 7px; border-radius: 12px; }
+  .au-chip-core svg { width: 38px; height: 38px; }
+  .au-say, .au-ach, .au-code, .au-flash { display: none; }
+  .au-brand { top: 18px; left: 16px; }
+  .au-copy { left: 16px; bottom: 20px; right: 16px; }
+  .au-copy h2 { font-size: 30px; }
+  .au-copy p { margin: 6px 0 0; font-size: 13px; }
+  .au-pts { display: none; }
+  .au-x { top: 12px; right: 12px; }
+  .au-head h1 { font-size: 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .au-card { opacity: 1; }
+  .au-caret { animation: none; }
+}

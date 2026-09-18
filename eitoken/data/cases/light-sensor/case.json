@@ -1,0 +1,92 @@
+{
+  "id": "light-sensor",
+  "title": "天黑自动开灯",
+  "sub": "光线变暗时，灯自己亮起来",
+  "category": "sensing",
+  "tags": [
+    "光敏",
+    "ADC",
+    "自动控制"
+  ],
+  "difficulty": 1,
+  "minutes": 10,
+  "boards": [
+    {
+      "family": "avr",
+      "fqbn": "arduino:avr:uno",
+      "nm": "Arduino Uno"
+    },
+    {
+      "family": "avr",
+      "fqbn": "arduino:avr:nano",
+      "nm": "Arduino Nano"
+    },
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:esp32",
+      "nm": "ESP32 DevKit"
+    },
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:esp32s3",
+      "nm": "ESP32-S3 DevKitC"
+    }
+  ],
+  "parts": [
+    {
+      "nm": "光敏电阻模块（带 AO 输出）",
+      "qty": 1
+    },
+    {
+      "nm": "LED",
+      "qty": 1
+    }
+  ],
+  "libraries": [],
+  "wiring": [
+    {
+      "mcu": "Uno/Nano A0 · ESP32 GPIO34 · S3 GPIO1",
+      "part": "光敏模块",
+      "pin": "AO",
+      "color": "#FBBF24"
+    },
+    {
+      "mcu": "Uno/Nano 13 · ESP32 GPIO2 · S3 GPIO2",
+      "part": "LED",
+      "pin": "阳极",
+      "color": "#F87171"
+    }
+  ],
+  "pins": {
+    "LDR_PIN": {
+      "avr": "A0",
+      "esp32": "34",
+      "esp32s3": "1"
+    },
+    "LED_PIN": {
+      "avr": "13",
+      "esp32": "2",
+      "esp32s3": "2"
+    }
+  },
+  "pinNotes": {
+    "avr": "AO 接 A0，模块供电 5V",
+    "esp32": "AO 接 ESP32 GPIO34 / S3 GPIO1，模块供电用 3V3"
+  },
+  "sim": true,
+  "simBoard": "wokwi-arduino-uno",
+  "expect": "light",
+  "cover": {
+    "motif": "light",
+    "hue": "amber"
+  },
+  "xp": 30,
+  "learn": [
+    "光敏电阻随光照改变电压",
+    "阈值 + 回差，避免灯在临界点来回闪"
+  ],
+  "aiIdeas": [
+    "亮度随环境光平滑变化",
+    "天黑后 10 秒无人自动关灯"
+  ]
+}

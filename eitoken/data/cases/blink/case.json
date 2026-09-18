@@ -1,0 +1,83 @@
+{
+  "id": "blink",
+  "title": "闪烁 LED",
+  "sub": "让灯一秒闪一次，确认板子、驱动、烧录全都通了",
+  "category": "first-light",
+  "tags": [
+    "LED",
+    "GPIO",
+    "入门"
+  ],
+  "difficulty": 1,
+  "minutes": 5,
+  "boards": [
+    {
+      "family": "avr",
+      "fqbn": "arduino:avr:uno",
+      "nm": "Arduino Uno"
+    },
+    {
+      "family": "avr",
+      "fqbn": "arduino:avr:nano",
+      "nm": "Arduino Nano"
+    },
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:esp32",
+      "nm": "ESP32 DevKit"
+    },
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:esp32s3",
+      "nm": "ESP32-S3 DevKitC"
+    }
+  ],
+  "parts": [
+    {
+      "nm": "LED（Uno/Nano/ESP32 可用板载灯）",
+      "qty": 1
+    },
+    {
+      "nm": "220Ω 电阻",
+      "qty": 1
+    }
+  ],
+  "libraries": [],
+  "wiring": [
+    {
+      "mcu": "Uno/Nano 13 · ESP32 GPIO2 · S3 GPIO2",
+      "part": "LED",
+      "pin": "阳极（长脚）",
+      "color": "#F87171",
+      "note": "经 220Ω 电阻，阴极接 GND"
+    }
+  ],
+  "pins": {
+    "LED_PIN": {
+      "avr": "13",
+      "esp32": "2",
+      "esp32s3": "2"
+    }
+  },
+  "pinNotes": {
+    "avr": "Uno/Nano 板载灯在 D13，不接线也能看到闪烁",
+    "esp32": "ESP32 DevKit 板载蓝灯多在 GPIO2；S3 DevKitC 板载是 RGB 灯（GPIO48），请外接 LED 到 GPIO2"
+  },
+  "sim": true,
+  "simBoard": "wokwi-arduino-uno",
+  "expect": "LED ON",
+  "cover": {
+    "motif": "led",
+    "hue": "cyan"
+  },
+  "xp": 30,
+  "learn": [
+    "pinMode 把引脚设成输出",
+    "digitalWrite 输出高低电平",
+    "delay 让程序等一会儿"
+  ],
+  "aiIdeas": [
+    "改成闪出 SOS 摩尔斯电码",
+    "越闪越快，像心跳加速"
+  ]
+}

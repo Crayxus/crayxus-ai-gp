@@ -1,0 +1,123 @@
+{
+  "id": "stepper-28byj",
+  "title": "步进电机精准转一圈",
+  "sub": "28BYJ-48 转整整一圈，再倒回来",
+  "category": "motion",
+  "tags": [
+    "步进电机",
+    "ULN2003",
+    "定位"
+  ],
+  "difficulty": 2,
+  "minutes": 15,
+  "boards": [
+    {
+      "family": "avr",
+      "fqbn": "arduino:avr:uno",
+      "nm": "Arduino Uno"
+    },
+    {
+      "family": "avr",
+      "fqbn": "arduino:avr:nano",
+      "nm": "Arduino Nano"
+    },
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:esp32",
+      "nm": "ESP32 DevKit"
+    },
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:esp32s3",
+      "nm": "ESP32-S3 DevKitC"
+    }
+  ],
+  "parts": [
+    {
+      "nm": "28BYJ-48 步进电机 + ULN2003 驱动板",
+      "qty": 1
+    },
+    {
+      "nm": "5V 电源",
+      "qty": 1
+    }
+  ],
+  "libraries": [
+    "Stepper"
+  ],
+  "wiring": [
+    {
+      "mcu": "Uno/Nano 8 · ESP32 GPIO25 · S3 GPIO17",
+      "part": "ULN2003",
+      "pin": "IN1",
+      "color": "#22D3EE"
+    },
+    {
+      "mcu": "Uno/Nano 9 · ESP32 GPIO26 · S3 GPIO18",
+      "part": "ULN2003",
+      "pin": "IN2",
+      "color": "#8B5CF6"
+    },
+    {
+      "mcu": "Uno/Nano 10 · ESP32 GPIO27 · S3 GPIO38",
+      "part": "ULN2003",
+      "pin": "IN3",
+      "color": "#FBBF24"
+    },
+    {
+      "mcu": "Uno/Nano 11 · ESP32 GPIO14 · S3 GPIO39",
+      "part": "ULN2003",
+      "pin": "IN4",
+      "color": "#34D399"
+    },
+    {
+      "mcu": "5V",
+      "part": "ULN2003",
+      "pin": "+",
+      "color": "#F87171",
+      "note": "电机电流较大，建议独立 5V 并共地"
+    }
+  ],
+  "pins": {
+    "IN1": {
+      "avr": "8",
+      "esp32": "25",
+      "esp32s3": "17"
+    },
+    "IN2": {
+      "avr": "9",
+      "esp32": "26",
+      "esp32s3": "18"
+    },
+    "IN3": {
+      "avr": "10",
+      "esp32": "27",
+      "esp32s3": "38"
+    },
+    "IN4": {
+      "avr": "11",
+      "esp32": "14",
+      "esp32s3": "39"
+    }
+  },
+  "pinNotes": {
+    "avr": "IN1~IN4 接 D8~D11",
+    "esp32": "ESP32：25/26/27/14；S3：17/18/38/39"
+  },
+  "sim": false,
+  "simBoard": null,
+  "expect": "turned",
+  "cover": {
+    "motif": "stepper",
+    "hue": "mint"
+  },
+  "xp": 40,
+  "learn": [
+    "步进电机按步数转，天然能定位",
+    "28BYJ-48 转一圈约 2048 步"
+  ],
+  "aiIdeas": [
+    "做一个自动喂食器，每天定点转半圈",
+    "按键控制转 90° 开合"
+  ]
+}

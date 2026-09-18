@@ -1,0 +1,71 @@
+{
+  "id": "web-led",
+  "title": "手机网页开关灯",
+  "sub": "手机打开网页，点按钮控制板子上的灯",
+  "category": "connect",
+  "tags": [
+    "WiFi",
+    "Web 服务器",
+    "手机控制"
+  ],
+  "difficulty": 2,
+  "minutes": 15,
+  "boards": [
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:esp32",
+      "nm": "ESP32 DevKit"
+    },
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:esp32s3",
+      "nm": "ESP32-S3 DevKitC"
+    }
+  ],
+  "parts": [
+    {
+      "nm": "ESP32 开发板",
+      "qty": 1
+    },
+    {
+      "nm": "LED（DevKit 可用板载灯）",
+      "qty": 1
+    }
+  ],
+  "libraries": [],
+  "wiring": [
+    {
+      "mcu": "Uno/Nano 2 · ESP32 GPIO2 · S3 GPIO2",
+      "part": "LED",
+      "pin": "阳极",
+      "color": "#F87171",
+      "note": "S3 请外接 LED 到 GPIO2"
+    }
+  ],
+  "pins": {
+    "LED_PIN": {
+      "avr": "2",
+      "esp32": "2",
+      "esp32s3": "2"
+    }
+  },
+  "pinNotes": {
+    "esp32": "手机和板子要连同一个 WiFi；在串口看到 IP 后，用手机浏览器打开这个地址"
+  },
+  "sim": false,
+  "simBoard": null,
+  "expect": "IP",
+  "cover": {
+    "motif": "web",
+    "hue": "violet"
+  },
+  "xp": 40,
+  "learn": [
+    "板子本身就能当网页服务器",
+    "网址路径 /on /off 对应不同动作"
+  ],
+  "aiIdeas": [
+    "页面上加一个亮度滑块",
+    "同时显示温湿度"
+  ]
+}

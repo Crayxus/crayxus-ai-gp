@@ -1,0 +1,98 @@
+{
+  "id": "button-led",
+  "title": "按键开关灯",
+  "sub": "按一下灯亮，再按一下灯灭",
+  "category": "first-light",
+  "tags": [
+    "按键",
+    "输入",
+    "消抖"
+  ],
+  "difficulty": 1,
+  "minutes": 10,
+  "boards": [
+    {
+      "family": "avr",
+      "fqbn": "arduino:avr:uno",
+      "nm": "Arduino Uno"
+    },
+    {
+      "family": "avr",
+      "fqbn": "arduino:avr:nano",
+      "nm": "Arduino Nano"
+    },
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:esp32",
+      "nm": "ESP32 DevKit"
+    },
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:esp32s3",
+      "nm": "ESP32-S3 DevKitC"
+    }
+  ],
+  "parts": [
+    {
+      "nm": "轻触按键",
+      "qty": 1
+    },
+    {
+      "nm": "LED",
+      "qty": 1
+    },
+    {
+      "nm": "220Ω 电阻",
+      "qty": 1
+    }
+  ],
+  "libraries": [],
+  "wiring": [
+    {
+      "mcu": "Uno/Nano 2 · ESP32 GPIO4 · S3 GPIO4",
+      "part": "按键",
+      "pin": "一脚",
+      "color": "#22D3EE",
+      "note": "另一脚接 GND，用内部上拉，不用外接电阻"
+    },
+    {
+      "mcu": "Uno/Nano 13 · ESP32 GPIO2 · S3 GPIO2",
+      "part": "LED",
+      "pin": "阳极",
+      "color": "#F87171",
+      "note": "经 220Ω 电阻"
+    }
+  ],
+  "pins": {
+    "BTN_PIN": {
+      "avr": "2",
+      "esp32": "4",
+      "esp32s3": "4"
+    },
+    "LED_PIN": {
+      "avr": "13",
+      "esp32": "2",
+      "esp32s3": "2"
+    }
+  },
+  "pinNotes": {
+    "avr": "按键接 D2 与 GND",
+    "esp32": "按键接 GPIO4 与 GND；ESP32 引脚是 3.3V，不要接 5V"
+  },
+  "sim": true,
+  "simBoard": "wokwi-arduino-uno",
+  "expect": "EIT button-led ready",
+  "cover": {
+    "motif": "button",
+    "hue": "cyan"
+  },
+  "xp": 30,
+  "learn": [
+    "INPUT_PULLUP：没按时读到 HIGH，按下读到 LOW",
+    "消抖：按键接触时会抖动，要等一小会儿再判断"
+  ],
+  "aiIdeas": [
+    "长按 1 秒才关灯",
+    "按键次数决定闪几下"
+  ]
+}

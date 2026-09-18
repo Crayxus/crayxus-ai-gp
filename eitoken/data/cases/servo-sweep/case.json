@@ -1,0 +1,93 @@
+{
+  "id": "servo-sweep",
+  "title": "舵机来回摆",
+  "sub": "SG90 舵机从 0° 转到 180° 再转回来",
+  "category": "motion",
+  "tags": [
+    "舵机",
+    "SG90",
+    "PWM"
+  ],
+  "difficulty": 1,
+  "minutes": 10,
+  "boards": [
+    {
+      "family": "avr",
+      "fqbn": "arduino:avr:uno",
+      "nm": "Arduino Uno"
+    },
+    {
+      "family": "avr",
+      "fqbn": "arduino:avr:nano",
+      "nm": "Arduino Nano"
+    },
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:esp32",
+      "nm": "ESP32 DevKit"
+    },
+    {
+      "family": "esp32",
+      "fqbn": "esp32:esp32:esp32s3",
+      "nm": "ESP32-S3 DevKitC"
+    }
+  ],
+  "parts": [
+    {
+      "nm": "SG90 舵机",
+      "qty": 1
+    }
+  ],
+  "libraries": [
+    "Servo",
+    "ESP32Servo"
+  ],
+  "wiring": [
+    {
+      "mcu": "Uno/Nano 9 · ESP32 GPIO26 · S3 GPIO18",
+      "part": "SG90",
+      "pin": "信号（橙/黄线）",
+      "color": "#FBBF24"
+    },
+    {
+      "mcu": "5V",
+      "part": "SG90",
+      "pin": "VCC（红线）",
+      "color": "#F87171",
+      "note": "多个舵机请外接电源并共地"
+    },
+    {
+      "mcu": "GND",
+      "part": "SG90",
+      "pin": "GND（棕线）",
+      "color": "#1F2937"
+    }
+  ],
+  "pins": {
+    "SERVO_PIN": {
+      "avr": "9",
+      "esp32": "26",
+      "esp32s3": "18"
+    }
+  },
+  "pinNotes": {
+    "avr": "信号接 D9，Uno 用自带 Servo 库",
+    "esp32": "信号接 ESP32 GPIO26 / S3 GPIO18；ESP32 要用 ESP32Servo 库（代码已自动切换），舵机供电接 5V(VIN)"
+  },
+  "sim": true,
+  "simBoard": "wokwi-arduino-uno",
+  "expect": "angle",
+  "cover": {
+    "motif": "servo",
+    "hue": "cyan"
+  },
+  "xp": 30,
+  "learn": [
+    "舵机靠 50Hz 脉宽决定角度",
+    "Uno 用 Servo 库，ESP32 换成 ESP32Servo"
+  ],
+  "aiIdeas": [
+    "用电位器控制舵机角度",
+    "做一个会点头的小机器人"
+  ]
+}
