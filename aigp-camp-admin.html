@@ -76,7 +76,7 @@
   </div>
   <div class="tabs"><span class="tab on" data-t="list">学员列表</span><span class="tab" data-t="groups">分组建议</span></div>
   <div id="vList"><div class="tw"><table>
-    <thead><tr><th>#</th><th>姓名</th><th>性别</th><th>年级 / 学校</th><th>画像</th><th>总分</th><th>强项</th><th>带教提示 / 安全</th><th>家长</th><th>提交时间</th></tr></thead>
+    <thead><tr><th>#</th><th>姓名</th><th>性别</th><th>年级 / 学校</th><th>画像</th><th>总分</th><th>强项</th><th>带教提示 / 安全</th><th>提交时间</th></tr></thead>
     <tbody id="tbody"></tbody></table></div></div>
   <div id="vGroups" style="display:none">
     <div class="bar" style="margin-top:0"><span class="sub">按总分蛇形分配，每组强弱搭配；男女、性格请在此基础上人工微调。</span>
@@ -135,8 +135,8 @@
         '<td>' + p.strong.map(function(s){ return '<span class="tag">' + esc(s) + '</span>'; }).join('') + '</td>' +
         '<td>' + p.alert.map(function(s){ return '<span class="tag al">' + esc(s) + '</span>'; }).join('') +
                  p.flags.map(function(s){ return '<span class="tag">' + esc(s) + '</span>'; }).join('') + '</td>' +
-        '<td>' + esc(a.parentName) + '<br><span class="sub">' + esc(a.parentPhone) + '</span></td><td class="sub">' + t(r.submittedAt) + '</td></tr>';
-    }).join('') || '<tr><td colspan="10" class="sub" style="text-align:center;padding:30px">还没有提交</td></tr>';
+        '<td class="sub">' + t(r.submittedAt) + '</td></tr>';
+    }).join('') || '<tr><td colspan="9" class="sub" style="text-align:center;padding:30px">还没有提交</td></tr>';
     document.querySelectorAll('tr.row').forEach(function(tr){ tr.onclick = function(){ detail(tr.dataset.id); }; });
     drawGroups();
   }

@@ -104,7 +104,7 @@
     <img class="share-cover" src="https://crayxus.com.au/og-aigp-camp.jpg?v=1" onerror="this.src='og-aigp-camp.jpg'" alt="AI·GP 2026 国庆营">
     <div class="kicker">AI·GP 2026 国庆营</div>
     <h1>开营前背景调查</h1>
-    <p class="lead">前七部分由学员本人填写，最后一部分请家长填写联系方式、健康信息与期待。主带工程师将据此安排分组与分层带教。</p>
+    <p class="lead">全部由学员本人填写。主带工程师将据此安排分组与分层带教。</p>
     <div class="meta"><span>10 月 2–6 日 · 杭州</span><span>8 个部分</span><span>约 6 分钟</span></div>
     <p class="privacy">信息仅供本期营地教学与安全保障使用，不对外公开。</p>
   </section>
@@ -118,7 +118,7 @@
   <section class="thanks" id="thanks">
     <div class="ic">✓</div>
     <h2>提交成功</h2>
-    <p>感谢填写。10 月 2 日 9:30 开营；营期每晚 22:00 前，个人学习反馈将发送至家长手机。</p>
+    <p>感谢填写。10 月 2 日 9:30 开营，杭州见。</p>
   </section>
 </div>
 
@@ -236,7 +236,6 @@
     var btn = $('next'); btn.disabled = true; btn.textContent = '提交中…';
     var ans = {};
     CAMP.FIELDS.forEach(function(q){ if (visible(q) && A[q.k] != null && A[q.k] !== '') ans[q.k] = A[q.k]; });
-    if (ans.parentPhone) ans.parentPhone = String(ans.parentPhone).replace(/\D/g, '');
     var test = /[?&]test=1/.test(location.search);
     fetch(API + '/api/aigp-camp/submit', { method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ answers: ans, test: test }) })
