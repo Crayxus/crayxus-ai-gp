@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0B1020">
+<title>EI TOKEN 使用指南</title>
+<meta name="description" content="EI TOKEN 一步步怎么用：登录、工作台、案例超市、案例详情、编译烧录串口、成就与排行榜。从插上板子到硬件跑起来，六步走完。">
+
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
+<!-- 微信分享卡片：绝对地址 + 800 方图 JPG + 多重声明 -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="EI TOKEN">
+<meta property="og:title" content="EI TOKEN 使用指南 · 六步从想法到硬件跑起来">
+<meta property="og:description" content="登录 → 工作台 → 案例超市 → 案例详情 → 编译烧录串口 → 成就排行。每一步都有真实界面截图。">
+<meta property="og:image" content="https://crayxus.com.au/og-eitoken-app.jpg?v=2">
+<meta property="og:image:secure_url" content="https://crayxus.com.au/og-eitoken-app.jpg?v=2">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="800">
+<meta property="og:image:height" content="800">
+<meta property="og:image:alt" content="EI TOKEN · 所想，即所动">
+<meta property="og:url" content="https://crayxus.com.au/eitoken-guide.html">
+<meta property="og:locale" content="zh_CN">
+<meta itemprop="image" content="https://crayxus.com.au/og-eitoken-app.jpg?v=2">
+<meta name="image" content="https://crayxus.com.au/og-eitoken-app.jpg?v=2">
+<link rel="image_src" href="https://crayxus.com.au/og-eitoken-app.jpg?v=2">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="EI TOKEN 使用指南">
+<meta name="twitter:image" content="https://crayxus.com.au/og-eitoken-app.jpg?v=2">
+
+<style>
+  :root{
+    --bg:#0B1020; --bg2:#0E1428; --surface:#121A2E; --raised:#1A2440; --line:#26314F;
+    --txt:#E6EAF2; --txt2:#B7C0D4; --mute:#8A94AD; --acc:#22D3EE; --acc2:#8B5CF6; --ok:#34D399; --warn:#FBBF24;
+    --sans:"MiSans","PingFang SC","Microsoft YaHei","HarmonyOS Sans SC",ui-sans-serif,system-ui,sans-serif;
+    --mono:"JetBrains Mono",Consolas,ui-monospace,monospace;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.75 var(--sans);-webkit-font-smoothing:antialiased}
+  a{color:var(--acc);text-decoration:none}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px 96px}
+
+  /* ── 头部 ── */
+  header{padding:64px 0 40px;position:relative}
+  .brand{display:flex;align-items:center;gap:12px;color:var(--mute);font-size:14px;letter-spacing:.14em}
+  .brand svg{width:34px;height:34px}
+  h1{margin:22px 0 0;font-size:44px;line-height:1.15;font-weight:600;letter-spacing:.02em}
+  h1 span{background:linear-gradient(135deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lede{margin:16px 0 0;font-size:17px;color:var(--txt2);max-width:680px}
+  .cta{margin-top:28px;display:flex;gap:12px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:8px;height:46px;padding:0 20px;border-radius:13px;font-weight:600;font-size:15px;border:1px solid var(--line);background:var(--surface);color:var(--txt);transition:transform .15s,box-shadow .15s}
+  .btn:hover{transform:translateY(-1px)}
+  .btn.primary{border:0;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#04121A;box-shadow:0 12px 30px -12px rgba(34,211,238,.6)}
+
+  /* ── 两种打开方式 ── */
+  .ways{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:44px}
+  .way{border:1px solid var(--line);border-radius:18px;padding:22px 24px;background:var(--surface)}
+  .way h3{margin:0 0 6px;font-size:18px}
+  .way p{margin:0;color:var(--txt2);font-size:14.5px}
+  .way .tag{display:inline-block;font-size:12px;letter-spacing:.08em;padding:3px 10px;border-radius:999px;margin-bottom:12px}
+  .tag.cloud{background:rgba(34,211,238,.12);color:var(--acc)}
+  .tag.win{background:rgba(52,211,153,.12);color:var(--ok)}
+  .way ul{margin:12px 0 0;padding-left:18px;color:var(--txt2);font-size:14px}
+  .way li{margin:3px 0}
+
+  /* ── 步骤 ── */
+  .steps{margin-top:64px}
+  .step{display:grid;grid-template-columns:64px 1fr;gap:20px;padding:44px 0;border-top:1px solid var(--line)}
+  .step:first-child{border-top:0;padding-top:0}
+  .num{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font:600 20px var(--mono);color:#04121A;background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 10px 26px -12px rgba(139,92,246,.7)}
+  .step h2{margin:8px 0 6px;font-size:26px;font-weight:600;letter-spacing:.01em}
+  .step .sub{margin:0 0 20px;color:var(--txt2);font-size:16px}
+  figure{margin:0;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--bg2);box-shadow:0 30px 80px -40px rgba(0,0,0,.9)}
+  figure img{display:block;width:100%;height:auto}
+  figure.two{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--line)}
+  figure.two img{background:var(--bg2)}
+  figcaption{padding:10px 14px;font-size:12.5px;color:var(--mute);background:var(--surface)}
+  .tips{margin:18px 0 0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .tips li{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;font-size:14px;color:var(--txt2);line-height:1.65}
+  .tips b{display:block;color:var(--txt);font-weight:600;margin-bottom:4px;font-size:14.5px}
+  .k{display:inline-block;padding:1px 8px;border-radius:7px;background:var(--raised);border:1px solid var(--line);font-size:13px;color:var(--txt);white-space:nowrap}
+
+  /* ── FAQ ── */
+  .faq{margin-top:72px;border-top:1px solid var(--line);padding-top:40px}
+  .faq h2{margin:0 0 18px;font-size:22px}
+  .qa{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .qa div{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+  .qa b{display:block;margin-bottom:6px;font-size:15px}
+  .qa p{margin:0;font-size:14px;color:var(--txt2)}
+
+  footer{margin-top:64px;padding-top:22px;border-top:1px solid var(--line);color:var(--mute);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}
+
+  @media (max-width:760px){
+    .wrap{padding:0 18px 64px}
+    header{padding:44px 0 30px}
+    h1{font-size:32px}
+    .ways,.qa,.tips{grid-template-columns:1fr}
+    .step{grid-template-columns:1fr;gap:12px;padding:34px 0}
+    .step h2{font-size:22px}
+    figure.two{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="brand">
+    <svg viewBox="0 0 64 64"><defs><linearGradient id="bm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22D3EE"/><stop offset="1" stop-color="#8B5CF6"/></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#bm)" opacity=".18"/><path d="M18 20h22M18 32h16M18 44h22" stroke="url(#bm)" stroke-width="6" stroke-linecap="round"/><circle cx="46" cy="32" r="5" fill="#22D3EE"/></svg>
+    EI TOKEN · 使用指南
+  </div>
+  <h1>从插上板子到硬件跑起来，<span>六步</span></h1>
+  <p class="lede">EI TOKEN 是具身智能 AI 工程平台：插上 ESP32 / Arduino，挑一个案例或说一句话，识别、编写、运行一次完成。下面每一步都是真实界面截图。</p>
+  <div class="cta">
+    <a class="btn primary" href="https://crayxus.com.au/eitoken/" target="_blank">打开云端体验版</a>
+    <a class="btn" href="#steps">从第一步开始看</a>
+  </div>
+
+  <div class="ways">
+    <div class="way">
+      <span class="tag cloud">云端体验版 · 零安装</span>
+      <h3>浏览器打开就能看</h3>
+      <p>电脑、手机都行。看界面、逛 37 个案例、登录、看成就和排行榜。</p>
+      <ul><li>网址：crayxus.com.au/eitoken/</li><li>设备区显示的是演示设备</li><li>编译与浏览器直连烧录正在上线</li></ul>
+    </div>
+    <div class="way">
+      <span class="tag win">Windows 版 · 能烧录</span>
+      <h3>装完就能插板子干活</h3>
+      <p>自带 Arduino 工具链，Uno / Nano 插上直接编译烧录；ESP32 首次联网装一次芯片支持包。</p>
+      <ul><li>Setup.exe 约 90 MB，装到用户目录不弹 UAC</li><li>桌面图标打开，独立窗口</li><li>识别、烧录、串口不计费</li></ul>
+    </div>
+  </div>
+</header>
+
+<section class="steps" id="steps">
+
+  <div class="step">
+    <div class="num">1</div>
+    <div>
+      <h2>登录，或者先逛逛</h2>
+      <p class="sub">新账号送 ¥5 额度。不登录也能看案例、看界面；只有生成代码、充值、把经验存到云端时才需要登录。</p>
+      <figure><img src="eitoken-guide/s1b-login.jpg" alt="登录页" loading="lazy"><figcaption>登录页：左边是"说一句话 → 出代码 → 烧录 → 拿经验"的循环演示，右边登录框。</figcaption></figure>
+      <ul class="tips">
+        <li><b>邮箱或用户名</b>都能登录，注册要邮箱，密码至少 8 位。</li>
+        <li><b>先逛逛，不登录</b>：点这个直接进工作台，随时再登。</li>
+        <li><b>登录后</b>经验、成就、项目都跟着账号走，换台电脑也在。</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="num">2</div>
+    <div>
+      <h2>工作台：三条路任选一条</h2>
+      <p class="sub">最上面一句话就是入口——"今天想让硬件做什么？"。下面三张卡是三条路：插上板子、逛案例超市、说一句话。</p>
+      <figure><img src="eitoken-guide/s2b-hot.jpg" alt="工作台" loading="lazy"><figcaption>工作台：任务输入框、本周热品 StackChan、三条路、插着的板子、我的职级。</figcaption></figure>
+      <ul class="tips">
+        <li><b>插上板子</b>：用数据线连电脑，几秒内这里出现它的型号，点"跑个案例"。</li>
+        <li><b>说一句话</b>：例如"距离小于 10 厘米蜂鸣器就响"，AI 按你板子的真实接口写代码。</li>
+        <li><b>本周热品</b>：StackChan 桌面机器人，7 个案例一键进入。</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="num">3</div>
+    <div>
+      <h2>案例超市：按板子、场景筛</h2>
+      <p class="sub">37 个案例，每一个都在对应板型上真实编译验证过。带接线图、元件清单、能不能仿真的标记。</p>
+      <figure><img src="eitoken-guide/s3b-stackchan.jpg" alt="案例超市" loading="lazy"><figcaption>案例超市：精选、板子筛选（StackChan / ESP32 / Arduino）、场景分类（桌面机器人排第一）、元件标签。</figcaption></figure>
+      <ul class="tips">
+        <li><b>板子筛选</b>：只看你手上那块能跑的。</li>
+        <li><b>场景分类</b>：第一次点亮 → 感知 → 显示 → 运动 → 联网，难度从易到难。</li>
+        <li><b>能仿真</b>：没板子也能先在浏览器里跑一遍看效果。</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="num">4</div>
+    <div>
+      <h2>案例详情：选板子，看接线，三个大按钮</h2>
+      <p class="sub">先选你的板子（插着的会自动高亮），接线图和引脚会跟着板型切换。然后三选一：烧录到我的板子、先仿真、让 AI 改一改。</p>
+      <figure><img src="eitoken-guide/s4-case.jpg" alt="案例详情" loading="lazy"><figcaption>案例详情：板型选择、烧录 / 仿真 / AI 改一改、接线图、元件清单、做完你会知道什么。</figcaption></figure>
+      <ul class="tips">
+        <li><b>接线图按板型变</b>：Uno 是 D9/D10，ESP32 自动换成 GPIO26/27，不用自己查。</li>
+        <li><b>缺的库</b>编译时自动装，不用手动找。</li>
+        <li><b>让 AI 改一改</b>：右边有现成的改法建议，点一下就改。</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="num">5</div>
+    <div>
+      <h2>项目工作台：编译 → 自动备份 → 烧录 → 串口</h2>
+      <p class="sub">顶部一条步骤线：代码 → 编译 → 烧录 → 串口 → 仿真。烧录前会先把板子上原来的程序自动备份，随时能还原。</p>
+      <figure class="two"><img src="eitoken-guide/s5-project.jpg" alt="项目工作台" loading="lazy"><img src="eitoken-guide/s6-compiled.jpg" alt="编译通过" loading="lazy"><figcaption>左：代码 + AI 助手；右：编译通过，显示 Flash 和内存占用。</figcaption></figure>
+      <ul class="tips">
+        <li><b>编译</b>：进度实时显示；报错会翻译成能操作的建议，不是一堆编译器原文。</li>
+        <li><b>烧录</b>：自动备份 → 写入 → 校验，烧完自动打开串口监视器看输出。</li>
+        <li><b>ESP32 第一次</b>编译要 7–8 分钟（要编整个芯片支持包），之后几十秒。</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="num">6</div>
+    <div>
+      <h2>成就与排行：做事就涨经验</h2>
+      <p class="sub">经验只认真实事件：编译通过、烧录成功、完成案例、第一次用新板型。19 个成就，L1 见习创客到 L8 首席工程师，只展示不锁功能。</p>
+      <figure class="two"><img src="eitoken-guide/s8-me.jpg" alt="我的成就" loading="lazy"><img src="eitoken-guide/s7-rank.jpg" alt="排行榜" loading="lazy"><figcaption>左：成就墙与工程师职级；右：排行榜（总榜 / 本周 / 机构）。</figcaption></figure>
+      <ul class="tips">
+        <li><b>首次烧录 +50</b>，完成一个案例 +30，第一次用新板型 +80。</li>
+        <li><b>隐藏成就</b>显示为 ???，做到了才揭晓。</li>
+        <li><b>不想上榜</b>可以在"我的"里关掉。</li>
+      </ul>
+    </div>
+  </div>
+
+</section>
+
+<section class="faq">
+  <h2>常见问题</h2>
+  <div class="qa">
+    <div><b>没有板子能玩吗？</b><p>能。带"能仿真"标记的案例在浏览器里跑；云端体验版全程用演示设备也能把流程走一遍。</p></div>
+    <div><b>插上板子认不出来？</b><p>多半是串口驱动（CH340 / CP210x）。Win11 通常自动装好，Win10 装一次驱动即可；帮助页有链接。</p></div>
+    <div><b>怎么计费？</b><p>识别、编译、烧录、串口不计费。AI 生成代码按实际用量计费，一次大约 ¥0.10；新账号送 ¥5。</p></div>
+    <div><b>烧坏了怎么办？</b><p>烧录前自动备份了原固件，项目页"备份"标签里一键还原。</p></div>
+  </div>
+</section>
+
+<footer>
+  <span>EI TOKEN · 所想，即所动</span>
+  <span><a href="https://crayxus.com.au/eitoken/" target="_blank">打开云端体验版 →</a></span>
+</footer>
+
+</div>
+</body>
+</html>
