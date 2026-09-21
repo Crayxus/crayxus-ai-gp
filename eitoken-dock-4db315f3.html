@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EI DOCK D7 · 调试供电底座</title>
+<meta property="og:title" content="EI DOCK D7 · 调试供电底座">
+<meta property="og:description" content="一根线接电脑，七路独立供电，3.3V 到 24V 全覆盖">
+<meta property="og:image" content="https://crayxus.com.au/og-eitoken-dock.jpg">
+<meta property="og:url" content="https://crayxus.com.au/eitoken-dock-4db315f3.html">
+<style>
+:root{
+  --bg:#f6f7f9;--sheet:#fff;--ink:#16202e;--mute:#66717f;--dim:#96a0ae;
+  --line:#e3e7ee;--acc:#1f6feb;--acc-soft:#eef4ff;
+  --ok:#18794e;--ok-soft:#eaf6f0;--warn:#9a6700;--warn-soft:#fff8e6;
+  --red:#b42318;--red-soft:#fdf0ef;
+  --font:"PingFang SC","Microsoft YaHei","Source Han Sans SC",system-ui,sans-serif;
+  --mono:Consolas,"SF Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14.5px;line-height:1.7;padding:24px 16px 60px}
+.wrap{max-width:880px;margin:0 auto}
+header{background:var(--sheet);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:14px}
+.hero{display:block;width:100%;background:#e9ecf1}
+.htxt{padding:22px 30px 24px}
+.eyebrow{font:600 11.5px/1.5 var(--mono);color:var(--acc);letter-spacing:.09em}
+h1{margin:5px 0 3px;font-size:26px;font-weight:800;letter-spacing:-.01em}
+.sub{color:var(--mute);font-size:14px}
+.tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.tag{border:1px solid var(--line);border-radius:999px;padding:3px 12px;font-size:12px;color:var(--mute);background:var(--bg)}
+.tag.on{background:var(--acc-soft);border-color:#cfe0ff;color:var(--acc);font-weight:600}
+section{background:var(--sheet);border:1px solid var(--line);border-radius:12px;padding:22px 30px;margin-bottom:12px}
+h2{margin:0 0 12px;font-size:17px;font-weight:750;display:flex;align-items:center;gap:10px}
+h2 .n{width:23px;height:23px;flex:none;border-radius:7px;background:var(--acc);color:#fff;font:700 12.5px/23px var(--mono);text-align:center}
+h3{margin:18px 0 7px;font-size:14.5px;font-weight:700}
+h3:first-of-type{margin-top:0}
+p{margin:0 0 9px}
+ul{margin:0 0 9px;padding-left:19px}
+li{margin:3px 0}
+li::marker{color:var(--dim)}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:8px 0 4px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--bg);font-weight:650;font-size:12.5px;color:var(--mute);white-space:nowrap}
+td.m{font-family:var(--mono);white-space:nowrap;font-size:12.5px}
+td.c{text-align:center;white-space:nowrap}
+.note{background:var(--acc-soft);border:1px solid #cfe0ff;border-radius:9px;padding:10px 14px;font-size:13.5px;margin:11px 0}
+.note b{color:var(--acc)}
+.bad{background:var(--red-soft);border:1px solid #f4cfcb;border-radius:9px;padding:10px 14px;font-size:13.5px;margin:11px 0}
+.bad b{color:var(--red)}
+.ok{background:var(--ok-soft);border:1px solid #cfe9dc;border-radius:9px;padding:10px 14px;font-size:13.5px;margin:11px 0}
+.ok b{color:var(--ok)}
+.warn{background:var(--warn-soft);border:1px solid #f0e0b0;border-radius:9px;padding:10px 14px;font-size:13.5px;margin:11px 0}
+.warn b{color:var(--warn)}
+pre{background:#0f1720;color:#dbe4ee;border-radius:9px;padding:12px 15px;overflow-x:auto;font:12.5px/1.6 var(--mono);margin:9px 0}
+pre .c{color:#7b8b9d}pre .k{color:#8ed0ff}pre .s{color:#a8e6a0}
+.diagram{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:14px;overflow-x:auto;margin:10px 0}
+.diagram pre{background:transparent;color:var(--ink);padding:0;font-size:11.5px;line-height:1.5}
+.ch{display:inline-block;min-width:36px;text-align:center;border-radius:5px;padding:1px 7px;font:600 11.5px var(--mono);background:var(--acc-soft);color:var(--acc);border:1px solid #cfe0ff}
+.ch.t{background:#f3eefe;color:#6b4bb5;border-color:#ddd0f5}
+.ch.d{background:var(--ok-soft);color:var(--ok);border-color:#cfe9dc}
+.fill{background:#fff6d8;border-bottom:1px dashed #d8b84a;padding:0 6px;font-family:var(--mono);color:#8a6d00}
+footer{color:var(--dim);font-size:12px;text-align:center;margin-top:20px}
+@media print{body{background:#fff;padding:0}section,header{break-inside:avoid}}
+@media (max-width:680px){section,.htxt{padding:18px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <img class="hero" src="eitoken-dock-hero.jpg" alt="EI DOCK D7 调试供电底座">
+  <div class="htxt">
+    <div class="eyebrow">EI TOKEN 配套硬件 · 设计方案 v2</div>
+    <h1>EI DOCK D7　调试供电底座</h1>
+    <p class="sub">一根线接电脑，七路独立供电，3.3V 到 24V 全覆盖，每一路的电流平台都看得见</p>
+    <div class="tags">
+      <span class="tag on">7 路 · 3.3–24V · 150W</span>
+      <span class="tag on">DC 输入 · 不进 CCC 目录</span>
+      <span class="tag on">ESP32-S3 · 平台可识别可控</span>
+      <span class="tag">BOM ¥243 / 售价 ¥499</span>
+    </div>
+  </div>
+</header>
+
+<section>
+  <h2><span class="n">1</span>要解决的问题</h2>
+  <ul>
+    <li>笔记本一个 USB 口只给 <b>500mA（2.0）/ 900mA（3.0）</b>。四个 SG90 舵机峰值就要 2.4A，板子直接复位。</li>
+    <li>树莓派 5 要 <b>5V/5A</b>、Jetson Orin Nano 要 <b>19V</b>、工业步进驱动器要 <b>24V</b>——桌上摆一堆各不相同的适配器。</li>
+    <li>市售 USB Hub <b>从电脑那个口取电</b>，再怎么分还是那 500mA。</li>
+  </ul>
+  <div class="note"><b>定义：</b>数据走 Hub 直通电脑，供电完全独立，3.3V 到 24V 一台全包，每一路可测量、可开关、可被 EI TOKEN 读取和控制。</div>
+  <p>单做电源是红海。差异化不在供电，在于<b>它自己是一台 EI TOKEN 认得出的设备</b>——平台知道每个口挂了什么、吃多少电、哪一路过流。做电源的厂商做不了这件事，因为他们没有平台。</p>
+</section>
+
+<section>
+  <h2><span class="n">2</span>兼容性对照</h2>
+  <p style="color:var(--mute);font-size:13.5px;margin-bottom:10px">先把要支持的设备列全，再倒推需要哪些输出。</p>
+  <table>
+    <tr><th style="width:28%">设备</th><th style="width:22%">供电要求</th><th class="c" style="width:13%">接哪路</th><th>备注</th></tr>
+    <tr><td><b>树莓派 5</b></td><td class="m">5V / 5A（PD）</td><td class="c"><span class="ch">CH5</span></td><td>须声明 5V5A，否则降频</td></tr>
+    <tr><td>树莓派 4B / 3B+</td><td class="m">5V / 3A</td><td class="c"><span class="ch">CH5</span></td><td></td></tr>
+    <tr><td><b>Jetson Orin Nano</b></td><td class="m">19V / 2.4A 桶插</td><td class="c"><span class="ch d">CH7</span></td><td>19V 预设档直连</td></tr>
+    <tr><td>Jetson Xavier NX / Nano</td><td class="m">19V / 5V 桶插</td><td class="c"><span class="ch d">CH7</span></td><td></td></tr>
+    <tr><td>地瓜 RDK X5 / X3</td><td class="m">5V / 3A USB-C</td><td class="c"><span class="ch">CH5</span></td><td></td></tr>
+    <tr><td>ESP32 / Arduino / STM32</td><td class="m">5V / &lt;0.5A</td><td class="c"><span class="ch">CH1–4</span></td><td>四块同时插，互不影响</td></tr>
+    <tr><td>M5 StackChan（CoreS3）</td><td class="m">5V / 1A</td><td class="c"><span class="ch">CH1–4</span></td><td>转头峰值 1.5A</td></tr>
+    <tr><td>SG90 舵机 ×4</td><td class="m">5V / 2.4A 峰值</td><td class="c"><span class="ch t">CH6</span></td><td>堵转靠限流保护</td></tr>
+    <tr><td><b>MG996R 大舵机 ×2</b></td><td class="m">6.0V / 5A 峰值</td><td class="c"><span class="ch t">CH6</span></td><td>6V 档扭力最佳</td></tr>
+    <tr><td>WS2812 灯带 60 灯</td><td class="m">5V / 3.6A</td><td class="c"><span class="ch t">CH6</span></td><td>大电流走端子</td></tr>
+    <tr><td>L298N / TB6612 + 电机</td><td class="m">6–12V / 2A</td><td class="c"><span class="ch t">CH6</span></td><td></td></tr>
+    <tr><td><b>六轴机械臂</b></td><td class="m">12V / 5A</td><td class="c"><span class="ch t">CH6</span></td><td>多关节同动峰值高</td></tr>
+    <tr><td><b>42 步进 + TB6600</b></td><td class="m">24V / 3A</td><td class="c"><span class="ch t">CH6</span></td><td>24V 档的意义所在</td></tr>
+    <tr><td>工业传感器 / RS485</td><td class="m">24V / &lt;1A</td><td class="c"><span class="ch t">CH6</span></td><td>光电、接近、编码器</td></tr>
+    <tr><td>激光雷达 C1 / LD19</td><td class="m">5V / 0.5A</td><td class="c"><span class="ch">CH1–4</span></td><td></td></tr>
+    <tr><td>路由器 / 工控机</td><td class="m">12V / 2A 桶插</td><td class="c"><span class="ch d">CH7</span></td><td>12V 预设档</td></tr>
+    <tr><td>3.3V 裸模块</td><td class="m">3.3V / &lt;1A</td><td class="c"><span class="ch t">CH6</span></td><td>可调轨下限</td></tr>
+    <tr><td>笔记本 / 手机</td><td class="m">PD 5–20V</td><td class="c"><span class="ch">CH5</span></td><td>顺手当 100W 充电器</td></tr>
+  </table>
+  <div class="ok"><b>倒推出的输出配置：</b>
+  <span class="ch">CH1–4</span> 固定 5V USB-A
+  <span class="ch">CH5</span> USB-C PD 5–20V
+  <span class="ch t">CH6</span> 可调端子 3.3–24V
+  <span class="ch d">CH7</span> DC 桶插 5/12/19/24V</div>
+</section>
+
+<section>
+  <h2><span class="n">3</span>规格</h2>
+  <table>
+    <tr><th style="width:14%">项</th><th style="width:34%">规格</th><th>说明</th></tr>
+    <tr><td><b>输入</b></td><td class="m">DC 5.5×2.5　24V / 6.5A（156W）<br>或 USB-C PD 20V/5A（100W）</td><td>自动切换。DC 为主，PD 为便携备用（降额 90W）</td></tr>
+    <tr><td><b>数据上行</b></td><td class="m">USB-C ×1 → 电脑</td><td>4 口 Hub 直通，与供电隔离</td></tr>
+    <tr><td><b>CH1–4</b></td><td class="m">USB-A　5V / 单口 2.4A，合计 ≤6A</td><td>带 BC1.2 握手</td></tr>
+    <tr><td><b>CH5</b></td><td class="m">USB-C PD 最高 100W<br>5V/5A · 9V/3A · 12V/3A · 20V/5A</td><td>含 5V/5A 特殊档与 PPS</td></tr>
+    <tr><td><b>CH6</b></td><td class="m">端子　3.3–24V 可调 / 5A，步进 0.1V</td><td>Buck-Boost，非 5V 档需确认</td></tr>
+    <tr><td><b>CH7</b></td><td class="m">DC 桶插　5 / 12 / 19 / 24V 预设 / 5A</td><td>给只有桶插口的设备</td></tr>
+    <tr><td><b>总功率</b></td><td class="m">150W（DC）/ 90W（PD）</td><td>超预算按 CH5 &gt; CH7 &gt; CH6 &gt; CH1–4 降载</td></tr>
+    <tr><td><b>计量</b></td><td class="m">每路 V / A / W　±1% · 10Hz</td><td>INA3221 ×3，支持电流曲线回放</td></tr>
+    <tr><td><b>保护</b></td><td class="m">过流 · 短路 · 过压 · 过温 · 防反接 · 软启动</td><td>硬件 eFuse + MCU 软件双重</td></tr>
+    <tr><td><b>显示</b></td><td class="m">1.3" OLED + 旋钮，每路双色 LED</td><td>绿=正常，红=保护，黄=高压档</td></tr>
+    <tr><td><b>主控</b></td><td class="m">ESP32-S3（USB CDC + WiFi）</td><td>平台可识别、可下指令、可 OTA</td></tr>
+    <tr><td><b>尺寸</b></td><td class="m">约 165 × 110 × 40 mm</td><td>铝合金型材兼散热</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2><span class="n">4</span>系统框图</h2>
+  <div class="diagram"><pre>
+   ┌──────────── 输入（与电脑完全无关）────────────┐
+   │  DC 24V/6.5A 桶插 ──┐                        │
+   │  USB-C PD 20V/5A ───┼─► ORing ─► 24V 主母线   │
+   └─────────────────────┴────────────────────────┘
+                              │
+        ┌───────────┬─────────┼──────────┬────────────┐
+        ▼           ▼         ▼          ▼            ▼
+   ┌─────────┐ ┌─────────┐ ┌────────┐ ┌────────┐ ┌────────┐
+   │ 5V/8A   │ │ PD 源   │ │ Buck-  │ │ Buck   │ │ 3.3V   │
+   │ 同步Buck│ │ Buck-   │ │ Boost  │ │ 5/12/  │ │ 辅助    │
+   │         │ │ Boost   │ │3.3–24V │ │ 19/24V │ │ MCU 用 │
+   └────┬────┘ └────┬────┘ └───┬────┘ └───┬────┘ └────────┘
+   ┌────┴────┐      │          │          │
+   ▼ ▼ ▼ ▼          ▼          ▼          ▼
+  eFuse ×4        eFuse      eFuse      eFuse   ← 每路独立限流
+   │ │ │ │          │          │          │
+  CH1-CH4         CH5        CH6        CH7
+  USB-A ×4      USB-C PD   螺丝端子    DC 桶插
+
+   INA3221 ×3 ─ I2C ─► ESP32-S3 ─► USB CDC ─► EI TOKEN
+                          ├─► 7× 使能 + 故障回读
+                          ├─► OLED + 旋钮 + 14× LED
+                          └─► NTC ×2 过温降载
+
+   数据通路（独立）：电脑 USB-C ─► Hub ─► D+/D- 直通 CH1–4
+  </pre></div>
+  <div class="note"><b>关键：</b>数据通路和供电系统<b>只共地，不共电</b>。每个 USB-A 口的 VBUS 来自独立 5V 轨经 eFuse，不是来自电脑。</div>
+</section>
+
+<section>
+  <h2><span class="n">5</span>电气要点</h2>
+
+  <h3>为什么主母线是 24V</h3>
+  <p>要输出 24V 就不能靠升压——大功率 Boost 的效率和纹波都不如 Buck。取 24V 母线 + 各路降压，七路里六路是纯 Buck，只有 CH6 为兼顾 3.3V 下限用 Buck-Boost。</p>
+  <p>接 PD 时母线只有 20V，<b>24V 档自动锁定</b>，界面灰掉并提示"需接 24V 适配器"。</p>
+
+  <h3>五条输出轨</h3>
+  <table>
+    <tr><th>轨</th><th>拓扑</th><th>主芯片（样机 / 量产）</th></tr>
+    <tr><td class="c">5V/8A</td><td class="c">同步 Buck</td><td class="m">TPS56637 / SY8205F</td></tr>
+    <tr><td class="c">CH5 PD</td><td class="c">Buck-Boost</td><td class="m">IP2368 + HUSB311</td></tr>
+    <tr><td class="c">CH6 可调</td><td class="c">Buck-Boost</td><td class="m">TPS55288 / SC8815</td></tr>
+    <tr><td class="c">CH7 档位</td><td class="c">同步 Buck</td><td class="m">SY8205F + 数字电位器</td></tr>
+    <tr><td class="c">3.3V 辅助</td><td class="c">LDO</td><td class="m">AMS1117-3.3</td></tr>
+  </table>
+  <div class="note"><b>TPS55288 是 CH6 的关键器件</b>：I2C 直接设定输出电压，不需要外部电位器改 FB。平台下一条指令就能把电压配好。</div>
+
+  <h3>保护</h3>
+  <p>每路输出前串一颗 eFuse——这是和廉价 Hub 最本质的区别，它们只有一个总保险，一路短路全盘掉电。样机用 TPS2595，量产换 SY6280 / AOZ1360 + 采样电阻。</p>
+  <div class="warn"><b>保护必须双层：</b>eFuse 管微秒级硬件切断（短路），MCU 管毫秒级软件判断（持续过流、缓慢升温）。只靠软件，一次短路就烧板子；只靠硬件，舵机堵转这种"没到限流但一直大电流"看不出来。</div>
+
+  <h3>热</h3>
+  <p>满载 150W、90% 效率，损耗约 15W，集中在四颗开关电源。铝型材外壳兼散热器，功率区垫导热硅胶片贴壳。NTC ×2 贴主电感与 Buck-Boost 区，70°C 降载、85°C 切断。不上风扇——桌面产品噪音比温度更影响体验。</p>
+</section>
+
+<section>
+  <h2><span class="n">6</span>「自适应」的边界</h2>
+  <table>
+    <tr><th style="width:12%">层</th><th style="width:30%">做法</th><th>是否自动</th></tr>
+    <tr><td class="c"><b>协议级</b></td><td>PD / PPS / BC1.2 握手，对方说要多少给多少</td><td class="c" style="color:var(--ok)"><b>全自动</b>，零风险</td></tr>
+    <tr><td class="c"><b>负载级</b></td><td>恒压 + 可编程限流 + 软启动</td><td class="c" style="color:var(--ok)"><b>全自动</b>，电源本分</td></tr>
+    <tr><td class="c"><b>电压级</b></td><td>识别设备 → 自动切电压档</td><td class="c" style="color:var(--red)"><b>不自动</b></td></tr>
+  </table>
+  <div class="bad"><b>红线：CH6 / CH7 绝不自动升压。</b>5V 的板子给 24V，一秒钟就废，而大多数设备不会告诉你它要多少伏。
+  <ul style="margin:6px 0 0">
+    <li>上电默认永远 <b>5.0V</b>，不记忆上次的高压档</li>
+    <li>切高压必须：旋钮<b>按下确认</b>，或 EI TOKEN 下发明确指令</li>
+    <li>高压档该路 LED <b>常亮黄色</b>，OLED 顶栏显示警示条</li>
+    <li>调压<b>先断输出再改设定值再上电</b>，绝不带载调压</li>
+    <li>上电先 5V 软启动再爬升，电流异常立即回落断开</li>
+  </ul></div>
+  <div class="ok"><b>不碰电压能做的聪明事：</b>测插入瞬间的浪涌曲线判断负载类型并自动设限流 · 周期性电流尖峰判定舵机堵转 · 反复触发保护自动降限流并上报 · 总功率超标按优先级降载而非整机掉电 · PD 输入时自动锁掉 24V 档</div>
+</section>
+
+<section>
+  <h2><span class="n">7</span>固件与平台协议</h2>
+  <p>主控选 ESP32-S3 不是因为最便宜（CH32V203 更便宜），而是因为 <b>EI TOKEN 已经完整支持它</b>：这台底座本身就是平台能一键烧录的设备，固件更新走平台；原生 USB CDC 免驱；VID 0x303A 一插上就被认出。</p>
+  <pre><span class="c"># 握手</span>
+&gt; <span class="k">ID</span>
+&lt; <span class="s">EITDOCK v1 sn=D7A7F2C1 ch=7 vin=24.1 src=dc pmax=150</span>
+
+<span class="c"># 状态，平台 10Hz 轮询</span>
+&gt; <span class="k">ST</span>
+&lt; <span class="s">1 usb-a  on  5.02 0.42  2.1 ok</span>
+&lt; <span class="s">5 usb-c  on  5.09 4.62 23.5 pd5v5a</span>   <span class="c">树莓派 5</span>
+&lt; <span class="s">6 term   on 12.01 4.88 58.6 <b>ilim</b></span>     <span class="c">机械臂到限流</span>
+&lt; <span class="s">7 barrel on 19.02 2.10 39.9 ok</span>      <span class="c">Jetson</span>
+&lt; <span class="s">total 133.5W / 150W  temp 61C</span>
+
+<span class="c"># 控制</span>
+&gt; <span class="k">ON 3</span> / <span class="k">OFF 3</span> / <span class="k">LIM 6 5.0</span> / <span class="k">SET 6 7.4</span> / <span class="k">SET 7 19</span> / <span class="k">CONFIRM</span> / <span class="k">LOG 6</span></pre>
+  <p>平台侧：案例的 <code>case.json</code> 加一段 <code>"power": { "v": 7.4, "a": 2.5, "ch": "term" }</code>，打开案例即提示「本例需要 7.4V/2.5A，是否切换 CH6？」，点一下自动配置。烧录中电流异常直接提示「CH6 触发限流，检查舵机是否卡死」。</p>
+  <div class="note"><b>这是护城河。</b>硬件两个月能仿，但「案例知道自己要多少电、平台直接把电源配好」需要平台、案例库、固件三者都在自己手里。</div>
+</section>
+
+<section>
+  <h2><span class="n">8</span>BOM 与成本</h2>
+  <p style="color:var(--mute);font-size:13.5px;margin-bottom:8px">1000 台批量估算，人民币，不含电源适配器。</p>
+  <table>
+    <tr><th style="width:30%">模块</th><th style="width:38%">主要物料</th><th class="c">成本</th></tr>
+    <tr><td>主控与显示</td><td class="m">ESP32-S3-WROOM-1 · OLED · 编码器 · 14×LED</td><td class="c">¥34</td></tr>
+    <tr><td>输入级</td><td class="m">CH224K · ORing P-MOS ×2 · TVS · 座子</td><td class="c">¥14</td></tr>
+    <tr><td>5V/8A 轨</td><td class="m">TPS56637 · 电感 · 电容组</td><td class="c">¥17</td></tr>
+    <tr><td>CH5 PD 源</td><td class="m">IP2368 · HUSB311 · 电感电容</td><td class="c">¥24</td></tr>
+    <tr><td>CH6 可调轨</td><td class="m">TPS55288 · 电感 · 端子</td><td class="c">¥29</td></tr>
+    <tr><td>CH7 档位轨</td><td class="m">SY8205F · 数字电位器 · DC 座</td><td class="c">¥16</td></tr>
+    <tr><td>七路保护</td><td class="m">SY6280 ×4 · AOZ1360 ×2 · BC1.2 ×4</td><td class="c">¥23</td></tr>
+    <tr><td>计量</td><td class="m">INA3221 ×3 · 分流电阻 ×7 · NTC ×2</td><td class="c">¥14</td></tr>
+    <tr><td>USB Hub</td><td class="m">SL2.1A · USB-A 座 ×4 · ESD</td><td class="c">¥11</td></tr>
+    <tr><td>PCB 与贴片</td><td class="m">4 层 115×150mm 双面贴装</td><td class="c">¥24</td></tr>
+    <tr><td>结构件</td><td class="m">铝型材 · 端盖 ×2 · 螺丝 · 脚垫 · 导热片</td><td class="c">¥30</td></tr>
+    <tr><td>包装</td><td class="m">彩盒 · 说明卡 · 泡棉</td><td class="c">¥7</td></tr>
+    <tr style="background:var(--bg)"><td><b>BOM 合计</b></td><td></td><td class="c"><b>¥243</b></td></tr>
+    <tr><td>良率与测试损耗 8%</td><td></td><td class="c">¥19</td></tr>
+    <tr style="background:var(--acc-soft)"><td><b>落地成本</b></td><td>零售 <b>¥499</b> 裸机 / <b>¥599</b> 含 150W 适配器</td><td class="c"><b>¥262</b></td></tr>
+  </table>
+  <p style="font-size:13px;color:var(--mute)">毛利率约 47%。首批 500 台，打样 + 型材 CNC（无需注塑模）<span class="fill">约 ¥4–6 万</span>。</p>
+</section>
+
+<section>
+  <h2><span class="n">9</span>合规</h2>
+  <div class="ok"><b>整机只接 DC，不碰市电。</b>适配器外购已有 CCC 的成品（明纬、台达有 24V/6.5A 现货），<b>本体不属于 CCC 强制目录</b>，省掉 2–3 个月认证和上万元费用。这是把形态定为「DC 输入底座」而非「AC 台式电源」的首要原因。</div>
+  <table>
+    <tr><th style="width:26%">项目</th><th style="width:20%">是否必须</th><th>说明</th></tr>
+    <tr><td>CCC（国内）</td><td class="c" style="color:var(--ok)"><b>不需要</b></td><td>DC 输入配件，不在强制目录</td></tr>
+    <tr><td>CE / FCC</td><td class="c">出口才需要</td><td>EMC 为主，约 ¥1.5–3 万</td></tr>
+    <tr><td>USB-IF</td><td class="c">非必须</td><td>不申请就不能打 USB 官方 logo</td></tr>
+    <tr><td>RoHS</td><td class="c">建议做</td><td>教育与企业采购常被要求</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2><span class="n">10</span>开发计划与风险</h2>
+  <table>
+    <tr><th style="width:12%">阶段</th><th style="width:16%">周期 / 成本</th><th>产出与验收</th></tr>
+    <tr><td><b>V0 验证</b></td><td class="m">2 周 / ¥1200</td><td>现成模块洞洞板搭一台。<b>验收：树莓派 5 与 Jetson Orin Nano 同时稳定供电、七路电流可读、平台能识别并下指令。</b>给 3–5 个真实用户试用，确认需求真伪。</td></tr>
+    <tr><td><b>V1 样机</b></td><td class="m">7 周 / ¥2.5 万</td><td>PCB 打样 3 版 + 铝型材手板。<b>验收：满载 150W 连续 4 小时壳温 &lt;60°C；七路短路各 100 次不损坏；误切高压保护 100% 动作；BC1.2 对 10 款板子握手成功。</b></td></tr>
+    <tr><td><b>V2 小批</b></td><td class="m">6 周 / ¥15 万</td><td>500 台试产 + 测试治具。<b>验收：全测七路精度 ±1%，老化 2 小时零故障。</b></td></tr>
+    <tr><td><b>平台联调</b></td><td class="m">与 V1 并行</td><td>case.json 加 power 字段；设备页支持 EI DOCK 面板；烧录接入过流诊断。</td></tr>
+  </table>
+  <div class="warn"><b>四条风险与对策</b>
+    <ol style="margin:7px 0 0;padding-left:20px">
+      <li><b>需求未必刚性</b>——多数入门用户只点个灯。对策：V0 先用现成方案给用户试，看有多少人真的抱怨供电，再决定投不投 V1。</li>
+      <li><b>24V 是双刃剑</b>——覆盖面上去，误操作烧板子的风险也上去。对策：第 6 节那几条红线一条不能省。</li>
+      <li><b>拖累现金流</b>——500 台压 ¥13 万货值。对策：走教育机构整班采购和厂商联营，先有订单再投产，不做零售备货。</li>
+      <li><b>分散精力</b>——平台真机验证还没跑完一轮。对策：V0 交外部硬件工程师兼职，创始人只做规格评审。</li>
+    </ol>
+  </div>
+</section>
+
+<footer>EI TOKEN 配套硬件 · EI DOCK D7 · 内部讨论稿　｜　黄色标注处待定，成本以供应商报价为准</footer>
+
+</div>
+</body>
+</html>
