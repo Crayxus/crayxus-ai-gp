@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Nomi v0.3 升级方案</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --paper:#EEF0ED;      /* 冷燕麦, 偏绿灰 */
+    --card:#FAFBFA;
+    --ink:#14181A;
+    --ink-2:#4A5358;
+    --ink-3:#7B858A;
+    --line:#D8DCD8;
+    --steel:#3E6A8C;      /* 主色: 餐具的钢蓝 */
+    --steel-soft:#E3EAF0;
+    --amber:#A8701F;      /* 有点多了 */
+    --clay:#9C3F33;       /* 超标 */
+    --moss:#4C6B47;       /* 到量 */
+  }
+  :root:not([data-theme="light"]){
+    @media (prefers-color-scheme: dark){
+      --paper:#121513; --card:#1A1E1C; --ink:#EAEDE9; --ink-2:#A7B0AC; --ink-3:#77817C;
+      --line:#2A302C; --steel:#7FAFD0; --steel-soft:#1E2A33;
+      --amber:#D9A65C; --clay:#D4796B; --moss:#8FB588;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#121513; --card:#1A1E1C; --ink:#EAEDE9; --ink-2:#A7B0AC; --ink-3:#77817C;
+    --line:#2A302C; --steel:#7FAFD0; --steel-soft:#1E2A33;
+    --amber:#D9A65C; --clay:#D4796B; --moss:#8FB588;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    background:var(--paper); color:var(--ink); margin:0;
+    font-family:"PingFang SC","Microsoft YaHei","Hiragino Sans GB",system-ui,sans-serif;
+    font-size:15px; line-height:1.75;
+  }
+  .wrap{max-width:760px; margin:0 auto; padding-inline:20px; padding-block:40px 72px}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace}
+
+  header{border-bottom:2px solid var(--ink); padding-bottom:18px; margin-bottom:34px}
+  .eyebrow{
+    font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--ink-3); font-family:"IBM Plex Mono",monospace;
+  }
+  h1{font-size:30px; line-height:1.25; margin:.3em 0 .25em; font-weight:700; text-wrap:balance}
+  .sub{color:var(--ink-2); margin:0; font-size:14.5px}
+  .facts{display:flex; flex-wrap:wrap; gap:6px 22px; margin-top:16px}
+  .facts div{font-size:12.5px; color:var(--ink-3)}
+  .facts b{color:var(--ink-2); font-weight:600}
+
+  h2{
+    font-size:13px; letter-spacing:.14em; text-transform:uppercase;
+    font-family:"IBM Plex Mono",monospace; color:var(--steel);
+    margin:44px 0 14px; font-weight:600;
+  }
+  h3{font-size:16px; margin:26px 0 8px; font-weight:650}
+  p{margin:0 0 12px; max-width:62ch}
+  .note{color:var(--ink-2); font-size:13.5px}
+
+  /* 按住时长刻度 —— 这页唯一的图, 画的是按键真实的毫秒门槛 */
+  .ruler{background:var(--card); border:1px solid var(--line); border-radius:4px; padding:22px 18px 14px; margin:18px 0 26px}
+  .ruler svg{display:block; width:100%; height:auto; max-width:100%}
+
+  table{border-collapse:collapse; width:100%; font-size:14px}
+  .tw{overflow-x:auto; margin:14px 0 6px}
+  th,td{text-align:left; padding:9px 12px 9px 0; border-bottom:1px solid var(--line); vertical-align:top}
+  th{font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3); font-weight:600;
+     font-family:"IBM Plex Mono",monospace; white-space:nowrap}
+  td:first-child{white-space:nowrap; font-weight:600}
+  .num{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums}
+
+  .pill{
+    display:inline-block; font-size:11.5px; padding:1px 8px; border-radius:2px;
+    font-family:"IBM Plex Mono",monospace; letter-spacing:.04em; white-space:nowrap;
+  }
+  .p-ok{background:var(--steel-soft); color:var(--steel)}
+  .p-lv1{color:var(--moss); border:1px solid var(--moss)}
+  .p-lv2{color:var(--amber); border:1px solid var(--amber)}
+  .p-lv3{color:var(--clay); border:1px solid var(--clay)}
+
+  /* 排期: 左边日号, 右边内容, 竖线串起来 */
+  .days{list-style:none; padding:0; margin:14px 0 0}
+  .days li{display:grid; grid-template-columns:62px 1fr; gap:16px; padding:14px 0; border-top:1px solid var(--line)}
+  .days li:last-child{border-bottom:1px solid var(--line)}
+  .dnum{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-3); letter-spacing:.08em; padding-top:2px}
+  .dtitle{font-weight:650; margin-bottom:2px}
+  .dbody{color:var(--ink-2); font-size:13.5px}
+  .crit{color:var(--clay); font-weight:600}
+
+  .blockers{background:var(--card); border:1px solid var(--line); border-left:3px solid var(--clay);
+            border-radius:3px; padding:16px 18px; margin-top:16px}
+  .blockers ol{margin:8px 0 0; padding-left:20px}
+  .blockers li{margin-bottom:8px; color:var(--ink-2); font-size:14px}
+  .blockers b{color:var(--ink)}
+
+  .done{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px}
+  .done span{font-size:12.5px; padding:3px 10px; border:1px solid var(--line); border-radius:2px;
+             background:var(--card); color:var(--ink-2)}
+
+  footer{margin-top:52px; padding-top:16px; border-top:1px solid var(--line);
+         font-size:12.5px; color:var(--ink-3)}
+  @media (max-width:520px){
+    h1{font-size:25px}
+    .days li{grid-template-columns:1fr; gap:4px}
+  }
+</style>
+</head>
+<body><div class="wrap">
+<header>
+  <div class="eyebrow">Nomi · AI 智能餐叉 / 升级方案</div>
+  <h1>一个按钮，四件事</h1>
+  <p class="sub">v0.3 升级：实体按键、能量累计与三档提示、外壳 v7。整体 3–5 天。</p>
+  <div class="facts">
+    <div>方案日期 <b>2026-09-21</b></div>
+    <div>当前固件 <b class="num">2.87 MB / 86%</b></div>
+    <div>外壳 <b>v7</b></div>
+    <div>手柄总长 <b class="num">192 mm</b></div>
+  </div>
+</header>
+
+<h2>一 · 实体按键</h2>
+<p>叉子握在手里的时候，按键上那颗蓝灯朝着手心，根本看不见。所以<strong>每一档都用声音说话</strong>，灯只是补充。按住类的动作一律<strong>松手才执行</strong>——按住的过程中，跨过一档就响一声，人可以听着声音决定继续按还是松手。如果到点就执行，想清零的人会先被静音一次，两个功能就打架了。</p>
+
+<div class="ruler">
+  <svg viewBox="0 0 620 132" role="img" aria-label="按住时长与功能对应刻度：0 到 0.6 秒为拍摄，1.2 秒进入静音档，3.5 秒进入清零档">
+    <line x1="24" y1="70" x2="596" y2="70" stroke="currentColor" stroke-width="1.5" opacity=".35"/>
+    <!-- 短按区 -->
+    <rect x="24" y="58" width="96" height="24" fill="var(--steel)" opacity=".18"/>
+    <line x1="120" y1="52" x2="120" y2="88" stroke="var(--steel)" stroke-width="2"/>
+    <text x="24" y="104" class="mono" font-size="11" fill="var(--ink-3)">0</text>
+    <text x="108" y="104" class="mono" font-size="11" fill="var(--ink-3)">0.6s</text>
+    <text x="30" y="48" font-size="12.5" fill="var(--ink)" font-weight="600">短按 = 拍照认菜</text>
+
+    <!-- 犹豫区 -->
+    <rect x="120" y="62" width="96" height="16" fill="currentColor" opacity=".07"/>
+    <text x="126" y="126" class="mono" font-size="10.5" fill="var(--ink-3)">犹豫区 · 不做事</text>
+
+    <!-- 静音档 -->
+    <line x1="216" y1="46" x2="216" y2="94" stroke="var(--amber)" stroke-width="2"/>
+    <rect x="216" y="58" width="196" height="24" fill="var(--amber)" opacity=".16"/>
+    <text x="204" y="104" class="mono" font-size="11" fill="var(--ink-3)">1.2s</text>
+    <text x="222" y="40" font-size="12.5" fill="var(--ink)" font-weight="600">松手 = 静音开关</text>
+    <text x="222" y="126" class="mono" font-size="10.5" fill="var(--amber)">到点 ▸ 一声高音 + 灯闪 1 下</text>
+
+    <!-- 清零档 -->
+    <line x1="412" y1="46" x2="412" y2="94" stroke="var(--clay)" stroke-width="2"/>
+    <rect x="412" y="58" width="184" height="24" fill="var(--clay)" opacity=".16"/>
+    <text x="400" y="104" class="mono" font-size="11" fill="var(--ink-3)">3.5s</text>
+    <text x="418" y="40" font-size="12.5" fill="var(--ink)" font-weight="600">松手 = 这顿清零</text>
+    <text x="418" y="126" class="mono" font-size="10.5" fill="var(--clay)">到点 ▸ 两声高音 + 灯闪 3 下</text>
+  </svg>
+</div>
+
+<div class="tw">
+<table>
+  <thead><tr><th>操作</th><th>功能</th><th>声音</th><th>防误触</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>短按</td><td>拍照认菜，念菜名</td>
+      <td>三连上扬「叮」</td>
+      <td><span class="num">3 秒</span>冷却；冷却内按会响一声低音</td>
+    </tr>
+    <tr>
+      <td>双击</td><td>报这顿累计</td>
+      <td>按档位滴 1 / 2 / 3 声</td>
+      <td>误触也无所谓，只是报个数</td>
+    </tr>
+    <tr>
+      <td>按住 <span class="num">1.2s</span></td><td>静音开关</td>
+      <td>到点一声高音，切换时再给确认音</td>
+      <td>要刻意按住；状态存 NVS，关机再开仍保持</td>
+    </tr>
+    <tr>
+      <td>按住 <span class="num">3.5s</span></td><td>这顿清零</td>
+      <td>到点两声高音，清零时四音收尾</td>
+      <td>几乎不可能蹭到</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p class="note">档位提示用高频（<span class="num">1480 / 1976 Hz</span>），能量三档用低频（<span class="num">880 / 740 / 587 Hz</span>），两套声音反着走，不会听混。灯语：微亮＝待命，全亮＝正在拍，灭＝静音中。</p>
+
+<h2>二 · 能量累计</h2>
+<p>三档只用同一个音、改变次数——人不必记「哪个音代表什么」，数声音个数就行；音高一档比一档低，潜意识里越低越该停。每档一顿只响一次，<span class="num">25</span> 分钟无动作自动清零。</p>
+
+<div class="tw">
+<table>
+  <thead><tr><th>累计</th><th>提示</th><th>屏幕</th><th>表情</th></tr></thead>
+  <tbody>
+    <tr><td class="num">≥ 500 kcal</td><td><span class="pill p-lv1">滴 1 声</span> 到量了</td><td class="num">520 kcal · ok</td><td>笑脸</td></tr>
+    <tr><td class="num">≥ 700 kcal</td><td><span class="pill p-lv2">滴 2 声</span> 有点多</td><td class="num">much</td><td>平静</td></tr>
+    <tr><td class="num">≥ 900 kcal</td><td><span class="pill p-lv3">滴 3 声</span> 超标了</td><td class="num">over</td><td>晕脸</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="note"><strong>只响声音，不报数字给人听</strong>——数字留在屏幕上，想看才看。这是对「叉子上不显示卡路里」那条原则的折中：提示到位，但不主动往耳朵里塞数字。</p>
+
+<h3>计量口径随 IMU 自动切换</h3>
+<div class="tw">
+<table>
+  <thead><tr><th></th><th>没有 IMU（现在）</th><th>接上 IMU 之后</th></tr></thead>
+  <tbody>
+    <tr><td>拍摄键</td><td>认菜 <strong>+ 算吃了一勺</strong></td><td><strong>只认菜</strong>，不累加</td></tr>
+    <tr><td>每一口</td><td>—</td><td>IMU 数出来，按当前菜的类别自动累加</td></tr>
+  </tbody>
+</table>
+</div>
+<p class="note">这样切换是为了避免重复计：有 IMU 时如果按一次也算一勺，「认一次菜 + 吃五口」就成了六勺。IMU 走 I2C 与屏幕共用，<strong>不占新引脚</strong>。</p>
+
+<h2>三 · 外壳 v7</h2>
+<div class="tw">
+<table>
+  <thead><tr><th>项</th><th>内容</th></tr></thead>
+  <tbody>
+    <tr><td>按键孔</td><td>Ø<span class="num">11.15</span>，开在②显示仓 <span class="num">+y</span> 侧 <span class="num">Z=132</span>，整键穿壳后热熔胶固定</td></tr>
+    <tr><td>护圈</td><td>外径 <span class="num">16.5</span>、高出壳面 <span class="num">1.6 mm</span>，手掌压过去先碰到圈，碰不到按帽</td></tr>
+    <tr><td>沿用 v6</td><td>电子仓 Ø<span class="num">34.5</span>、三仓重排、Type-C 侧出、开关移尾端、电池进握持段管道</td></tr>
+  </tbody>
+</table>
+</div>
+<p>按键位置不是随便挑的：①号仓被主板挡（<span class="num">13 mm</span> 厚居中）、③号仓被喇叭挡（<span class="num">28</span> 方几乎占满内腔）、④尾端只剩 <span class="num">9 mm</span>，<strong>算下来只有②显示仓的 +y 侧塞得下</strong>，那一侧本来就是空的（OLED 贴在对面）。离 Type-C 口 <span class="num">28 mm</span>，不会误按成另一个。</p>
+<p class="note">三个件已验证水密、单一实体。喇叭余量从 v5 的 <span class="num">0.04 mm</span> 提到 <span class="num">0.78 mm</span>——前者纸面上装得下，实物必卡。</p>
+
+<h2>四 · 排期</h2>
+<ol class="days">
+  <li>
+    <div class="dnum">DAY 1</div>
+    <div><div class="dtitle">外壳定稿并打印</div>
+      <div class="dbody">量按键本体深度 → 定稿 v7 → 打印上下壳。产出：可装配的壳。</div></div>
+  </li>
+  <li>
+    <div class="dnum">DAY 2</div>
+    <div><div class="dtitle">接 IMU，真吃一顿做标定 <span class="crit">· 关键路径</span></div>
+      <div class="dbody">两根线接 SDA / SCL。敲 <span class="mono">d</span> 打开姿态流，绑在普通叉子上真吃一顿录 CSV。
+      现在 <span class="mono">motion.h</span> 里那几个阈值（伸出 −25°、送口 +20°、停顿 180 ms）全是估的，从没在真人身上验过——不校准的话，后面的口数和能量累计全是错的。</div></div>
+  </li>
+  <li>
+    <div class="dnum">DAY 3</div>
+    <div><div class="dtitle">整机装配与续航</div>
+      <div class="dbody">按键穿壳、电池进管、走线收拢；脱线跑一顿饭测续航；现场复调音量。</div></div>
+  </li>
+  <li>
+    <div class="dnum">DAY 4</div>
+    <div><div class="dtitle">认菜准确度与参数定版</div>
+      <div class="dbody">测试页 17 张 + 真实饭菜批测；误触实测；三档阈值按实际饭量微调。</div></div>
+  </li>
+  <li>
+    <div class="dnum">DAY 5</div>
+    <div><div class="dtitle">回归与收尾</div>
+      <div class="dbody">全功能回归、文档与参数归档，演示就绪。</div></div>
+  </li>
+</ol>
+
+<h2>五 · 还卡着的三件</h2>
+<div class="blockers">
+  <ol>
+    <li><b>按键本体深度</b>（含引脚伸进腔内多少）——现按 <span class="num">12 mm</span> 估。电子仓内半径 <span class="num">15.65 mm</span>，超过 <span class="num">15</span> 就要换位置。<strong>这件不定，外壳出不了打印件。</strong></li>
+    <li><b>三档阈值 500 / 700 / 900 kcal</b> 是否合适——按成年人一顿正餐取的经验值，改一个数字的事。</li>
+    <li><b>菜名库要不要扩到 100 道</b>——现在 43 道占 <span class="num">1.16 MB</span>，flash 已到 86%。再扩必须单开 LittleFS 数据分区，约半天工作量。</li>
+  </ol>
+</div>
+
+<h2>六 · 已经跑通的</h2>
+<div class="done">
+  <span>WiFi 串口现配 · 存 NVS</span>
+  <span>摄像头 OV3660 · VGA</span>
+  <span>板端认菜 <span class="num">0.9–1.3s</span> 往返</span>
+  <span>43 道菜名语音</span>
+  <span>屏幕菜名 + 能量点阵</span>
+  <span>网页取景 + 远程触发</span>
+  <span>开机三段声音反馈</span>
+  <span>17 句情境语音</span>
+</div>
+
+<footer>
+  Nomi · AI 智能餐叉 — v0.3 升级方案 · 2026-09-21 · 内部技术文档
+</footer>
+</div>
+</body>
+</html>
