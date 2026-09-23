@@ -33,6 +33,15 @@ ul{margin:6px 0;padding-left:20px} li{margin:4px 0}
 .box p{font-size:13.5px;color:var(--mute);margin:0}
 .steps li{margin:6px 0}
 .steps b{color:var(--ink)}
+.kit{border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:10px 0}
+.kit-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.kit-h b{font-size:15.5px}
+.kit-h .plat{font:600 11.5px var(--mono);color:var(--acc);background:var(--acc-soft);border-radius:6px;padding:2px 8px}
+.kit-h .price{margin-left:auto;font:600 13px var(--mono);color:var(--mute)}
+.kit dl{display:grid;grid-template-columns:5.5em 1fr;gap:4px 12px;margin:0;font-size:13.5px}
+.kit dt{color:var(--mute)} .kit dd{margin:0}
+.st{font:700 11px var(--mono);padding:1px 6px;border-radius:5px}
+.st.ok{color:#1B8A5A;background:#E5F5EC} .st.gap{color:var(--t1);background:var(--t1-soft)}
 footer{color:var(--dim);font-size:12px;text-align:center;margin-top:18px}
 @media (max-width:700px){.grid{grid-template-columns:1fr} section{padding:18px}}
 @media print{body{background:#fff;padding:0} section{break-inside:avoid;border:0}}
@@ -75,6 +84,56 @@ footer{color:var(--dim);font-size:12px;text-align:center;margin-top:18px}
     <div class="box"><h3><span class="tier T2">T2</span>好看不买单</h3><p>成就与排行、采购清单、仿真、能力地图。维持现状，<b>不再投入</b>。</p></div>
   </div>
   <p style="margin-top:12px;font-size:14px;color:var(--mute)">EI HUB（桌面供电枢纽）对机构是 T0——一间教室二十块板的供电和线材是真痛；对个人是 T2。所以它的第一批客户是机构，不做零售定价。</p>
+</section>
+
+
+<section>
+  <h2>展示套件：每个平台配一件"拿得出手"的东西</h2>
+  <p>客户不看功能清单，看<b>桌上那个东西动起来</b>。选型三条原则：<b>客户已经有的优先</b>（插上就能用最有说服力）、<b>三分钟内能出效果</b>、<b>我们已经在真机上跑通过</b>。每个平台一件主套件，不求全。</p>
+
+  <div class="kit"><div class="kit-h"><b>mBot（Makeblock 一代，mCore 主板）</b><span class="plat">AVR · Arduino</span><span class="price">约 ¥450</span></div><dl>
+    <dt>为什么是它</dt><dd>国内中小学创客教室保有量最大的 Arduino 小车，<b>很多学校仓库里有一箱在吃灰</b>——"你们现有的 mBot 插上就能用"比任何演示都有力。主板就是 ATmega328P + CH340，平台已能认、能烧。</dd>
+    <dt>三分钟演示</dt><dd>插上 → 认出 Arduino Uno → 一键烧「超声波避障」→ 放地上自己绕开椅子腿 → 让 AI 改成"离墙 10cm 就倒退并响一声"→ 云端编译 → 再烧。</dd>
+    <dt>现状</dt><dd><span class="st gap">要补</span> 5 个 mBot 专用案例（巡线、避障、遥控、灯光、蜂鸣），用 Makeblock 库，约一天；认板烧录已有。备选：通用「Arduino Uno 37 合 1 传感器套件」（约 ¥120），现有 51 个案例大部分直接能用，给没有 mBot 的机构。</dd>
+  </dl></div>
+
+  <div class="kit"><div class="kit-h"><b>M5 StackChan（CoreS3）</b><span class="plat">ESP32-S3</span><span class="price">约 ¥900</span></div><dl>
+    <dt>为什么是它</dt><dd>有脸、会转头、会说话——现场最吸引人的一件；社区热度高，家长和校长一眼就懂。</dd>
+    <dt>三分钟演示</dt><dd>插上 → 认出 StackChan → 一键烧「点头」「表情」→ 烧「离线语音」，现场用中文喊它转头。</dd>
+    <dt>现状</dt><dd><span class="st ok">就绪</span> 9 个专用案例全部真编译通过，离线语音模型已处理。</dd>
+  </dl></div>
+
+  <div class="kit"><div class="kit-h"><b>Black Pill 遥控云台</b><span class="plat">STM32</span><span class="price">约 ¥80</span></div><dl>
+    <dt>为什么是它</dt><dd>STM32 的卖点是"工业级芯片，但像 Arduino 一样简单"。Black Pill + 两个舵机云台 + 摇杆 + OLED，便宜、好带，正好展示"插 USB 就烧"——这件事别人家做不到。</dd>
+    <dt>三分钟演示</dt><dd>首次：按住 BOOT0 插上 → 一键初始化 → 之后插上就烧「摇杆控制」→ 推摇杆云台跟着转，OLED 显示角度。</dd>
+    <dt>现状</dt><dd><span class="st gap">要补</span> 1 个组合案例（摇杆 + 双舵机 + OLED，由现有三个案例拼成）；初始化和烧录代码已完成，<b>待真机验证</b>。大场合可加展 ZYArm-X1 六轴机械臂（STM32，已在经典版跑通），做视觉冲击。</dd>
+  </dl></div>
+
+  <div class="kit"><div class="kit-h"><b>幻尔 ROS 小车（Jetson，JetAuto / ROSOrin 系）</b><span class="plat">ROS · Jetson</span><span class="price">约 ¥5,000–8,000</span></div><dl>
+    <dt>为什么是它</dt><dd>高校和高中竞赛班最常见的 ROS 平台；我们的 ROS 面板就是按幻尔的话题命名做的，ROSOrin 双车实战时整条链路跑通过。</dd>
+    <dt>三分钟演示</dt><dd>USB 连 Jetson → 登录 → 自动认出型号和 ROS → 雷达图实时刷新 → 方向盘开车 → 推一段避障脚本，车自己走。</dd>
+    <dt>现状</dt><dd><span class="st ok">就绪</span> 1.0 的终端、ROS 面板、实时状态已完成，<b>待真机验证</b>。只对高校和竞赛机构带，不作为通用展示。</dd>
+  </dl></div>
+
+  <div class="kit"><div class="kit-h"><b>地瓜 RDK X5 + USB 摄像头</b><span class="plat">RDK</span><span class="price">约 ¥700</span></div><dl>
+    <dt>为什么是它</dt><dd>国产 AI 板，BPU 算力；和地瓜的合作口径一致（COS 演示本来就定在 RDK X5）。</dd>
+    <dt>三分钟演示</dt><dd>连上 → 实时状态里看到 BPU 占用 → 推一段人脸 / 物体识别脚本，终端里实时打印识别结果。</dd>
+    <dt>现状</dt><dd><span class="st gap">要补</span> 1 个视觉演示脚本；终端与状态已完成。</dd>
+  </dl></div>
+
+  <div class="kit"><div class="kit-h"><b>NXP FRDM（任选一块）</b><span class="plat">自定义</span><span class="price">约 ¥150</span></div><dl>
+    <dt>为什么是它</dt><dd>专门用来回答"我们的板子你们认不认"——认得出调试器、打得开串口、AI 能帮写驱动。给板卡厂商看，证明不挑板。</dd>
+    <dt>现状</dt><dd><span class="st ok">就绪</span> 识别和串口已上线；烧录不支持，现场如实说明。</dd>
+  </dl></div>
+
+  <h3 style="margin:18px 0 8px;font-size:15px">按客户组合成包</h3>
+  <div class="tw"><table>
+    <tr><th style="width:18%">展示包</th><th>带什么</th><th style="width:30%">讲什么</th><th style="width:12%">硬件成本</th></tr>
+    <tr><td><span class="tier T0">T0</span> <b>机构包</b></td><td>mBot（或 Uno 传感器套件）+ StackChan + EI HUB 样机；高校 / 竞赛机构加 ROS 小车</td><td>从小学到高中一条线：入门 mBot、进阶 StackChan、竞赛 ROS。"学生插上就能跑，老师不用会嵌入式。"</td><td>约 ¥1,400（不含小车）</td></tr>
+    <tr><td><span class="tier T0">T0</span> <b>厂商包</b></td><td>对方自己的板 + Black Pill 云台 + FRDM + 一张印好二维码的包装样卡</td><td>"扫码、插上、跑起来"，现场用他们的板走一遍；FRDM 证明不挑板。"买家插上就亮，客服少一半。"</td><td>约 ¥250</td></tr>
+    <tr><td><span class="tier T1">T1</span> <b>整机厂包</b></td><td>对方的 ROS 车 + RDK X5</td><td>"你的客户收到车，打开一个网页就能连车、看雷达、跑脚本，售后不用远程。"</td><td>对方提供</td></tr>
+  </table></div>
+  <p style="margin-top:10px;font-size:13.5px;color:var(--mute)">上门前的补课：mBot 5 个案例、Black Pill 云台组合案例、RDK 视觉脚本，合计约两天；所有套件按交付测试清单在真机上走一遍再出门。</p>
 </section>
 
 <section>
