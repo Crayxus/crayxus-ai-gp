@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <linearGradient id="cvkitrdk" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6D28D9" stop-opacity=".55"/><stop offset=".55" stop-color="#0B1020"/><stop offset="1" stop-color="#121A2E"/></linearGradient>
+      <pattern id="cvkitrdkg" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="#fff" stroke-opacity=".05"/></pattern>
+      <radialGradient id="cvkitrdkr" cx=".5" cy=".55" r=".5"><stop offset="0" stop-color="#A78BFA" stop-opacity=".35"/><stop offset="1" stop-color="#A78BFA" stop-opacity="0"/></radialGradient>
+      <marker id="ah" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#A78BFA"/></marker>
+    </defs>
+    <rect width="320" height="180" fill="url(#cvkitrdk)"/><rect width="320" height="180" fill="url(#cvkitrdkg)"/>
+    <circle cx="160" cy="100" r="96" fill="url(#cvkitrdkr)"/>
+    <path d="M0 160h40l10-10h60M320 30h-50l-10 10h-40" stroke="#A78BFA" stroke-opacity=".35" stroke-width="2" fill="none"/>
+    <circle cx="110" cy="150" r="3" fill="#A78BFA" opacity=".6"/><circle cx="220" cy="40" r="3" fill="#A78BFA" opacity=".6"/>
+    <rect x="80" y="54" width="160" height="104" rx="12" fill="#0B1020" stroke="#E6EAF2" stroke-opacity=".3" stroke-width="2"/><path d="M80 76h160" stroke="#E6EAF2" stroke-opacity=".3" stroke-width="2"/><circle cx="94" cy="65" r="3.5" fill="#F87171"/><circle cx="106" cy="65" r="3.5" fill="#FBBF24"/><circle cx="118" cy="65" r="3.5" fill="#34D399"/><rect x="118" y="100" width="84" height="32" rx="16" fill="#A78BFA"/><circle cx="186" cy="116" r="11" fill="#E6EAF2"/>
+  </svg>

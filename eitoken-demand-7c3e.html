@@ -4,148 +4,239 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex,nofollow,noarchive">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>EI TOKEN 需求分层</title>
+<title>EI TOKEN 推广手册</title>
 <style>
-:root{--bg:#F6F7F9;--sheet:#fff;--ink:#16202E;--mute:#66717F;--dim:#9AA3B2;--line:#E3E7EE;--acc:#0E8FAE;--acc-soft:#E6F4F8;
-  --t0:#B42318;--t0-soft:#FDF0EF;--t1:#9A6700;--t1-soft:#FFF7E3;--t2:#66717F;--t2-soft:#F0F2F5;
+:root{--bg:#F4F6F9;--sheet:#fff;--ink:#141C2A;--mute:#667085;--dim:#98A2B3;--line:#E4E8EF;
+  --acc:#0E8FAE;--acc-soft:#E4F4F8;--night:#0B1020;--t0:#C2410C;--t0-soft:#FFF1E8;--t1:#8A6A00;--t1-soft:#FFF8DD;
+  --ok:#15803D;--ok-soft:#E7F6EC;--wip:#8A6A00;--wip-soft:#FFF8DD;
   --font:"PingFang SC","Microsoft YaHei","Source Han Sans SC",system-ui,sans-serif;--mono:Consolas,ui-monospace,monospace}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.8 var(--font);padding:28px 18px 70px}
-.wrap{max-width:900px;margin:0 auto}
-header{margin-bottom:22px}
-.eyebrow{font:600 11.5px var(--mono);color:var(--acc);letter-spacing:.12em}
-h1{margin:6px 0 8px;font-size:28px;font-weight:750;letter-spacing:-.01em;text-wrap:balance}
-.lead{font-size:16px;color:var(--mute);max-width:64ch;margin:0}
-section{background:var(--sheet);border:1px solid var(--line);border-radius:14px;padding:22px 26px;margin-bottom:14px}
-h2{margin:0 0 10px;font-size:18px;font-weight:700}
-p{margin:0 0 10px}
-.thesis{font-size:17px;font-weight:600;border-left:3px solid var(--acc);padding:6px 16px;margin:8px 0 14px;background:var(--acc-soft);border-radius:0 10px 10px 0}
-table{width:100%;border-collapse:collapse;font-size:14px}
-th,td{border-top:1px solid var(--line);padding:10px 10px;text-align:left;vertical-align:top}
-th{border-top:0;color:var(--mute);font-weight:600;font-size:12.5px}
-.tier{display:inline-block;font:700 12px var(--mono);padding:2px 8px;border-radius:6px;white-space:nowrap}
-.T0{color:var(--t0);background:var(--t0-soft)} .T1{color:var(--t1);background:var(--t1-soft)} .T2{color:var(--t2);background:var(--t2-soft)}
-.tw{overflow-x:auto}
-ul{margin:6px 0;padding-left:20px} li{margin:4px 0}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.box{border:1px solid var(--line);border-radius:12px;padding:14px 16px}
-.box h3{margin:0 0 6px;font-size:14px;display:flex;align-items:center;gap:8px}
-.box p{font-size:13.5px;color:var(--mute);margin:0}
-.steps li{margin:6px 0}
-.steps b{color:var(--ink)}
-.kit{border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:10px 0}
-.kit-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px}
-.kit-h b{font-size:15.5px}
-.kit-h .plat{font:600 11.5px var(--mono);color:var(--acc);background:var(--acc-soft);border-radius:6px;padding:2px 8px}
-.kit-h .price{margin-left:auto;font:600 13px var(--mono);color:var(--mute)}
-.kit dl{display:grid;grid-template-columns:5.5em 1fr;gap:4px 12px;margin:0;font-size:13.5px}
-.kit dt{color:var(--mute)} .kit dd{margin:0}
-.st{font:700 11px var(--mono);padding:1px 6px;border-radius:5px}
-.st.ok{color:#1B8A5A;background:#E5F5EC} .st.gap{color:var(--t1);background:var(--t1-soft)}
-footer{color:var(--dim);font-size:12px;text-align:center;margin-top:18px}
-@media (max-width:700px){.grid{grid-template-columns:1fr} section{padding:18px}}
-@media print{body{background:#fff;padding:0} section{break-inside:avoid;border:0}}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.7 var(--font);padding:0 16px 70px}
+.wrap{max-width:1040px;margin:0 auto}
+img{max-width:100%;display:block}
+.eyebrow{font:600 11.5px var(--mono);color:var(--acc);letter-spacing:.14em}
+h1{font-size:clamp(28px,4.4vw,42px);line-height:1.2;margin:8px 0 10px;font-weight:800;letter-spacing:-.01em;text-wrap:balance}
+h2{font-size:22px;margin:0 0 6px;font-weight:750}
+.lede{color:var(--mute);margin:0 0 18px;font-size:15px}
+section{margin-top:44px}
+
+/* 开头 */
+.hero{display:grid;grid-template-columns:1fr 1.15fr;gap:28px;align-items:center;padding-top:36px}
+.hero p{font-size:17px;color:var(--mute);margin:0 0 18px}
+.hero .shot{border-radius:14px;overflow:hidden;box-shadow:0 18px 50px rgba(11,16,32,.18)}
+.pills{display:flex;gap:8px;flex-wrap:wrap}
+.pill{font-size:13px;border:1px solid var(--line);background:var(--sheet);border-radius:99px;padding:4px 12px}
+
+/* 谁会买 */
+.buyers{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.buyer{background:var(--sheet);border:1px solid var(--line);border-radius:16px;padding:20px 22px}
+.buyer .tag{display:inline-block;font:700 12px var(--mono);color:var(--t0);background:var(--t0-soft);border-radius:6px;padding:2px 8px}
+.buyer h3{margin:8px 0 4px;font-size:19px}
+.buyer .say{font-size:17px;font-weight:650;color:var(--acc);margin:10px 0 0}
+.buyer .pain{color:var(--mute);font-size:14px;margin:0}
+.also{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:14px;font-size:13.5px;color:var(--mute)}
+.also .t1{font:700 12px var(--mono);color:var(--t1);background:var(--t1-soft);border-radius:6px;padding:2px 8px}
+
+/* 套件 */
+.kits{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.kit{background:var(--sheet);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.kit .pic{aspect-ratio:16/9;background:var(--night);display:grid;place-items:center;overflow:hidden}
+.kit .pic img{width:100%;height:100%;object-fit:cover}
+.kit .pic.light{background:#fff}.kit .pic.light img{object-fit:contain;padding:10px}
+.kit .body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px;flex:1}
+.kit .top{display:flex;align-items:center;gap:8px}
+.kit .plat{font:600 11px var(--mono);color:var(--acc);background:var(--acc-soft);border-radius:6px;padding:2px 7px}
+.kit .st{margin-left:auto;font-size:12px;border-radius:99px;padding:1px 9px}
+.st.ok{color:var(--ok);background:var(--ok-soft)} .st.wip{color:var(--wip);background:var(--wip-soft)}
+.kit h3{margin:0;font-size:16.5px}
+.kit .demo{font-size:14px;margin:0}
+.box{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}
+.box span{font-size:12px;color:var(--mute);background:var(--bg);border-radius:6px;padding:2px 8px}
+.kit .price{font:600 13px var(--mono);color:var(--mute)}
+
+/* 展示包 */
+.packs{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.pack{background:var(--sheet);border:1px solid var(--line);border-radius:16px;padding:18px}
+.pack.hero-pack{border:2px solid var(--acc)}
+.pack .thumbs{display:flex;gap:6px;margin-bottom:12px}
+.pack .thumbs img{width:33%;aspect-ratio:1;object-fit:cover;border-radius:10px;background:var(--night)}
+.pack h3{margin:0 0 2px;font-size:17px}
+.pack .for{font-size:13px;color:var(--mute);margin:0 0 8px}
+.pack .quote{font-size:15px;font-weight:650;margin:0 0 10px}
+.pack .cost{font:600 13px var(--mono);color:var(--acc)}
+
+/* 演示流程 */
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.step{background:var(--sheet);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.step img{aspect-ratio:16/10;object-fit:cover;object-position:top left;width:100%}
+.step p{margin:0;padding:10px 12px;font-size:14px}
+.step b{color:var(--acc);font-family:var(--mono);margin-right:6px}
+
+/* 行动 */
+.go{background:var(--night);color:#E6EAF2;border-radius:18px;padding:26px 28px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.go h2{color:#fff}
+.go ol{margin:0;padding-left:20px}.go li{margin:6px 0}
+.go .big{font-size:40px;font-weight:800;color:#22D3EE;line-height:1}
+.go .mute{color:#98A3B8;font-size:13.5px}
+footer{text-align:center;color:var(--dim);font-size:12px;margin-top:30px}
+
+@media (max-width:860px){.hero,.buyers,.go{grid-template-columns:1fr}.kits,.packs{grid-template-columns:1fr 1fr}.flow{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.kits,.packs,.flow{grid-template-columns:1fr}}
 </style>
 </head>
 <body><div class="wrap">
 
-<header>
-  <div class="eyebrow">EI TOKEN · 产品与推广</div>
-  <h1>谁一定会用，谁大概率会用</h1>
-  <p class="lead">按"不用就干不了活"这一个尺子，把客户和功能分成三层。资源只投前两层，推广只找第一层。</p>
-</header>
-
-<section>
-  <h2>一个判断</h2>
-  <div class="thesis">能成交的，是那些每天都在为"我们已经解决的问题"花时间的人；不是那些用了更好的人。</div>
-  <p>看上去很好的产品成交难，是因为客户可以不买。分层的标准只有两条：<b>这个痛是不是每周都在发生</b>，<b>有没有人已经在为它付出成本</b>（工时、退货、差评、课时）。两条都满足是 T0，满足一条是 T1，都不满足是 T2。</p>
-</section>
-
-<section>
-  <h2>客户分层</h2>
-  <div class="tw"><table>
-    <tr><th style="width:9%">层</th><th style="width:20%">客户</th><th>每天在发生的痛</th><th>我们消灭的是什么</th><th style="width:14%">付费方</th></tr>
-    <tr><td><span class="tier T0">T0</span></td><td><b>STEM 培训机构、中小学创客课、高校实训室</b></td><td>一节课 20 台电脑装环境、驱动、库版本对不上；授课老师不是嵌入式工程师；一个学生编不过，全班停下来等</td><td>零安装、一键烧录、案例超市。课前不用装机，课中不会卡死。这是每学期都在流的成本</td><td>机构，按教室 / 学年</td></tr>
-    <tr><td><span class="tier T0">T0</span></td><td><b>开发板卖家、板卡厂、套件厂</b>（ESP32 / STM32 板、StackChan 这类）</td><td>客服每天几十遍"驱动怎么装""烧不进去""为什么不亮"；退货与差评</td><td>包装上一个二维码：扫码、插上、跑起来。客服问题减半，转化提升</td><td>厂商，按板型接入 / 联名 / 预装</td></tr>
-    <tr><td><span class="tier T1">T1</span></td><td>高校学生的课设、毕设</td><td>有截止日期，环境折腾两天没有进度</td><td>快速起步。用完即走，付费取决于学校</td><td>学校（回到 T0）或免费</td></tr>
-    <tr><td><span class="tier T1">T1</span></td><td>2–10 人硬件小团队做原型</td><td>换一块板重配一次环境；新人上手慢</td><td>省下环境时间。他们有自己的 IDE，只在起步和换板时用</td><td>团队订阅，转化中等</td></tr>
-    <tr><td><span class="tier T1">T1</span></td><td>机器人整机厂的售后与演示（ROS 小车、机械臂）</td><td>客户收到车不会调，售后远程折腾</td><td>给客户一个网页：连车、看雷达、推脚本</td><td>厂商，与上一行合并推进</td></tr>
-    <tr><td><span class="tier T1">T1</span></td><td>独立创客、爱好者</td><td>想改代码，不会配环境</td><td>免费版足够。付费率低，但量大，是口碑和案例的来源</td><td>少数付费</td></tr>
-    <tr><td><span class="tier T2">T2</span></td><td>资深嵌入式工程师</td><td>没有痛，有成熟流程，反感黑盒</td><td>不推。推了适得其反</td><td>—</td></tr>
-    <tr><td><span class="tier T2">T2</span></td><td>工业与企业客户</td><td>要求离线、审计、认证</td><td>现阶段满足不了</td><td>—</td></tr>
-  </table></div>
-</section>
-
-<section>
-  <h2>功能用同一把尺子</h2>
-  <div class="grid">
-    <div class="box"><h3><span class="tier T0">T0</span>没有就不成交</h3><p>插上能认板、一键烧现成案例、串口看到结果、烧坏能还原、纯网页零安装。<b>已完成</b>，剩真机验证。</p></div>
-    <div class="box"><h3><span class="tier T1">T1</span>提高粘性与客单</h3><p>改代码后云端编译、AI 写代码、Jetson / ROS 板子的终端与面板。<b>已完成</b>，够用即停，不再往深做。</p></div>
-    <div class="box"><h3><span class="tier T2">T2</span>好看不买单</h3><p>成就与排行、采购清单、仿真、能力地图。维持现状，<b>不再投入</b>。</p></div>
+<div class="hero">
+  <div>
+    <div class="eyebrow">EI TOKEN · 市场推广手册</div>
+    <h1>插上板子，<br>网页里一键跑起来。</h1>
+    <p>不装软件、不配环境、不用会嵌入式。浏览器打开 eitoken.ai，插上开发板，选一个案例就能烧进去。</p>
+    <div class="pills"><span class="pill">51 个真机验证案例</span><span class="pill">ESP32 · Arduino · STM32</span><span class="pill">Jetson · 树莓派 · ROS</span><span class="pill">AI 改代码</span></div>
   </div>
-  <p style="margin-top:12px;font-size:14px;color:var(--mute)">EI HUB（桌面供电枢纽）对机构是 T0——一间教室二十块板的供电和线材是真痛；对个人是 T2。所以它的第一批客户是机构，不做零售定价。</p>
-</section>
-
+  <div class="shot"><img src="eitoken-demand/s3b-stackchan.jpg" alt="EI TOKEN 案例超市界面"></div>
+</div>
 
 <section>
-  <h2>展示套件：每个平台配一件"拿得出手"的东西</h2>
-  <p>客户不看功能清单，看<b>桌上那个东西动起来</b>。选型三条原则：<b>客户已经有的优先</b>（插上就能用最有说服力）、<b>三分钟内能出效果</b>、<b>我们已经在真机上跑通过</b>。每个平台一件主套件，不求全。</p>
-
-  <div class="kit"><div class="kit-h"><b>mBot（Makeblock 一代，mCore 主板）</b><span class="plat">AVR · Arduino</span><span class="price">约 ¥450</span></div><dl>
-    <dt>为什么是它</dt><dd>国内中小学创客教室保有量最大的 Arduino 小车，<b>很多学校仓库里有一箱在吃灰</b>——"你们现有的 mBot 插上就能用"比任何演示都有力。主板就是 ATmega328P + CH340，平台已能认、能烧。</dd>
-    <dt>三分钟演示</dt><dd>插上 → 认出 Arduino Uno → 一键烧「超声波避障」→ 放地上自己绕开椅子腿 → 让 AI 改成"离墙 10cm 就倒退并响一声"→ 云端编译 → 再烧。</dd>
-    <dt>现状</dt><dd><span class="st gap">要补</span> 5 个 mBot 专用案例（巡线、避障、遥控、灯光、蜂鸣），用 Makeblock 库，约一天；认板烧录已有。备选：通用「Arduino Uno 37 合 1 传感器套件」（约 ¥120），现有 51 个案例大部分直接能用，给没有 mBot 的机构。</dd>
-  </dl></div>
-
-  <div class="kit"><div class="kit-h"><b>M5 StackChan（CoreS3）</b><span class="plat">ESP32-S3</span><span class="price">约 ¥900</span></div><dl>
-    <dt>为什么是它</dt><dd>有脸、会转头、会说话——现场最吸引人的一件；社区热度高，家长和校长一眼就懂。</dd>
-    <dt>三分钟演示</dt><dd>插上 → 认出 StackChan → 一键烧「点头」「表情」→ 烧「离线语音」，现场用中文喊它转头。</dd>
-    <dt>现状</dt><dd><span class="st ok">就绪</span> 9 个专用案例全部真编译通过，离线语音模型已处理。</dd>
-  </dl></div>
-
-  <div class="kit"><div class="kit-h"><b>Black Pill 遥控云台</b><span class="plat">STM32</span><span class="price">约 ¥80</span></div><dl>
-    <dt>为什么是它</dt><dd>STM32 的卖点是"工业级芯片，但像 Arduino 一样简单"。Black Pill + 两个舵机云台 + 摇杆 + OLED，便宜、好带，正好展示"插 USB 就烧"——这件事别人家做不到。</dd>
-    <dt>三分钟演示</dt><dd>首次：按住 BOOT0 插上 → 一键初始化 → 之后插上就烧「摇杆控制」→ 推摇杆云台跟着转，OLED 显示角度。</dd>
-    <dt>现状</dt><dd><span class="st gap">要补</span> 1 个组合案例（摇杆 + 双舵机 + OLED，由现有三个案例拼成）；初始化和烧录代码已完成，<b>待真机验证</b>。大场合可加展 ZYArm-X1 六轴机械臂（STM32，已在经典版跑通），做视觉冲击。</dd>
-  </dl></div>
-
-  <div class="kit"><div class="kit-h"><b>幻尔 ROS 小车（Jetson，JetAuto / ROSOrin 系）</b><span class="plat">ROS · Jetson</span><span class="price">约 ¥5,000–8,000</span></div><dl>
-    <dt>为什么是它</dt><dd>高校和高中竞赛班最常见的 ROS 平台；我们的 ROS 面板就是按幻尔的话题命名做的，ROSOrin 双车实战时整条链路跑通过。</dd>
-    <dt>三分钟演示</dt><dd>USB 连 Jetson → 登录 → 自动认出型号和 ROS → 雷达图实时刷新 → 方向盘开车 → 推一段避障脚本，车自己走。</dd>
-    <dt>现状</dt><dd><span class="st ok">就绪</span> 1.0 的终端、ROS 面板、实时状态已完成，<b>待真机验证</b>。只对高校和竞赛机构带，不作为通用展示。</dd>
-  </dl></div>
-
-  <div class="kit"><div class="kit-h"><b>地瓜 RDK X5 + USB 摄像头</b><span class="plat">RDK</span><span class="price">约 ¥700</span></div><dl>
-    <dt>为什么是它</dt><dd>国产 AI 板，BPU 算力；和地瓜的合作口径一致（COS 演示本来就定在 RDK X5）。</dd>
-    <dt>三分钟演示</dt><dd>连上 → 实时状态里看到 BPU 占用 → 推一段人脸 / 物体识别脚本，终端里实时打印识别结果。</dd>
-    <dt>现状</dt><dd><span class="st gap">要补</span> 1 个视觉演示脚本；终端与状态已完成。</dd>
-  </dl></div>
-
-  <div class="kit"><div class="kit-h"><b>NXP FRDM（任选一块）</b><span class="plat">自定义</span><span class="price">约 ¥150</span></div><dl>
-    <dt>为什么是它</dt><dd>专门用来回答"我们的板子你们认不认"——认得出调试器、打得开串口、AI 能帮写驱动。给板卡厂商看，证明不挑板。</dd>
-    <dt>现状</dt><dd><span class="st ok">就绪</span> 识别和串口已上线；烧录不支持，现场如实说明。</dd>
-  </dl></div>
-
-  <h3 style="margin:18px 0 8px;font-size:15px">按客户组合成包</h3>
-  <div class="tw"><table>
-    <tr><th style="width:18%">展示包</th><th>带什么</th><th style="width:30%">讲什么</th><th style="width:12%">硬件成本</th></tr>
-    <tr><td><span class="tier T0">T0</span> <b>机构包</b></td><td>mBot（或 Uno 传感器套件）+ StackChan + EI HUB 样机；高校 / 竞赛机构加 ROS 小车</td><td>从小学到高中一条线：入门 mBot、进阶 StackChan、竞赛 ROS。"学生插上就能跑，老师不用会嵌入式。"</td><td>约 ¥1,400（不含小车）</td></tr>
-    <tr><td><span class="tier T0">T0</span> <b>厂商包</b></td><td>对方自己的板 + Black Pill 云台 + FRDM + 一张印好二维码的包装样卡</td><td>"扫码、插上、跑起来"，现场用他们的板走一遍；FRDM 证明不挑板。"买家插上就亮，客服少一半。"</td><td>约 ¥250</td></tr>
-    <tr><td><span class="tier T1">T1</span> <b>整机厂包</b></td><td>对方的 ROS 车 + RDK X5</td><td>"你的客户收到车，打开一个网页就能连车、看雷达、跑脚本，售后不用远程。"</td><td>对方提供</td></tr>
-  </table></div>
-  <p style="margin-top:10px;font-size:13.5px;color:var(--mute)">上门前的补课：mBot 5 个案例、Black Pill 云台组合案例、RDK 视觉脚本，合计约两天；所有套件按交付测试清单在真机上走一遍再出门。</p>
+  <h2>先找这两类客户</h2>
+  <p class="lede">他们每天都在为"装环境、烧不进去"付出时间——这正是我们已经解决的事。</p>
+  <div class="buyers">
+    <div class="buyer">
+      <span class="tag">首选</span>
+      <h3>培训机构 · 中小学创客课 · 高校实训室</h3>
+      <p class="pain">一节课 20 台电脑装环境；老师不是工程师；一个学生卡住，全班等。</p>
+      <p class="say">"学生插上就能跑，老师不用会嵌入式。"</p>
+    </div>
+    <div class="buyer">
+      <span class="tag">首选</span>
+      <h3>开发板卖家 · 板卡厂 · 套件厂</h3>
+      <p class="pain">客服每天几十遍"驱动怎么装""烧不进去"；退货和差评。</p>
+      <p class="say">"买家扫码插上就亮，客服少一半。"</p>
+    </div>
+  </div>
+  <div class="also"><span class="t1">其次</span>学生课设毕设 · 硬件小团队 · 机器人整机厂售后 · 创客爱好者（免费用，带口碑）</div>
 </section>
 
 <section>
-  <h2>推广终点</h2>
-  <p>两类客户：<b>培训机构</b>按教室卖席位，<b>板卡厂商</b>按板型联名。个人用户免费，作为口碑与案例来源，不作为收入来源。</p>
-  <ol class="steps">
-    <li><b>先测通，再上门。</b>按交付测试清单在全新电脑上把 P0 全部跑过，带着结果去见客户。</li>
-    <li><b>各找 3 家试点。</b>3 家机构（一间教室、一个学期）+ 3 家板卡店（一个板型、包装二维码）。目标不是收入，是拿到"上课不用装机""客服问题少了多少"这两个数字。</li>
-    <li><b>用数字定价。</b>机构按教室 / 学年，厂商按板型 / 年；价格从试点数据倒推，不拍脑袋。</li>
-    <li><b>只讲一句话。</b>对机构："学生插上就能跑，老师不用会嵌入式。"对厂商："买家扫码插上就亮，客服少一半。"</li>
-  </ol>
+  <h2>展示套件</h2>
+  <p class="lede">每个平台一件，挑客户已经有的、三分钟能动起来的。</p>
+  <div class="kits">
+    <div class="kit"><div class="pic"><img src="eitoken-demand/kit-stackchan.jpg" alt="StackChan"></div><div class="body">
+      <div class="top"><span class="plat">ESP32</span><span class="st ok">可演示</span></div>
+      <h3>StackChan 桌面机器人</h3>
+      <p class="demo">插上 → 一键烧 → 它眨眼、点头，用中文喊它就转头。</p>
+      <div class="box"><span>M5 CoreS3</span><span>双舵机</span><span>9 个案例</span></div>
+      <div class="price">约 ¥900</div></div></div>
+
+    <div class="kit"><div class="pic"><img src="eitoken-demand/kit-mbot.svg" alt="mBot 示意"></div><div class="body">
+      <div class="top"><span class="plat">Arduino</span><span class="st wip">准备中</span></div>
+      <h3>mBot 教育小车</h3>
+      <p class="demo">学校仓库里现有的 mBot，插上就能烧避障，放地上自己绕开椅子。</p>
+      <div class="box"><span>mCore 主板</span><span>超声波</span><span>巡线</span><span>电机</span></div>
+      <div class="price">约 ¥450</div></div></div>
+
+    <div class="kit"><div class="pic"><img src="eitoken-demand/kit-uno37.svg" alt="Arduino 传感器套件示意"></div><div class="body">
+      <div class="top"><span class="plat">Arduino</span><span class="st ok">可演示</span></div>
+      <h3>Uno 传感器套件</h3>
+      <p class="demo">没有 mBot 的机构用它：温湿度、测距、屏幕，40 多个案例直接跑。</p>
+      <div class="box"><span>Arduino Uno</span><span>37 种传感器</span><span>面包板</span></div>
+      <div class="price">约 ¥120</div></div></div>
+
+    <div class="kit"><div class="pic light"><img src="eitoken-demand/kit-stm32.jpg" alt="STM32 Black Pill"></div><div class="body">
+      <div class="top"><span class="plat">STM32</span><span class="st wip">准备中</span></div>
+      <h3>Black Pill 遥控云台</h3>
+      <p class="demo">工业级芯片，插 USB 就烧——推摇杆，云台跟着转，屏上显示角度。</p>
+      <div class="box"><span>Black Pill F411</span><span>双舵机云台</span><span>摇杆</span><span>OLED</span></div>
+      <div class="price">约 ¥80</div></div></div>
+
+    <div class="kit"><div class="pic"><img src="eitoken-demand/kit-ros.jpg" alt="ROS 小车"></div><div class="body">
+      <div class="top"><span class="plat">ROS · Jetson</span><span class="st ok">可演示</span></div>
+      <h3>ROS 智能小车</h3>
+      <p class="demo">网页连车：雷达图实时刷新，方向盘开车，推一段脚本它自己走。</p>
+      <div class="box"><span>Jetson</span><span>激光雷达</span><span>深度相机</span><span>麦轮底盘</span></div>
+      <div class="price">约 ¥5,000–8,000 · 高校用</div></div></div>
+
+    <div class="kit"><div class="pic"><img src="eitoken-demand/kit-zyarm.jpg" alt="机械臂动作编排"></div><div class="body">
+      <div class="top"><span class="plat">STM32</span><span class="st ok">可演示</span></div>
+      <h3>六轴机械臂</h3>
+      <p class="demo">展会压轴：选一段动作，机械臂现场表演，随时一键停。</p>
+      <div class="box"><span>ZYArm-X1</span><span>6 关节</span><span>动作库</span></div>
+      <div class="price">大场合带</div></div></div>
+
+    <div class="kit"><div class="pic"><img src="eitoken-demand/kit-rdk.svg" alt="RDK X5 示意"></div><div class="body">
+      <div class="top"><span class="plat">RDK</span><span class="st wip">准备中</span></div>
+      <h3>RDK X5 视觉盒</h3>
+      <p class="demo">国产 AI 板 + 摄像头，网页里推一段识别脚本，结果实时出来。</p>
+      <div class="box"><span>地瓜 RDK X5</span><span>USB 摄像头</span></div>
+      <div class="price">约 ¥700</div></div></div>
+
+    <div class="kit"><div class="pic"><img src="eitoken-demand/kit-frdm.svg" alt="NXP FRDM 示意"></div><div class="body">
+      <div class="top"><span class="plat">任意板</span><span class="st ok">可演示</span></div>
+      <h3>NXP FRDM</h3>
+      <p class="demo">给板卡厂看：不认识的板插上也能认出来、打开串口、让 AI 写驱动。</p>
+      <div class="box"><span>FRDM 开发板</span><span>板载调试器</span></div>
+      <div class="price">约 ¥150</div></div></div>
+
+    <div class="kit"><div class="pic"><img src="eitoken-demand/kit-hub.svg" alt="EI HUB 示意"></div><div class="body">
+      <div class="top"><span class="plat">配件</span><span class="st wip">样机中</span></div>
+      <h3>EI HUB 桌面工位</h3>
+      <p class="demo">四块板各有座位，一根线接电脑；哪块在烧录，哪个座位亮。</p>
+      <div class="box"><span>4 座位</span><span>100W 供电</span><span>小屏</span></div>
+      <div class="price">机构版</div></div></div>
+  </div>
 </section>
 
-<footer>EI TOKEN · 内部讨论稿 · 2026-09-23</footer>
+<section>
+  <h2>三个展示包</h2>
+  <p class="lede">按客户带，不要全部背出门。</p>
+  <div class="packs">
+    <div class="pack hero-pack">
+      <div class="thumbs"><img src="eitoken-demand/kit-mbot.svg" alt=""><img src="eitoken-demand/kit-stackchan.jpg" alt=""><img src="eitoken-demand/kit-hub.svg" alt=""></div>
+      <h3>机构包</h3><p class="for">培训机构 · 中小学 · 高校（高校加 ROS 小车）</p>
+      <p class="quote">入门 mBot → 进阶 StackChan → 竞赛 ROS，一条线讲完。</p>
+      <div class="cost">约 ¥1,400</div>
+    </div>
+    <div class="pack">
+      <div class="thumbs"><img src="eitoken-demand/kit-stm32.jpg" alt=""><img src="eitoken-demand/kit-frdm.svg" alt=""><img src="eitoken-demand/board-uno.jpg" alt=""></div>
+      <h3>厂商包</h3><p class="for">开发板卖家 · 板卡厂 · 套件厂</p>
+      <p class="quote">现场拿他们自己的板走一遍：扫码、插上、跑起来。</p>
+      <div class="cost">约 ¥250 + 包装二维码样卡</div>
+    </div>
+    <div class="pack">
+      <div class="thumbs"><img src="eitoken-demand/kit-ros.jpg" alt=""><img src="eitoken-demand/board-jetson.jpg" alt=""><img src="eitoken-demand/kit-rdk.svg" alt=""></div>
+      <h3>整机厂包</h3><p class="for">机器人小车、机械臂厂商的售后</p>
+      <p class="quote">客户收到车，打开网页就能连、能看雷达、能跑脚本。</p>
+      <div class="cost">用对方的车</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>现场演示四步</h2>
+  <p class="lede">每一步都在客户自己的电脑上做，不带我们的笔记本。</p>
+  <div class="flow">
+    <div class="step"><img src="eitoken-demand/s2b-hot.jpg" alt="打开网页"><p><b>1</b>打开 eitoken.ai</p></div>
+    <div class="step"><img src="eitoken-demand/s3b-stackchan.jpg" alt="选案例"><p><b>2</b>插上板子，选个案例</p></div>
+    <div class="step"><img src="eitoken-demand/s6-compiled.jpg" alt="一键烧录"><p><b>3</b>一键烧录，板子动起来</p></div>
+    <div class="step"><img src="eitoken-demand/s5-project.jpg" alt="AI 改代码"><p><b>4</b>让 AI 改一句，再烧</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="go">
+    <div>
+      <h2>接下来</h2>
+      <ol>
+        <li>测试员在全新电脑上把全部套件跑一遍，"准备中"的补齐</li>
+        <li>各找 3 家试点：机构（一间教室、一个学期）、板卡店（一个板型、包装二维码）</li>
+        <li>拿到两个数字再定价：上课省了多少时间、客服少了多少问题</li>
+      </ol>
+    </div>
+    <div>
+      <div class="big">3 + 3</div>
+      <p class="mute">3 家机构 + 3 家板卡店试点。<br>个人用户免费，是口碑来源，不是收入来源。</p>
+    </div>
+  </div>
+</section>
+
+<footer>EI TOKEN · 内部推广资料 · 请勿外传 · 2026-09-23</footer>
 </div></body></html>
