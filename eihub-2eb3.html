@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EI HUB 方案</title>
+<style>
+:root{--bg:#0B1020;--sheet:#121A2E;--raised:#1A2440;--line:#26314F;--ink:#E6EAF2;--mute:#8A94AD;--acc:#22D3EE;--warn:#FBBF24;--ok:#34D399;
+  --font:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;--mono:Consolas,ui-monospace,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14.5px;line-height:1.7;padding:26px 18px 60px}
+.wrap{max-width:920px;margin:0 auto}
+header{background:var(--sheet);border:1px solid var(--line);border-radius:14px;padding:24px 28px;margin-bottom:14px}
+.eyebrow{font:600 11.5px var(--mono);color:var(--acc);letter-spacing:.1em}
+h1{margin:6px 0 4px;font-size:26px}
+.sub{color:var(--mute)}
+section{background:var(--sheet);border:1px solid var(--line);border-radius:14px;padding:20px 26px;margin-bottom:12px}
+h2{margin:0 0 12px;font-size:17px;display:flex;gap:10px;align-items:center}
+h2 .n{width:22px;height:22px;border-radius:7px;background:var(--acc);color:#0B1020;font:700 12px/22px var(--mono);text-align:center;flex:none}
+h3{margin:16px 0 6px;font-size:14.5px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin:8px 0}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--raised);color:var(--mute);font-weight:600;font-size:12.5px}
+td.r{text-align:right;font-family:var(--mono);white-space:nowrap}
+.note{background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.3);border-radius:10px;padding:10px 14px;font-size:13.5px;margin:10px 0}
+.warn{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.35);border-radius:10px;padding:10px 14px;font-size:13.5px;margin:10px 0}
+.ok{color:var(--ok)} .mute{color:var(--mute)}
+pre{background:#0d1426;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font:12.5px/1.6 var(--mono);white-space:pre-wrap;word-break:break-word;color:#c8d3e6}
+.diagram{font:12.5px/1.5 var(--mono);background:#0d1426;border:1px solid var(--line);border-radius:10px;padding:14px;white-space:pre;overflow:auto;color:#c8d3e6}
+ul{margin:6px 0;padding-left:20px} li{margin:3px 0}
+</style>
+</head>
+<body><div class="wrap">
+
+<header>
+  <div class="eyebrow">EI TOKEN · 硬件</div>
+  <h1>EI HUB —— 桌面供电与接入枢纽</h1>
+  <p class="sub">一头接电、一头接电脑，把主流开发板全部供上电、接进 EI TOKEN；按屏顶的 ◀ ▶ 两个键选板子，电压和限流自动配好。有线台式，不带电池。</p>
+</header>
+
+<section>
+  <h2><span class="n">1</span>先把几件事定下来</h2>
+  <table>
+    <tr><th style="width:26%">决定</th><th>结论</th><th style="width:34%">为什么</th></tr>
+    <tr><td>形态</td><td><b>板子有座位的托盘</b>：220×120×22mm 的石墨蓝矮板，顶面四个浅凹槽是"座位"，ESP32 / Arduino / Black Pill 躺进去，USB-A 口开在座位后壁，线只有 5cm；每个座位一圈细光线（青=待机、白=烧录中、红=过流）。后沿一道 60mm 高的铝合金窄脊，嵌一块 2.4 寸竖屏当脸，眼睛看向正在烧录的座位；脊两端各一个圆按钮（◀ ▶ 切板子，长按确认）。<b>大板子（树莓派 / Jetson）从脊背面的口接</b></td><td>桌上就是"一个小工位，四块板各就各位"，和 eitoken.ai 设备页四张卡一一对应——网页上哪张卡亮，桌上哪个座位亮。这是别人抄不走的形态</td></tr>
+    <tr><td>电从哪来</td><td>USB-C PD 100W 适配器（随机附 GaN 头）；不做内置电池</td><td>Jetson 一开机就要 20-40W，电池版撑不了几分钟还贵一倍；台式用不着</td></tr>
+    <tr><td>怎么接电脑</td><td>一根 USB-C 数据线；HUB 内置 4 口 USB 2.0 集线器，MCU 口既供电又走数据</td><td>板子插 HUB 就等于插电脑，eitoken.ai 直接认、直接烧</td></tr>
+    <tr><td>「选芯片自动适配」怎么实现</td><td>◀ ▶ 两键切档（ESP32 / Arduino / STM32 / 树莓派 / Jetson / 小车 / 自定义）→ 决定 DC 口电压、每口限流、辅助引脚行为；<b>eitoken.ai 认出板子后也能通过 USB 告诉 HUB 切档</b></td><td>HUB 自己看不到下游 USB 枚举（它不是主机），所以"自动"由网页端下发，本地两个按钮兜底</td></tr>
+    <tr><td>一个独有卖点</td><td>HUB 上带一组 <b>UART + BOOT0 + NRST</b> 三针口，由 HUB 的 MCU 控制</td><td>STM32 初始化在 Windows 纯网页做不了（DFU 没驱动），接 HUB 就能做——HUB 替用户拨 BOOT0、按复位，走串口 bootloader</td></tr>
+    <tr><td>暂不做</td><td>24V 工业、PoE、无线充、电池、USB 3.0 高速口</td><td>不主流，或者成本翻倍</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2><span class="n">2</span>接口与供电能力（覆盖主流）</h2>
+  <table>
+    <tr><th>口</th><th>规格</th><th>给谁用</th><th>保护</th></tr>
+    <tr><td>USB-A × 4</td><td>5V / 每口 3A，走数据（经内置 HUB 到电脑）</td><td>ESP32 全系、Arduino Uno / Nano / Mega、STM32 Blue Pill / Black Pill、CH340 类一切串口板、StackChan</td><td>每口独立 eFuse 限流 + 电流表 + 短路自恢复</td></tr>
+    <tr><td>USB-C 供电口 × 1</td><td>5V / 5A（PD 通告 5V5A）</td><td>树莓派 4 / 5、RDK X5</td><td>同上；树莓派 5 要 5A 才不限制外设</td></tr>
+    <tr><td>DC 5.5×2.5 × 1</td><td>可切 <b>12V / 4A</b> 或 <b>19V / 3A</b>（切到 Jetson 或 小车档决定）</td><td>Jetson Orin Nano（9–20V）、Jetson Nano（5V4A 用 A 口不够，走 DC 5V 档）、ROS 小车 12V 底盘</td><td>输出前有开关，换档时先断电再切，防止 19V 打到 12V 设备</td></tr>
+    <tr><td>3 针辅助口 × 1</td><td>TX / RX / GND + BOOT0 / NRST（5 针排母，3.3V 电平）</td><td>STM32 初始化、任何板子的调试串口（RDK 调试针、树莓派 GPIO 串口）</td><td>HUB 的 MCU 做 USB-TTL，BOOT0 / NRST 由它拉</td></tr>
+    <tr><td>上行 USB-C × 1</td><td>USB 2.0 数据到电脑</td><td>电脑</td><td>—</td></tr>
+    <tr><td>电源入口 USB-C × 1</td><td>PD 100W 输入（请求 20V / 5A）</td><td>适配器</td><td>输入过压 / 反接</td></tr>
+  </table>
+  <div class="note">功率预算：20V×5A = 100W。同时接满：4 个 A 口 5V×3A 最多 60W + C 口 25W + DC 口 48W 会超。固件按档限总功率——切到 Jetson 档时 A 口总限 30W，屏上显示还剩多少。实际用户很少同时插满。</div>
+</section>
+
+<section>
+  <h2><span class="n">3</span>架构</h2>
+  <div class="diagram">适配器 ──USB-C PD 20V──▶ [PD 协议芯片 CH224K] ──20V 母线──┬─▶ [同步降压 5V/12A] ──┬─▶ eFuse ×4 ──▶ USB-A ×4 ──▶ [USB2.0 集线器 GL852G] ──▶ 上行 USB-C ──▶ 电脑
+                                                          │                        └─▶ eFuse ──▶ USB-C 5V5A（树莓派）
+                                                          ├─▶ [降压 12V/5A] ─┐
+                                                          └─▶ 20V 直通(降 19V)─┴─▶ [继电器/MOS 选一路] ──▶ DC 5.5 口
+[ESP32-S3 主控] ── I²C ──▶ INA3221 ×2（6 路电流电压）
+              ── GPIO ─▶ 各口 eFuse 使能、DC 档位、BOOT0 / NRST
+              ── UART ─▶ 3 针辅助口（USB-TTL 功能，经集线器上电脑）
+              ── SPI  ─▶ 2.8 寸横屏（脸）；头顶 ◀ ▶ 两个按钮（GPIO）
+              ── USB  ─▶ 作为一个 CDC 设备挂在集线器上，和 eitoken.ai 说话（报电流、收切档命令）</div>
+  <h3>固件（ESP32-S3，Arduino 或 ESP-IDF）</h3>
+  <ul>
+    <li>档位表：每档 = { DC 电压, 各口限流, 总功率上限, 辅助口行为 }</li>
+    <li>200ms 一轮读 6 路电流；超限先关那一口再报警；短路 eFuse 硬件自断</li>
+    <li>CDC 协议一行一条：<code>HUB?</code> 报型号和各口状态 · <code>MODE jetson</code> 切档 · <code>BOOT0 1</code> / <code>RESET</code> 辅助口 · <code>PORT 3 off</code></li>
+    <li>脸：待机时一对眼睛（眨眼、看向刚插入的那个口的方向）；插板后眼睛变成板子图标 + 板名 + 电流；过流时皱眉 + 光带变红；切档时表情"确认？"，长按点头。切档要长按确认，DC 口先断电再切</li>
+  </ul>
+  <h3>EI TOKEN 端</h3>
+  <ul>
+    <li>认 HUB 的 VID/PID → 设备页出一张 HUB 卡，显示各口在线和电流</li>
+    <li>识别出板子家族后自动下发 <code>MODE</code>；「STM32 初始化」页检测到 HUB 就走辅助口，用户什么都不用拨</li>
+  </ul>
+</section>
+
+<section>
+  <h2><span class="n">4</span>BOM（样机一台，淘宝价；量产在备注）</h2>
+  <table>
+    <tr><th>模块</th><th>件</th><th class="r">数量</th><th class="r">单价 ¥</th><th class="r">小计 ¥</th><th>备注</th></tr>
+    <tr><td rowspan="2">电源入口</td><td>CH224K PD 诱骗芯片（要 20V）</td><td class="r">1</td><td class="r">2</td><td class="r">2</td><td>样机可直接买 CH224K 小板 ¥6</td></tr>
+    <tr><td>100W GaN PD 适配器（外购随机附）</td><td class="r">1</td><td class="r">90</td><td class="r">90</td><td>量产谈到 ¥55 左右；也可不附、用户自备</td></tr>
+    <tr><td rowspan="3">电源转换</td><td>20V→5V 同步降压 12A（TPS54A20 / MP2143 方案或成品模块）</td><td class="r">1</td><td class="r">18</td><td class="r">18</td><td>样机用 XY-3606 类模块</td></tr>
+    <tr><td>20V→12V 降压 5A 模块</td><td class="r">1</td><td class="r">8</td><td class="r">8</td><td></td></tr>
+    <tr><td>DC 口档位切换（MOS + 驱动 / 小继电器）</td><td class="r">1</td><td class="r">4</td><td class="r">4</td><td></td></tr>
+    <tr><td rowspan="2">每口保护与测量</td><td>eFuse 限流开关 TPS2553（可编程限流）</td><td class="r">6</td><td class="r">3</td><td class="r">18</td><td>A 口 ×4、C 口、DC 口</td></tr>
+    <tr><td>INA3221 三路电流电压监测</td><td class="r">2</td><td class="r">8</td><td class="r">16</td><td>6 路</td></tr>
+    <tr><td>USB</td><td>GL852G 4 口 USB 2.0 集线器 + 外围</td><td class="r">1</td><td class="r">8</td><td class="r">8</td><td>4 口分给 A 口 ×3 + ESP32-S3；第 4 个 A 口另接一颗或用 7 口版 FE1.1s（¥5）</td></tr>
+    <tr><td rowspan="4">主控与交互</td><td>ESP32-S3-WROOM-1 模组（N8R2）</td><td class="r">1</td><td class="r">12</td><td class="r">12</td><td>原生 USB 做 CDC + USB-TTL</td></tr>
+    <tr><td>2.4 寸 IPS 240×320 SPI 屏（竖放嵌在后脊里当脸）</td><td class="r">1</td><td class="r">25</td><td class="r">25</td><td>表情用 LVGL 或直接位图，StackChan 那套眼睛动画可复用</td></tr>
+    <tr><td>后脊两端圆形按钮 ×2（Ø10 硅胶帽透光）</td><td class="r">2</td><td class="r">2</td><td class="r">4</td><td>◀ ▶ 切板子；长按 1.5 秒确认 / 锁定，防误碰</td></tr>
+    <tr><td>座位光带 WS2812 ×4（每条 12 颗）</td><td class="r">4</td><td class="r">3.5</td><td class="r">14</td><td>青 = 待机，白 = 烧录中，红 = 过流；哪个座位亮对应网页哪张卡</td></tr>
+    <tr><td rowspan="2">连接器</td><td>USB-A 母座 ×4、USB-C 母座 ×3、DC 5.5×2.5 母座、5 针排母</td><td class="r">1</td><td class="r">14</td><td class="r">14</td><td></td></tr>
+    <tr><td>3.3V LDO、MOS、阻容、TVS、保险丝等</td><td class="r">1</td><td class="r">15</td><td class="r">15</td><td></td></tr>
+    <tr><td>板</td><td>4 层 PCB（嘉立创 5 片起）</td><td class="r">1</td><td class="r">40</td><td class="r">40</td><td>量产 ¥8/片</td></tr>
+    <tr><td>外壳</td><td>样机：树脂 3D 打印上下盖 + 透光环；量产：注塑 + 铝底</td><td class="r">1</td><td class="r">80</td><td class="r">80</td><td>量产模具约 ¥3 万，单件 ¥18</td></tr>
+    <tr><td colspan="4"><b>样机合计（含适配器）</b></td><td class="r"><b>≈ 367</b></td><td>不含适配器 ≈ 257</td></tr>
+    <tr><td colspan="4"><b>量产 500 台 BOM（含 ¥55 适配器）</b></td><td class="r"><b>≈ 165</b></td><td>不含适配器 ≈ 110；对应零售 399–499 有空间</td></tr>
+  </table>
+  <div class="warn">两处别省：每口 eFuse（用户会短路，必然）和 DC 口的档位互锁（19V 打进 12V 小车驱动板是真的会烧）。</div>
+</section>
+
+<section>
+  <h2><span class="n">5</span>实现方法：三步，六周</h2>
+  <table>
+    <tr><th style="width:18%">阶段</th><th>做什么</th><th style="width:16%">周期</th></tr>
+    <tr><td>① 模块拼样机</td><td>CH224K 板 + 两个降压模块 + USB 集线器板 + ESP32-S3 DevKit + INA3221 + TPS2553 小板 + 屏 + 旋钮，面包板级接起来；固件把档位表、电流监控、CDC 协议全跑通；eitoken.ai 端认 HUB、下发 MODE、STM32 初始化走辅助口</td><td>2 周</td></tr>
+    <tr><td>② 画板</td><td>立创 EDA 出 4 层板，圆形，口环形分布；打 5 片；焊 2 台；做过流 / 短路 / 热测试（满载 1 小时壳温 &lt; 50°C）</td><td>3 周</td></tr>
+    <tr><td>③ 外壳与整机</td><td>按效果图出结构，树脂打印 3 台；配色和光带调到和网站一致；写说明书；拍图上 eitoken.ai</td><td>1 周</td></tr>
+  </table>
+  <p class="mute">软件侧我来做（固件 + 网页联动约 1500 行）；硬件侧需要一个会画板的人（王银申能做），或者外包画板 ¥3–5 千。</p>
+</section>
+
+<section>
+  <h2><span class="n">6</span>效果图提示词</h2>
+  <h3>主图（产品渲染）</h3>
+  <pre>Original product render of "EI HUB", a desktop docking tray for maker boards. A low, wide slab, 220mm × 120mm × 22mm, matte graphite-navy (#1A2440) with softly rounded edges. The top surface has four shallow recessed bays in a row, each the footprint of a small dev board; in three of them lie an ESP32 DevKit, an Arduino Nano and a Black Pill STM32, each plugged into a USB-A port set into the rear wall of its bay with a stubby 5cm cable. A hairline of cyan light (#22D3EE) traces the edge of each occupied bay; the empty bay is dark. Along the back edge rises a slim vertical spine, 60mm tall, in brushed light-gray aluminum, holding a small portrait 2.4-inch display that shows a pair of minimal cyan pixel eyes glancing toward the ESP32 bay. A round tactile button on each end of the spine. Single braided USB-C cable exits the rear of the spine. Dark desk, one soft key light from the upper left, gentle reflections on the aluminum, product photography, 3/4 view from slightly above, photorealistic, 8k. Small debossed "EI" on the spine. Calm, precise, workshop-like.</pre>
+  <h3>俯视图（看清座位）</h3>
+  <pre>Top-down view of the same "EI HUB" tray: four equal recessed bays in a row on a graphite-navy slab, each bay with a USB-A port in its rear wall and a thin cyan light outline; bays labeled with tiny engraved numerals 1–4. The rear spine seen edge-on with the portrait display. Clean, orthographic, technical product shot on a white background, photorealistic.</pre>
+  <h3>背面（大板子从这里接）</h3>
+  <pre>Rear view of the "EI HUB" spine: brushed light-gray aluminum bar on a graphite-navy tray. In a single row: USB-C power-out 5V/5A, DC barrel jack, USB-C uplink, USB-C power-in with a lightning icon, and a 5-pin header labeled "UART · BOOT0 · RST", each with a tiny engraved icon; a fine vent grille above them. Pure white background, centered, soft even light, product catalog style.</pre>
+  <h3>场景图</h3>
+  <pre>Evening maker desk: the "EI HUB" tray sits in front of a laptop showing the dark EI TOKEN web app; three boards rest in their bays with short cables, the bay under the STM32 glowing white while it is being flashed and the spine's pixel eyes looking at it; a Raspberry Pi 5 and a Jetson Orin Nano sit behind, cabled to the spine. Warm desk lamp left, cool cyan from the bays, shallow depth of field, photorealistic.</pre>
+</section>
+
+<section>
+  <h2><span class="n">7</span>和 EI TOKEN 怎么"完美适配"</h2>
+  <p class="mute">原则：HUB 不是另一套软件，它是 eitoken.ai 的一只手。网页管"认板子、编译、烧录"，HUB 管"供电、拨引脚、给反馈"，两边靠一条 USB 串口协议说话。</p>
+  <h3>① HUB 在电脑上是什么</h3>
+  <ul>
+    <li>插上电脑，HUB 自己是一个 USB 串口设备（VID 0x303A，我们自己的 PID），下面挂着一个 4 口集线器。<b>Windows / Mac 免驱</b>，浏览器 Web Serial 直接开。</li>
+    <li>eitoken.ai 设备页多一张 <b>HUB 卡</b>：六个口的在线状态、每口电流、当前档位、总功率；这张卡是"桌面全景"，所有板子卡片挂在它下面。</li>
+  </ul>
+  <h3>② 板子插进 HUB 之后发生什么（用户视角）</h3>
+  <table>
+    <tr><th style="width:22%">用户动作</th><th>HUB</th><th>eitoken.ai</th></tr>
+    <tr><td>把 ESP32 插进 A2 口</td><td>眼睛看向 A2 口方向，报 <code>PORT A2 on 0.12A</code></td><td>浏览器收到新串口，自动识别（USB 指纹 → 握手），设备页出 ESP32 卡，卡上标"HUB · A2"</td></tr>
+    <tr><td>—</td><td>收到 <code>MODE esp32</code>，A2 口限流 1.5A，脸变成 ESP32 图标</td><td>识别完立刻下发 MODE；用户什么都没按</td></tr>
+    <tr><td>点「烧录」</td><td>眼睛"专注"表情，光带流动；万一过流立刻关口并报 <code>ERR A2 overcurrent</code></td><td>正常 Web Serial 烧录；收到 ERR 就中止并显示"HUB 报 A2 口过流，检查接线"</td></tr>
+    <tr><td>插一块空的 Black Pill</td><td>—</td><td>网页发现是 STM32 但不在 bootloader：<b>提示"接到 HUB 的辅助口做初始化"</b></td></tr>
+    <tr><td>用 5 针线接辅助口，点「初始化」</td><td><code>BOOT0 1</code> → <code>RESET</code> → 转发串口 → 写完 <code>BOOT0 0</code> → <code>RESET</code></td><td>整片备份、写 EITBL、校验——全在浏览器里，<b>Windows 纯网页也能做</b>（这就是 HUB 绕过 DFU 那堵墙的方式）</td></tr>
+    <tr><td>插 Jetson 到 DC 口</td><td>脸上问"Jetson 19V？"，等长按确认才通电</td><td>网页同时弹同样的确认；任一边确认都行</td></tr>
+  </table>
+  <h3>③ 协议（USB 串口，一行一条，和 EITBL 一个风格）</h3>
+  <pre>HUB?                 → HUB 1 ports=A1,A2,A3,A4,C1,DC,AUX mode=esp32 power=23.4W
+STAT                 → A1 on 0.12A · A2 off · … · DC 19V 1.8A
+MODE jetson          → OK（DC 口先断电，切 19V，再通电）
+PORT A3 off / on     → OK
+AUX BOOT0 1 · AUX RESET · AUX BAUD 115200 → 辅助口成 USB-TTL，串口数据透传
+FACE flash / idle / err                     → 网页也能指挥表情（烧录时"专注"，成功时"眨眼"）
+事件（HUB 主动发）：EVT plug A2 · EVT unplug A2 · EVT overcurrent A2 · EVT button left</pre>
+  <h3>④ 软件侧要改什么（都在 1.0 已有的骨架上）</h3>
+  <ul>
+    <li><code>core/webserial.js</code>：USB_DB 加 HUB 的 VID/PID → 家族 <code>hub</code>；识别时 <code>HUB?</code> 一句认出</li>
+    <li>新增 <code>core/hub.js</code>：协议客户端 + 事件流；设备页 HUB 卡；板子卡片按 HUB 的 plug 事件标口位</li>
+    <li>识别完成后的一处钩子：有 HUB 在线就下发 <code>MODE</code>；烧录前订阅 <code>EVT overcurrent</code></li>
+    <li>「STM32 初始化」页多一条路："经 HUB 辅助口"——把现有串口 bootloader 那套代码的 BOOT0/RESET 动作换成 <code>AUX</code> 命令即可</li>
+    <li>桥接（Windows 版）同样一套，COM 口走 <code>/api/serial/*</code></li>
+  </ul>
+  <p class="mute">约 600 行网页代码 + HUB 固件里的协议实现。协议先定下来，固件和网页可以两头同时开工，用一个 ESP32-S3 DevKit 就能先把"网页 ↔ HUB 对话"跑通，不用等板子。</p>
+</section>
+
+</div></body></html>
