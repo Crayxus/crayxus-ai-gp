@@ -5,7 +5,6 @@
 <meta name="robots" content="noindex,nofollow,noarchive">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>EI TOKEN 交付测试清单</title>
-
 <style>
 :root{
   --bg:#F5F7FA;--sheet:#FFFFFF;--ink:#16202E;--mute:#66717F;--dim:#9AA3B2;--line:#DDE3EC;--line-soft:#EBEFF5;
@@ -68,14 +67,12 @@ td .note{width:100%;min-width:120px;border:1px solid var(--line);border-radius:7
 @media (max-width:640px){th:nth-child(3),td:nth-child(3){min-width:200px} section.card{padding:16px}}
 @media (prefers-reduced-motion:reduce){.toast{transition:none}}
 </style>
-</head>
-<body>
 
 <div class="wrap">
 <header>
   <div class="eyebrow">EI TOKEN · 交付验收</div>
-  <h1>交付测试清单</h1>
-  <p class="sub">给一位没参与开发的测试员用。从一台<b>全新安装的电脑</b>开始，按编号逐条做，每条填结果和备注。做完点「复制结果」发回来。P0 全过才能交付。</p>
+  <h1>交付测试清单 · 首批机构版</h1>
+  <p class="sub">首批机构用 Arduino、ESP32、树莓派、地瓜 RDK，本轮只测这四类。给一位没参与开发的测试员用。从一台<b>全新安装的电脑</b>开始，按编号逐条做，每条填结果和备注。做完点「复制结果」发回来。P0 全过才能交付。</p>
 </header>
 
 <div class="bar">
@@ -95,10 +92,11 @@ td .note{width:100%;min-width:120px;border:1px solid var(--line);border-radius:7
   <h3>测试环境（缺一样就在备注里写明）</h3>
   <div class="kv">
     <span>电脑 A</span><div><b>全新 Windows 11</b>（新装系统或新账户，从没装过 Arduino IDE、驱动、EI TOKEN）。Chrome 或 Edge 最新版。能上网。</div>
-    <span>电脑 B（可选）</span><div>一台 Mac（测 STM32 DFU 初始化只有 Mac 纯网页能走）。</div>
     <span>账号</span><div>用自己的邮箱在 eitoken.ai 新注册；不要用开发者账号。</div>
-    <span>板子</span><div>ESP32 DevKit（CH340 或 CP2102）· ESP32-S3 DevKitC（原生 USB 口）· Arduino Uno · Arduino Nano（旧 bootloader 版）· Black Pill STM32F411 · Blue Pill STM32F103 + 一块 USB-TTL（CH340）· Nucleo F401RE · Jetson（Nano 或 Orin Nano，出厂系统）· 树莓派 4/5（可选）· M5 StackChan CoreS3（可选）· NXP FRDM（可选）</div>
-    <span>元件</span><div>LED + 220Ω · 按键 · SG90 舵机 · DHT22 · 0.96 寸 OLED · 杜邦线 · 面包板</div>
+    <span>板子</span><div><b>本轮只测四类（首批机构用的）</b>：Arduino Uno、Arduino Nano（旧 bootloader 版）· ESP32 DevKit（CH340 或 CP2102）、ESP32-S3 DevKitC · 树莓派 4 或 5（烧好官方系统的 SD 卡）· 地瓜 RDK X5（烧好官方系统）· 一块 USB-TTL 小板（CH340，接树莓派调试口用）· 机构用的 Arduino 套件（mBot 或传感器套件，有就带上）</div>
+    <span>元件</span><div>LED + 220Ω · 按键 · SG90 舵机 · DHT22 · 超声波 HC-SR04 · 0.96 寸 OLED · 杜邦线 · 面包板 · USB 摄像头（RDK / 树莓派视觉演示）</div>
+    <span>树莓派准备</span><div>SD 卡 boot 分区的 <b>config.txt</b> 末尾加一行 <b>enable_uart=1</b>；USB-TTL 接 GPIO14(TX)→RX、GPIO15(RX)→TX、GND（Pi 5 可直接用板上 3 针调试口）。记下登录用户名和密码。</div>
+    <span>RDK 准备</span><div>找到调试串口（板载调试 USB 口或调试针），记下登录用户名和密码。</div>
     <span>数据线</span><div><b>确认是数据线不是充电线</b>：先在手机上试能传文件。带一根已知坏的充电线做异常测试。</div>
   </div>
   <h3>记录规则</h3>
@@ -109,7 +107,7 @@ td .note{width:100%;min-width:120px;border:1px solid var(--line);border-radius:7
     <li>凡是页面说"会复位板子一次"的操作，板子灯闪一下、串口断一下都是正常，不算失败。</li>
     <li>凡是提示"浏览器不允许…""要 Windows 版"这类<b>如实的限制说明</b>，出现了就算通过——我们要验证的是它说清楚了，不是它能突破浏览器。</li>
   </ul>
-  <div class="warn-box">安全：接舵机、电机、继电器时电源单独接；ROS 小车方向盘测试把车架空或轮子离地。</div>
+  <div class="warn-box">安全：接舵机、电机、继电器时电源单独接；GPIO 点灯时 LED 必须串 220Ω 电阻，别把 5V 接到树莓派 / RDK 的 GPIO 上。</div>
 </section>
 
 <div id="sections"></div>
@@ -117,7 +115,7 @@ td .note{width:100%;min-width:120px;border:1px solid var(--line);border-radius:7
 <section class="card">
   <h2><span class="tag">终</span>交付判定</h2>
   <ul>
-    <li>A、B、E 三节的 P0 全部通过，且 G 节异常路径每条都有清楚的提示（不是白屏、不是英文报错）。</li>
+    <li>A、B、C、E 四节的 P0 全部通过，且 G 节异常路径每条都有清楚的提示（不是白屏、不是英文报错）。</li>
     <li>任一 P0 失败 → 不交付，把失败条目连截图发回。</li>
     <li>P1 失败超过 3 条 → 不交付。</li>
     <li>做完把「复制结果」的文本发回，附截图文件夹。</li>
@@ -145,7 +143,7 @@ const S = [
  ['A14','P0','换 Arduino Uno，重复 A4–A7','认出「Arduino Uno」、签名 1E950F；烧「闪烁 LED」后 D13 灯闪；串口有输出',''],
  ['A15','P0','换 Arduino Nano（旧 bootloader），重复 A4–A6','认出 Nano；烧录成功（平台自动用 57600 波特率）','失败：记下是新款还是旧款 Nano'],
  ['A16','P0','换 ESP32-S3 DevKitC，插<b>原生 USB 口</b>（不是 UART 口），重复 A4–A7','认出 ESP32-S3（VID 303A）；烧「闪烁 LED」成功；烧完串口断一下自动回来','S3 烧录前如果提示按 BOOT，按住 BOOT 再插一次'],
- ['A17','P1','案例超市：按板子筛选（ESP32 / Arduino / STM32），按分类筛选','列表正确变化，每张卡有难度、时长、元件数',''],
+ ['A17','P1','案例超市：按板子筛选（ESP32 / Arduino），按分类筛选（含「mBot 小车」）','列表正确变化，每张卡有难度、时长、元件数',''],
  ['A18','P1','案例页「先仿真」（任选 sim 标记的案例）','仿真跑起来或明确提示需要 Windows 版；不能是白屏',''],
  ['A19','P1','案例页「加入采购清单」→ 采购清单页','元件带单价、能改数量、有淘宝/京东/立创跳转；导出 CSV 打开不乱码',''],
  ['A20','P1','深度识别：ESP32 卡上点「深度识别」','面板依次问五条通道，最后给出芯片、MAC、Flash 实测，证据等级标"实测"',''],
@@ -154,36 +152,26 @@ const S = [
  ['A23','P1','我的成就 / 排行榜','A6 烧录成功后经验 +50、完成案例 +30；成就墙有解锁；排行榜能看到自己',''],
  ['A24','P1','账户与用量 → 演示充值','页面明确标注"演示支付，不会真实扣款"；余额变化',''],
 ]},
-{ id:'B', nm:'纯网页 · STM32', goal:'STM32 第一次要「初始化」（写入 EI TOKEN 自己的 bootloader），之后插 USB 就烧。这一节大部分代码没在真板上跑过，请特别仔细记录。', t:[
- ['B1','P0','电脑 A（Windows 纯网页）：Black Pill 按住 BOOT0 键插 USB → 设备页二线区「STM32 初始化」→ 点「按住 BOOT0 插上，点这里」','弹窗里<b>没有</b>设备，页面提示"Windows 上要先装过 EI TOKEN，或者用 Mac"','这是预期限制，提示清楚即通过'],
- ['B2','P0','电脑 B（Mac）：同样操作','弹窗里有 STM32 BOOTLOADER → 选中 → 日志：读 UID → 备份 512KB → 判断 F411 → 擦扇区 → 写入 31KB → 校验 → 完成；板子自动重启','没有 Mac 就跳过，写明'],
- ['B3','P0','初始化完成后，松开 BOOT0，重插 USB → 设备页「连接设备」→ 选 STM32 那一项','二线区出卡「Black Pill F411（已初始化）」，显示 UID、Flash 512KB、"应用区是空的"',''],
- ['B4','P0','烧「闪烁 LED」','面板：备份 → 擦应用区 → 写入 → 启动；PC13 板载灯闪（注意它是低电平亮，亮灭和串口打印相反，正常）',''],
- ['B5','P0','项目页改 delay → 云端编译 → 烧录','面板日志里出现"板子在跑用户程序，发暗号让它回到 bootloader"→ 串口断一下回来 → 烧成功 → 灯闪频率变了','这条验证"程序在跑也能不按键重烧"'],
- ['B6','P1','按住 KEY 键重插 USB → 连接 → 认一下','认出"已初始化"且"有用户程序"；点烧录仍能烧',''],
- ['B7','P1','Blue Pill：按页面接线表接 USB-TTL（TX→PA10，RX→PA9，GND，3.3V），BOOT0 跳线拨 1，按 RESET → 初始化页「USB-TTL 初始化」','弹窗选 CH340 → 备份 64KB → 写入 → 完成提示"BOOT0 拨回 0，拔掉 USB-TTL，插板子 USB 口"',''],
- ['B8','P1','Blue Pill 按提示做完后插自己的 USB 口 → 连接','认出「Blue Pill F103C8（已初始化）」；烧「闪烁 LED」成功','部分 Blue Pill 的 USB 上拉电阻不对，插上电脑认不到——记下'],
- ['B9','P1','Nucleo F401RE 插 USB → 连接','认出「Nucleo（ST-Link 串口）」，说明"烧录用 Windows 版"；点烧录被明确拒绝',''],
- ['B10','P2','已初始化的 Black Pill 拔掉再插，观察上电','不按任何键，用户程序直接跑（灯闪），没有几秒延迟',''],
+{ id:'B', nm:'纯网页 · 树莓派（USB-TTL 调试串口）', goal:'不装软件，经调试串口登录树莓派，识别、推脚本、看日志、GPIO 点灯。', t:[
+ ['B1','P0','树莓派开机；USB-TTL 按准备区接好插电脑 → 设备页「连接设备」→ 选 CH340 那一项','四线区出现一张卡，有「当作 Linux 终端」按钮',''],
+ ['B2','P0','点「当作 Linux 终端」→ 波特率选 115200 → 填用户名密码 → 「连接并识别」','状态"已登录"；信息区显示树莓派型号、系统、CPU、内存、IP','不出登录提示：检查 enable_uart=1 和 TX/RX 是否交叉'],
+ ['B3','P0','脚本模板选「板子信息」→ 推送并运行','日志出现 hello from … / tick 1…5 / done / "── 结束 ──"',''],
+ ['B4','P0','模板选「树莓派 GPIO 点灯」，GPIO17 接 LED → 推送并运行 → 点「停止」','LED 一秒闪一次，日志 LED ON / OFF；停止后出现退出码 130',''],
+ ['B5','P1','模板选「摄像头人脸计数」，插 USB 摄像头 → 运行','每秒打印人脸数和帧率；对着摄像头数字变化','没装 opencv 时提示清楚'],
+ ['B6','P1','下方命令框输入 ls ~ → 回车','显示家目录内容',''],
+ ['B7','P1','观察「实时状态」','CPU、内存、温度每 5 秒刷新；欠压时显示警告',''],
+ ['B8','P1','离开工作台再回来 → 重新连接','不报"串口被占用"',''],
 ]},
-{ id:'C', nm:'纯网页 · Jetson / 树莓派 / RDK（三线）', goal:'用板子的 USB 口当终端：登录、识别、推脚本、看日志、ROS 面板。', t:[
- ['C1','P0','Jetson 开机，用它的 micro-USB / USB-C 设备口连电脑 A → 设备页「连接设备」','弹窗里有一个串口（NVIDIA）；三线区出卡「NVIDIA Jetson（USB 终端）」',''],
- ['C2','P0','卡上「打开工作台」→ 填 Jetson 的用户名密码 → 「连接并识别」','状态变"已登录"；信息区显示型号（如 Jetson Orin Nano）、系统、CPU、内存、加速器、ROS 版本、IP','密码错 → 提示"用户名或密码不对"（也测一次）'],
- ['C3','P0','「推送并运行」（默认示例脚本）','日志区依次出现 hello from … / tick 1…5 / done / "── 结束 ──"',''],
- ['C4','P0','把示例脚本改成死循环打印（while True: print(1); time.sleep(1)）→ 推送并运行 → 点「停止」','日志持续滚动；点停止后出现"── 退出码 130 ──"，按钮恢复',''],
- ['C5','P1','下方命令框输入 ls / → 回车','日志区显示目录列表',''],
- ['C6','P1','观察连接卡下方「实时状态」','CPU、内存、温度每 5 秒刷新；Jetson 有 GPU 一栏',''],
- ['C7','P1','若 Jetson 装了 ROS 且 roscore/节点在跑：ROS 面板','出现零件（雷达/底盘…）、话题数、电量；点「来一帧」雷达图出点；「连续刷新」能动',''],
- ['C8','P1','ROS 面板方向盘：车架空，点「前」','车轮转一下（几百毫秒后自停）；日志显示 cmd_vel x=0.2','没有 ROS 车就跳过'],
- ['C9','P2','树莓派：按文档在 SD 卡开 gadget 模式后，重复 C1–C3','认出 Linux USB 终端；登录、识别（树莓派）、推脚本通过',''],
- ['C10','P1','工作台离开页面再回来','串口被正确释放，重新连接不报"被占用"',''],
+{ id:'C', nm:'纯网页 · 地瓜 RDK', goal:'经调试串口登录 RDK，识别 BPU、推脚本、GPIO 点灯、视觉演示。', t:[
+ ['C1','P0','RDK 开机，调试串口插电脑 → 设备页「连接设备」→ 选中它','四线区出卡，有「当作 Linux 终端」',''],
+ ['C2','P0','「当作 Linux 终端」→ 波特率选 921600 → 填用户名密码 → 连接并识别','状态"已登录"；识别为地瓜 RDK，加速器显示 BPU','乱码或无响应就换 115200，记下实际是哪个'],
+ ['C3','P0','模板「板子信息」→ 推送并运行','日志正常到"── 结束 ──"',''],
+ ['C4','P0','模板「地瓜 RDK GPIO 点灯」，物理引脚 37 接 LED → 运行 → 停止','LED 闪烁；停止后退出码 130','权限不够时记下报错原文'],
+ ['C5','P0','模板「摄像头人脸计数」，插 USB 摄像头 → 运行','每秒打印人脸数和帧率',''],
+ ['C6','P1','模板「AI 算力自检」→ 运行','显示型号和 BPU 信息',''],
+ ['C7','P1','实时状态','CPU、内存、温度、BPU 占用刷新',''],
 ]},
-{ id:'D', nm:'纯网页 · 四线自定义设备', goal:'不认识的板子也能有事可做。', t:[
- ['D1','P1','插 NXP FRDM（或任何 CMSIS-DAP 板）→ 连接','四线区出大卡「NXP MCU-Link 调试器」，五行信息（调试器/USB 指纹/内核/串口/烧录），按钮：打开串口 / 断开 / 让 AI 写驱动','没有 FRDM 跳过'],
- ['D2','P1','「打开串口」→ 打开 115200 → 按板子复位','串口面板里看到板子的开机打印（或至少不报错）',''],
- ['D3','P2','插一块完全没见过的串口设备（任何 CH340 板）→ 深度识别','五条通道都问过，最后如实说"没应答"，并给出打开串口的出口，不是死等',''],
-]},
-{ id:'E', nm:'Windows 版（Setup.exe，电脑 A）', goal:'装包 → 板子自动出现 → 本机编译 → 烧录 → 串口。注意：当前安装包还没带 STM32 核心和 pyOCD，E8/E9 等新包。', t:[
+{ id:'E', nm:'Windows 版（Setup.exe，电脑 A）', goal:'装包 → 板子自动出现 → 本机编译 → 烧录 → 串口；树莓派 / RDK 走网络 SSH。', t:[
  ['E1','P0','双击 Setup.exe 安装（默认路径）','安装完成，桌面有「EI TOKEN」图标；安装过程没有报错、没有要求单独装 Python',''],
  ['E2','P0','双击图标','独立窗口打开 1.0 界面（不是浏览器标签）；顶部不再是"云端体验版"',''],
  ['E3','P0','插上 ESP32 → 设备页','<b>不用点连接设备</b>，几秒内自动出现 ESP32 卡，显示 COM 号',''],
@@ -191,16 +179,10 @@ const S = [
  ['E5','P0','「烧录」','备份 → 写入 → 校验 → 成功；自动打开串口看到输出',''],
  ['E6','P0','换 Uno：编译 + 烧录','AVR 核心是随包带的，不用下载；一分钟内完成',''],
  ['E7','P1','备份标签页 → 还原','还原成功',''],
- ['E8','P1','插 Nucleo F401RE → 项目页选板型 Nucleo F401RE → 编译 → 烧录','编译要 STM32 核心（首次在线装）；烧录经 ST-Link，首次会装芯片包；成功后 PA5 灯闪','当前包可能提示缺 STM32 核心或 pyOCD——记原文，等新包'],
- ['E9','P1','已初始化的 Black Pill 插 USB → 编译 → 烧录','编译产物按 EITBL 地址链接；烧录走串口 bootloader 成功',''],
- ['E10','P1','三线：设备页「用 SSH 连」→ 填 Jetson IP / 用户名 / 密码 → 连接并识别 → 推脚本','与 C2–C4 同样通过',''],
+   ['E10','P0','设备页三线区「用 SSH 连」→ 填树莓派的 IP / 用户名 / 密码 → 连接并识别 → 推「板子信息」脚本','认出树莓派型号；脚本输出正常（与 B 节同样通过）','树莓派和电脑在同一局域网'],
+ ['E10b','P0','同上，换地瓜 RDK','认出 RDK，加速器一栏显示 BPU；脚本输出正常',''],
  ['E11','P1','关掉窗口再开','之前的项目还在；串口没被占住',''],
  ['E12','P1','控制面板卸载','卸载干净，桌面图标消失；重新安装能正常用',''],
-]},
-{ id:'F', nm:'StackChan（可选，有板子才测）', goal:'热品板一键出效果。', t:[
- ['F1','P1','插 CoreS3 的 USB-C → 纯网页连接 → 深度识别','认出 ESP32-S3 且卡片标 StackChan',''],
- ['F2','P1','StackChan 案例「点头」一键烧','舵机点头；面板同步显示代码',''],
- ['F3','P1','「离线语音」案例一键烧','固件带语音模型（面板显示 srmodels 段）；说中文命令词有反应',''],
 ]},
 { id:'G', nm:'异常路径（每条都要有清楚的中文提示）', goal:'用户会犯的错，页面必须说清楚怎么办，不能白屏、不能英文原文。', t:[
  ['G1','P0','用只能充电的 USB 线插 ESP32 → 连接设备','弹窗里没有设备；页面有说明引导去查线 / 设备管理器',''],
@@ -210,13 +192,13 @@ const S = [
  ['G5','P1','给 ESP32 烧 Arduino 的案例固件（案例只有 Uno 固件时）','页面明确说"固件和板子对不上"，不会硬烧',''],
  ['G6','P1','断网状态下点云端编译','提示连不上云端，不是转圈到死',''],
  ['G7','P1','把 Render 上的编译工人暂停（由开发方操作）→ 云端编译','页面显示"还没有编译机在线，等一下"，任务留在队列；工人恢复后自动完成',''],
- ['G8','P1','STM32 初始化时中途拔 USB','失败提示清楚；重新按 BOOT0 插上能再做一次',''],
- ['G9','P1','三线工作台密码错三次','每次都提示"用户名或密码不对"，不会卡住',''],
+  ['G9','P1','树莓派 / RDK 工作台密码错三次','每次都提示"用户名或密码不对"，不会卡住',''],
+ ['G11','P1','RDK 工作台波特率选错（选 115200 连 921600 的口）','连不上或乱码时有提示；换成正确波特率后能登录',''],
  ['G10','P2','手机浏览器打开 eitoken.ai','能浏览案例和指南；设备相关按钮显示"手机浏览器不支持"之类说明',''],
 ]},
 ];
 
-const KEY='eit-test-v1';
+const KEY='eit-test-v1-inst';
 let state={};
 try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){state={}}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}};
@@ -263,6 +245,3 @@ document.getElementById('btnCopy').onclick=async()=>{
   catch(e){const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();toast('请按 Ctrl+C 复制');setTimeout(()=>ta.remove(),8000)}
 };
 </script>
-
-</body>
-</html>
