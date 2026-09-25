@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI·GP 双车仿真 · 3圈</title>
+<style>
+:root{--bg:#0E2440;--pan:#16304F;--line:#274867;--ink:#E9F1FA;--dim:#8FA6C0;
+      --or:#F0921E;--cy:#12B5C9;--gr:#2E9E6B;--rd:#DC4437;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);
+ font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;padding:14px}
+.mono{font-family:ui-monospace,Consolas,monospace;font-variant-numeric:tabular-nums}
+html,body{height:100%;overflow:hidden}
+body{display:flex;flex-direction:column;padding:10px 14px}
+h1{font-size:17px;font-weight:800}
+.sub{font-size:11.5px;color:var(--dim);margin-bottom:8px}
+.wrap{flex:1;min-height:0;display:grid;gap:10px;grid-template-columns:1fr 300px}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}}
+.card{background:var(--pan);border:1px solid var(--line);border-radius:8px;padding:10px;
+ display:flex;flex-direction:column;min-height:0}
+.card.side{overflow-y:auto}
+canvas{flex:1;min-height:0;width:100%;display:block;background:#0A1A2E;border-radius:6px}
+.bar{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
+button{background:var(--or);color:#08172B;border:0;border-radius:6px;padding:8px 16px;
+ font-weight:800;font-size:13px;cursor:pointer;font-family:inherit}
+button.g{background:var(--line);color:var(--ink)}
+button:disabled{opacity:.4;cursor:default}
+.lbl{font-size:11px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;
+ font-weight:700;margin:14px 0 6px}
+.row{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:12.5px}
+.row span:first-child{width:74px;color:var(--dim)}
+.row input[type=range]{flex:1;accent-color:var(--or)}
+.row b{width:46px;text-align:right;font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{padding:5px 4px;text-align:right;border-bottom:1px solid var(--line)}
+th{color:var(--dim);font-weight:600;font-size:11px}
+td:first-child,th:first-child{text-align:left}
+.c1{color:var(--cy)}.c2{color:var(--or)}
+.tag{display:inline-block;padding:1px 7px;border-radius:3px;font-size:11px;font-weight:700}
+.ok{background:rgba(46,158,107,.2);color:#6FD09C}
+.bad{background:rgba(220,68,55,.2);color:#FF8A7A}
+.note{font-size:11.5px;color:var(--dim);line-height:1.6;margin-top:10px}
+select{background:var(--bg);color:var(--ink);border:1px solid var(--line);
+ border-radius:5px;padding:5px 8px;font-family:inherit;font-size:12.5px;width:100%}
+</style></head><body>
+<h1>AI·GP 双车仿真 · 3 圈</h1>
+<div class="sub">真实赛道几何 · Follow-the-Gap 算法逐行照搬车上代码 · 只吃雷达，不用地图 · 沿墙模式能绕圈</div>
+
+<div class="wrap">
+  <div class="card">
+    <div class="bar">
+      <button id="go">▶ 开始 3 圈</button>
+      <button id="ps" class="g">⏸ 暂停</button>
+      <button id="rs" class="g">↺ 重置</button>
+      <button id="ry" class="g">雷达线</button>
+      <span class="row" style="margin:0 0 0 6px"><span>倍速</span>
+        <input id="sp" type="range" min="1" max="8" step="1" value="3" style="width:90px">
+        <b id="spv" class="mono">3×</b></span>
+    </div>
+    <canvas id="cv" width="1100" height="560"></canvas>
+  </div>
+
+  <div class="card side">
+    <div class="lbl">车型</div>
+    <select id="car">
+      <option value="new">ROSOrin 新车 · 轴距0.213 转角32°</option>
+      <option value="new2">ROSOrin 备选 · 轴距0.177 转角32°</option>
+      <option value="old">R680 现用车 · 轴距0.322 转角26.7°</option>
+    </select>
+
+    <div class="lbl">驾驶模式</div>
+    <select id="mode">
+      <option value="line">参考线循线 · 车上主力，路线就是这么来的</option>
+      <option value="wall">沿墙跟随 wall · 降级备份</option>
+      <option value="gap">Follow-the-Gap · 只避障，会乱窜</option>
+    </select>
+
+    <div class="lbl">调参（对应车上同名参数）</div>
+    <div class="row" id="r_ld"><span>前瞻距离</span><input id="p_ld" type="range" min="0.25" max="1.0" step="0.05" value="0.45"><b id="v_ld" class="mono"></b></div>
+    <div class="row" id="r_cv"><span>弯道速度</span><input id="p_cv" type="range" min="0.2" max="1.0" step="0.05" value="0.3"><b id="v_cv" class="mono"></b></div>
+    <div class="row" id="r_wd"><span>目标墙距</span><input id="p_wd" type="range" min="0.3" max="1.2" step="0.05" value="0.7"><b id="v_wd" class="mono"></b></div>
+    <div class="row"><span>极速</span><input id="p_vmax" type="range" min="0.2" max="2" step="0.05" value="0.6"><b id="v_vmax" class="mono"></b></div>
+    <div class="row"><span>出弯加速</span><input id="p_accel" type="range" min="0.02" max="0.4" step="0.02" value="0.1"><b id="v_accel" class="mono"></b></div>
+    <div class="row"><span>弯中带速</span><input id="p_grip" type="range" min="0.1" max="0.7" step="0.05" value="0.35"><b id="v_grip" class="mono"></b></div>
+    <div class="row"><span>安全气泡</span><input id="p_bub" type="range" min="0.15" max="0.6" step="0.01" value="0.35"><b id="v_bub" class="mono"></b></div>
+    <div class="row"><span>通行阈值</span><input id="p_gap" type="range" min="0.6" max="2" step="0.05" value="1.2"><b id="v_gap" class="mono"></b></div>
+    <div class="row"><span>发车错开</span><input id="p_dly" type="range" min="0" max="6" step="0.5" value="0"><b id="v_dly" class="mono"></b></div>
+
+    <div class="lbl">成绩</div>
+    <table><thead><tr><th>车</th><th>圈</th><th>本圈</th><th>最快</th><th>撞墙</th><th>离线</th></tr></thead>
+    <tbody id="tb"></tbody></table>
+    <div id="vd" class="note"></div>
+    <div class="note">气泡越小越贴边越快，但撞墙风险涨；弯中带速越小越敢带速过弯。
+    调出「3圈零撞墙」的一组参数，明天到车上直接套。</div>
+  </div>
+</div>
+
+<script>
+const TRACK = {"walls":[[[-0.05,4.35],[-0.041,4.438],[-0.016,4.522],[0.026,4.6],[0.082,4.668],[0.15,4.724],[0.228,4.766],[0.312,4.791],[0.4,4.8],[9.12,4.8],[9.208,4.791],[9.292,4.766],[9.37,4.724],[9.438,4.668],[9.494,4.6],[9.536,4.522],[9.561,4.438],[9.57,4.35],[9.57,0.4],[9.561,0.312],[9.536,0.228],[9.494,0.15],[9.438,0.082],[9.37,0.026],[9.292,-0.016],[9.208,-0.041],[9.12,-0.05],[6.675,-0.05],[6.587,-0.041],[6.503,-0.016],[6.425,0.026],[6.357,0.082],[6.301,0.15],[6.259,0.228],[6.234,0.312],[6.225,0.4],[6.225,1.975],[4.225,1.975],[4.225,0.4],[4.216,0.312],[4.191,0.228],[4.149,0.15],[4.093,0.082],[4.025,0.026],[3.947,-0.016],[3.863,-0.041],[3.775,-0.05],[0.4,-0.05],[0.312,-0.041],[0.228,-0.016],[0.15,0.026],[0.082,0.082],[0.026,0.15],[-0.016,0.228],[-0.041,0.312],[-0.05,0.4]],[[1.744,1.814],[2.941,1.814],[2.941,3.006],[1.744,3.006]],[[2.941,2.809],[7.549,2.809],[7.549,1.4],[7.709,1.4],[7.709,2.929],[2.941,2.929]]],"start":[3.55,3.46,3.1416],"startline":[[3.05,4.62],[3.05,3.02]],"raceline":[[3.517,3.53],[3.367,3.533],[3.228,3.58],[3.126,3.688],[3.023,3.797],[2.897,3.875],[2.751,3.905],[2.601,3.907],[2.451,3.908],[2.301,3.911],[2.151,3.91],[2.001,3.912],[1.866,3.87],[1.738,3.817],[1.621,3.745],[1.514,3.655],[1.415,3.552],[1.318,3.444],[1.221,3.336],[1.125,3.228],[1.036,3.117],[0.962,2.997],[0.902,2.87],[0.853,2.736],[0.852,2.586],[0.851,2.436],[0.852,2.286],[0.852,2.135],[0.853,1.985],[0.879,1.838],[0.935,1.699],[1.042,1.596],[1.16,1.504],[1.216,1.373],[1.299,1.274],[1.39,1.193],[1.492,1.142],[1.606,1.121],[1.731,1.122],[1.865,1.132],[2.005,1.141],[2.148,1.147],[2.292,1.148],[2.432,1.144],[2.566,1.13],[2.693,1.11],[2.811,1.093],[2.922,1.093],[3.028,1.118],[3.13,1.161],[3.234,1.265],[3.353,1.357],[3.433,1.482],[3.519,1.605],[3.545,1.752],[3.581,1.897],[3.597,2.045],[3.66,2.177],[3.779,2.268],[3.915,2.33],[4.06,2.371],[4.208,2.395],[4.357,2.407],[4.507,2.411],[4.657,2.41],[4.807,2.408],[4.957,2.407],[5.108,2.407],[5.258,2.407],[5.408,2.407],[5.558,2.405],[5.708,2.403],[5.858,2.405],[6.008,2.408],[6.158,2.403],[6.307,2.385],[6.453,2.35],[6.588,2.286],[6.709,2.197],[6.824,2.103],[6.858,1.96],[6.86,1.812],[6.905,1.669],[6.907,1.52],[6.912,1.37],[6.955,1.226],[7.007,1.086],[7.065,0.948],[7.158,0.834],[7.288,0.76],[7.432,0.717],[7.581,0.705],[7.722,0.743],[7.846,0.827],[7.965,0.918],[8.078,1.016],[8.223,1.053],[8.369,1.088],[8.491,1.167],[8.492,1.3],[8.393,1.412],[8.385,1.558],[8.432,1.7],[8.473,1.844],[8.497,1.992],[8.501,2.142],[8.486,2.291],[8.454,2.438],[8.409,2.581],[8.369,2.725],[8.453,2.843],[8.544,2.952],[8.488,3.084],[8.384,3.192],[8.286,3.306],[8.177,3.408],[8.045,3.479],[7.922,3.564],[7.799,3.651],[7.696,3.76],[7.568,3.836],[7.42,3.86],[7.27,3.869],[7.12,3.871],[6.97,3.872],[6.82,3.872],[6.67,3.871],[6.522,3.852],[6.415,3.749],[6.327,3.627],[6.213,3.534],[6.068,3.499],[5.918,3.494],[5.768,3.495],[5.618,3.498],[5.468,3.501],[5.318,3.503],[5.168,3.506],[5.018,3.508],[4.868,3.511],[4.718,3.514],[4.568,3.517],[4.418,3.52],[4.268,3.523],[4.118,3.525],[3.967,3.528],[3.817,3.529],[3.667,3.53]]};
+const CARS = {
+  new:{L:0.213,W:0.222,steer:32*Math.PI/180,len:0.32,wid:0.25,name:"ROSOrin 0.213"},
+  new2:{L:0.177,W:0.172,steer:32*Math.PI/180,len:0.30,wid:0.22,name:"ROSOrin 0.177"},
+  old:{L:0.322,W:0.322,steer:0.466,len:0.45,wid:0.30,name:"R680"}
+};
+const NOECHO=12, ESTOP=0.45, BRAKE=0.95, VMIN=0.25;
+const LINE=TRACK.raceline, NL=LINE.length;
+// 起跑线在参考线上的索引 —— 判圈以它为准，两车在同一条线上收车
+const FINISH=(()=>{
+  const mx=(TRACK.startline[0][0]+TRACK.startline[1][0])/2;
+  const my=(TRACK.startline[0][1]+TRACK.startline[1][1])/2;
+  let bi=0,bd=9e9;
+  for(let i=0;i<NL;i++){
+    const d=(LINE[i][0]-mx)**2+(LINE[i][1]-my)**2;
+    if(d<bd){bd=d;bi=i;}
+  } return bi;
+})();
+// 逐点限速: 照搬 main.py _line_speeds (急弯/中弯/窄巷铁闸)
+function lineSpeeds(vfast,cv){
+  const sp=new Array(NL).fill(vfast);
+  for(let i=0;i<NL;i++){
+    const a=LINE[(i-2+NL)%NL],b=LINE[i],c=LINE[(i+2)%NL];
+    const h1=Math.atan2(b[1]-a[1],b[0]-a[0]);
+    const h2=Math.atan2(c[1]-b[1],c[0]-b[0]);
+    let turn=Math.abs(((h2-h1+Math.PI)%(2*Math.PI))-Math.PI);
+    if(turn>0.40) sp[i]=cv;
+    else if(turn>0.22) sp[i]=Math.min(vfast,(cv+vfast)/2);
+    if(b[0]>3.3&&b[0]<7.1&&b[1]>1.7&&b[1]<3.0) sp[i]=0.30;   // 窄巷铁闸
+  }
+  return sp;
+}
+
+// ── 墙段 ──
+let SEGS=[];
+for(const poly of TRACK.walls)
+  for(let i=0;i<poly.length;i++){
+    const a=poly[i],b=poly[(i+1)%poly.length];      // ← 首尾闭合，别漏最后一段
+    SEGS.push([a[0],a[1],b[0],b[1]]);
+  }
+
+function rectSegs(x,y,th,len,wid){
+  const c=Math.cos(th),s=Math.sin(th),hl=len/2,hw=wid/2;
+  const p=[[hl,hw],[hl,-hw],[-hl,-hw],[-hl,hw]].map(([a,b])=>[x+a*c-b*s,y+a*s+b*c]);
+  return [0,1,2,3].map(i=>[p[i][0],p[i][1],p[(i+1)%4][0],p[(i+1)%4][1]]);
+}
+function ray(px,py,ang,extra){
+  const dx=Math.cos(ang),dy=Math.sin(ang);let best=NOECHO;
+  const all=extra?SEGS.concat(extra):SEGS;
+  for(const[x3,y3,x4,y4]of all){
+    const den=dx*(y3-y4)-dy*(x3-x4); if(Math.abs(den)<1e-9)continue;
+    const t=((x3-px)*(y3-y4)-(y3-py)*(x3-x4))/den;
+    const u=(dx*(y3-py)-dy*(x3-px))/den;
+    if(t>0.02&&t<best&&u>=0&&u<=1)best=t;
+  } return best;
+}
+function nearWall(x,y){
+  let b=99;
+  for(const[x3,y3,x4,y4]of SEGS){
+    const dx=x4-x3,dy=y4-y3,L2=dx*dx+dy*dy;
+    const t=L2<1e-9?0:Math.max(0,Math.min(1,((x-x3)*dx+(y-y3)*dy)/L2));
+    const d=Math.hypot(x-(x3+t*dx),y-(y3+t*dy)); if(d<b)b=d;
+  } return b;
+}
+
+function safe(d){return (d===undefined||d>=NOECHO)?NOECHO:d;}
+
+// ── 车（wall / gap 双模式，逐行照搬 driver.py）──
+class Car{
+  constructor(i,spec,delay){
+    this.i=i; this.spec=spec; this.delay=delay;
+    this.reset();
+  }
+  reset(){
+    // ── F1 交替式发车格（照 start_grid.py 的印刷件）──
+    //    P1 内线：压起跑线，在参考线上
+    //    P2 外线：错后 0.50m + 横向错开 0.35m（往赛道宽的一侧让）
+    let idx=0,bd=9e9;
+    for(let i=0;i<NL;i++){
+      const d=(LINE[i][0]-TRACK.start[0])**2+(LINE[i][1]-TRACK.start[1])**2;
+      if(d<bd){bd=d;idx=i;}
+    }
+    const gridIdx=idx;
+    if(this.i){                       // P2 沿参考线后退 0.50m
+      let acc=0;
+      while(acc<0.50){ const q=(idx-1+NL)%NL;
+        acc+=Math.hypot(LINE[idx][0]-LINE[q][0],LINE[idx][1]-LINE[q][1]); idx=q; }
+    }
+    const cur=LINE[idx], nx=LINE[(idx+1)%NL];
+    let th=Math.atan2(nx[1]-cur[1],nx[0]-cur[0]);
+    let px=cur[0], py=cur[1];
+    if(this.i){                       // 横向让 0.35m，往离墙更远的一侧
+      const nxv=-Math.sin(th), nyv=Math.cos(th), OFF=0.35;
+      const cA=nearWall(px+nxv*OFF,py+nyv*OFF);
+      const cB=nearWall(px-nxv*OFF,py-nyv*OFF);
+      const sgn=cA>=cB?1:-1;
+      px+=nxv*OFF*sgn; py+=nyv*OFF*sgn;
+    }
+    this.x=px; this.y=py; this.th=th;
+    this.startIdx=idx; this._li=idx; this._liPrev=idx;
+    this.gridX=px; this.gridY=py; this.gridTh=th;
+    this.prog=0;
+    this.v=0; this.steer=0;
+    this.pSteer=0; this.pOut=0; this.pErr=0; this.rng=[]; this.gapLen=0; this.lost=false;
+    this.offline=0; this.LS=[];
+    this.laps=0; this.t=0; this.lapT=0; this.best=null; this.crash=0;
+    this.minClear=99; this.prevTh=this.th; this.acc=0; this.done=false; this.beams=[];
+  }
+  scan(other){
+    // 收车的车已停在自己的格子（与对方相隔约0.6m），对雷达透明以免误刹
+    const ex=(other&&!other.done)
+      ?rectSegs(other.x,other.y,other.th,other.spec.len,other.spec.wid):null;
+    const out=[];
+    for(let a=-100;a<=100;a+=2)
+      out.push(ray(this.x,this.y,this.th+a*Math.PI/180,ex));
+    this.beams=out; this.rng=out; return out;
+  }
+  sm(a0,a1){   // sector_min: 车头0°, 左正右负
+    let b=NOECHO;
+    for(let a=Math.round(a0);a<=Math.round(a1);a++){
+      const i=Math.round((a-(-100))/2);
+      if(i>=0&&i<this.rng.length&&this.rng[i]<b)b=this.rng[i];
+    } return b;
+  }
+  // ═══ 模式零: 参考线纯追踪（main.py 的主力，路线就是这么来的）═══
+  pursuit(P){
+    const x=this.x,y=this.y,th=this.th;
+    // 1) 缓存窗口找最近点
+    let best=9e9,bi=this._li;
+    for(let k=-12;k<44;k++){
+      const i=((this._li+k)%NL+NL)%NL;
+      const dd=(LINE[i][0]-x)**2+(LINE[i][1]-y)**2;
+      if(dd<best){best=dd;bi=i;}
+    }
+    if(best>0.36){                       // 缓存陈旧 → 全局重找
+      for(let i=0;i<NL;i++){
+        const dd=(LINE[i][0]-x)**2+(LINE[i][1]-y)**2;
+        if(dd<best){best=dd;bi=i;}
+      }
+    }
+    this._li=bi;
+    this.offline=Math.sqrt(best);
+    if(best>0.36) return [0,this.pSteer,NOECHO];   // 离线>0.6m → 停
+
+    // 2) 前瞻 LD 弧长取目标点
+    let LD=P.ld, acc=0, j=bi;
+    while(acc<LD){
+      const j2=(j+1)%NL;
+      acc+=Math.hypot(LINE[j2][0]-LINE[j][0],LINE[j2][1]-LINE[j][1]);
+      j=j2;
+    }
+    const wx=LINE[j][0],wy=LINE[j][1];
+    let alpha=((Math.atan2(wy-y,wx-x)-th+Math.PI)%(2*Math.PI)+2*Math.PI)%(2*Math.PI)-Math.PI;
+    if(Math.abs(alpha)>1.75) return [0,this.pSteer,NOECHO];   // 背对线 → 停
+
+    let kap=2.0*Math.sin(alpha)/Math.max(LD,0.3);
+    // 3) 横向误差反馈
+    const a2=LINE[bi],b2=LINE[(bi+1)%NL];
+    const tx=b2[0]-a2[0],ty=b2[1]-a2[1],tl=Math.hypot(tx,ty)||1e-9;
+    const eLat=((x-a2[0])*ty-(y-a2[1])*tx)/tl;
+    kap+=Math.max(-0.5,Math.min(0.5,1.0*eLat));
+    let steer=Math.atan(this.spec.L*kap);
+
+    // 4) 逐点限速 + 刹车预瞄
+    let vt=this.LS[bi];
+    acc=0; j=bi;
+    while(acc<0.9){
+      const j2=(j+1)%NL;
+      acc+=Math.hypot(LINE[j2][0]-LINE[j][0],LINE[j2][1]-LINE[j][1]);
+      if(this.LS[j2]<vt)vt=this.LS[j2];
+      j=j2;
+    }
+    // 5) 前车避让：雷达前扇区
+    const front=safe(this.sm(-12,12));
+    if(front<2.4) vt=Math.min(vt,VMIN+(vt-VMIN)*Math.max(0,(front-0.5)/1.9));
+    return [vt,steer,front];
+  }
+
+  // ═══ 模式一: 沿墙跟随 ═══
+  wall(P){
+    const sign=1.0, ang_b=-90, ang_a=-45, theta=Math.PI/4;   // 右墙
+    const b=safe(this.sm(ang_b-4,ang_b+4)), a=safe(this.sm(ang_a-4,ang_a+4));
+    const den=a*Math.sin(theta);
+    const alpha=Math.atan2(a*Math.cos(theta)-b, Math.abs(den)>1e-6?den:1e-6);
+    const dist=b*Math.cos(alpha);
+    const front=safe(this.sm(-12,12));
+    const ratio=Math.max(0,Math.min(1,(front-0.4)/2.0));
+    let speed=VMIN+(P.vmax-VMIN)*ratio;
+    if(front<BRAKE)speed=Math.min(speed,VMIN);
+
+    // 丢墙保护
+    if(dist>P.wd+2.5||b>NOECHO*0.8||Math.abs(alpha)>0.96||b>P.wd*3.5){
+      this.lost=true;
+      return[Math.min(speed,0.24),this.pSteer*0.85,front];
+    }
+    this.lost=false;
+    // 级联控制
+    let target_d=P.wd;
+    const opp=safe(this.sm(-ang_b-6,-ang_b+6)), corridor=dist+opp;
+    if(opp<2.0&&corridor<2*target_d+0.36) target_d=Math.max(0.24,corridor/2);
+    let err=Math.max(-0.5,Math.min(0.5,(target_d-dist)*sign));
+    const ta=Math.max(-0.6,Math.min(0.6,P.kp*0.5*err));
+    const ae=(ta-alpha*sign)*sign;
+    let steer=1.2*ae+P.kd*(err-this.pErr);
+    this.pErr=err;
+    // 弯道前瞻
+    const trig=Math.max(BRAKE,speed*1.2+0.3,1.30);
+    if(front<trig){
+      if(front<0.55){ steer=this.gapSteer(P); }
+      else{
+        const esc=safe(this.sm(25,85))-safe(this.sm(-85,-25));
+        const urg=1.0-front/trig;
+        steer+=Math.sign(esc)*1.7*Math.pow(urg,0.7);
+      }
+    }
+    return[speed,steer,front];
+  }
+  gapSteer(P){
+    const rng=this.rng,n=rng.length,STEP=2,A0=-100;
+    let imin=0; for(let i=1;i<n;i++) if(rng[i]<rng[imin])imin=i;
+    const work=rng.slice(), dmin=Math.max(rng[imin],0.15);
+    const half=Math.atan2(P.bub,dmin)*180/Math.PI/STEP;
+    for(let i=Math.round(imin-half);i<=Math.round(imin+half);i++)
+      if(i>=0&&i<n)work[i]=0;
+    let bs=-1,bl=0,cs=-1,cl=0;
+    for(let i=0;i<=n;i++){
+      const ok=i<n&&work[i]>P.gap;
+      if(ok){ if(cs<0){cs=i;cl=0;} cl++; }
+      else if(cs>=0){ if(cl>bl){bs=cs;bl=cl;} cs=-1; }
+    }
+    let target;
+    if(bl<=0){ target=0; for(let i=1;i<n;i++) if(work[i]>work[target])target=i; }
+    else{ let far=bs; for(let i=bs;i<bs+bl;i++) if(work[i]>work[far])far=i;
+          target=(far+(bs+bl/2))/2; }
+    this.gapLen=bl;
+    return (A0+target*STEP)*Math.PI/180;
+  }
+  step(dt,P,other){
+    if(this.done)return;
+    this.t+=dt;
+    if(this.t<this.delay){this.v=0;return;}
+    this.rng=this.scan(other);
+    const rng=this.rng, n=rng.length, STEP=2, A0=-100;
+
+    let speed,steer,front;
+    if(P.mode==="line"){
+      [speed,steer,front]=this.pursuit(P);
+    }else if(P.mode==="wall"){
+      [speed,steer,front]=this.wall(P);
+    }else{
+      steer=this.gapSteer(P);
+      front=safe(this.sm(-12,12));
+      const ratio=Math.max(0,Math.min(1,(front-0.4)/2.0));
+      speed=VMIN+(P.vmax-VMIN)*ratio;
+      if(front<BRAKE)speed=Math.min(speed,VMIN);
+    }
+
+    // _finish
+    const MS=this.spec.steer;
+    steer=Math.max(-MS,Math.min(MS,steer));
+    steer=0.75*steer+0.25*this.pSteer; this.pSteer=steer;
+    speed*=1-P.grip*Math.abs(steer)/MS;
+    if(speed>this.pOut+P.accel)speed=this.pOut+P.accel;
+    this.pOut=speed;
+    if(front<ESTOP){speed=0;this.pOut=0;}
+
+    // 阿克曼积分（一阶惯性，与 SimChassis 一致）
+    this.v+=(speed-this.v)*(speed>this.v?0.25:0.5);
+    this.steer=steer;
+    const om=Math.abs(steer)<1e-6?0:this.v*Math.tan(steer)/this.spec.L;
+    this.th+=om*dt;
+    const nx=this.x+this.v*Math.cos(this.th)*dt, ny=this.y+this.v*Math.sin(this.th)*dt;
+
+    // 撞墙：车身四角出界
+    let hit=false;
+    for(const[a,b,,]of rectSegs(nx,ny,this.th,this.spec.len,this.spec.wid))
+      if(nearWall(a,b)<0.02)hit=true;
+    if(hit&&this.v>0.05){
+      this.crash++; this.v=0; this.pOut=0;
+      this.x-=0.10*Math.cos(this.th); this.y-=0.10*Math.sin(this.th);
+      this.th+=0.5; return;
+    }
+    this.x=nx; this.y=ny;
+
+    const c=nearWall(this.x,this.y); if(c<this.minClear)this.minClear=c;
+    this.lapT+=dt;
+    // 圈数: 每车按【自己的发车格】累计一整周 = 一圈
+    //   → 跑满 3 圈正好回到自己格子，收车不会跳、两车也不会抢同一个点
+    let dI=this._li-this._liPrev;
+    if(dI>NL/2)dI-=NL; else if(dI<-NL/2)dI+=NL;
+    this.prog+=dI; this._liPrev=this._li;
+    if(this.prog>=NL){
+      this.prog-=NL;
+      this.laps++;
+      if(this.best===null||this.lapT<this.best)this.best=this.lapT;
+      this.lapT=0;
+      if(this.laps>=3){
+        this.done=true; this.v=0; this.steer=0;
+        this.x=this.gridX; this.y=this.gridY; this.th=this.gridTh;   // 正好回到格子
+      }
+    }
+  }
+}
+
+// ── 渲染 ──
+const cv=document.getElementById('cv'),cx=cv.getContext('2d');
+const PAD=30, SC=Math.min((cv.width-2*PAD)/9.7,(cv.height-2*PAD)/4.9);
+const TX=x=>PAD+x*SC, TY=y=>cv.height-PAD-y*SC;
+let showRay=false;
+
+function draw(cars){
+  cx.fillStyle="#0A1A2E";cx.fillRect(0,0,cv.width,cv.height);
+  cx.strokeStyle="#F0921E";cx.lineWidth=1.6;cx.globalAlpha=.35;cx.beginPath();
+  TRACK.raceline.forEach((p,i)=>i?cx.lineTo(TX(p[0]),TY(p[1])):cx.moveTo(TX(p[0]),TY(p[1])));
+  cx.stroke();cx.globalAlpha=1;
+  cx.strokeStyle="#5E7EA6";cx.lineWidth=2.4;
+  for(const poly of TRACK.walls){cx.beginPath();
+    poly.forEach((p,i)=>i?cx.lineTo(TX(p[0]),TY(p[1])):cx.moveTo(TX(p[0]),TY(p[1])));
+    cx.closePath();cx.stroke();}
+  cx.strokeStyle="#DC4437";cx.setLineDash([6,4]);cx.beginPath();
+  cx.moveTo(TX(TRACK.startline[0][0]),TY(TRACK.startline[0][1]));
+  cx.lineTo(TX(TRACK.startline[1][0]),TY(TRACK.startline[1][1]));cx.stroke();cx.setLineDash([]);
+
+  const col=["#12B5C9","#F0921E"];
+  cars.forEach((c,k)=>{
+    if(showRay&&c.beams.length){
+      cx.strokeStyle=col[k];cx.globalAlpha=.10;cx.lineWidth=1;cx.beginPath();
+      c.beams.forEach((d,i)=>{const a=c.th+(-100+i*2)*Math.PI/180;
+        cx.moveTo(TX(c.x),TY(c.y));cx.lineTo(TX(c.x+d*Math.cos(a)),TY(c.y+d*Math.sin(a)));});
+      cx.stroke();cx.globalAlpha=1;
+    }
+    const pts=rectSegs(c.x,c.y,c.th,c.spec.len,c.spec.wid);
+    cx.fillStyle=col[k];cx.beginPath();
+    pts.forEach((s,i)=>i?cx.lineTo(TX(s[0]),TY(s[1])):cx.moveTo(TX(s[0]),TY(s[1])));
+    cx.closePath();cx.fill();
+    cx.strokeStyle="#fff";cx.lineWidth=2;cx.beginPath();
+    cx.moveTo(TX(c.x),TY(c.y));
+    cx.lineTo(TX(c.x+0.22*Math.cos(c.th)),TY(c.y+0.22*Math.sin(c.th)));cx.stroke();
+    cx.fillStyle="#fff";cx.font="bold 13px system-ui";
+    cx.fillText("P"+(k+1),TX(c.x)-7,TY(c.y)-16);
+  });
+}
+
+// ── 主循环 ──
+let cars=[],running=false,raf=null;
+const $=id=>document.getElementById(id);
+function params(){return{mode:$('mode').value,vmax:+$('p_vmax').value,
+  accel:+$('p_accel').value,grip:+$('p_grip').value,bub:+$('p_bub').value,
+  gap:+$('p_gap').value,wd:+$('p_wd').value,ld:+$('p_ld').value,
+  cv:+$('p_cv').value,kp:1.6,kd:0.35};}
+function syncLbl(){
+  $('v_vmax').textContent=(+$('p_vmax').value).toFixed(2);
+  $('v_accel').textContent=(+$('p_accel').value).toFixed(2);
+  $('v_grip').textContent=(+$('p_grip').value).toFixed(2);
+  $('v_bub').textContent=(+$('p_bub').value).toFixed(2);
+  $('v_gap').textContent=(+$('p_gap').value).toFixed(2);
+  $('v_wd').textContent=(+$('p_wd').value).toFixed(2);
+  $('v_dly').textContent=(+$('p_dly').value).toFixed(1)+"s";
+  $('v_ld').textContent=(+$('p_ld').value).toFixed(2);
+  $('v_cv').textContent=(+$('p_cv').value).toFixed(2);
+  const ln=$('mode').value==="line";
+  $('r_wd').style.display=$('mode').value==="wall"?"flex":"none";
+  $('r_ld').style.display=ln?"flex":"none";
+  $('r_cv').style.display=ln?"flex":"none";
+  $('spv').textContent=$('sp').value+"×";
+}
+function reset(){
+  const sp=CARS[$('car').value];
+  cars=[new Car(0,sp,0),new Car(1,sp,+$('p_dly').value)];
+  const P0=params(); const LS0=lineSpeeds(P0.vmax,P0.cv);
+  cars.forEach(c=>c.LS=LS0);
+  draw(cars);table();$('vd').innerHTML="";
+}
+function table(){
+  $('tb').innerHTML=cars.map((c,k)=>`<tr>
+    <td class="${k?'c2':'c1'}">P${k+1}</td>
+    <td class="mono">${c.laps}/3</td>
+    <td class="mono">${c.t<c.delay?'待发':c.lapT.toFixed(1)}</td>
+    <td class="mono">${c.best===null?'—':c.best.toFixed(1)+'s'}</td>
+    <td class="mono">${c.crash?'<span class="tag bad">'+c.crash+'</span>':'<span class="tag ok">0</span>'}</td>
+    <td class="mono">${c.offline.toFixed(2)}</td></tr>`).join('');
+}
+function tick(){
+  if(!running)return;
+  const P=params(),n=+$('sp').value;
+  const LS=lineSpeeds(P.vmax,P.cv);
+  cars.forEach(c=>c.LS=LS);
+  for(let k=0;k<n;k++)
+    for(let i=0;i<cars.length;i++) cars[i].step(0.05,P,cars[1-i]);
+  draw(cars);table();
+  if(cars.every(c=>c.done)){
+    running=false;
+    const cr=cars.reduce((s,c)=>s+c.crash,0);
+    const mc=Math.min(...cars.map(c=>c.minClear));
+    $('vd').innerHTML=cr===0&&mc>=0.05
+      ?`<span class="tag ok">✅ 3圈完成 · 零撞墙 · 最近离墙 ${mc.toFixed(2)}m</span><br>这组参数明天可以直接试。上真车请先按 60% 起步。`
+      :`<span class="tag bad">❌ 撞墙 ${cr} 次</span><br>调小极速、调大气泡、或调大弯中带速再试。`;
+    $('go').disabled=false;
+  } else raf=requestAnimationFrame(tick);
+}
+$('go').onclick=()=>{reset();running=true;$('go').disabled=true;tick();};
+$('ps').onclick=()=>{running=!running;if(running)tick();};
+$('rs').onclick=()=>{running=false;$('go').disabled=false;reset();};
+$('ry').onclick=()=>{showRay=!showRay;draw(cars);};
+['p_vmax','p_accel','p_grip','p_bub','p_gap','p_dly','p_wd','p_ld','p_cv','sp'].forEach(id=>
+  $(id).oninput=syncLbl);
+$('mode').onchange=()=>{syncLbl();reset();};
+$('car').onchange=reset;
+$('p_dly').onchange=reset;
+syncLbl();reset();
+</script></body></html>
