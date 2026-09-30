@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#F4F3F1">
+<title>VESTA 灶神 · 会指路、会教你用的灭火器</title>
+<meta name="description" content="它一直看着灶台。真出事的时候，它先看见，亮起来告诉你灭火器在哪，再一步步教你怎么用。">
+
+<link rel="icon" type="image/png" sizes="32x32" href="https://crayxus.com.au/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://crayxus.com.au/favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://crayxus.com.au/apple-touch-icon.png">
+
+<!-- Open Graph · 微信分享卡片(绝对URL + 根目录800方图 + JPG + 多重声明, 照抄配方缺一不可) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VESTA 灶神">
+<meta property="og:title" content="VESTA 灶神 · 会指路、会教你用的灭火器">
+<meta property="og:description" content="它一直看着灶台。真出事的时候，它先看见，亮起来告诉你灭火器在哪，再一步步教你怎么用。">
+<meta property="og:image" content="https://crayxus.com.au/og-vesta.jpg?v=1">
+<meta property="og:image:secure_url" content="https://crayxus.com.au/og-vesta.jpg?v=1">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="800">
+<meta property="og:image:height" content="800">
+<meta property="og:image:alt" content="VESTA 灶神 智能灭火器底座">
+<meta property="og:url" content="https://crayxus.com.au/vesta.html">
+<meta property="og:locale" content="zh_CN">
+<meta itemprop="image" content="https://crayxus.com.au/og-vesta.jpg?v=1">
+<meta name="image" content="https://crayxus.com.au/og-vesta.jpg?v=1">
+<link rel="image_src" href="https://crayxus.com.au/og-vesta.jpg?v=1">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="VESTA 灶神 · 会指路、会教你用的灭火器">
+<meta name="twitter:image" content="https://crayxus.com.au/og-vesta.jpg?v=1">
+
+<style>
+  :root{
+    --paper:#F4F3F1;
+    --paper2:#EDEBE8;
+    --card:#FFFFFF;
+    --ink:#1F1D1B;
+    --ink2:#4A4642;
+    --mute:#8A847E;
+    --line:#DFDCD7;
+    --coral:#C4552F;
+    --coral-soft:#F8E9E0;
+    --sans:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Source Han Sans SC",-apple-system,BlinkMacSystemFont,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme=light]){
+    --paper:#131211;
+    --paper2:#1B1917;
+    --card:#1E1C1A;
+    --ink:#F0EEEB;
+    --ink2:#BDB7B0;
+    --mute:#867F78;
+    --line:#2C2926;
+    --coral:#E8834F;
+    --coral-soft:#2E1C13;
+  }}
+  :root[data-theme=dark]{
+    --paper:#131211; --paper2:#1B1917; --card:#1E1C1A;
+    --ink:#F0EEEB; --ink2:#BDB7B0; --mute:#867F78;
+    --line:#2C2926; --coral:#E8834F; --coral-soft:#2E1C13;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:17px;
+    line-height:1.85;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%;height:auto;display:block}
+
+  .wrap{max-width:760px;margin:0 auto;padding:0 26px}
+
+  /* ── hero ───────────────────────────────── */
+  .hero{padding:76px 0 20px;text-align:center}
+  .name{
+    font-size:clamp(52px,15vw,88px);
+    font-weight:700;letter-spacing:-.045em;line-height:1;
+    display:inline-flex;align-items:flex-start;gap:10px;
+  }
+  .name .dot{
+    width:12px;height:12px;border-radius:50%;
+    background:var(--coral);margin-top:.18em;flex:none;
+  }
+  .tagline{
+    margin-top:22px;font-size:clamp(19px,4.6vw,25px);
+    font-weight:600;color:var(--ink);letter-spacing:-.01em;
+  }
+  .sub{
+    margin-top:12px;font-size:16px;color:var(--mute);
+    max-width:30ch;margin-left:auto;margin-right:auto;
+  }
+  .heroimg{margin:22px -26px 0}
+  .heroimg img{width:100%}
+
+  /* ── 通用段 ─────────────────────────────── */
+  section{padding:58px 0}
+  .eyebrow{
+    font-size:12.5px;letter-spacing:.24em;color:var(--coral);
+    font-weight:600;margin-bottom:18px;
+  }
+  h2{
+    font-size:clamp(25px,6vw,34px);
+    font-weight:700;line-height:1.38;letter-spacing:-.022em;
+    margin-bottom:16px;
+  }
+  p.lead{font-size:17px;color:var(--ink2);max-width:34ch}
+
+  /* ── 三件事 ─────────────────────────────── */
+  .things{border-top:1px solid var(--line)}
+  .thing{
+    padding:46px 0;border-bottom:1px solid var(--line);
+  }
+  .thing .num{
+    font-size:13px;color:var(--coral);letter-spacing:.2em;
+    font-weight:600;margin-bottom:14px;
+  }
+  .thing h3{
+    font-size:clamp(23px,5.6vw,30px);font-weight:700;
+    letter-spacing:-.02em;line-height:1.4;margin-bottom:14px;
+  }
+  .thing p{color:var(--ink2);max-width:32ch}
+
+  /* ── 步骤 ───────────────────────────────── */
+  .steps{
+    display:grid;gap:14px;margin-top:30px;
+  }
+  .step{
+    background:var(--card);border:1px solid var(--line);
+    border-radius:14px;padding:22px 24px;
+    display:grid;grid-template-columns:auto 1fr;gap:0 18px;align-items:center;
+  }
+  .step .i{
+    width:34px;height:34px;border-radius:50%;
+    background:var(--coral-soft);color:var(--coral);
+    display:grid;place-items:center;font-weight:700;font-size:15px;
+  }
+  .step b{display:block;font-size:18px;font-weight:650;letter-spacing:-.01em}
+  .step span{display:block;font-size:15px;color:var(--mute);margin-top:2px}
+  .step-note{
+    margin-top:20px;font-size:15px;color:var(--mute);text-align:center;
+  }
+
+  /* ── 强调块 ─────────────────────────────── */
+  .quiet{
+    background:var(--paper2);margin:0 -26px;padding:56px 26px;
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  }
+  .quiet .inner{max-width:760px;margin:0 auto}
+  ul.dont{list-style:none;margin-top:26px}
+  ul.dont li{
+    padding-left:26px;position:relative;color:var(--ink2);
+    margin-bottom:13px;max-width:34ch;
+  }
+  ul.dont li::before{
+    content:"";position:absolute;left:0;top:.78em;
+    width:10px;height:2px;background:var(--coral);
+  }
+
+  /* ── 页脚 ───────────────────────────────── */
+  footer{
+    padding:56px 0 70px;text-align:center;
+    border-top:1px solid var(--line);
+  }
+  footer .fname{font-size:24px;font-weight:700;letter-spacing:-.03em}
+  footer .from{margin-top:8px;font-size:14px;color:var(--mute);letter-spacing:.05em}
+  footer .soon{
+    margin-top:26px;display:inline-block;
+    border:1px solid var(--line);border-radius:100px;
+    padding:9px 24px;font-size:14px;color:var(--mute);
+  }
+
+  /* ── 入场 ───────────────────────────────── */
+  .rise{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s ease}
+  .rise.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){
+    .rise{opacity:1;transform:none;transition:none}
+    html{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="name">VESTA<span class="dot"></span></div>
+    <div class="tagline">看着你家灶台的那位</div>
+    <p class="sub">真出事的时候，它先看见。<br>亮起来告诉你灭火器在哪，再一步步教你怎么用。</p>
+    <div class="heroimg">
+      <picture>
+        <source media="(max-width:600px)" srcset="https://crayxus.com.au/vesta-hero-m.jpg">
+        <img src="https://crayxus.com.au/vesta-hero.jpg" alt="VESTA 灶神 智能灭火器底座" width="1400" height="1050">
+      </picture>
+    </div>
+  </div>
+
+  <section class="things">
+    <div class="thing rise">
+      <div class="num">01</div>
+      <h3>它认得你家的厨房</h3>
+      <p>炒菜的油烟、开火关火、烧水时那阵热气，它都见过，所以不会一惊一乍。只有真正不对劲的时候，它才出声。</p>
+    </div>
+    <div class="thing rise">
+      <div class="num">02</div>
+      <h3>它比你先看见</h3>
+      <p>烟一起来，人的眼睛就不好使了。它不靠看见火苗才反应——哪里在发烫，它先知道。</p>
+    </div>
+    <div class="thing rise">
+      <div class="num">03</div>
+      <h3>它告诉你灭火器在哪</h3>
+      <p>一圈光亮起来，声音叫住你。黑暗和浓烟里，找灭火器这件事不该从起火之后才开始。</p>
+    </div>
+    <div class="thing rise">
+      <div class="num">04</div>
+      <h3>它教你怎么用</h3>
+      <p>大多数人手里握着灭火器也不知道该怎么办。拔掉保险销、对准火焰根部、左右扫——它一句一句说给你听，还会用一束光指着该打的地方。</p>
+    </div>
+    <div class="thing rise">
+      <div class="num">05</div>
+      <h3>它替你记着有效期</h3>
+      <p>压力掉了、药剂少了、瓶子被人挪走了，它都先发现，在手机上告诉你。灭火器最常见的失效方式，是在角落里悄悄过期。</p>
+    </div>
+  </section>
+
+  <section class="rise">
+    <div class="eyebrow">用起来</div>
+    <h2>把灭火器放上去，<br>然后当它不存在。</h2>
+    <p class="lead">不用改装，不用换瓶。家里那只标准灭火器，直接放上去就行。</p>
+    <div class="steps">
+      <div class="step">
+        <span class="i">1</span>
+        <span><b>把灭火器放上去</b><span>放稳就好，不用对准什么</span></span>
+      </div>
+      <div class="step">
+        <span class="i">2</span>
+        <span><b>平时不用管它</b><span>它自己看着，自己体检</span></span>
+      </div>
+      <div class="step">
+        <span class="i">3</span>
+        <span><b>真出事时跟着光走</b><span>光亮在哪，灭火器就在哪</span></span>
+      </div>
+    </div>
+    <p class="step-note">平时插着电，停电了它自己还能撑住——火灾常常连着断电。</p>
+  </section>
+
+  <div class="quiet">
+    <div class="inner rise">
+      <div class="eyebrow">为什么它自己不喷</div>
+      <h2>因为按不按那一下，<br>应该由人来决定。</h2>
+      <p class="lead">它不替你按手柄，也不会在你烤糊一片面包的时候喷你一身。它做的是另一件事：让你更快找到它，更快用对它。</p>
+    </div>
+  </div>
+
+  <section class="rise">
+    <div class="eyebrow">它长这样</div>
+    <h2>一个底座，<br>和你本来就有的那只灭火器。</h2>
+    <p class="lead">灭火器还是原来那只，随时拿起来就能用——底座不锁它、不缠着它，也不挡手。</p>
+    <div class="heroimg" style="margin-top:28px">
+      <img src="https://crayxus.com.au/vesta-product.jpg" alt="VESTA 灶神 底座与标准灭火器" width="1200" height="900">
+    </div>
+  </section>
+
+  <section class="rise">
+    <div class="eyebrow">它不做什么</div>
+    <h2>它不制造紧张。</h2>
+    <ul class="dont">
+      <li>不替代家里的烟感和消防系统，它只是多一双眼睛</li>
+      <li>不会因为你煎个鱼就报警</li>
+      <li>不自己喷，也不自己联系任何人——除非你让它这么做</li>
+    </ul>
+    <p class="lead" style="margin-top:26px">灶神本来就是这样的：平时不出声，关键时候在。</p>
+  </section>
+
+  <footer class="rise">
+    <div class="fname">VESTA · 灶神</div>
+    <div class="from">Crayxus 出品</div>
+    <div class="soon">概念阶段</div>
+  </footer>
+
+</div>
+
+<script>
+  (function () {
+    var els = document.querySelectorAll('.rise');
+    if (!('IntersectionObserver' in window) ||
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      els.forEach(function (e) { e.classList.add('in'); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    els.forEach(function (e) { io.observe(e); });
+  })();
+</script>
+
+</body>
+</html>
