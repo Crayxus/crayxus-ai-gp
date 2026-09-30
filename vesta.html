@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#F4F3F1">
 <title>VESTA 灶神 · 会指路、会教你用的灭火器</title>
-<meta name="description" content="它一直看着灶台。真出事的时候，它先看见，亮起来告诉你灭火器在哪，再一步步教你怎么用。">
+<meta name="description" content="烟里看不见的时候，它看得见。它圈出该打的位置，用一束光指过去，喷口上也有瞄准——你只要把两个圈对上。">
 
 <link rel="icon" type="image/png" sizes="32x32" href="https://crayxus.com.au/favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="https://crayxus.com.au/favicon-16.png">
@@ -15,7 +15,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="VESTA 灶神">
 <meta property="og:title" content="VESTA 灶神 · 会指路、会教你用的灭火器">
-<meta property="og:description" content="它一直看着灶台。真出事的时候，它先看见，亮起来告诉你灭火器在哪，再一步步教你怎么用。">
+<meta property="og:description" content="烟里看不见的时候，它看得见。它圈出该打的位置，用一束光指过去，喷口上也有瞄准——你只要把两个圈对上。">
 <meta property="og:image" content="https://crayxus.com.au/og-vesta.jpg?v=1">
 <meta property="og:image:secure_url" content="https://crayxus.com.au/og-vesta.jpg?v=1">
 <meta property="og:image:type" content="image/jpeg">
@@ -42,6 +42,10 @@
     --line:#DFDCD7;
     --coral:#C4552F;
     --coral-soft:#F8E9E0;
+    --beam:#2C9A64;
+    --heat1:#C4552F;
+    --heat2:#E0913A;
+    --haze:#B9B4AE;
     --sans:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Source Han Sans SC",-apple-system,BlinkMacSystemFont,sans-serif;
   }
   @media (prefers-color-scheme:dark){:root:not([data-theme=light]){
@@ -54,11 +58,16 @@
     --line:#2C2926;
     --coral:#E8834F;
     --coral-soft:#2E1C13;
+    --beam:#4FD597;
+    --heat1:#FF7A4D;
+    --heat2:#FFB562;
+    --haze:#4A4642;
   }}
   :root[data-theme=dark]{
     --paper:#131211; --paper2:#1B1917; --card:#1E1C1A;
     --ink:#F0EEEB; --ink2:#BDB7B0; --mute:#867F78;
     --line:#2C2926; --coral:#E8834F; --coral-soft:#2E1C13;
+    --beam:#4FD597; --heat1:#FF7A4D; --heat2:#FFB562; --haze:#4A4642;
   }
 
   *{box-sizing:border-box;margin:0;padding:0}
@@ -181,6 +190,19 @@
     .rise{opacity:1;transform:none;transition:none}
     html{scroll-behavior:auto}
   }
+
+  /* 示意图 */
+  .fig{margin:30px 0 8px}
+  .fig svg{width:100%;height:auto;display:block}
+  .fig figcaption{
+    font-size:14px;color:var(--mute);text-align:center;
+    margin-top:10px;line-height:1.7;
+  }
+  .sv-label{font-size:15px;fill:var(--ink2);font-family:var(--sans)}
+  .sv-small{font-size:13px;fill:var(--mute);font-family:var(--sans)}
+  .sv-key{font-size:14px;fill:var(--coral);font-family:var(--sans);font-weight:600}
+  .sv-panel{fill:var(--card);stroke:var(--line);stroke-width:1.5}
+  .sv-dim{stroke:var(--line);stroke-width:1.5;fill:none}
 </style>
 </head>
 <body>
@@ -217,13 +239,131 @@
     <div class="thing rise">
       <div class="num">04</div>
       <h3>它教你怎么用</h3>
-      <p>大多数人手里握着灭火器也不知道该怎么办。拔掉保险销、对准火焰根部、左右扫——它一句一句说给你听，还会用一束光指着该打的地方。</p>
+      <p>大多数人手里握着灭火器也不知道该怎么办。拔掉保险销、对准火焰根部、左右扫——它一句一句说给你听。该打哪儿也不用猜：一束光直接指在那儿，喷口上还有一圈光帮你对准。</p>
     </div>
     <div class="thing rise">
       <div class="num">05</div>
       <h3>它替你记着有效期</h3>
       <p>压力掉了、药剂少了、瓶子被人挪走了，它都先发现，在手机上告诉你。灭火器最常见的失效方式，是在角落里悄悄过期。</p>
     </div>
+  </section>
+
+
+  <section class="rise">
+    <div class="eyebrow">它怎么指路</div>
+    <h2>它先找到最烫的地方，<br>再把该打的位置圈给你看。</h2>
+    <p class="lead">火不是哪儿亮就打哪儿。真正该打的是火焰的根部——它算的就是这个位置，然后用一束光直接指过去。</p>
+
+    <figure class="fig">
+      <svg viewBox="0 0 720 250" role="img" aria-label="三步示意：找到最烫的区域、圈出建议喷射区、用光指给你看">
+        <!-- 面板 1 -->
+        <rect class="sv-panel" x="8" y="14" width="205" height="160" rx="10"/>
+        <ellipse cx="110" cy="100" rx="62" ry="44" fill="var(--heat1)" opacity=".16"/>
+        <ellipse cx="110" cy="102" rx="40" ry="28" fill="var(--heat2)" opacity=".34"/>
+        <ellipse cx="110" cy="106" rx="20" ry="13" fill="var(--heat1)" opacity=".75"/>
+        <text class="sv-small" x="110" y="158" text-anchor="middle">越往里越烫</text>
+        <text class="sv-label" x="110" y="200" text-anchor="middle">① 找到最烫的区域</text>
+        <text class="sv-small" x="110" y="222" text-anchor="middle">烟挡得住眼睛，挡不住热</text>
+
+        <!-- 箭头 -->
+        <path class="sv-dim" d="M222 94 h34"/><path class="sv-dim" d="M250 88 l8 6 -8 6"/>
+
+        <!-- 面板 2 -->
+        <rect class="sv-panel" x="265" y="14" width="205" height="160" rx="10"/>
+        <ellipse cx="367" cy="100" rx="62" ry="44" fill="var(--heat1)" opacity=".16"/>
+        <ellipse cx="367" cy="102" rx="40" ry="28" fill="var(--heat2)" opacity=".34"/>
+        <ellipse cx="367" cy="106" rx="20" ry="13" fill="var(--heat1)" opacity=".75"/>
+        <rect x="337" y="112" width="60" height="34" rx="4" fill="none"
+              stroke="var(--beam)" stroke-width="2.5" stroke-dasharray="7 5"/>
+        <text class="sv-key" x="367" y="164" text-anchor="middle">建议喷射区</text>
+        <text class="sv-label" x="367" y="200" text-anchor="middle">② 圈出火焰根部</text>
+        <text class="sv-small" x="367" y="222" text-anchor="middle">不是最亮的那团火苗</text>
+
+        <path class="sv-dim" d="M479 94 h34"/><path class="sv-dim" d="M507 88 l8 6 -8 6"/>
+
+        <!-- 面板 3 -->
+        <rect class="sv-panel" x="522" y="14" width="190" height="160" rx="10"/>
+        <ellipse cx="632" cy="104" rx="46" ry="32" fill="var(--heat1)" opacity=".18"/>
+        <ellipse cx="632" cy="110" rx="20" ry="13" fill="var(--heat1)" opacity=".7"/>
+        <path d="M536 52 L624 112" stroke="var(--beam)" stroke-width="3" stroke-linecap="round" opacity=".9"/>
+        <circle cx="632" cy="116" r="19" fill="none" stroke="var(--beam)" stroke-width="3"/>
+        <path d="M632 106 v20 M622 116 h20" stroke="var(--beam)" stroke-width="2.5"/>
+        <circle cx="534" cy="50" r="7" fill="var(--beam)" opacity=".85"/>
+        <text class="sv-label" x="617" y="200" text-anchor="middle">③ 用一束光指过去</text>
+        <text class="sv-small" x="617" y="222" text-anchor="middle">光圈落在哪，就打哪</text>
+      </svg>
+      <figcaption>它判断的是火焰根部的位置，而不是画面里最亮的地方——灭火打根部才有用。</figcaption>
+    </figure>
+  </section>
+
+  <div class="quiet">
+    <div class="inner rise">
+      <div class="eyebrow">关于烟</div>
+      <h2>烟挡住的是你的眼睛，<br>不是它的。</h2>
+      <p class="lead">起火之后最危险的不是火，是你什么都看不清。这恰恰是它最有用的时候。</p>
+
+      <figure class="fig">
+        <svg viewBox="0 0 720 230" role="img" aria-label="对比示意：烟雾中人眼几乎看不见，而它仍能分辨出热源位置">
+          <rect class="sv-panel" x="8" y="12" width="340" height="150" rx="10"/>
+          <g opacity=".5">
+            <rect x="8" y="12" width="340" height="150" rx="10" fill="var(--haze)" opacity=".55"/>
+            <ellipse cx="120" cy="70" rx="90" ry="34" fill="var(--haze)" opacity=".5"/>
+            <ellipse cx="250" cy="110" rx="100" ry="40" fill="var(--haze)" opacity=".45"/>
+          </g>
+          <rect x="232" y="78" width="70" height="52" rx="4" fill="none" stroke="var(--ink2)" stroke-width="1.5" opacity=".18"/>
+          <text class="sv-label" x="178" y="190" text-anchor="middle">人眼看到的</text>
+          <text class="sv-small" x="178" y="212" text-anchor="middle">灰白一片，分不出火在哪</text>
+
+          <rect class="sv-panel" x="372" y="12" width="340" height="150" rx="10"/>
+          <rect x="372" y="12" width="340" height="150" rx="10" fill="var(--ink)" opacity=".06"/>
+          <ellipse cx="596" cy="96" rx="78" ry="46" fill="var(--heat1)" opacity=".18"/>
+          <ellipse cx="596" cy="100" rx="50" ry="30" fill="var(--heat2)" opacity=".38"/>
+          <ellipse cx="596" cy="106" rx="24" ry="15" fill="var(--heat1)" opacity=".8"/>
+          <rect x="566" y="112" width="62" height="34" rx="4" fill="none" stroke="var(--beam)" stroke-width="2.5" stroke-dasharray="7 5"/>
+          <path d="M392 40 L578 114" stroke="var(--beam)" stroke-width="3" stroke-linecap="round" opacity=".55"/>
+          <path d="M392 40 L578 114" stroke="var(--beam)" stroke-width="9" stroke-linecap="round" opacity=".13"/>
+          <text class="sv-label" x="542" y="190" text-anchor="middle">它看到的</text>
+          <text class="sv-small" x="542" y="212" text-anchor="middle">热在哪、该打哪，一清二楚</text>
+        </svg>
+        <figcaption>还有件顺带的好事：烟越浓，那束光在空气里越清楚——它会变成一条看得见的线，从底座一直连到该打的地方。</figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <section class="rise">
+    <div class="eyebrow">喷口上的瞄准</div>
+    <h2>你手上那支喷管，<br>也知道该往哪儿打。</h2>
+    <p class="lead">灭火器一旦拿起来，方向就由你决定了。所以喷口上也有一圈光——你往哪儿指，它就在哪儿画出落点，和底座圈出的位置对上，就可以按了。</p>
+
+    <figure class="fig">
+      <svg viewBox="0 0 720 260" role="img" aria-label="喷口瞄准示意：喷口射出的光圈落在火焰根部，与建议喷射区重合">
+        <rect class="sv-panel" x="8" y="12" width="704" height="190" rx="10"/>
+        <!-- 喷管 -->
+        <path d="M60 96 q34 -24 74 2" stroke="var(--ink2)" stroke-width="11" fill="none" stroke-linecap="round" opacity=".8"/>
+        <rect x="128" y="86" width="46" height="22" rx="5" fill="var(--ink2)" opacity=".85"/>
+        <circle cx="176" cy="97" r="7" fill="var(--beam)"/>
+        <text class="sv-small" x="96" y="72" text-anchor="middle">喷口</text>
+        <!-- 光束 -->
+        <path d="M182 99 L528 158" stroke="var(--beam)" stroke-width="3.5" stroke-linecap="round"/>
+        <path d="M182 99 L528 158" stroke="var(--beam)" stroke-width="12" stroke-linecap="round" opacity=".14"/>
+        <!-- 火焰 -->
+        <path d="M600 160 q-16 -34 4 -54 q6 20 20 26 q16 -14 12 -36 q30 32 18 64 z"
+              fill="var(--heat2)" opacity=".55"/>
+        <path d="M604 160 q-8 -22 6 -34 q4 12 12 16 q8 -8 6 -20 q16 20 10 38 z"
+              fill="var(--heat1)" opacity=".75"/>
+        <!-- 落点光圈 + 建议区 -->
+        <ellipse cx="560" cy="162" rx="30" ry="12" fill="none" stroke="var(--beam)" stroke-width="3"/>
+        <path d="M560 152 v20 M545 162 h30" stroke="var(--beam)" stroke-width="2.5"/>
+        <rect x="524" y="146" width="112" height="32" rx="4" fill="none"
+              stroke="var(--beam)" stroke-width="2" stroke-dasharray="7 5" opacity=".65"/>
+        <!-- 标注 -->
+        <path class="sv-dim" d="M560 186 v14 h-70" />
+        <text class="sv-key" x="484" y="205" text-anchor="end">打这里 · 火焰根部</text>
+        <path class="sv-dim" d="M632 92 v-16 h56"/>
+        <text class="sv-small" x="694" y="72" text-anchor="end">火苗，打这儿没用</text>
+      </svg>
+      <figcaption>底座圈出位置，喷口画出落点，两个圈重合的时候再按——不用在慌乱中靠感觉对准。</figcaption>
+    </figure>
   </section>
 
   <section class="rise">
