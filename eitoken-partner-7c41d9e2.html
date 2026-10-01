@@ -65,6 +65,7 @@
   .role { border: 1px solid #e3e7ef; border-radius: 2.4mm; padding: 2.2mm 1.6mm; text-align: center; }
   .role .ic { font-size: 19pt; color: #0e7490; }
   .role b { display: block; font-size: 10pt; color: #0b1020; margin-top: 1mm; line-height: 1.3; }
+  .role.hw { background: #fffbf3; border-color: #f1e1c2; } .role.hw .ic { color: #d97706; } .role.hw em { color: #b45309; }
   .role em { display: block; font-style: normal; font-size: 11.5pt; font-weight: 700; color: #4f46e5; margin-top: .6mm; }
   .sum { display: flex; align-items: center; gap: 3mm; margin-top: 2.2mm; padding: 2.4mm 3.2mm; border-radius: 2.4mm; background: linear-gradient(90deg, #ecfeff, #f5f3ff); font-size: 10.2pt; line-height: 1.55; }
   .sum .ic { font-size: 17pt; color: #7c3aed; }
@@ -117,6 +118,11 @@
     <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></symbol>
     <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></symbol>
     <symbol id="i-user" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+    <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M8 11h6M11 8v6"/></symbol>
+    <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.74V17h8v-2.26A7 7 0 0 0 12 2z"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
   </defs>
 </svg>
 
@@ -246,7 +252,7 @@
 <div class="page">
   <div class="band"></div>
 
-  <h2 style="margin-top:1mm"><span class="n">04</span>我承担的角色 · 市场月薪参考</h2>
+  <h2 style="margin-top:1mm"><span class="n">04</span>我承担的角色 · 市场月薪参考（软件 + 硬件）</h2>
   <div class="roles">
     <div class="role"><svg class="ic"><use href="#i-crown"/></svg><b>技术合伙人 / CTO</b><em>6–10 万</em></div>
     <div class="role"><svg class="ic"><use href="#i-truck"/></svg><b>FDE 前线部署</b><em>4–6 万</em></div>
@@ -258,8 +264,13 @@
     <div class="role"><svg class="ic"><use href="#i-server"/></svg><b>DevOps / 运维</b><em>2.5–4 万</em></div>
     <div class="role"><svg class="ic"><use href="#i-book"/></svg><b>课程研发 / 教研</b><em>2–3.5 万</em></div>
     <div class="role"><svg class="ic"><use href="#i-palette"/></svg><b>UI / 视觉 / 内容</b><em>2–3.5 万</em></div>
+    <div class="role hw"><svg class="ic"><use href="#i-wrench"/></svg><b>硬件快速打样</b><em>3–5 万</em></div>
+    <div class="role hw"><svg class="ic"><use href="#i-search"/></svg><b>硬件拆解 / 逆向</b><em>3–5 万</em></div>
+    <div class="role hw"><svg class="ic"><use href="#i-bulb"/></svg><b>产品创造 0→1</b><em>4–6 万</em></div>
+    <div class="role hw"><svg class="ic"><use href="#i-box"/></svg><b>结构 / 3D 设计</b><em>2.5–4 万</em></div>
+    <div class="role hw"><svg class="ic"><use href="#i-link"/></svg><b>选型 / 供应链</b><em>2.5–4 万</em></div>
   </div>
-  <div class="sum"><svg class="ic"><use href="#i-users"/></svg><span>拆成团队：<b>4–6 人，15–25 万 / 月</b>。另带来前置 IP（12 项发明候选、7 项软著）、实机验证过的硬件、学校和营地渠道、澳洲主体。</span></div>
+  <div class="sum"><svg class="ic"><use href="#i-users"/></svg><span>拆成团队：<b>6–8 人，20–30 万 / 月</b>。硬件快打：从想法到能跑的样机按天计，不按月计。另带来前置 IP（12 项发明候选、7 项软著）、学校和营地渠道、澳洲主体。</span></div>
 
   <h2><span class="n">05</span>IP 结构：澳洲公司授权 + 股权代持，达标后激活</h2>
   <svg viewBox="0 0 720 388" width="100%" style="display:block">
