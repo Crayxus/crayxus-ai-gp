@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EI TOKEN 合伙条件框架</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #e9ecf1; }
+  body { font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", sans-serif; color: #1f2430; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page { width: 210mm; height: 297mm; margin: 8mm auto; padding: 11mm 13mm 9mm; background: #fff; position: relative; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 2px 18px rgba(0,0,0,.08); }
+  @media print { html, body { background: #fff; } .page { margin: 0; box-shadow: none; page-break-after: always; } .page:last-child { page-break-after: auto; } }
+  .band { position: absolute; left: 0; top: 0; right: 0; height: 4mm; background: linear-gradient(90deg, #0e7490, #22d3ee 45%, #8b5cf6); }
+  header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid #d9dee8; padding-bottom: 2.6mm; }
+  h1 { margin: 0; font-size: 18pt; color: #0b1020; }
+  h1 small { display: block; font-size: 10pt; font-weight: 400; color: #5b6478; margin-top: 1mm; }
+  .meta { text-align: right; font-size: 9.5pt; color: #5b6478; line-height: 1.55; }
+  h2 { margin: 3.6mm 0 1.8mm; font-size: 12.5pt; color: #0b1020; display: flex; align-items: center; gap: 2mm; }
+  h2::before { content: ""; width: 1.4mm; height: 4.6mm; border-radius: 1mm; background: linear-gradient(#22d3ee, #8b5cf6); }
+  h2 .n { color: #0e7490; }
+  .ic { width: 1em; height: 1em; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2.6mm; margin-top: 3mm; }
+  .kpi { border-radius: 2.6mm; padding: 2.2mm 3mm; background: #f4f7fb; border: 1px solid #e3e7ef; }
+  .kpi .h { display: flex; align-items: center; gap: 1.6mm; font-size: 9.5pt; color: #5b6478; }
+  .kpi .h .ic { font-size: 12pt; color: #0e7490; }
+  .kpi .v { font-size: 16pt; font-weight: 700; color: #0b1020; margin-top: .6mm; letter-spacing: -.2pt; white-space: nowrap; }
+  .kpi .v small { font-size: 9.5pt; font-weight: 400; color: #5b6478; }
+  .kpi.w { background: #fffaf0; border-color: #f1e1c2; } .kpi.w .h .ic { color: #d97706; }
+  .kpi.r { background: #fef2f2; border-color: #fecaca; } .kpi.r .h .ic { color: #dc2626; } .kpi.r .v { color: #b91c1c; }
+  .dl { margin: 0 3mm 2.6mm; padding: 2mm 2.6mm; border-radius: 2mm; background: #f6f8fb; }
+  .dl b { display: flex; align-items: center; gap: 1.4mm; font-size: 10pt; color: #0b1020; margin-bottom: .6mm; }
+  .dl b .ic { font-size: 11pt; color: #16a34a; }
+  .dl p { margin: 0; font-size: 10pt; line-height: 1.55; padding-left: 3.2mm; position: relative; }
+  .dl p::before { content: ""; position: absolute; left: .4mm; top: 2.3mm; width: 1.3mm; height: 1.3mm; border-radius: 50%; background: #16a34a; }
+  .buf { margin-top: 3.4mm; border-radius: 2.8mm; border: 1px solid #bbf7d0; background: #f0fdf4; padding: 2.6mm 3.2mm; }
+  .buf .bh { display: flex; align-items: center; gap: 1.8mm; font-size: 11.5pt; font-weight: 700; color: #15803d; }
+  .buf .bh .ic { font-size: 14pt; }
+  .flow { display: flex; align-items: stretch; gap: 1.6mm; margin-top: 2mm; }
+  .fs { flex: 1; background: #fff; border: 1px solid #bbf7d0; border-radius: 2.2mm; padding: 1.8mm 2.4mm; }
+  .fs em { font-style: normal; display: inline-grid; place-items: center; width: 5mm; height: 5mm; border-radius: 50%; background: #16a34a; color: #fff; font-size: 9pt; font-weight: 700; margin-right: 1.2mm; }
+  .fs b { font-size: 10.5pt; color: #0b1020; }
+  .fs span { display: block; font-size: 9.6pt; color: #5b6478; margin-top: .8mm; line-height: 1.45; }
+  .fs.red { border-color: #fecaca; background: #fff7f7; } .fs.red em { background: #dc2626; }
+  .fa { font-size: 12pt; color: #16a34a; align-self: center; }
+  .stages { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3mm; }
+  .st { border-radius: 2.8mm; overflow: hidden; border: 1px solid #e3e7ef; }
+  .st .top { padding: 2.2mm 3mm; color: #fff; display: flex; align-items: center; gap: 2.2mm; }
+  .st .top .ic { font-size: 17pt; }
+  .st .top b { font-size: 12pt; display: block; }
+  .st .top span { font-size: 9.5pt; opacity: .95; }
+  .st1 .top { background: linear-gradient(135deg, #0e7490, #22d3ee); }
+  .st2 .top { background: linear-gradient(135deg, #4f46e5, #818cf8); }
+  .st3 .top { background: linear-gradient(135deg, #7c3aed, #a78bfa); }
+  .st .cash { padding: 1.8mm 3mm .6mm; font-size: 20pt; font-weight: 700; color: #0b1020; }
+  .st .cash small { font-size: 10pt; font-weight: 400; color: #5b6478; }
+  .kv { padding: 0 3mm 2mm; }
+  .kv div { display: flex; justify-content: space-between; align-items: center; gap: 2mm; font-size: 10pt; padding: 1mm 0; border-top: 1px dashed #e3e7ef; }
+  .kv div span { color: #5b6478; display: flex; align-items: center; gap: 1.3mm; white-space: nowrap; }
+  .kv div span .ic { font-size: 11pt; color: #8a94ad; }
+  .kv div b { color: #0b1020; text-align: right; }
+  .kv div b.hi { color: #0e7490; }
+  .kv div b.dt { color: #b45309; }
+  .roles { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2.2mm; }
+  .role { border: 1px solid #e3e7ef; border-radius: 2.4mm; padding: 2.2mm 1.6mm; text-align: center; }
+  .role .ic { font-size: 19pt; color: #0e7490; }
+  .role b { display: block; font-size: 10pt; color: #0b1020; margin-top: 1mm; line-height: 1.3; }
+  .role em { display: block; font-style: normal; font-size: 11.5pt; font-weight: 700; color: #4f46e5; margin-top: .6mm; }
+  .sum { display: flex; align-items: center; gap: 3mm; margin-top: 2.2mm; padding: 2.4mm 3.2mm; border-radius: 2.4mm; background: linear-gradient(90deg, #ecfeff, #f5f3ff); font-size: 10.2pt; line-height: 1.55; }
+  .sum .ic { font-size: 17pt; color: #7c3aed; }
+  .sum b { color: #0b1020; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; }
+  .card { border-radius: 2.6mm; padding: 2.6mm 3.2mm; border: 1px solid #e3e7ef; }
+  .card h3 { margin: 0 0 1.4mm; font-size: 11.5pt; display: flex; align-items: center; gap: 1.8mm; color: #0b1020; }
+  .card h3 .ic { font-size: 14pt; }
+  .card.co { background: #f7f5ff; border-color: #e4defc; } .card.co h3 .ic { color: #7c3aed; }
+  .card.wa { background: #fffaf0; border-color: #f1e1c2; } .card.wa h3 .ic { color: #d97706; }
+  .row { display: flex; gap: 2mm; align-items: flex-start; font-size: 10pt; line-height: 1.5; padding: .9mm 0; }
+  .row .ic { font-size: 12pt; margin-top: .4mm; color: #5b6478; }
+  .row b { color: #0b1020; }
+  footer { margin-top: auto; padding-top: 2.2mm; border-top: 1px solid #d9dee8; display: flex; justify-content: space-between; font-size: 8.8pt; color: #6b7388; }
+  svg text { font-family: "Microsoft YaHei", sans-serif; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="i-rocket" viewBox="0 0 24 24"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></symbol>
+    <symbol id="i-coins" viewBox="0 0 24 24"><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/><path d="M16.71 13.88l.7.71-2.82 2.82"/></symbol>
+    <symbol id="i-trend" viewBox="0 0 24 24"><path d="M22 7l-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/></symbol>
+    <symbol id="i-wallet" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="15" rx="2"/><path d="M16 12h2"/><path d="M2 9h20"/></symbol>
+    <symbol id="i-pie" viewBox="0 0 24 24"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+    <symbol id="i-scale" viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M5 21h14"/><path d="M3 7h18"/><path d="M6 7l-3 7a3 3 0 0 0 6 0z"/><path d="M18 7l-3 7a3 3 0 0 0 6 0z"/></symbol>
+    <symbol id="i-flag" viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 22v-7"/></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+    <symbol id="i-fast" viewBox="0 0 24 24"><path d="M13 19l9-7-9-7z"/><path d="M2 19l9-7-9-7z"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="i-flame" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></symbol>
+    <symbol id="i-stairs" viewBox="0 0 24 24"><path d="M3 20h5v-5h5v-5h5V5h3"/></symbol>
+    <symbol id="i-crown" viewBox="0 0 24 24"><path d="M2 18h20"/><path d="M3 18l-1-11 6 4 4-7 4 7 6-4-1 11"/></symbol>
+    <symbol id="i-truck" viewBox="0 0 24 24"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></symbol>
+    <symbol id="i-layout" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></symbol>
+    <symbol id="i-brain" viewBox="0 0 24 24"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.04z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.04z"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24"><path d="M16 18l6-6-6-6"/><path d="M8 6l-6 6 6 6"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/></symbol>
+    <symbol id="i-present" viewBox="0 0 24 24"><path d="M2 3h20"/><path d="M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3"/><path d="M7 21l5-5 5 5"/></symbol>
+    <symbol id="i-server" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><path d="M6 6h.01M6 18h.01"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+    <symbol id="i-palette" viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="1.5"/><circle cx="17.5" cy="10.5" r="1.5"/><circle cx="8.5" cy="7.5" r="1.5"/><circle cx="6.5" cy="12.5" r="1.5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.93 0 1.5-.75 1.5-1.66 0-.43-.18-.83-.44-1.12-.29-.29-.44-.65-.44-1.13a1.64 1.64 0 0 1 1.67-1.67h2c3.05 0 5.56-2.5 5.56-5.55C21.97 6.01 17.46 2 12 2z"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+  </defs>
+</svg>
+
+<div class="page">
+  <div class="band"></div>
+  <header>
+    <h1>EI TOKEN 技术合伙人 · 报酬与 IP 保障框架<small>现金底线三阶段 · 递延缓冲 · 澳洲公司授权 + 代持激活</small></h1>
+    <div class="meta">2026 年 10 月<br>合伙人讨论稿</div>
+  </header>
+
+  <div class="kpis">
+    <div class="kpi w"><div class="h"><svg class="ic"><use href="#i-flame"/></svg>我的隐性成本</div><div class="v">10–15 万<small> / 月</small></div></div>
+    <div class="kpi"><div class="h"><svg class="ic"><use href="#i-stairs"/></svg>月现金底线</div><div class="v">2.5 → 5 → 10<small> 万</small></div></div>
+    <div class="kpi r"><div class="h"><svg class="ic"><use href="#i-coins"/></svg>我的累计垫付</div><div class="v">≈ 52.5 万<small> 至 27.06</small></div></div>
+    <div class="kpi"><div class="h"><svg class="ic"><use href="#i-pie"/></svg>股权（补偿垫付）</div><div class="v">约 30%<small> · 不抵现金</small></div></div>
+  </div>
+
+  <h2><span class="n">01</span>价值曲线：现金追上成本之前，差额是我在垫付</h2>
+  <svg viewBox="0 0 720 332" width="100%" style="display:block">
+    <defs>
+      <linearGradient id="lg" x1="0" x2="1"><stop offset="0" stop-color="#0e7490"/><stop offset=".5" stop-color="#4f46e5"/><stop offset="1" stop-color="#7c3aed"/></linearGradient>
+      <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#a78bfa"/></marker>
+      <marker id="ax" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#3a4256"/></marker>
+    </defs>
+    <rect x="60" y="30" width="130" height="240" fill="#f0fbfe"/>
+    <rect x="190" y="30" width="260" height="240" fill="#f3f4ff"/>
+    <rect x="450" y="30" width="250" height="240" fill="#f7f2ff"/>
+    <g font-size="14" font-weight="700">
+      <use href="#i-rocket" x="70" y="40" width="20" height="20" stroke="#0e7490" fill="none" stroke-width="2"/><text x="94" y="56" fill="#0e7490">阶段一</text>
+      <use href="#i-coins" x="262" y="40" width="20" height="20" stroke="#4f46e5" fill="none" stroke-width="2"/><text x="288" y="56" fill="#4f46e5">阶段二</text>
+      <use href="#i-trend" x="532" y="40" width="20" height="20" stroke="#7c3aed" fill="none" stroke-width="2"/><text x="558" y="56" fill="#7c3aed">阶段三</text>
+    </g>
+    <g stroke="#e3e7ef" stroke-width="1"><line x1="60" y1="210" x2="700" y2="210"/><line x1="60" y1="150" x2="700" y2="150"/><line x1="60" y1="90" x2="700" y2="90"/></g>
+    <!-- 隐性成本带 10–15 万：y = 270 - 12v -->
+    <rect x="60" y="90" width="640" height="60" fill="#fbbf24" opacity=".17"/>
+    <line x1="60" y1="150" x2="700" y2="150" stroke="#d97706" stroke-width="2.2" stroke-dasharray="8 5"/>
+    <text x="66" y="84" font-size="12.5" fill="#b45309" font-weight="700">隐性成本 10–15 万</text>
+    <!-- 垫付区 -->
+    <polygon points="60,150 450,150 450,210 190,210 190,240 60,240" fill="#ef4444" opacity=".15"/>
+    <g font-size="12.5" font-weight="700" fill="#dc2626" text-anchor="middle">
+      <text x="125" y="190">垫付</text><text x="125" y="207">7.5 万 × 3 月</text>
+      <text x="330" y="196">垫付 5 万 × 6 月</text>
+    </g>
+    <!-- 股权上行空间 -->
+    <line x1="60" y1="262" x2="690" y2="44" stroke="#a78bfa" stroke-width="2.2" stroke-dasharray="3 5" marker-end="url(#ar)"/>
+    <text x="476" y="136" font-size="12" fill="#7c3aed" font-weight="700" transform="rotate(-19 476 136)">股权价值：随估值上行</text>
+    <!-- 现金阶梯 -->
+    <path d="M60 240 H190 V210 H450 V150 H700" fill="none" stroke="url(#lg)" stroke-width="4.5" stroke-linejoin="round"/>
+    <g font-size="15" font-weight="700" text-anchor="middle">
+      <text x="125" y="260" fill="#0e7490">2.5 万</text>
+      <text x="320" y="232" fill="#4f46e5">5 万</text>
+      <text x="575" y="176" fill="#7c3aed">10 万</text>
+    </g>
+    <!-- 交叉点 -->
+    <circle cx="450" cy="150" r="8" fill="#fff" stroke="#dc2626" stroke-width="2.6"/>
+    <circle cx="450" cy="150" r="3" fill="#dc2626"/>
+    <text x="440" y="112" text-anchor="end" font-size="13" fill="#dc2626" font-weight="700">交叉点：现金追上成本下限</text>
+    <line x1="444" y1="118" x2="448" y2="140" stroke="#dc2626" stroke-width="1.4"/>
+    <!-- 轴 -->
+    <line x1="60" y1="270" x2="708" y2="270" stroke="#3a4256" stroke-width="1.6" marker-end="url(#ax)"/>
+    <line x1="60" y1="270" x2="60" y2="24" stroke="#3a4256" stroke-width="1.6" marker-end="url(#ax)"/>
+    <g font-size="12" fill="#5b6478" text-anchor="end"><text x="53" y="274">0</text><text x="53" y="214">5</text><text x="53" y="154">10</text><text x="53" y="94">15</text></g>
+    <text x="18" y="150" font-size="12" fill="#5b6478" transform="rotate(-90 18 150)" text-anchor="middle">月现金（万元）</text>
+    <g font-size="12.5" text-anchor="middle" font-weight="700">
+      <line x1="190" y1="270" x2="190" y2="277" stroke="#3a4256"/><line x1="450" y1="270" x2="450" y2="277" stroke="#3a4256"/>
+      <text x="62" y="292" text-anchor="start" fill="#0e7490">2026.10</text>
+      <text x="190" y="292" fill="#4f46e5">2027.01.01</text>
+      <text x="450" y="292" fill="#7c3aed">2027.07.01</text>
+      <text x="700" y="292" text-anchor="end" fill="#5b6478" font-weight="400">时间</text>
+    </g>
+    <g font-size="12" fill="#3a4256">
+      <line x1="64" y1="321" x2="92" y2="321" stroke="#4f46e5" stroke-width="4.5"/><text x="98" y="326">月现金底线</text>
+      <line x1="196" y1="321" x2="222" y2="321" stroke="#d97706" stroke-width="2.2" stroke-dasharray="7 4"/><text x="228" y="326">隐性成本</text>
+      <rect x="306" y="315" width="13" height="13" fill="#ef4444" opacity=".22"/><text x="325" y="326">我的垫付（由股权补偿）</text>
+      <line x1="486" y1="321" x2="512" y2="321" stroke="#a78bfa" stroke-width="2.2" stroke-dasharray="3 5"/><text x="518" y="326">股权上行空间（不抵现金）</text>
+    </g>
+  </svg>
+
+  <h2><span class="n">02</span>三阶段：现金底线 + 我的交付</h2>
+  <div class="stages">
+    <div class="st st1">
+      <div class="top"><svg class="ic"><use href="#i-rocket"/></svg><div><b>阶段一 · 起步</b><span>即日 – 2026.12.31</span></div></div>
+      <div class="cash">2.5 万<small> / 月现金</small></div>
+      <div class="kv">
+        <div><span><svg class="ic"><use href="#i-pie"/></svg>股权</span><b>约 30%</b></div>
+        <div><span><svg class="ic"><use href="#i-fast"/></svg>提前升级</span><b>天使轮到账</b></div>
+      </div>
+      <div class="dl"><b><svg class="ic"><use href="#i-flag"/></svg>我的交付</b>
+        <p>EI TOKEN 1.0 正式版（网页 + Windows）</p><p>首批课程 / 营地交付</p><p>天使轮技术尽调与 IP 清单</p></div>
+    </div>
+    <div class="st st2">
+      <div class="top"><svg class="ic"><use href="#i-coins"/></svg><div><b>阶段二 · 天使轮</b><span>2027.01.01 – 06.30</span></div></div>
+      <div class="cash">≥ 5 万<small> / 月现金</small></div>
+      <div class="kv">
+        <div><span><svg class="ic"><use href="#i-pie"/></svg>股权</span><b>约 25.5%</b></div>
+        <div><span><svg class="ic"><use href="#i-fast"/></svg>提前升级</span><b>A 轮到账</b></div>
+      </div>
+      <div class="dl"><b><svg class="ic"><use href="#i-flag"/></svg>我的交付</b>
+        <p>STM32 / ROS 产品线上线</p><p>≥ 10 家付费学校或机构</p><p>核心专利提交申请</p></div>
+    </div>
+    <div class="st st3">
+      <div class="top"><svg class="ic"><use href="#i-trend"/></svg><div><b>阶段三 · 规模化</b><span>2027.07.01 起</span></div></div>
+      <div class="cash">≥ 10 万<small> / 月现金</small></div>
+      <div class="kv">
+        <div><span><svg class="ic"><use href="#i-pie"/></svg>股权</span><b>随融资稀释</b></div>
+        <div><span><svg class="ic"><use href="#i-clock"/></svg>复议</span><b>每年一次</b></div>
+      </div>
+      <div class="dl"><b><svg class="ic"><use href="#i-flag"/></svg>我的交付</b>
+        <p>组建 3–5 人技术团队</p><p>平台规模化部署与运维</p><p>支撑 A 轮技术尽调</p></div>
+    </div>
+  </div>
+
+  <div class="buf">
+    <div class="bh"><svg class="ic"><use href="#i-shield"/></svg>现金缓冲：发不出先记账，不直接回转</div>
+    <div class="flow">
+      <div class="fs"><em>1</em><b>差额记为递延薪酬</b><span>升级部分发不出，记为公司对我的负债</span></div>
+      <svg class="ic fa"><use href="#i-fast"/></svg>
+      <div class="fs"><em>2</em><b>融资到账后结清</b><span>天使轮到账一次补发，或按该轮价格转股</span></div>
+      <svg class="ic fa"><use href="#i-fast"/></svg>
+      <div class="fs red"><em>3</em><b>递延满 3 个月仍无方案</b><span>才触发 IP 回转（基础 2.5 万不递延）</span></div>
+    </div>
+  </div>
+
+  <footer><span>EI TOKEN · 合伙条件框架（讨论稿）</span><span>1 / 2</span></footer>
+</div>
+
+<div class="page">
+  <div class="band"></div>
+
+  <h2 style="margin-top:1mm"><span class="n">04</span>我承担的角色 · 市场月薪参考</h2>
+  <div class="roles">
+    <div class="role"><svg class="ic"><use href="#i-crown"/></svg><b>技术合伙人 / CTO</b><em>6–10 万</em></div>
+    <div class="role"><svg class="ic"><use href="#i-truck"/></svg><b>FDE 前线部署</b><em>4–6 万</em></div>
+    <div class="role"><svg class="ic"><use href="#i-layout"/></svg><b>高级产品经理</b><em>3.5–6 万</em></div>
+    <div class="role"><svg class="ic"><use href="#i-brain"/></svg><b>AI / 算法</b><em>4–7 万</em></div>
+    <div class="role"><svg class="ic"><use href="#i-code"/></svg><b>全栈 前端 + 后端</b><em>3–5 万</em></div>
+    <div class="role"><svg class="ic"><use href="#i-cpu"/></svg><b>嵌入式 / 机器人</b><em>3–5 万</em></div>
+    <div class="role"><svg class="ic"><use href="#i-present"/></svg><b>解决方案 / 售前</b><em>3.5–6 万</em></div>
+    <div class="role"><svg class="ic"><use href="#i-server"/></svg><b>DevOps / 运维</b><em>2.5–4 万</em></div>
+    <div class="role"><svg class="ic"><use href="#i-book"/></svg><b>课程研发 / 教研</b><em>2–3.5 万</em></div>
+    <div class="role"><svg class="ic"><use href="#i-palette"/></svg><b>UI / 视觉 / 内容</b><em>2–3.5 万</em></div>
+  </div>
+  <div class="sum"><svg class="ic"><use href="#i-users"/></svg><span>拆成团队：<b>4–6 人，15–25 万 / 月</b>。另带来前置 IP（12 项发明候选、7 项软著）、实机验证过的硬件、学校和营地渠道、澳洲主体。</span></div>
+
+  <h2><span class="n">05</span>IP 结构：澳洲公司授权 + 股权代持，达标后激活</h2>
+  <svg viewBox="0 0 720 388" width="100%" style="display:block">
+    <defs>
+      <marker id="a1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#0e7490"/></marker>
+      <marker id="a4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#7c3aed"/></marker>
+      <marker id="a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#16a34a"/></marker>
+      <marker id="a3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#dc2626"/></marker>
+    </defs>
+    <rect x="30" y="8" width="176" height="92" rx="10" fill="#ecfeff" stroke="#67e8f9"/>
+    <use href="#i-globe" x="42" y="20" width="28" height="28" stroke="#0e7490" fill="none" stroke-width="2"/>
+    <text x="78" y="34" font-size="14.5" font-weight="700" fill="#0b1020">我的澳洲公司</text>
+    <text x="78" y="52" font-size="12" fill="#5b6478">前置 IP 所有人</text>
+    <text x="42" y="78" font-size="11.5" fill="#0e7490">代码 · 握手识别</text>
+    <text x="42" y="93" font-size="11.5" fill="#0e7490">专利候选 · 软著</text>
+
+    <rect x="30" y="134" width="176" height="92" rx="10" fill="#f5f3ff" stroke="#c4b5fd"/>
+    <use href="#i-user" x="42" y="146" width="28" height="28" stroke="#7c3aed" fill="none" stroke-width="2"/>
+    <text x="78" y="160" font-size="14.5" font-weight="700" fill="#0b1020">我</text>
+    <text x="78" y="178" font-size="12" fill="#5b6478">约 30% 股权</text>
+    <text x="42" y="204" font-size="11.5" fill="#7c3aed">4 年归属</text>
+    <text x="42" y="219" font-size="11.5" fill="#7c3aed">满 1 年开始兑现</text>
+
+    <rect x="290" y="8" width="176" height="92" rx="10" fill="#fff" stroke="#94a3b8"/>
+    <use href="#i-cpu" x="302" y="20" width="28" height="28" stroke="#0b1020" fill="none" stroke-width="2"/>
+    <text x="338" y="34" font-size="14.5" font-weight="700" fill="#0b1020">EI TOKEN</text>
+    <text x="338" y="52" font-size="12" fill="#5b6478">国内运营公司</text>
+    <text x="302" y="85" font-size="11.5" fill="#5b6478">使用 IP · 签客户 · 融资</text>
+
+    <rect x="290" y="134" width="176" height="92" rx="10" fill="#fff" stroke="#94a3b8"/>
+    <use href="#i-lock" x="302" y="146" width="28" height="28" stroke="#0b1020" fill="none" stroke-width="2"/>
+    <text x="338" y="160" font-size="14.5" font-weight="700" fill="#0b1020">代持人</text>
+    <text x="338" y="178" font-size="12" fill="#5b6478">工商登记，暂不显名</text>
+    <text x="302" y="204" font-size="11.5" fill="#5b6478">股权质押给我</text>
+    <text x="302" y="219" font-size="11.5" fill="#5b6478">+ 不可撤销授权</text>
+
+    <line x1="206" y1="54" x2="286" y2="54" stroke="#0e7490" stroke-width="2.4" marker-end="url(#a1)"/>
+    <text x="246" y="44" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0e7490">独占许可</text>
+    <text x="246" y="72" text-anchor="middle" font-size="11" fill="#5b6478">阶段一免费</text>
+    <line x1="206" y1="180" x2="286" y2="180" stroke="#7c3aed" stroke-width="2.4" marker-end="url(#a4)"/>
+    <text x="246" y="170" text-anchor="middle" font-size="12.5" font-weight="700" fill="#7c3aed">代持协议</text>
+
+    <rect x="536" y="8" width="178" height="218" rx="12" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5"/>
+    <use href="#i-check" x="548" y="20" width="26" height="26" stroke="#16a34a" fill="none" stroke-width="2"/>
+    <text x="580" y="39" font-size="16" font-weight="700" fill="#15803d">激活</text>
+    <text x="548" y="66" font-size="12" fill="#3a4256">天使轮到账</text>
+    <text x="548" y="84" font-size="12" fill="#3a4256">+ 递延薪酬结清</text>
+    <line x1="548" y1="96" x2="702" y2="96" stroke="#bbf7d0"/>
+    <text x="548" y="118" font-size="13" font-weight="700" fill="#0b1020">① IP 转让入公司</text>
+    <text x="548" y="136" font-size="11.5" fill="#5b6478">或永久独占许可，作价出资</text>
+    <text x="548" y="162" font-size="13" font-weight="700" fill="#0b1020">② 代持股权显名</text>
+    <text x="548" y="180" font-size="11.5" fill="#5b6478">或转入澳洲公司 / 持股平台</text>
+    <text x="548" y="212" font-size="11.5" font-weight="700" fill="#15803d">最晚在天使轮交割时完成</text>
+    <line x1="466" y1="54" x2="532" y2="80" stroke="#16a34a" stroke-width="2.4" marker-end="url(#a2)"/>
+    <line x1="466" y1="180" x2="532" y2="154" stroke="#16a34a" stroke-width="2.4" marker-end="url(#a2)"/>
+
+    <rect x="8" y="252" width="706" height="130" rx="12" fill="#fef2f2" stroke="#fecaca"/>
+    <use href="#i-alert" x="24" y="264" width="24" height="24" stroke="#dc2626" fill="none" stroke-width="2"/>
+    <text x="56" y="282" font-size="14.5" font-weight="700" fill="#b91c1c">激活前，任一条件成立 → 许可终止，IP 留在澳洲公司</text>
+    <g font-size="11.5">
+      <rect x="22" y="298" width="164" height="72" rx="8" fill="#fff" stroke="#fecaca"/>
+      <use href="#i-cal" x="32" y="308" width="20" height="20" stroke="#dc2626" fill="none" stroke-width="2"/>
+      <text x="58" y="323" font-size="13" font-weight="700" fill="#0b1020">递延满 3 个月</text>
+      <text x="32" y="345" fill="#5b6478">仍无融资或补发方案</text>
+      <text x="32" y="362" fill="#5b6478">书面催告 30 天后</text>
+      <rect x="196" y="298" width="164" height="72" rx="8" fill="#fff" stroke="#fecaca"/>
+      <use href="#i-wallet" x="206" y="308" width="20" height="20" stroke="#dc2626" fill="none" stroke-width="2"/>
+      <text x="232" y="323" font-size="13" font-weight="700" fill="#0b1020">欠付基础现金</text>
+      <text x="206" y="345" fill="#5b6478">2.5 万基础部分</text>
+      <text x="206" y="362" fill="#5b6478">连续 2 个月未发</text>
+      <rect x="370" y="298" width="164" height="72" rx="8" fill="#fff" stroke="#fecaca"/>
+      <use href="#i-alert" x="380" y="308" width="20" height="20" stroke="#dc2626" fill="none" stroke-width="2"/>
+      <text x="406" y="323" font-size="13" font-weight="700" fill="#0b1020">解散 / 破产</text>
+      <text x="380" y="345" fill="#5b6478">或擅自出售、质押</text>
+      <text x="380" y="362" fill="#5b6478">核心 IP</text>
+      <rect x="544" y="298" width="158" height="72" rx="8" fill="#fff" stroke="#fecaca"/>
+      <use href="#i-user" x="554" y="308" width="20" height="20" stroke="#dc2626" fill="none" stroke-width="2"/>
+      <text x="580" y="323" font-size="13" font-weight="700" fill="#0b1020">无过错被解约</text>
+      <text x="554" y="345" fill="#5b6478">已转让的部分</text>
+      <text x="554" y="362" fill="#5b6478">我有优先回购权</text>
+    </g>
+    <path d="M16 252 V 54 H 26" fill="none" stroke="#dc2626" stroke-width="2.4" stroke-dasharray="5 4" marker-end="url(#a3)"/>
+    <text x="4" y="140" font-size="12" fill="#dc2626" font-weight="700" writing-mode="tb">回转</text>
+  </svg>
+
+  <div class="two" style="margin-top:3.2mm">
+    <div class="card co">
+      <h3><svg class="ic"><use href="#i-shield"/></svg>对公司的保护</h3>
+      <div class="row"><svg class="ic"><use href="#i-user"/></svg><span>我<b>主动离开或有过错</b>：不回转，IP 留公司，未归属股权回购</span></div>
+      <div class="row"><svg class="ic"><use href="#i-file"/></svg><span>回转后，<b>已签约客户</b>用到合同到期，我不带走客户</span></div>
+      <div class="row"><svg class="ic"><use href="#i-flag"/></svg><span>我的阶段交付没达标：公司可提出复议下一阶段条件</span></div>
+      <div class="row"><svg class="ic"><use href="#i-coins"/></svg><span>没钱时差额可递延或转股，不压公司现金流</span></div>
+      <div class="row"><svg class="ic"><use href="#i-check"/></svg><span>我保证 IP 权属清楚，全职投入，遵守保密和竞业约定</span></div>
+    </div>
+    <div class="card wa">
+      <h3><svg class="ic"><use href="#i-alert"/></svg>跨境与代持要提前处理</h3>
+      <div class="row"><svg class="ic"><use href="#i-globe"/></svg><span>跨境许可做<b>技术进口合同登记</b>；收许可费涉及约 10% 预提税和外汇</span></div>
+      <div class="row"><svg class="ic"><use href="#i-lock"/></svg><span>代持人擅自处分或自身负债，股权可能受牵连</span></div>
+      <div class="row"><svg class="ic"><use href="#i-user"/></svg><span>境外身份直接持股会使公司变为外资企业，激活时定持股方式</span></div>
+      <div class="row"><svg class="ic"><use href="#i-code"/></svg><span>公司的改进归公司；回转时澳洲公司可按公允价购买或取得许可</span></div>
+    </div>
+  </div>
+
+  <footer><span>EI TOKEN · 合伙条件框架（讨论稿）· 正式条款以双方律师审定的协议为准</span><span>2 / 2</span></footer>
+</div>
+
+</body>
+</html>
