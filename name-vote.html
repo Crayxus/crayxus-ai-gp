@@ -5,17 +5,17 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex">
 <title>公司命名投票</title>
-<meta name="description" content="九个候选公司名，每人选 3 个排序：第一 3 分、第二 2 分、第三 1 分，按累计分排名。">
+<meta name="description" content="十个候选公司名，每人选 3 个，按票数排名。">
 <meta property="og:title" content="公司命名投票">
-<meta property="og:description" content="九个候选公司名，每人选 3 个排序：第一 3 分、第二 2 分、第三 1 分，按累计分排名。">
+<meta property="og:description" content="十个候选公司名，每人选 3 个，按票数排名。">
 <meta property="og:url" content="https://crayxus.com.au/name-vote.html">
 <style>
-/* 布局：标题 → 我的选票（名字 + 三个名次槽）→ 累计排名榜 → 六张候选卡（每张三个名次按钮）。票数条是“光轨”，呼应 NEXUS 灯效 */
+/* 布局：标题 → 我的选票（名字 + 已选 3 个 + 提交）→ 票数排名 → 十张候选卡（点卡片选/取消）。票数条是“光轨”，呼应 NEXUS 灯效 */
 :root{
   --bg:#F2F4F8; --surface:#FFFFFF; --ink:#12162A; --muted:#5A6378; --line:#DCE1EB;
   --rail:#E7EBF2; --accent:#0B93AE; --accent-ink:#FFFFFF; --glow:rgba(11,147,174,.28);
   --pick:#6D4FD8; --pick-ink:#FFFFFF; --pick-soft:rgba(109,79,216,.10); --warn:#9A5B00; --warn-soft:#FFF4E0;
-  --r1:#C98A00; --r2:#7D8796; --r3:#A8653A;
+  --ok:#0F7B4B; --r1:#C98A00;
   --f-display:"Songti SC","STSong","Noto Serif SC","Source Han Serif SC","SimSun",serif;
   --f-body:"PingFang SC","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
   --f-mono:ui-monospace,"SF Mono","Cascadia Mono",Consolas,monospace;
@@ -25,12 +25,12 @@
   --bg:#0B1020; --surface:#121A2E; --ink:#E6EAF2; --muted:#8A94AD; --line:#26314F;
   --rail:#1B2540; --accent:#22D3EE; --accent-ink:#06202A; --glow:rgba(34,211,238,.45);
   --pick:#A58BFF; --pick-ink:#140C33; --pick-soft:rgba(165,139,255,.12); --warn:#FBBF24; --warn-soft:rgba(251,191,36,.10);
-  --r1:#F5C451; --r2:#B9C2D0; --r3:#E0976A; color-scheme:dark}}
+  --ok:#34D399; --r1:#F5C451; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0B1020; --surface:#121A2E; --ink:#E6EAF2; --muted:#8A94AD; --line:#26314F;
   --rail:#1B2540; --accent:#22D3EE; --accent-ink:#06202A; --glow:rgba(34,211,238,.45);
   --pick:#A58BFF; --pick-ink:#140C33; --pick-soft:rgba(165,139,255,.12); --warn:#FBBF24; --warn-soft:rgba(251,191,36,.10);
-  --r1:#F5C451; --r2:#B9C2D0; --r3:#E0976A; color-scheme:dark}
+  --ok:#34D399; --r1:#F5C451; color-scheme:dark}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;padding-inline:16px;padding-block:calc(36px + env(safe-area-inset-top,0px)) calc(56px + env(safe-area-inset-bottom,0px))}
@@ -52,22 +52,25 @@ h2.sec{font-size:13px;letter-spacing:.12em;color:var(--muted);margin:0 0 10px;fo
 .me label{font-weight:700;font-size:14px}
 .me input{flex:1 1 180px;min-width:0;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
 .me input:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
-.slots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-@media (max-width:560px){.slots{grid-template-columns:minmax(0,1fr)}}
-.slot{display:flex;align-items:center;gap:10px;border:1px dashed var(--line);border-radius:12px;padding:10px 12px;min-width:0}
-.slot.on{border-style:solid;border-color:var(--pick);background:var(--pick-soft)}
-.medal{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-mono);font-weight:700;font-size:14px;color:var(--bg)}
-.m1{background:var(--r1)} .m2{background:var(--r2)} .m3{background:var(--r3)}
-.slot-tx{min-width:0;display:grid}
-.slot-tx small{color:var(--muted);font-size:12px}
-.slot-tx span{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.slot:not(.on) .slot-tx span{color:var(--muted);font-weight:400}
-.me-foot{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
-.link{appearance:none;background:none;border:0;padding:4px 0;font:inherit;font-size:13px;color:var(--accent);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
-.link:disabled{color:var(--muted);cursor:default;text-decoration:none}
+.picked{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:560px){.picked{grid-template-columns:minmax(0,1fr)}}
+.slot{display:flex;align-items:center;border:1px dashed var(--line);border-radius:12px;padding:10px 12px;min-width:0;min-height:46px;color:var(--muted);font-size:14px}
+.slot.on{border-style:solid;border-color:var(--pick);background:var(--pick-soft);color:var(--ink);font-weight:700}
+.slot span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.me-foot{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px}
+.hint{font-size:13px;color:var(--muted)}
+.hint.ok{color:var(--ok)}
+.actions{display:flex;align-items:center;gap:14px;margin-left:auto}
+.submit{appearance:none;border:0;font:inherit;font-weight:700;font-size:15px;border-radius:12px;padding:11px 28px;background:var(--accent);color:var(--accent-ink);cursor:pointer;transition:box-shadow .2s,transform .1s,opacity .2s}
+.submit:hover{box-shadow:0 0 0 4px var(--glow)}
+.submit:active{transform:scale(.98)}
+.submit:focus-visible{outline:3px solid var(--pick);outline-offset:2px}
+.submit:disabled{opacity:.45;cursor:default;box-shadow:none;transform:none}
+.link{appearance:none;background:none;border:0;padding:4px 0;font:inherit;font-size:13px;color:var(--muted);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.link:disabled{cursor:default;text-decoration:none;opacity:.6}
 .notice{border:1px solid var(--line);background:var(--warn-soft);color:var(--warn);border-radius:12px;padding:12px 14px;font-size:14px}
 .board{display:grid;gap:10px;margin:0;padding:0;list-style:none}
-.row{display:grid;grid-template-columns:28px minmax(0,8em) minmax(0,1fr) auto;align-items:center;gap:12px}
+.row{display:grid;grid-template-columns:28px minmax(0,17em) minmax(0,1fr) auto;align-items:center;gap:12px}
 @media (max-width:560px){.row{grid-template-columns:24px minmax(0,1fr) auto;row-gap:6px}.row .pos,.row .row-nm,.row .row-sc{grid-row:1}.row .rail{grid-row:2;grid-column:2/4}}
 .pos{font-family:var(--f-mono);font-weight:700;color:var(--muted);text-align:center}
 .row.lead .pos{color:var(--r1)}
@@ -78,33 +81,27 @@ h2.sec{font-size:13px;letter-spacing:.12em;color:var(--muted);margin:0 0 10px;fo
 .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
 @media (max-width:860px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:560px){.grid{grid-template-columns:minmax(0,1fr)}}
-.card{display:grid;grid-template-rows:auto 1fr auto auto;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px 20px 18px;min-width:0;transition:border-color .2s}
-.card.mine{border-color:var(--pick);box-shadow:0 0 0 3px var(--pick-soft)}
+.card{display:grid;grid-template-rows:1fr auto auto;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px 20px 18px;min-width:0;transition:border-color .2s,box-shadow .2s}
+.card.sel{border-color:var(--pick);box-shadow:0 0 0 3px var(--pick-soft)}
 .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-.zh{font-family:var(--f-display);font-weight:900;font-size:clamp(24px,3vw,30px);line-height:1.2;margin:0}
-.en{font-family:var(--f-mono);font-size:13px;color:var(--muted);margin-top:4px;letter-spacing:.02em}
+.zh{font-family:var(--f-display);font-weight:900;font-size:clamp(19px,2vw,21px);line-height:1.35;margin:0}
+.zh span{white-space:nowrap}
 .badge{flex:none;font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--accent);color:var(--accent-ink);white-space:nowrap}
-.note{margin:0;font-size:14px;color:var(--muted)}
 .tally{display:grid;gap:8px}
-.tally-row{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13px;color:var(--muted)}
 .count{font-family:var(--f-mono);font-weight:700;font-size:20px;color:var(--ink);font-variant-numeric:tabular-nums}
+.tally-row{font-size:13px;color:var(--muted)}
 .rail{height:6px;border-radius:999px;background:var(--rail);overflow:hidden}
 .fill{height:100%;width:0;border-radius:inherit;background:var(--accent);box-shadow:0 0 12px var(--glow);transition:width .6s cubic-bezier(.2,.8,.2,1)}
 .voters{display:flex;flex-wrap:wrap;gap:6px;min-height:24px;align-items:center}
-.chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;line-height:1;padding:4px 8px 4px 4px;border-radius:999px;background:var(--rail);color:var(--ink);max-width:100%}
-.chip i{font-style:normal;width:16px;height:16px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:700;color:var(--bg);flex:none}
-.chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ranks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
-.rk{appearance:none;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-size:13px;font-weight:700;border-radius:10px;padding:9px 4px;cursor:pointer;line-height:1.3;transition:background .15s,border-color .15s,transform .1s}
-.rk small{display:block;font-weight:400;font-size:11px;color:var(--muted)}
-.rk:hover{border-color:var(--accent)}
-.rk:active{transform:scale(.97)}
-.rk:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-.rk[aria-pressed="true"]{background:var(--pick);border-color:var(--pick);color:var(--pick-ink)}
-.rk[aria-pressed="true"] small{color:var(--pick-ink);opacity:.8}
-.rk:disabled{opacity:.5;cursor:default;transform:none}
+.chip{font-size:12px;line-height:1;padding:5px 9px;border-radius:999px;background:var(--rail);color:var(--ink);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.choose{appearance:none;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-size:14px;font-weight:700;border-radius:10px;padding:10px;cursor:pointer;transition:background .15s,border-color .15s,transform .1s}
+.choose:hover{border-color:var(--pick)}
+.choose:active{transform:scale(.98)}
+.choose:focus-visible{outline:3px solid var(--pick);outline-offset:2px}
+.choose[aria-pressed="true"]{background:var(--pick);border-color:var(--pick);color:var(--pick-ink)}
+.choose:disabled{opacity:.45;cursor:default;transform:none}
 footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}
-@media (prefers-reduced-motion:reduce){.fill,.card,.rk{transition:none}}
+@media (prefers-reduced-motion:reduce){.fill,.card,.choose,.submit{transition:none}}
 </style>
 </head>
 <body>
@@ -114,8 +111,8 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);paddin
       <svg class="oct" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2h8l6 6v8l-6 6H8l-6-6V8z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="2.5" fill="currentColor"/></svg>
       EI TOKEN · 新公司命名
     </div>
-    <h1>九个名字，选出你心里的前三</h1>
-    <p class="lede">每人最多选 3 个并排好顺序：<b>第一 3 分、第二 2 分、第三 1 分</b>。最后按累计分排名，同分时第一选择多的排前面。可以随时修改。</p>
+    <h1>十个名字，选出你最喜欢的三个</h1>
+    <p class="lede">在下面的卡片里<b>选 3 个</b>，填上你的名字，点<b>提交</b>。每个名字算 1 票，最后按票数排名。提交后还能改，改完再提交一次就行。</p>
     <div class="status"><span><span class="dot" id="dot"></span><span id="conn">正在读取票数…</span></span><span>已投票 <b id="total">0</b> 人</span></div>
   </header>
 
@@ -125,36 +122,40 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);paddin
       <label for="name">你的名字</label>
       <input id="name" maxlength="20" autocomplete="name" placeholder="例如：张三">
     </div>
-    <div class="slots" id="slots"></div>
-    <div class="me-foot"><span id="saved">在下面的卡片上点「第一 / 第二 / 第三」排名次，点了就自动保存。</span><button class="link" id="clear" type="button">清空我的选票</button></div>
+    <div class="picked" id="picked"></div>
+    <div class="me-foot">
+      <span class="hint" id="hint" aria-live="polite"></span>
+      <div class="actions"><button class="link" id="clear" type="button" hidden>撤回我的票</button><button class="submit" id="submit" type="button">提交</button></div>
+    </div>
   </section>
 
   <div class="notice" id="notice" hidden></div>
 
   <section class="panel" aria-labelledby="board-h">
-    <h2 class="sec" id="board-h">累计排名</h2>
+    <h2 class="sec" id="board-h">票数排名</h2>
     <ol class="board" id="board"></ol>
   </section>
 
   <section class="grid" id="grid" aria-label="候选名字"></section>
-  <footer>思达克工业、机智算能科技、艾伦克斯技术、启绎、星绎、乾枢由团队提名；奇点工坊、弧光动力、曜擎科技来自命名建议。最终注册前还要查企业名称和商标是否可用。</footer>
+  <footer>最终注册前还要核查企业名称和商标是否可用。</footer>
 </div>
 <script>
 // 从后端自己的 /vote 打开就走同源；放在 crayxus.com.au 上就跨域连后端
 const API=(location.pathname==='/vote'?'':'https://api.crayxus.com.au')+'/api/poll/company-name';
 const OPTIONS=[
-  {id:'stack',zh:'思达克工业',en:'Stack Industry',note:'Stack 是“叠栈”：把硬件、软件、AI 一层层搭起来。'},
-  {id:'qidian',zh:'奇点工坊',en:'Singularity Works',note:'技术突破的那个点；适合讲课、带学生做项目。'},
-  {id:'arclight',zh:'弧光动力',en:'Arclight Dynamics',note:'弧光像反应堆的光，Dynamics 听着像硬科技公司。'},
-  {id:'yaoqing',zh:'曜擎科技',en:'Yaoqing Tech',note:'曜是光，擎是引擎，正好对应 NEXUS 的灯效。'},
-  {id:'jizhi',zh:'机智算能科技',en:'Jizhi Suanneng Tech',note:'机器的智慧，加上算力和能力。'},
-  {id:'ailunkesi',zh:'艾伦克斯技术',en:'Ailunkesi Tech',note:'音译风格的名字，中英文场合都好叫。'},
-  {id:'qiyi',zh:'启绎',en:'Qiyi',note:'启是开启，绎是推演、一层层展开。'},
-  {id:'xingyi',zh:'星绎',en:'Stellaris',note:'星辰加推演；Stellaris 在拉丁语里是“星的”。'},
-  {id:'qianshu',zh:'乾枢',en:'PrimeCore',note:'乾为首，枢是中枢；PrimeCore 就是“首要核心”，呼应 NEXUS。'}
+  {id:'yuchengqi',zh:'杭州语成器科技有限公司'},
+  {id:'yichengqi',zh:'意成器科技（杭州）有限公司'},
+  {id:'yuangou',zh:'元构万机科技（杭州）有限责任公司'},
+  {id:'wanjixu',zh:'万机序科技（杭州）有限责任公司'},
+  {id:'qiyi',zh:'启绎科技（杭州）有限责任公司'},
+  {id:'huisuanzi',zh:'慧算子科技（杭州）有限责任公司'},
+  {id:'jizhi',zh:'机智算能（杭州）科技有限公司'},
+  {id:'xunzhi',zh:'训智算能科技（杭州）有限公司'},
+  {id:'xunzhima',zh:'驯智算能科技（杭州）有限责任公司'},
+  {id:'xunsuan',zh:'训算科技（杭州）有限责任公司'}
 ];
+const N=3;
 const BY=Object.fromEntries(OPTIONS.map(o=>[o.id,o]));
-const RANK=['第一','第二','第三'], PTS=[3,2,1];
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const store={get(k){try{return localStorage.getItem(k)||''}catch(e){return ''}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
@@ -163,38 +164,46 @@ if(!/^[A-Za-z0-9_-]{16,64}$/.test(voter)){
   const a=new Uint8Array(18); (crypto.getRandomValues?crypto.getRandomValues(a):a.forEach((_,i)=>a[i]=Math.random()*256|0));
   voter=Array.from(a,b=>b.toString(16).padStart(2,'0')).join(''); store.set('poll.voter',voter);
 }
-let state={options:{},order:[],total:0,mine:[null,null,null]}, live=false, busy=false;
+// sel = 本页正在选的；dirty = 改过还没提交（这时 5 秒轮询不覆盖 sel）
+let state={options:{},order:[],total:0,mine:[]}, sel=[], dirty=false, live=false, busy=false, okMsg='';
 $('#name').value=store.get('poll.name');
-$('#name').addEventListener('input',e=>store.set('poll.name',e.target.value.trim()));
+$('#name').addEventListener('input',e=>{store.set('poll.name',e.target.value.trim()); okMsg=''; render();});
 
 function notice(t){const n=$('#notice'); n.textContent=t||''; n.hidden=!t;}
-const mine=()=>{const m=(state.mine||[]).slice(0,3); while(m.length<3) m.push(null); return m;};
+const same=(a,b)=>a.length===b.length&&a.every(x=>b.includes(x));
 function render(){
-  const m=mine(), total=state.total||0, opt=state.options||{};
-  const sc=id=>(opt[id]&&opt[id].score)||0;
-  const max=Math.max(0,...OPTIONS.map(o=>sc(o.id)));
+  const total=state.total||0, opt=state.options||{}, mine=state.mine||[];
+  const v=id=>(opt[id]&&opt[id].votes)||0;
+  const max=Math.max(0,...OPTIONS.map(o=>v(o.id)));
   const lead=max>0?(state.order||[])[0]:null;
   $('#total').textContent=total;
-  $('#slots').innerHTML=m.map((id,i)=>`<div class="slot${id?' on':''}"><span class="medal m${i+1}">${i+1}</span><div class="slot-tx"><small>${RANK[i]} · ${PTS[i]} 分</small><span>${id?esc(BY[id].zh):'还没选'}</span></div></div>`).join('');
-  $('#clear').disabled=!m.some(Boolean)||busy||!live;
+  $('#picked').innerHTML=Array.from({length:N},(_,i)=>{const id=sel[i]; return `<div class="slot${id?' on':''}"><span>${id?esc(BY[id].zh):'还没选'}</span></div>`;}).join('');
+  const name=$('#name').value.trim(), submitted=mine.length>0, unchanged=same(sel,mine)&&name===(state.myName||'');
+  $('#submit').textContent=submitted?'重新提交':'提交';
+  $('#submit').disabled=!live||busy||sel.length!==N||!name||(submitted&&unchanged);
+  $('#clear').hidden=!submitted; $('#clear').disabled=busy||!live;
+  const h=$('#hint'); h.classList.remove('ok');
+  if(okMsg){h.textContent=okMsg; h.classList.add('ok');}
+  else if(sel.length<N) h.textContent=`已选 ${sel.length} / ${N}，在下面的卡片上再选 ${N-sel.length} 个。`;
+  else if(!name) h.textContent='选好了，填上名字就能提交。';
+  else h.textContent=submitted&&unchanged?'这就是你已经提交的选票。':'选好了，点提交。';
   const order=(state.order&&state.order.length?state.order:OPTIONS.map(o=>o.id));
   $('#board').innerHTML=total?order.map((id,i)=>{
-    const o=opt[id]||{score:0,ranks:[0,0,0]}, pct=max?Math.round(o.score/max*100):0;
-    return `<li class="row${i===0&&o.score>0?' lead':''}"><span class="pos">${i+1}</span><span class="row-nm">${esc(BY[id].zh)}</span><div class="rail"><div class="fill" style="width:${pct}%"></div></div><span class="row-sc"><b>${o.score}</b> 分 · 第一 ${o.ranks[0]} 票</span></li>`;
-  }).join(''):'<li class="empty">还没有人投票。填好名字，在下面的卡片上排出你的前三。</li>';
+    const n=v(id), pct=max?Math.round(n/max*100):0;
+    return `<li class="row${i===0&&n>0?' lead':''}"><span class="pos">${i+1}</span><span class="row-nm">${esc(BY[id].zh)}</span><div class="rail"><div class="fill" style="width:${pct}%"></div></div><span class="row-sc"><b>${n}</b> 票</span></li>`;
+  }).join(''):'<li class="empty">还没有人投票。选 3 个名字，填上你的名字，点提交。</li>';
+  const full=sel.length>=N;
   $('#grid').innerHTML=OPTIONS.map(o=>{
-    const d=opt[o.id]||{score:0,ranks:[0,0,0],voters:[]}, r=m.indexOf(o.id);
-    const who=(d.voters||[]).slice().sort((a,b)=>a.rank-b.rank).map(v=>`<span class="chip"><i class="m${v.rank}">${v.rank}</i><span>${esc(v.name)}</span></span>`).join('');
-    const btns=RANK.map((nm,i)=>`<button class="rk" type="button" data-id="${o.id}" data-r="${i}" aria-pressed="${r===i}" ${(!live||busy)?'disabled':''}>${nm}<small>${PTS[i]} 分</small></button>`).join('');
-    return `<article class="card${r>=0?' mine':''}">
-      <div class="top"><div><h3 class="zh">${esc(o.zh)}</h3><div class="en">${esc(o.en)}</div></div>${lead===o.id?'<span class="badge">目前第一</span>':''}</div>
-      <p class="note">${esc(o.note)}</p>
+    const d=opt[o.id]||{votes:0,voters:[]}, on=sel.includes(o.id);
+    const who=(d.voters||[]).map(n=>`<span class="chip">${esc(n)}</span>`).join('');
+    return `<article class="card${on?' sel':''}">
+      <div class="top"><h3 class="zh">${esc(o.zh).replace(/（杭州）|有限责任公司|有限公司/g,m=>`<span>${m}</span>`)}</h3>${lead===o.id?'<span class="badge">目前第一</span>':''}</div>
       <div class="tally">
-        <div class="tally-row"><span><span class="count">${d.score}</span> 分</span><span>第一 ${d.ranks[0]} · 第二 ${d.ranks[1]} · 第三 ${d.ranks[2]}</span></div>
-        <div class="rail"><div class="fill" style="width:${max?Math.round(d.score/max*100):0}%"></div></div>
+        <div class="tally-row"><span class="count">${d.votes}</span> 票</div>
+        <div class="rail"><div class="fill" style="width:${max?Math.round(d.votes/max*100):0}%"></div></div>
         <div class="voters">${who}</div>
       </div>
-      <div class="ranks" role="group" aria-label="给${esc(o.zh)}排名次">${btns}</div>
+      <button class="choose" type="button" data-id="${o.id}" aria-pressed="${on}" ${(busy||(!on&&full))?'disabled':''}>${on?'✓ 已选（点击取消）':(full?'已选满 3 个':'选它')}</button>
     </article>`;
   }).join('');
 }
@@ -203,30 +212,32 @@ async function load(){
     const r=await fetch(API+'?voter='+encodeURIComponent(voter),{cache:'no-store'});
     const j=await r.json(); if(!j.ok) throw new Error(j.error||'读取失败');
     state=j; live=true; $('#conn').textContent='实时更新中'; $('#dot').classList.add('live');
+    if(!dirty) sel=(j.mine||[]).slice();
     if(j.myName&&!$('#name').value){$('#name').value=j.myName; store.set('poll.name',j.myName);}
     render();
   }catch(e){ $('#conn').textContent='暂时连不上投票服务器，正在重试…'; $('#dot').classList.remove('live'); if(!live) render(); }
 }
-async function save(picks){
-  const name=$('#name').value.trim();
-  if(picks.some(Boolean)&&!name){notice('先在「我的选票」里填一下你的名字，再排名次。'); $('#name').focus(); return;}
+async function post(picks){
   busy=true; render();
   try{
-    const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({voter,name,picks})});
-    const j=await r.json(); if(!j.ok) throw new Error(j.error||'没保存上');
-    state=j; notice('');
-    $('#saved').textContent=picks.some(Boolean)?'已保存。想改就再点卡片上的名次。':'已清空你的选票。';
-  }catch(err){ notice('没保存上：'+err.message+'。稍等一下再点一次。'); }
+    const r=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({voter,name:$('#name').value.trim(),picks})});
+    const j=await r.json(); if(!j.ok) throw new Error(j.error||'没提交上');
+    state=j; sel=(j.mine||[]).slice(); dirty=false; notice('');
+    okMsg=picks.length?'✓ 已提交，谢谢！想改的话重新选，再提交一次。':'已撤回你的票。';
+  }catch(err){ notice('没提交上：'+err.message+'。稍等一下再试。'); }
   finally{busy=false; render();}
 }
 $('#grid').addEventListener('click',e=>{
-  const b=e.target.closest('.rk'); if(!b||b.disabled) return;
-  const id=b.dataset.id, r=+b.dataset.r, m=mine();
-  if(m[r]===id) m[r]=null;
-  else { const k=m.indexOf(id); if(k>=0) m[k]=null; m[r]=id; }
-  save(m);
+  const b=e.target.closest('.choose'); if(!b||b.disabled) return;
+  const id=b.dataset.id, k=sel.indexOf(id);
+  if(k>=0) sel.splice(k,1); else if(sel.length<N) sel.push(id);
+  dirty=!same(sel,state.mine||[]); okMsg=''; render();
 });
-$('#clear').addEventListener('click',()=>save([null,null,null]));
+$('#submit').addEventListener('click',()=>{
+  if(!$('#name').value.trim()){notice('先填一下你的名字。'); $('#name').focus(); return;}
+  post(sel.slice());
+});
+$('#clear').addEventListener('click',()=>{ if(confirm('确定撤回你的票吗？')) post([]); });
 render(); load();
 setInterval(()=>{ if(!document.hidden&&!busy) load(); },5000);
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden) load(); });
