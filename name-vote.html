@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex">
 <title>公司命名投票</title>
-<meta name="description" content="六个候选公司名，每人选 3 个排序：第一 3 分、第二 2 分、第三 1 分，按累计分排名。">
+<meta name="description" content="九个候选公司名，每人选 3 个排序：第一 3 分、第二 2 分、第三 1 分，按累计分排名。">
 <meta property="og:title" content="公司命名投票">
-<meta property="og:description" content="六个候选公司名，每人选 3 个排序：第一 3 分、第二 2 分、第三 1 分，按累计分排名。">
+<meta property="og:description" content="九个候选公司名，每人选 3 个排序：第一 3 分、第二 2 分、第三 1 分，按累计分排名。">
 <meta property="og:url" content="https://crayxus.com.au/name-vote.html">
 <style>
 /* 布局：标题 → 我的选票（名字 + 三个名次槽）→ 累计排名榜 → 六张候选卡（每张三个名次按钮）。票数条是“光轨”，呼应 NEXUS 灯效 */
@@ -114,7 +114,7 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);paddin
       <svg class="oct" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2h8l6 6v8l-6 6H8l-6-6V8z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="2.5" fill="currentColor"/></svg>
       EI TOKEN · 新公司命名
     </div>
-    <h1>六个名字，选出你心里的前三</h1>
+    <h1>九个名字，选出你心里的前三</h1>
     <p class="lede">每人最多选 3 个并排好顺序：<b>第一 3 分、第二 2 分、第三 1 分</b>。最后按累计分排名，同分时第一选择多的排前面。可以随时修改。</p>
     <div class="status"><span><span class="dot" id="dot"></span><span id="conn">正在读取票数…</span></span><span>已投票 <b id="total">0</b> 人</span></div>
   </header>
@@ -137,7 +137,7 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);paddin
   </section>
 
   <section class="grid" id="grid" aria-label="候选名字"></section>
-  <footer>思达克工业、机智算能科技、艾伦克斯技术由团队提名；奇点工坊、弧光动力、曜擎科技来自命名建议。最终注册前还要查企业名称和商标是否可用。</footer>
+  <footer>思达克工业、机智算能科技、艾伦克斯技术、启绎、星绎、乾枢由团队提名；奇点工坊、弧光动力、曜擎科技来自命名建议。最终注册前还要查企业名称和商标是否可用。</footer>
 </div>
 <script>
 // 从后端自己的 /vote 打开就走同源；放在 crayxus.com.au 上就跨域连后端
@@ -148,7 +148,10 @@ const OPTIONS=[
   {id:'arclight',zh:'弧光动力',en:'Arclight Dynamics',note:'弧光像反应堆的光，Dynamics 听着像硬科技公司。'},
   {id:'yaoqing',zh:'曜擎科技',en:'Yaoqing Tech',note:'曜是光，擎是引擎，正好对应 NEXUS 的灯效。'},
   {id:'jizhi',zh:'机智算能科技',en:'Jizhi Suanneng Tech',note:'机器的智慧，加上算力和能力。'},
-  {id:'ailunkesi',zh:'艾伦克斯技术',en:'Ailunkesi Tech',note:'音译风格的名字，中英文场合都好叫。'}
+  {id:'ailunkesi',zh:'艾伦克斯技术',en:'Ailunkesi Tech',note:'音译风格的名字，中英文场合都好叫。'},
+  {id:'qiyi',zh:'启绎',en:'Qiyi',note:'启是开启，绎是推演、一层层展开。'},
+  {id:'xingyi',zh:'星绎',en:'Stellaris',note:'星辰加推演；Stellaris 在拉丁语里是“星的”。'},
+  {id:'qianshu',zh:'乾枢',en:'PrimeCore',note:'乾为首，枢是中枢；PrimeCore 就是“首要核心”，呼应 NEXUS。'}
 ];
 const BY=Object.fromEntries(OPTIONS.map(o=>[o.id,o]));
 const RANK=['第一','第二','第三'], PTS=[3,2,1];
