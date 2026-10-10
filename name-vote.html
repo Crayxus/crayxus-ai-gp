@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex">
 <title>公司命名投票</title>
-<meta name="description" content="十个候选公司名，每人选 3 个，按票数排名。">
+<meta name="description" content="十一个候选公司名，每人选 3 个，按票数排名。">
 <meta property="og:title" content="公司命名投票">
-<meta property="og:description" content="十个候选公司名，每人选 3 个，按票数排名。">
+<meta property="og:description" content="十一个候选公司名，每人选 3 个，按票数排名。">
 <meta property="og:url" content="https://crayxus.com.au/name-vote.html">
 <style>
-/* 布局：标题 → 我的选票（名字 + 已选 3 个 + 提交）→ 票数排名 → 十张候选卡（点卡片选/取消）。票数条是“光轨”，呼应 NEXUS 灯效 */
+/* 布局：标题 → 我的选票（名字 + 已选 3 个 + 提交）→ 票数排名 → 十一张候选卡（点卡片选/取消）。票数条是“光轨”，呼应 NEXUS 灯效 */
 :root{
   --bg:#F2F4F8; --surface:#FFFFFF; --ink:#12162A; --muted:#5A6378; --line:#DCE1EB;
   --rail:#E7EBF2; --accent:#0B93AE; --accent-ink:#FFFFFF; --glow:rgba(11,147,174,.28);
@@ -111,7 +111,7 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);paddin
       <svg class="oct" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2h8l6 6v8l-6 6H8l-6-6V8z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="2.5" fill="currentColor"/></svg>
       EI TOKEN · 新公司命名
     </div>
-    <h1>十个名字，选出你最喜欢的三个</h1>
+    <h1>十一个名字，选出你最喜欢的三个</h1>
     <p class="lede">在下面的卡片里<b>选 3 个</b>，填上你的名字，点<b>提交</b>。每个名字算 1 票，最后按票数排名。提交后还能改，改完再提交一次就行。</p>
     <div class="status"><span><span class="dot" id="dot"></span><span id="conn">正在读取票数…</span></span><span>已投票 <b id="total">0</b> 人</span></div>
   </header>
@@ -152,7 +152,8 @@ const OPTIONS=[
   {id:'jizhi',zh:'机智算能（杭州）科技有限公司'},
   {id:'xunzhi',zh:'训智算能科技（杭州）有限公司'},
   {id:'xunzhima',zh:'驯智算能科技（杭州）有限责任公司'},
-  {id:'xunsuan',zh:'训算科技（杭州）有限责任公司'}
+  {id:'xunsuan',zh:'训算科技（杭州）有限责任公司'},
+  {id:'xunhui',zh:'训慧智能'}
 ];
 const N=3;
 const BY=Object.fromEntries(OPTIONS.map(o=>[o.id,o]));
