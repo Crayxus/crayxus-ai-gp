@@ -1,0 +1,733 @@
+# -*- coding: utf-8 -*-
+"""简历快筛：本机小服务（只听 127.0.0.1:8830）。
+把简历放进岗位文件夹（或拖进网页）→ 自动逐份读取 → 火山方舟（豆包）按岗位标准抽取信息、逐项打分 → 这里的代码按权重算总分和档位 → 排名、统计、导出 Excel。
+- 文字版 PDF / Word / TXT / 网页直接取文字；扫描件和照片转成图片给模型看。
+- 模型只给「每项几分 + 依据」和硬性条件是否满足；总分、档位、是否硬性不符都由代码按规则算，改了权重点「全部重算」即可。
+- 不让模型依据性别、年龄、婚育、籍贯、民族、照片等打分，也不抽取这些信息。
+- 简历原件和结果只存在本机（data/screener.db）；只有简历内容会发给火山方舟做分析。
+用法：python app.py（或双击「开始简历快筛.bat」）。RS_HOME 可以把数据和简历目录换到别处（测试用），RS_PORT 换端口。"""
+import os, io, re, sys, json, shutil, time, base64, csv, queue, sqlite3, hashlib, threading, traceback, webbrowser, subprocess, zipfile
+import urllib.request, urllib.parse, urllib.error, html as htmllib
+from datetime import datetime, timedelta, timezone
+from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
+
+VERSION = '1.0.0'  # 每次发更新 +1（publish_update.py 会自动改）
+UPD_URL = os.environ.get('RS_UPD_URL') or 'https://crayxus.com.au/rs-upd-7c41e9/'  # 升级文件放这里：version.json + app.py + web/index.html
+FROZEN = getattr(sys, 'frozen', False)  # 打包成 exe 时：网页在包里，数据放 exe 旁边
+ROOT = os.path.dirname(sys.executable) if FROZEN else os.path.dirname(os.path.abspath(__file__))
+RES = getattr(sys, '_MEIPASS', ROOT)
+HOME = os.environ.get('RS_HOME') or ROOT
+DATA = os.path.join(HOME, 'data')
+INBOX = os.path.join(HOME, '简历')
+PORT = int(os.environ.get('RS_PORT') or 8830)
+INDEX = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'web', 'index.html')  # 升级后的网页跟着新 app.py 走
+if not os.path.isfile(INDEX): INDEX = os.path.join(RES, 'web', 'index.html')
+EXTS = {'.pdf', '.docx', '.txt', '.md', '.html', '.htm', '.jpg', '.jpeg', '.png', '.webp', '.bmp'}
+WORKERS = 3
+os.makedirs(DATA, exist_ok=True)
+os.makedirs(INBOX, exist_ok=True)
+if sys.stdout is None or FROZEN:  # pythonw / exe 没有控制台：日志写到 data/app.log
+    sys.stdout = sys.stderr = open(os.path.join(DATA, 'app.log'), 'a', encoding='utf-8', buffering=1)
+
+
+def load_env():
+    """先读本文件夹的 .env，没有的再从 cos-code/.env 补（只取用得到的几项）"""
+    env = {}
+    for p in (os.path.join(ROOT, '.env'), os.path.join(os.path.expanduser('~'), 'cos-code', '.env')):
+        if not os.path.isfile(p): continue
+        for l in io.open(p, encoding='utf-8').read().splitlines():
+            m = re.match(r'\s*([A-Z0-9_]+)\s*=\s*(.*?)\s*$', l)
+            if m and m.group(1) in ('DOUBAO_API_KEY', 'RS_MODEL') and m.group(1) not in env:
+                env[m.group(1)] = m.group(2).strip('"\'')
+    return env
+
+
+SETF = os.path.join(DATA, 'settings.json')
+
+
+def load_set():
+    try: return json.load(io.open(SETF, encoding='utf-8'))
+    except Exception: return {}
+
+
+ENV = load_env()
+KEY = load_set().get('ark_key') or ENV.get('DOUBAO_API_KEY', '')
+MODEL = os.environ.get('RS_MODEL') or ENV.get('RS_MODEL') or 'doubao-seed-2-0-lite-260428'
+ARK_URL = 'https://ark.cn-beijing.volces.com/api/v3/chat/completions'
+OPENER = urllib.request.build_opener(urllib.request.ProxyHandler({}))  # 火山在国内，不走本机代理
+BJ = timezone(timedelta(hours=8))
+now = lambda: datetime.now(BJ).strftime('%Y-%m-%d %H:%M:%S')
+
+# ---------------- 数据库 ----------------
+LOCK = threading.RLock()
+con = sqlite3.connect(os.path.join(DATA, 'screener.db'), check_same_thread=False)
+con.row_factory = sqlite3.Row
+con.executescript('''
+CREATE TABLE IF NOT EXISTS jobs(id INTEGER PRIMARY KEY, name TEXT, jd TEXT, must TEXT, plus TEXT, dims TEXT,
+  folder TEXT, auto INTEGER DEFAULT 1, a INTEGER DEFAULT 80, b INTEGER DEFAULT 65, created TEXT);
+CREATE TABLE IF NOT EXISTS resumes(id INTEGER PRIMARY KEY, job_id INTEGER, file TEXT, fname TEXT, sha1 TEXT,
+  status TEXT, err TEXT DEFAULT '', text TEXT DEFAULT '', via TEXT DEFAULT '', pages INTEGER DEFAULT 0, data TEXT DEFAULT '',
+  total INTEGER, tier TEXT DEFAULT '', hard INTEGER DEFAULT 0, unsure INTEGER DEFAULT 0,
+  name TEXT DEFAULT '', phone TEXT DEFAULT '', email TEXT DEFAULT '', dup_of INTEGER,
+  mark TEXT DEFAULT '', note TEXT DEFAULT '', created TEXT, scored_at TEXT, ms INTEGER, UNIQUE(job_id, sha1));
+''')
+for t, c in (('jobs', 'sign TEXT DEFAULT ""'), ('resumes', 'contacted TEXT DEFAULT ""')):  # 后加的列：老库补上
+    if c.split()[0] not in [x[1] for x in con.execute(f'PRAGMA table_info({t})')]: con.execute(f'ALTER TABLE {t} ADD COLUMN {c}')
+
+
+def rows(sql, args=()):
+    with LOCK:
+        return con.execute(sql, args).fetchall()
+
+
+def one(sql, args=()):
+    r = rows(sql, args)
+    return r[0] if r else None
+
+
+def run(sql, args=()):
+    with LOCK:
+        cur = con.execute(sql, args)
+        con.commit()
+        return cur.lastrowid
+
+
+DEFAULT_DIMS = [
+    {'key': 'skill', 'name': '岗位技能匹配', 'w': 35, 'desc': '简历里的技能、工具、技术栈和岗位要求的重合程度'},
+    {'key': 'exp', 'name': '相关工作经验', 'w': 25, 'desc': '做过的工作和这个岗位有多相关、做了多久、承担什么角色'},
+    {'key': 'proj', 'name': '项目与成果', 'w': 20, 'desc': '有没有能说明能力的具体项目、量化成果、作品、专利、获奖'},
+    {'key': 'edu', 'name': '学历与专业', 'w': 10, 'desc': '学历层次和专业与岗位的相关程度'},
+    {'key': 'stable', 'name': '稳定性与成长', 'w': 10, 'desc': '每段任职是否够长、职责是否逐步提升；频繁短期跳槽扣分'},
+]
+
+
+def job_dict(r):
+    d = dict(r)
+    for k in ('must', 'plus', 'dims'): d[k] = json.loads(d[k] or '[]')
+    return d
+
+
+def get_job(jid):
+    r = one('SELECT * FROM jobs WHERE id=?', (jid,))
+    return job_dict(r) if r else None
+
+
+def safe_name(s):
+    return re.sub(r'[\\/:*?"<>|\r\n\t]+', '_', s).strip(' .') or '岗位'
+
+
+if not one('SELECT id FROM jobs'):  # 第一次打开：放一个示例岗位，照着改或删掉
+    nm = '嵌入式软件工程师（示例）'
+    run('INSERT INTO jobs(name,jd,must,plus,dims,folder,auto,a,b,created) VALUES(?,?,?,?,?,?,?,?,?,?)', (
+        nm,
+        '负责机器人 / AIoT 设备的嵌入式软件开发：MCU 驱动、通信协议、传感器接入和整机联调，配合硬件和算法同事把样机做出来。',
+        json.dumps(['本科及以上，电子 / 计算机 / 自动化等相关专业', '2 年以上嵌入式 C/C++ 开发经验', '熟悉 ESP32 或 STM32 中至少一种 MCU'], ensure_ascii=False),
+        json.dumps(['做过机器人或 AIoT 量产产品', '熟悉 FreeRTOS 或 Linux 驱动', '会 Python，或有大模型应用开发经验'], ensure_ascii=False),
+        json.dumps(DEFAULT_DIMS, ensure_ascii=False), os.path.join(INBOX, safe_name(nm)), 1, 80, 65, now()))
+
+# ---------------- 读简历 ----------------
+def clean(t):
+    t = t.replace('　', ' ').replace('\xa0', ' ')
+    t = re.sub(r'[ \t]+', ' ', t)
+    return re.sub(r'\n\s*\n+', '\n', t).strip()
+
+
+def jpeg_of(page, maxw=1400):
+    import fitz
+    z = min(2.0, maxw / max(page.rect.width, 1))
+    pix = page.get_pixmap(matrix=fitz.Matrix(z, z), alpha=False)
+    return base64.b64encode(pix.tobytes('jpeg', jpg_quality=82)).decode()
+
+
+def extract(path):
+    """返回 (文字, [图片 base64], 页数)。有文字就不给图片。"""
+    ext = os.path.splitext(path)[1].lower()
+    if ext == '.pdf':
+        import fitz
+        with fitz.open(path) as d:
+            text = clean('\n'.join(p.get_text() for p in d))
+            if len(re.sub(r'\s', '', text)) >= 80: return text, [], d.page_count
+            return '', [jpeg_of(p) for p in list(d)[:3]], d.page_count  # 扫描件：前 3 页转图片
+    if ext == '.docx':
+        import docx
+        dd = docx.Document(path)
+        parts = [p.text for p in dd.paragraphs]
+        for t in dd.tables:
+            for row in t.rows:
+                cells = []
+                for c in row.cells:
+                    if c.text.strip() and (not cells or cells[-1] != c.text.strip()): cells.append(c.text.strip())
+                if cells: parts.append(' | '.join(cells))
+        text = clean('\n'.join(parts))
+        if len(re.sub(r'\s', '', text)) < 80:  # 文字都在文本框里：直接从 XML 里抠
+            with zipfile.ZipFile(path) as z:
+                x = z.read('word/document.xml').decode('utf-8', 'ignore')
+            text = clean(htmllib.unescape(re.sub(r'<[^>]+>', '', re.sub(r'</w:p>', '\n', x))))
+        return text, [], 1
+    if ext in ('.txt', '.md'):
+        raw = open(path, 'rb').read()
+        for enc in ('utf-8-sig', 'gb18030'):
+            try: return clean(raw.decode(enc)), [], 1
+            except UnicodeDecodeError: pass
+        return clean(raw.decode('utf-8', 'ignore')), [], 1
+    if ext in ('.html', '.htm'):
+        raw = open(path, 'rb').read().decode('utf-8', 'ignore')
+        raw = re.sub(r'(?is)<(script|style)[^>]*>.*?</\1>', '', raw)
+        raw = re.sub(r'(?i)<br\s*/?>|</(p|div|tr|li|h\d)>', '\n', raw)
+        return clean(htmllib.unescape(re.sub(r'<[^>]+>', ' ', raw))), [], 1
+    if ext in ('.jpg', '.jpeg', '.png', '.webp', '.bmp'):
+        import fitz
+        with fitz.open(path) as d:
+            return '', [jpeg_of(d[0], 1600)], 1
+    raise ValueError('不支持这种文件：' + ext + '（旧版 .doc 请另存为 .docx 或 PDF）')
+
+
+# ---------------- 问模型 ----------------
+SYS = '''你是严谨的招聘初筛助手，帮 HR 快速判断一份简历和岗位的匹配程度。
+只根据简历原文判断，不猜测、不脑补；简历没写的内容一律视为「没有证据」。
+不得依据性别、年龄、民族、籍贯、婚育、宗教、身体状况、照片外貌等与岗位无关的个人特征打分，也不要在输出里提这些信息。
+每个评分维度 0-10 分：9-10 有明确且突出的证据完全满足；7-8 基本满足；4-6 部分相关；1-3 只有很弱的关联；0 完全没有证据。
+只输出一个 JSON 对象，不要任何解释，也不要 Markdown 代码块。'''
+
+
+def build_prompt(job):
+    dims = job['dims']
+    num = lambda xs: '\n'.join(f'{i + 1}. {x}' for i, x in enumerate(xs)) or '（无）'
+    schema = {
+        'name': '姓名，没写就空字符串', 'phone': '手机号', 'email': '邮箱', 'city': '现居或期望城市',
+        'degree': '最高学历：博士/硕士/本科/大专/高中及以下/未知', 'school': '最高学历的学校', 'major': '专业',
+        'grad_year': '最高学历毕业年份（数字，没有填 null）',
+        'years': '全职工作年限（数字，可一位小数；实习不算，应届生填 0）',
+        'current': {'company': '最近一段工作的公司', 'title': '职位'},
+        'jobs': [{'company': '', 'title': '', 'from': 'YYYY-MM', 'to': 'YYYY-MM 或 至今'}],
+        'skills': ['关键技能，最多 12 个'],
+        'must': [{'item': '硬性条件原文', 'met': '是/否/不确定', 'evidence': '简历里的依据，40 字内'}],
+        'plus': [{'item': '加分项原文', 'met': '是/否'}],
+        'dims': {d['key']: {'score': '0-10 的整数', 'why': '打分依据，40 字内'} for d in dims},
+        'highlights': ['亮点，最多 3 条'], 'risks': ['需要面试时核实的疑点，最多 3 条'],
+        'summary': '一句话结论，60 字内',
+    }
+    return '\n\n'.join([
+        f'【岗位】{job["name"]}',
+        '【岗位描述】\n' + (job['jd'] or '（未填写）'),
+        '【硬性条件】逐条判断，met 只能填 是 / 否 / 不确定；简历里完全没提到的填 不确定，明确不满足才填 否。\n' + num(job['must']),
+        '【加分项】\n' + num(job['plus']),
+        '【评分维度】每项 0-10 分\n' + '\n'.join(f'- {d["key"]}（{d["name"]}）：{d.get("desc") or ""}' for d in dims),
+        '【输出 JSON 格式】\n' + json.dumps(schema, ensure_ascii=False, indent=1),
+        f'jobs 按时间倒序，最多 6 段；must、plus 和上面的条目一一对应、顺序一致。今天是 {datetime.now(BJ):%Y-%m-%d}，「至今」按今天算年限。',
+    ])
+
+
+def ark(messages):
+    if not KEY: raise RuntimeError('没有火山方舟的 Key：点左下角「填 Key」')
+    body = json.dumps({'model': MODEL, 'messages': messages, 'temperature': 0.1, 'max_tokens': 3000,
+                       'thinking': {'type': 'disabled'}}).encode()
+    req = urllib.request.Request(ARK_URL, body, {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + KEY})
+    try:
+        with OPENER.open(req, timeout=150) as r: j = json.load(r)
+    except urllib.error.HTTPError as e:
+        raise RuntimeError(f'火山方舟返回 {e.code}：' + e.read().decode('utf-8', 'ignore')[:200])
+    return j['choices'][0]['message']['content'] or ''
+
+
+def parse_json(s):
+    s = re.sub(r'^```(?:json)?|```$', '', s.strip(), flags=re.M).strip()
+    i, k = s.find('{'), s.rfind('}')
+    if i < 0 or k < i: raise ValueError('no json')
+    return json.loads(s[i:k + 1])
+
+
+def ask(job, text, imgs):
+    p = build_prompt(job)
+    if imgs:
+        content = [{'type': 'image_url', 'image_url': {'url': 'data:image/jpeg;base64,' + b}} for b in imgs]
+        content.append({'type': 'text', 'text': p + '\n\n【简历】见上面的图片（扫描件或照片），先认真读完再判断。'})
+    else:
+        content = p + '\n\n【简历原文】\n' + text[:14000]
+    last = ''
+    for _ in range(2):
+        last = ark([{'role': 'system', 'content': SYS}, {'role': 'user', 'content': content}])
+        try: return parse_json(last)
+        except ValueError: pass
+    raise RuntimeError('模型回的不是 JSON：' + last[:100])
+
+
+# ---------------- 打分规则（代码算，不让模型算） ----------------
+def clamp(v):
+    try: return max(0, min(10, round(float(v))))
+    except (TypeError, ValueError): return 0
+
+
+def met_of(v, allow_unsure=True):
+    s = str(v if v is not None else '').strip().lower()
+    if s.startswith('是') or s in ('true', 'yes', 'y', '满足'): return '是'
+    if s.startswith('否') or s in ('false', 'no', 'n', '不满足'): return '否'
+    return '不确定' if allow_unsure else '否'
+
+
+def compute(job, out):
+    dims = job['dims']
+    tw = sum(max(0.0, float(d.get('w') or 0)) for d in dims) or 1
+    od = out.get('dims') if isinstance(out.get('dims'), dict) else {}
+    s = 0.0
+    for d in dims:
+        v = od.get(d['key'])
+        v = v if isinstance(v, dict) else {'score': v, 'why': ''}
+        v['score'] = clamp(v.get('score'))
+        od[d['key']] = v
+        s += v['score'] * max(0.0, float(d.get('w') or 0))
+    out['dims'] = od
+    total = round(s / tw * 10)
+
+    def align(items, got, unsure):
+        got = got if isinstance(got, list) else []
+        res = []
+        for i, it in enumerate(items):
+            g = got[i] if i < len(got) and isinstance(got[i], dict) else {}
+            res.append({'item': it, 'met': met_of(g.get('met'), unsure), 'evidence': str(g.get('evidence') or '')[:80]})
+        return res
+    out['must'] = align(job['must'], out.get('must'), True)
+    out['plus'] = align(job['plus'], out.get('plus'), False)
+    hard = sum(m['met'] == '否' for m in out['must'])
+    unsure = sum(m['met'] == '不确定' for m in out['must'])
+    tier = 'X' if hard else 'A' if total >= job['a'] else 'B' if total >= job['b'] else 'C'
+    return total, tier, hard, unsure
+
+
+def norm_phone(p):
+    d = re.sub(r'\D', '', p or '')
+    return d[-11:] if len(d) >= 7 else ''
+
+
+def mark_dup(job_id, rid, phone, email):
+    """同一岗位里手机号或邮箱相同 = 同一个人投了多份，后来的那份标成重复（统计里不算）"""
+    ph, em = norm_phone(phone), (email or '').strip().lower()
+    run('UPDATE resumes SET dup_of=NULL WHERE id=?', (rid,))
+    if not ph and not em: return
+    for o in rows("SELECT id, phone, email FROM resumes WHERE job_id=? AND id<>? AND status='done' AND dup_of IS NULL", (job_id, rid)):
+        if (ph and norm_phone(o['phone']) == ph) or (em and (o['email'] or '').strip().lower() == em):
+            if o['id'] < rid: run('UPDATE resumes SET dup_of=? WHERE id=?', (o['id'], rid)); return
+            run('UPDATE resumes SET dup_of=? WHERE id=?', (rid, o['id']))
+
+
+# ---------------- 后台：逐份处理 + 自动翻阅文件夹 ----------------
+Q = queue.Queue()
+
+
+def process(rid):
+    r = one('SELECT * FROM resumes WHERE id=?', (rid,))
+    if not r or r['status'] != 'queued': return
+    job = get_job(r['job_id'])
+    if not job: return
+    run("UPDATE resumes SET status='reading', err='' WHERE id=?", (rid,))
+    t0 = time.time()
+    try:
+        if os.path.isfile(r['file']): text, imgs, pages = extract(r['file'])
+        elif r['text']: text, imgs, pages = r['text'], [], r['pages']
+        else: raise RuntimeError('原文件不见了：' + r['file'])
+        if not text and not imgs: raise RuntimeError('读不到内容（空文件？）')
+        out = ask(job, text, imgs)
+        total, tier, hard, unsure = compute(job, out)
+        run('''UPDATE resumes SET status='done', err='', text=?, via=?, pages=?, data=?, total=?, tier=?, hard=?, unsure=?,
+               name=?, phone=?, email=?, scored_at=?, ms=? WHERE id=?''',
+            (text, 'image' if imgs else 'text', pages, json.dumps(out, ensure_ascii=False), total, tier, hard, unsure,
+             str(out.get('name') or '')[:40], str(out.get('phone') or '')[:40], str(out.get('email') or '')[:80],
+             now(), int((time.time() - t0) * 1000), rid))
+        mark_dup(r['job_id'], rid, out.get('phone'), out.get('email'))
+        print(f'[{now()}] 读完 #{rid} {r["fname"]}：{total} 分 {tier}（{time.time() - t0:.1f}s）', flush=True)
+    except Exception as e:
+        run("UPDATE resumes SET status='error', err=? WHERE id=?", (str(e)[:300], rid))
+        print(f'[{now()}] 出错 #{rid} {r["fname"]}：{e}', flush=True)
+
+
+def worker():
+    while True:
+        rid = Q.get()
+        try: process(rid)
+        except Exception: traceback.print_exc()
+
+
+def sha1_of(p):
+    h = hashlib.sha1()
+    with open(p, 'rb') as f:
+        for b in iter(lambda: f.read(1 << 20), b''): h.update(b)
+    return h.hexdigest()
+
+
+SEEN = {}  # (路径, 修改时间, 大小) → 已经登记过，免得每轮都重新算哈希
+
+
+def add_file(job_id, p):
+    st = os.stat(p)
+    k = (job_id, p, st.st_mtime, st.st_size)
+    if k in SEEN: return None
+    sha = sha1_of(p)
+    with LOCK:
+        if one('SELECT id FROM resumes WHERE job_id=? AND sha1=?', (job_id, sha)): SEEN[k] = 1; return None
+        rid = run("INSERT INTO resumes(job_id,file,fname,sha1,status,created) VALUES(?,?,?,?, 'queued', ?)",
+                  (job_id, p, os.path.basename(p), sha, now()))
+    SEEN[k] = 1
+    Q.put(rid)
+    return rid
+
+
+def scan(job):
+    folder = job['folder']
+    os.makedirs(folder, exist_ok=True)
+    n = 0
+    for d, _, fs in os.walk(folder):
+        for f in sorted(fs):
+            if f.startswith(('~$', '.')) or os.path.splitext(f)[1].lower() not in EXTS: continue
+            try:
+                if add_file(job['id'], os.path.join(d, f)): n += 1
+            except OSError: pass  # 还在拷贝 / 被占用：下一轮再试
+    return n
+
+
+def auto_loop():
+    while True:
+        for r in rows('SELECT * FROM jobs WHERE auto=1'):
+            try: scan(job_dict(r))
+            except Exception: traceback.print_exc()
+        time.sleep(15)
+
+
+# ---------------- 网页接口 ----------------
+def j_jobs(h, q, b):
+    out = []
+    for r in rows('SELECT * FROM jobs ORDER BY id'):
+        d = job_dict(r)
+        c = one('''SELECT COUNT(*) n, SUM(status='done' AND dup_of IS NULL) done, SUM(status IN ('queued','reading')) busy,
+                   SUM(tier='A' AND status='done' AND dup_of IS NULL) na FROM resumes WHERE job_id=?''', (r['id'],))
+        d.update({k: c[k] or 0 for k in ('n', 'done', 'busy', 'na')})
+        out.append(d)
+    return out
+
+
+def j_save_job(h, q, b):
+    name = (b.get('name') or '').strip()
+    if not name: return {'error': '岗位名称不能空'}
+    lines = lambda v: [x.strip(' -·•\t') for x in (v if isinstance(v, list) else str(v or '').splitlines()) if x.strip(' -·•\t')]
+    dims = []
+    for i, d in enumerate(b.get('dims') or DEFAULT_DIMS):
+        if not str(d.get('name') or '').strip(): continue
+        key = re.sub(r'[^a-z0-9_]', '', str(d.get('key') or '').lower()) or f'd{i + 1}'
+        while any(x['key'] == key for x in dims): key += 'x'
+        dims.append({'key': key, 'name': str(d['name']).strip()[:20], 'w': max(0, min(100, float(d.get('w') or 0))), 'desc': str(d.get('desc') or '').strip()[:120]})
+    if not dims or not sum(d['w'] for d in dims): return {'error': '至少要有一个权重大于 0 的评分维度'}
+    folder = (b.get('folder') or '').strip() or os.path.join(INBOX, safe_name(name))
+    a, bb = int(b.get('a') or 80), int(b.get('b') or 65)
+    if not (0 < bb < a <= 100): return {'error': 'A 线要高于 B 线（0-100）'}
+    vals = (name[:40], str(b.get('jd') or '')[:4000], json.dumps(lines(b.get('must'))[:10], ensure_ascii=False),
+            json.dumps(lines(b.get('plus'))[:10], ensure_ascii=False), json.dumps(dims, ensure_ascii=False), folder, 1 if b.get('auto', True) else 0, a, bb, str(b.get('sign') or '').strip()[:60])
+    if b.get('id'):
+        run('UPDATE jobs SET name=?,jd=?,must=?,plus=?,dims=?,folder=?,auto=?,a=?,b=?,sign=? WHERE id=?', vals + (int(b['id']),))
+        jid = int(b['id'])
+    else:
+        jid = run('INSERT INTO jobs(name,jd,must,plus,dims,folder,auto,a,b,sign,created) VALUES(?,?,?,?,?,?,?,?,?,?,?)', vals + (now(),))
+    os.makedirs(folder, exist_ok=True)
+    return {'ok': True, 'id': jid}
+
+
+def j_del_job(h, q, b):
+    jid = int(b.get('id') or 0)
+    run('DELETE FROM resumes WHERE job_id=?', (jid,))
+    run('DELETE FROM jobs WHERE id=?', (jid,))
+    return {'ok': True}  # 只删记录，文件夹里的简历原件不动
+
+
+def j_auto(h, q, b):
+    run('UPDATE jobs SET auto=? WHERE id=?', (1 if b.get('on') else 0, int(b.get('id') or 0)))
+    return {'ok': True}
+
+
+def j_scan(h, q, b):
+    job = get_job(int(b.get('job') or 0))
+    if not job: return {'error': '没有这个岗位'}
+    return {'ok': True, 'added': scan(job)}
+
+
+def j_resumes(h, q, b):
+    out = []
+    for r in rows('''SELECT id,fname,status,err,via,pages,data,total,tier,hard,unsure,name,phone,email,dup_of,mark,note,contacted,created,scored_at,ms
+                     FROM resumes WHERE job_id=? ORDER BY id''', (int(q.get('job') or 0),)):
+        d = dict(r)
+        d['data'] = json.loads(d['data']) if d['data'] else None
+        out.append(d)
+    return out
+
+
+def j_mark(h, q, b):
+    run('UPDATE resumes SET mark=?, note=? WHERE id=?', (str(b.get('mark') or '')[:8], str(b.get('note') or '')[:1000], int(b.get('id') or 0)))
+    return {'ok': True}
+
+
+DRAFT = {
+    'invite': '邀请对方来面试：先用一句话点出简历里一个具体打动我们的地方（真实、具体，别夸大），再说明岗位、请对方回复方便的面试时间（给两三个时间段让对方选，或者请对方提供），最后留联系方式。',
+    'ask': '对方简历里有几条硬性条件没写清楚，礼貌地请对方补充说明（逐条列出要问的问题，问得具体、好回答），说明这是为了更好地安排下一步。',
+    'reject': '礼貌婉拒：感谢对方投递，说明这次岗位要求和对方经历不太匹配，祝好，并表示以后有合适机会会再联系。不要列具体扣分原因，不要提分数。',
+}
+
+
+def j_draft(h, q, b):
+    r = one('SELECT * FROM resumes WHERE id=?', (int(b.get('id') or 0),))
+    kind = b.get('kind') if b.get('kind') in DRAFT else 'invite'
+    if not r or r['status'] != 'done': return {'error': '这份简历还没读完'}
+    job = get_job(r['job_id'])
+    d = json.loads(r['data'] or '{}')
+    info = {'姓名': r['name'], '最近': d.get('current'), '学历': [d.get('degree'), d.get('school'), d.get('major')],
+            '亮点': d.get('highlights'), '技能': (d.get('skills') or [])[:8]}
+    if kind == 'ask': info['没写清楚的硬性条件'] = [m['item'] for m in d.get('must') or [] if m.get('met') == '不确定']
+    p = '\n'.join([
+        f'帮招聘方给候选人写一条消息。岗位：{job["name"]}。岗位描述：{(job["jd"] or "")[:300]}',
+        '候选人信息：' + json.dumps(info, ensure_ascii=False),
+        '这条消息要：' + DRAFT[kind],
+        f'落款：{job.get("sign") or "（落款留空，让 HR 自己填）"}',
+        '要求：中文，口吻真诚、专业、简洁，正文 150 字以内；称呼用「姓名 + 您好」（没有姓名就用「您好」）；',
+        '不要提评分、AI、筛选系统；不要提及年龄、性别、婚育等个人特征；不要编造候选人简历里没有的经历，也不要编造薪资、地址、面试时间等招聘方没给的信息（需要时用【】留空让 HR 填）。',
+        '只输出 JSON：{"subject": "邮件标题，20 字内", "text": "消息正文"}',
+    ])
+    out = parse_json(ark([{'role': 'user', 'content': p}]))
+    return {'ok': True, 'subject': str(out.get('subject') or '')[:60], 'text': str(out.get('text') or '')[:1500]}
+
+
+def j_contacted(h, q, b):
+    how = str(b.get('how') or '')[:20]
+    run('UPDATE resumes SET contacted=? WHERE id=?', (f'{now()[5:16]} · {how}' if how else '', int(b.get('id') or 0)))
+    return {'ok': True}
+
+
+def j_rescore(h, q, b):
+    ids = [int(x) for x in (b.get('ids') or [])]
+    if ids: rs = [r['id'] for r in rows(f"SELECT id FROM resumes WHERE id IN ({','.join('?' * len(ids))}) AND status<>'reading'", ids)]
+    else: rs = [r['id'] for r in rows("SELECT id FROM resumes WHERE job_id=? AND status<>'reading'", (int(b.get('job') or 0),))]
+    for rid in rs:
+        run("UPDATE resumes SET status='queued' WHERE id=?", (rid,))
+        Q.put(rid)
+    return {'ok': True, 'n': len(rs)}
+
+
+def j_remove(h, q, b):
+    run('DELETE FROM resumes WHERE id=?', (int(b.get('id') or 0),))
+    return {'ok': True}  # 只删记录；文件还在文件夹里的话，要改名或移走，不然会被重新读到
+
+
+def j_status(h, q, b):
+    busy = one("SELECT COUNT(*) n FROM resumes WHERE status IN ('queued','reading')")['n']
+    return {'ok': True, 'model': MODEL, 'key': bool(KEY), 'busy': busy, 'version': VERSION, 'frozen': bool(FROZEN),
+            'upd': UPD if UPD.get('ver') and vt(UPD['ver']) > vt(VERSION) else None}
+
+
+# ---------------- 升级：只换 app.py 和网页，库不动 ----------------
+UPD = {}
+vt = lambda v: tuple(int(x) for x in re.findall(r'\d+', str(v)))
+
+
+def check_update():
+    global UPD
+    try:
+        with OPENER.open(UPD_URL + 'version.json?t=' + str(int(time.time())), timeout=20) as r: UPD = json.load(r)
+    except Exception as e:
+        print(now(), '检查更新失败', e, flush=True)
+
+
+def upd_loop():
+    while True:
+        check_update()
+        time.sleep(6 * 3600)
+
+
+def j_check_update(h, q, b):
+    check_update()
+    return j_status(h, q, b)
+
+
+def j_update(h, q, b):
+    """下载新版到 exe 旁边的 app 目录（先下到 app.new，sha256 全对才替换），然后自己重启"""
+    if not FROZEN: return {'ok': False, 'error': '开发版不自动升级，直接改代码'}
+    check_update()
+    if not UPD.get('ver') or vt(UPD['ver']) <= vt(VERSION): return {'ok': False, 'error': '已经是最新版'}
+    new, cur = os.path.join(ROOT, 'app.new'), os.path.join(ROOT, 'app')
+    shutil.rmtree(new, ignore_errors=True)
+    for rel, sha in UPD['files'].items():
+        with OPENER.open(UPD_URL + rel + '?v=' + UPD['ver'], timeout=60) as r: data = r.read()
+        if hashlib.sha256(data).hexdigest() != sha: raise RuntimeError(f'{rel} 下载不完整，稍后再试')
+        dst = os.path.join(new, *rel.split('/'))
+        os.makedirs(os.path.dirname(dst), exist_ok=True)
+        open(dst, 'wb').write(data)
+    shutil.rmtree(cur, ignore_errors=True)
+    os.replace(new, cur)
+    print(now(), '已升级到', UPD['ver'], '正在重启', flush=True)
+    threading.Thread(target=restart, daemon=True).start()
+    return {'ok': True, 'ver': UPD['ver']}
+
+
+def restart():
+    time.sleep(0.8)  # 先把这次请求的回复发出去；新进程会等旧进程让出端口（main 里重试 15 秒）
+    try: p = subprocess.Popen([sys.executable, '--no-browser'], cwd=ROOT, creationflags=0x00000008 | 0x00000200,  # DETACHED | NEW_PROCESS_GROUP
+                     stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, close_fds=True,
+                     env=dict(os.environ, PYINSTALLER_RESET_ENVIRONMENT='1'))  # 让新进程当成全新启动，而不是旧 exe 的子进程
+    except Exception: traceback.print_exc()
+    else: print(now(), '新进程', p.pid, sys.executable, flush=True)
+    os._exit(0)
+
+
+def j_key(h, q, b):
+    """在网页里填火山方舟 Key：先试调一次，通了才存到 data/settings.json（只存在这台电脑）"""
+    global KEY
+    k, old = (b.get('key') or '').strip(), KEY
+    if not k: return {'ok': False, 'error': 'Key 是空的'}
+    KEY = k
+    try: ark([{'role': 'user', 'content': '只回复 ok'}])
+    except Exception as e:
+        KEY = old
+        return {'ok': False, 'error': str(e)[:200]}
+    st = load_set(); st['ark_key'] = k
+    io.open(SETF, 'w', encoding='utf-8').write(json.dumps(st, ensure_ascii=False))
+    for r in rows("SELECT id FROM resumes WHERE status='error' AND err LIKE '%Key%'"):  # 之前因为没 Key 失败的，重新排队
+        run("UPDATE resumes SET status='queued', err='' WHERE id=?", (r['id'],))
+        Q.put(r['id'])
+    return {'ok': True}
+
+
+def j_open_folder(h, q, b):
+    job = get_job(int(b.get('job') or 0))
+    if job:
+        os.makedirs(job['folder'], exist_ok=True)
+        os.startfile(job['folder'])
+    return {'ok': True}
+
+
+def j_pick_folder(h, q, b):
+    ps = ("Add-Type -AssemblyName System.Windows.Forms;$f=New-Object System.Windows.Forms.Form -Property @{TopMost=$true};"
+          "$d=New-Object System.Windows.Forms.FolderBrowserDialog;$d.Description='选择放简历的文件夹';"
+          "if($d.ShowDialog($f) -eq 'OK'){[Console]::OutputEncoding=[Text.Encoding]::UTF8;$d.SelectedPath}")
+    r = subprocess.run(['powershell', '-NoProfile', '-STA', '-Command', ps], capture_output=True, timeout=600)
+    return {'ok': True, 'path': r.stdout.decode('utf-8', 'ignore').strip()}
+
+
+def j_upload(h, q, b):
+    job = get_job(int(q.get('job') or 0))
+    if not job: return {'error': '没有这个岗位'}
+    name = os.path.basename(q.get('name') or 'resume')
+    if os.path.splitext(name)[1].lower() not in EXTS: return {'error': '不支持：' + name}
+    os.makedirs(job['folder'], exist_ok=True)
+    base, ext = os.path.splitext(safe_name(name))
+    p, i = os.path.join(job['folder'], base + ext), 1
+    while os.path.exists(p):
+        i += 1
+        p = os.path.join(job['folder'], f'{base}({i}){ext}')
+    with open(p, 'wb') as f: f.write(b)
+    rid = add_file(job['id'], p)
+    if rid is None: os.remove(p)  # 同一份文件已经读过：不留副本
+    return {'ok': True, 'id': rid, 'dup': rid is None}
+
+
+TIER = {'A': 'A 推荐面试', 'B': 'B 可考虑', 'C': 'C 不合适', 'X': '硬性不符'}
+
+
+def export_csv(h, q):
+    job = get_job(int(q.get('job') or 0))
+    if not job: return h.send(404, {'error': '没有这个岗位'})
+    rs = [r for r in rows("SELECT * FROM resumes WHERE job_id=? AND status='done'", (job['id'],))]
+    order = {'A': 0, 'B': 1, 'C': 2, 'X': 3}
+    rs.sort(key=lambda r: (r['dup_of'] is not None, order.get(r['tier'], 4), -(r['total'] or 0)))
+    buf = io.StringIO()
+    w = csv.writer(buf)
+    w.writerow(['排名', '姓名', '总分', '档位', '硬性条件'] + [d['name'] for d in job['dims']] +
+               ['学历', '学校', '专业', '工作年限', '当前公司', '当前职位', '电话', '邮箱', '城市', '关键技能', '亮点', '待核实', '一句话结论', '标记', '备注', '联系', '文件', '重复'])
+    for i, r in enumerate(rs, 1):
+        d = json.loads(r['data'] or '{}')
+        cur = d.get('current') or {}
+        must = '全部满足' if not r['hard'] and not r['unsure'] else f"不满足 {r['hard']} 条" if r['hard'] else f"{r['unsure']} 条待确认"
+        w.writerow([i, r['name'], r['total'], TIER.get(r['tier'], ''), must] +
+                   [(d.get('dims') or {}).get(x['key'], {}).get('score', '') for x in job['dims']] +
+                   [d.get('degree', ''), d.get('school', ''), d.get('major', ''), d.get('years', ''), cur.get('company', ''), cur.get('title', ''),
+                    r['phone'], r['email'], d.get('city', ''), '、'.join(map(str, d.get('skills') or [])),
+                    '；'.join(map(str, d.get('highlights') or [])), '；'.join(map(str, d.get('risks') or [])), d.get('summary', ''),
+                    r['mark'], r['note'], r['contacted'] or '', r['fname'], f"和 #{r['dup_of']} 重复" if r['dup_of'] else ''])
+    fn = urllib.parse.quote(f'{job["name"]}-简历评分-{datetime.now(BJ):%m%d}.csv')
+    h.send(200, '﻿' + buf.getvalue(), 'text/csv; charset=utf-8', {'Content-Disposition': f"attachment; filename*=UTF-8''{fn}"})
+
+
+def serve_file(h, q):
+    r = one('SELECT file, fname FROM resumes WHERE id=?', (int(q.get('id') or 0),))
+    if not r or not os.path.isfile(r['file']): return h.send(404, '原文件不见了', 'text/plain; charset=utf-8')
+    ext = os.path.splitext(r['file'])[1].lower()
+    ct = {'.pdf': 'application/pdf', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp', '.bmp': 'image/bmp',
+          '.txt': 'text/plain; charset=utf-8', '.md': 'text/plain; charset=utf-8', '.html': 'text/plain; charset=utf-8', '.htm': 'text/plain; charset=utf-8',
+          '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'}.get(ext, 'application/octet-stream')
+    disp = 'attachment' if ext == '.docx' else 'inline'
+    h.send(200, open(r['file'], 'rb').read(), ct, {'Content-Disposition': f"{disp}; filename*=UTF-8''{urllib.parse.quote(r['fname'])}"})
+
+
+GET = {'/api/jobs': j_jobs, '/api/resumes': j_resumes, '/api/status': j_status}
+POST = {'/api/job': j_save_job, '/api/job/del': j_del_job, '/api/job/auto': j_auto, '/api/scan': j_scan, '/api/mark': j_mark,
+        '/api/rescore': j_rescore, '/api/remove': j_remove, '/api/open-folder': j_open_folder, '/api/pick-folder': j_pick_folder,
+        '/api/draft': j_draft, '/api/contacted': j_contacted, '/api/key': j_key, '/api/update': j_update, '/api/check-update': j_check_update}
+
+
+class H(BaseHTTPRequestHandler):
+    def log_message(self, *a): pass
+
+    def send(self, code, body, ctype='application/json; charset=utf-8', extra=None):
+        if isinstance(body, (dict, list)): body = json.dumps(body, ensure_ascii=False).encode()
+        elif isinstance(body, str): body = body.encode()
+        self.send_response(code)
+        self.send_header('Content-Type', ctype)
+        self.send_header('Content-Length', str(len(body)))
+        self.send_header('Cache-Control', 'no-store')
+        for k, v in (extra or {}).items(): self.send_header(k, v)
+        self.end_headers()
+        self.wfile.write(body)
+
+    def do_GET(self): self.route('GET')
+
+    def do_POST(self): self.route('POST')
+
+    def route(self, m):
+        # 只认本机地址；POST 必须带 X-RS 头（别的网站发不出这种请求，防止网页偷偷改数据）
+        if (self.headers.get('Host') or '').split(':')[0] not in ('127.0.0.1', 'localhost'): return self.send(403, {'error': 'forbidden'})
+        if m == 'POST' and self.headers.get('X-RS') != '1': return self.send(403, {'error': 'forbidden'})
+        u = urllib.parse.urlparse(self.path)
+        q = {k: v[0] for k, v in urllib.parse.parse_qs(u.query).items()}
+        try:
+            if m == 'GET' and u.path in ('/', '/index.html'): return self.send(200, open(INDEX, 'rb').read(), 'text/html; charset=utf-8')
+            if m == 'GET' and u.path == '/api/export': return export_csv(self, q)
+            if m == 'GET' and u.path == '/api/file': return serve_file(self, q)
+            n = int(self.headers.get('Content-Length') or 0)
+            raw = self.rfile.read(n) if n else b''
+            if m == 'POST' and u.path == '/api/upload': return self.send(200, j_upload(self, q, raw))
+            fn = (GET if m == 'GET' else POST).get(u.path)
+            if not fn: return self.send(404, {'error': 'not found'})
+            b = json.loads(raw.decode('utf-8')) if raw else {}
+            self.send(200, fn(self, q, b))
+        except Exception as e:
+            traceback.print_exc()
+            self.send(500, {'error': str(e)[:300]})
+
+
+def main():
+    global SRV
+    url = f'http://127.0.0.1:{PORT}/'
+    for i in range(30):  # 升级重启时旧进程可能还没让出端口，等一会
+        try:
+            SRV = ThreadingHTTPServer(('127.0.0.1', PORT), H)
+            break
+        except OSError:
+            if '--no-browser' not in sys.argv: webbrowser.open(url); return  # 已经开着：直接打开网页
+            time.sleep(0.5)
+    else: return
+    for r in rows("SELECT id FROM resumes WHERE status IN ('queued','reading') ORDER BY id"):  # 上次没读完的接着读
+        run("UPDATE resumes SET status='queued' WHERE id=?", (r['id'],))
+        Q.put(r['id'])
+    for _ in range(WORKERS): threading.Thread(target=worker, daemon=True).start()
+    threading.Thread(target=auto_loop, daemon=True).start()
+    if FROZEN: threading.Thread(target=upd_loop, daemon=True).start()
+    print(f'简历快筛 v{VERSION} 已启动：{url}  模型 {MODEL}  Key {"有" if KEY else "没有！"}  数据 {DATA}', flush=True)
+    if '--no-browser' not in sys.argv: webbrowser.open(url)
+    SRV.serve_forever()
+
+
+if __name__ == '__main__':
+    main()
