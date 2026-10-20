@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>SITAS 采购清单</title>
+<style>
+:root{
+  --bg:#F6F7F5; --card:#FFFFFF; --ink:#18212A; --sub:#5B6875; --line:#DCE1DE; --soft:#EEF1EF;
+  --accent:#2E6B5E; --accent-bg:#E8F2EE;
+  --must:#B03A2E; --must-bg:#FBEDEA;
+  --rec:#8A6420; --rec-bg:#FBF3E3;
+  --opt:#4F6475; --opt-bg:#EDF1F4;
+  --warn-bg:#FFF6E0; --warn-line:#D9A520;
+  --link:#1F5FAF;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1418; --card:#171E24; --ink:#E5EAE8; --sub:#98A6B1; --line:#2B363E; --soft:#1E272E;
+    --accent:#6BBFA5; --accent-bg:#15261F;
+    --must:#EE8B7B; --must-bg:#2B1B19;
+    --rec:#DDB15A; --rec-bg:#2A2214;
+    --opt:#A3B6C6; --opt-bg:#1D252C;
+    --warn-bg:#2A2414; --warn-line:#B58A1C;
+    --link:#7DB3F0;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1418; --card:#171E24; --ink:#E5EAE8; --sub:#98A6B1; --line:#2B363E; --soft:#1E272E;
+  --accent:#6BBFA5; --accent-bg:#15261F;
+  --must:#EE8B7B; --must-bg:#2B1B19;
+  --rec:#DDB15A; --rec-bg:#2A2214;
+  --opt:#A3B6C6; --opt-bg:#1D252C;
+  --warn-bg:#2A2414; --warn-line:#B58A1C;
+  --link:#7DB3F0;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC","Source Han Sans SC",sans-serif;
+  line-height:1.6;font-size:15px}
+a{color:var(--link)}
+.num{font-family:ui-monospace,"SF Mono","Cascadia Mono",Consolas,monospace;font-variant-numeric:tabular-nums}
+.wrap{max-width:1320px;margin:0 auto;padding:24px 16px 64px}
+
+header{border-bottom:2px solid var(--ink);padding-bottom:16px;margin-bottom:18px}
+.eyebrow{font-size:12px;letter-spacing:.18em;color:var(--sub)}
+h1{font-size:clamp(24px,5vw,32px);margin:6px 0 8px;line-height:1.25}
+.lede{margin:0;color:var(--sub);max-width:820px}
+
+.panel{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:18px 0}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.box .k{font-size:12px;color:var(--sub)}
+.box .v{font-size:24px;font-weight:700;margin-top:2px}
+.box .h{font-size:12px;color:var(--sub);margin-top:2px}
+.box.ctl label{display:flex;align-items:center;gap:8px;font-size:14px;margin:4px 0;flex-wrap:wrap}
+.box.ctl input[type=number]{width:84px;font-size:18px;padding:4px 8px;border:1px solid var(--line);
+  border-radius:6px;background:var(--bg);color:var(--ink)}
+.box.ctl input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent)}
+
+h2{font-size:20px;margin:34px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+h3{font-size:16px;margin:20px 0 8px}
+p{margin:8px 0}
+.note{color:var(--sub);font-size:13.5px}
+
+.callout{background:var(--warn-bg);border-left:4px solid var(--warn-line);border-radius:0 8px 8px 0;
+  padding:12px 14px;margin:14px 0;font-size:14px}
+.callout ul{margin:6px 0 0;padding-left:20px}
+.callout li{margin:3px 0}
+.callout.ok{background:var(--accent-bg);border-left-color:var(--accent)}
+
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:13px;color:var(--sub);margin:8px 0 12px}
+
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+thead th{position:sticky;top:0;background:var(--soft);font-size:12.5px;color:var(--sub);font-weight:600;white-space:nowrap;z-index:1}
+#bom{min-width:1500px}
+#bom td.r,#bom th.r{text-align:right;white-space:nowrap}
+#bom td.c{text-align:center}
+#bom tr.cat td{background:var(--accent-bg);color:var(--accent);font-weight:700;font-size:14px;border-bottom:1px solid var(--line)}
+#bom tr.cat .ct{float:right;font-weight:600}
+#bom .nm{font-weight:600;min-width:150px}
+#bom .spec{min-width:260px}
+#bom .use{white-space:nowrap}
+#bom .kw{min-width:170px}
+#bom .kw code{display:inline-block;background:var(--soft);border-radius:4px;padding:2px 6px;font-size:12.5px;word-break:break-all}
+#bom .kw button{margin-top:4px;font-size:12px;padding:1px 8px;border:1px solid var(--line);border-radius:4px;
+  background:var(--card);color:var(--sub);cursor:pointer}
+#bom .lk{min-width:120px;font-size:12.5px}
+#bom .lk .vf{color:var(--accent);font-weight:600}
+#bom .nt{min-width:300px;color:var(--ink)}
+#bom .rng{display:block;font-size:11.5px;color:var(--sub)}
+#bom tr.off td{opacity:.45}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:4px;white-space:nowrap;border:1px solid}
+.t-must{color:var(--must);background:var(--must-bg);border-color:var(--must)}
+.t-rec{color:var(--rec);background:var(--rec-bg);border-color:var(--rec)}
+.t-opt{color:var(--opt);background:var(--opt-bg);border-color:var(--opt)}
+
+ol.check,ul.pit{padding-left:22px;margin:8px 0}
+ol.check li,ul.pit li{margin:8px 0}
+.idt{min-width:620px}
+.idt td,.idt th{font-size:13.5px}
+
+footer{margin-top:40px;padding-top:14px;border-top:1px solid var(--line);color:var(--sub);font-size:13px}
+
+@media (max-width:600px){
+  body{font-size:14.5px}
+  .box .v{font-size:21px}
+}
+@media print{
+  :root{--bg:#fff;--card:#fff}
+  body{font-size:11px}
+  .wrap{max-width:none;padding:0}
+  .scroll{overflow:visible;border:0}
+  #bom{min-width:0;font-size:10px}
+  #bom .kw button,.noprint{display:none}
+  thead th{position:static}
+  tr{page-break-inside:avoid}
+  a{color:inherit;text-decoration:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">SITAS · 实验室影像可信存证 · 一体机硬件</div>
+  <h1>SITAS 一体机采购清单</h1>
+  <p class="lede">一套 = 一台可独立工作的 SITAS 拍照存证一体机：XIAO ESP32-S3 Sense 主控 + 摄像头 + ATECC608A 加密芯片 + 0.96 寸 OLED + 锂电 + 电源键 / 快门键 + 3D 打印外壳（可选目镜转接件，用来接显微镜）。照这张表买齐，再按项目里的接线图（<code>enclosure/wiring.html</code>）焊接，就能烧录 <code>firmware/sitas_cam_ov7725/</code> 通用版固件。</p>
+</header>
+
+<div class="panel">
+  <div class="box ctl noprint">
+    <div class="k">采购数量</div>
+    <label>按 <input id="nSets" type="number" min="1" max="500" value="1" inputmode="numeric"> 套采购</label>
+    <label>工具 <input id="nTools" type="number" min="0" max="50" value="1" inputmode="numeric"> 份（按同时动手的组数）</label>
+    <label><input id="incOpt" type="checkbox"> 合计里也算上"可选"件</label>
+  </div>
+  <div class="box">
+    <div class="k">单套物料成本（只算必须件）</div>
+    <div class="v num" id="perMust">¥0</div>
+    <div class="h">整包耗材按每套实际用量折算</div>
+  </div>
+  <div class="box">
+    <div class="k">单套物料成本（必须 + 建议）</div>
+    <div class="v num" id="perRec">¥0</div>
+    <div class="h">建议件：备用摄像头 / 备用加密芯片 / 电量分压电阻等</div>
+  </div>
+  <div class="box">
+    <div class="k">本次下单金额（<span id="nLabel">1</span> 套）</div>
+    <div class="v num" id="orderTotal">¥0</div>
+    <div class="h">已按整包取整；含工具 <span class="num" id="toolTotal">¥0</span></div>
+  </div>
+</div>
+
+<div class="callout">
+  <b>价格说明：</b>除标注"官方价已核实"的那一项外，表里所有人民币价格都是<b>参考价，以下单页为准</b>（取常见淘宝价区间的中间值，区间写在单价下方）。电商价格浮动大，多套采购请先问店家批量价。<br>
+  <b>链接说明：</b>标 <span style="color:var(--accent);font-weight:600">官方页 · 已核实</span> 的是本次实际打开确认过的官方商品页；其余链接都是<b>用"购买搜索词"自动生成的淘宝搜索链接</b>，不是具体商品页，请按"规格/型号"一栏自己挑店。
+</div>
+
+<div class="callout">
+  <b>别买错（这些都不属于一体机）：</b>
+  <ul>
+    <li><b>TPS61023 升压板、USB-C 公头转接板、302030 小电池</b>：这是另一款"SITAS Link 相机加密狗"的配件（之前那份约 ¥50 的清单说的就是它），一体机用不上。</li>
+    <li><b>YubiKey / U 盾</b>：电脑工位版签名用，不装在一体机里。</li>
+    <li><b>ESP32-CAM 老款板、Freenove 摄像头板、MIPI 接口摄像头</b>：引脚和接口都对不上本项目固件。</li>
+    <li><b>普通版 XIAO ESP32S3（不带 Sense）</b>：没有摄像头接口和 SD 卡槽。</li>
+  </ul>
+</div>
+
+<h2>物料清单</h2>
+<div class="legend">
+  <span><span class="tag t-must">必须</span> 少了整机不能用</span>
+  <span><span class="tag t-rec">建议</span> 强烈建议买，少了能用但有风险</span>
+  <span><span class="tag t-opt">可选</span> 看需要</span>
+  <span>表格可左右滑动查看全部列</span>
+</div>
+<div class="scroll">
+<table id="bom">
+  <thead>
+    <tr>
+      <th>序号</th><th>名称</th><th>规格 / 型号</th><th>每套数量</th><th class="r">本次采购量</th>
+      <th class="r">参考单价 (¥)</th><th class="r">小计 (¥)</th><th>购买搜索词</th><th>购买链接</th>
+      <th>必须/可选</th><th>备注</th>
+    </tr>
+  </thead>
+  <tbody id="tb"></tbody>
+</table>
+</div>
+<noscript><p class="callout">此页需要启用 JavaScript 才能显示清单表格和自动计算。</p></noscript>
+
+<h2>到货验收</h2>
+<p class="note">每样东西到货当天就验，有问题马上找店家换，别等焊上去才发现。</p>
+<ol class="check">
+  <li><b>XIAO ESP32S3 Sense</b>：盒里应有主板、Sense 扩展板（带摄像头、麦克风、TF 卡槽）、2.4G 天线；带摄像头的款还有一片散热片。插 USB-C 线到电脑，设备管理器 / 系统信息里能看到新串口（乐鑫 USB 设备）才算好。</li>
+  <li><b>摄像头型号</b>：<b>不要信丝印和商品标题</b>。烧录项目里的 <code>firmware/tools/cam_id/</code> 小工具，串口（115200）会打印传感器地址和 ID，对照下面的"摄像头 ID 对照表"确认型号。</li>
+  <li><b>ATECC608A 模块</b>：芯片丝印应为 ATECC608A（或 608B，见常见坑）。接到 XIAO 的 3V3 / GND / D4(SDA) / D5(SCL) 后，烧一体机固件，串口应显示"配置区未锁 · 数据区未锁"。<b>验收这一步绝对不要改锁定开关</b>。顺便看模块上有没有 4.7kΩ 上拉电阻（多数有，没有就自己补两颗接 3V3）。</li>
+  <li><b>OLED</b>：确认是 SSD1306、128×64、4 针 I2C；<b>对照丝印看针脚顺序</b>（有的是 VCC-GND-SCL-SDA，有的是 GND-VCC-SCL-SDA）。I2C 地址应为 0x3C。</li>
+  <li><b>锂电池</b>：万用表量红黑线之间电压，正常 3.6–4.2V；低于 3.0V 直接退。确认带保护板（电池一端有一小块电路板，包在胶膜里）。量一下尺寸，外壳电池仓按 42×30×10 mm 设计。</li>
+  <li><b>16mm 金属按钮</b>：按下不弹起、再按才弹起 = 自锁款（对）；按下就弹回 = 自复位款（错）。看侧面标签灯电压应为 3–6V。用卡尺量"本体 + 端子"总深度，外壳按 30 mm 设计，差得多就改 <code>enclosure/sitas_cam_case.scad</code> 里的 BTN_DEPTH 重新出 STL。</li>
+  <li><b>快门键</b>：万用表蜂鸣档测两只开关脚按下导通、松开断开；LED 两脚用二极管档能微亮。</li>
+  <li><b>MicroSD 卡</b>：容量不超过 32GB，电脑上格式化为 FAT32。</li>
+  <li><b>USB-C 线</b>：插电脑能识别出串口才算数据线；只亮灯不出串口的是仅充电线，烧不了固件。</li>
+  <li><b>3D 打印件</b>：先打 <code>plug_gauge.stl</code> 试配目镜筒，再打正式的 <code>plug_plug.stl</code> / <code>plug_dock.stl</code>；外壳盖子应能顺滑盖上、不晃。</li>
+</ol>
+
+<h3>摄像头 ID 对照表（cam_id 工具输出）</h3>
+<div class="scroll">
+<table class="idt">
+  <thead><tr><th>串口里"发现设备"的地址</th><th>身份寄存器读数</th><th>型号</th><th>本项目情况</th></tr></thead>
+  <tbody>
+    <tr><td class="num">0x30</td><td class="num">8位 PID=0x26 VER=0x42</td><td>OV2640</td><td>可用（原版固件实测过；已停产，越来越难买到原装）</td></tr>
+    <tr><td class="num">0x21</td><td class="num">8位 PID=0x77 VER=0x21</td><td>OV7725</td><td>可用（通用版固件实测过）；只有 640×480，没有硬件 JPEG，课堂演示够用</td></tr>
+    <tr><td class="num">0x3C</td><td class="num">16位 ID=0x3660</td><td>OV3660</td><td>固件里已带驱动，<b>但还没有实机验证</b>，第一台先测</td></tr>
+    <tr><td class="num">0x3C</td><td class="num">16位 ID=0x5640</td><td>OV5640</td><td>固件里已带驱动，<b>但还没有实机验证</b>，第一台先测</td></tr>
+    <tr><td>没有任何地址</td><td>—</td><td>—</td><td>排线没插好或模组没供电（固件报 0x105 也是这个原因）</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>常见坑</h2>
+<ul class="pit">
+  <li><b>卖家常把 OV7725 当 OV2640 发。</b>之前买的"XIAO 摄像头"到货就是 OV7725，标题和丝印都不可信。固件报 <code>0x106 not supported</code> 表示"有应答但型号对不上"，先用 cam_id 读 ID 再下结论。</li>
+  <li><b>官方 OV2640 已停产。</b>Seeed 官方说明新出货的 Sense 板可能带 OV3660 或 OV5640。通用版固件里已带这两种驱动，但还没有实机验证。<b>先买 1 套到货验证通过，再批量下单。</b></li>
+  <li><b>摄像头排线很脆。</b>原来那颗 OV2640 就是排线触点裂了才坏。插拔时捏住排线根部，别反复对折；装进外壳时给排线留弯曲余量。</li>
+  <li><b>ATECC608A 锁定是一次性的。</b>配置区一旦锁定永久不可改，锁错 = 芯片报废。所以每批要多备芯片，锁定这一步要两个人一起核对后再做。</li>
+  <li><b>ATECC608A 和 608B。</b>608A 已逐步被 608B 取代，市面上不少模块其实是 608B。理论上兼容，但本项目只实测过 608A，买 608B 先少量试。</li>
+  <li><b>OLED 和 ATECC 只能接 3V3。</b>接到 5V 会直接烧坏。两个模块共用同一条 I2C（D4/D5），地址 0x3C 和 0x60 不冲突。</li>
+  <li><b>先焊电池线，再叠 Sense 板。</b>XIAO 的电池焊盘（BAT+ / BAT−）在主板背面，叠上扩展板后几乎没法下烙铁。<b>电池最后才接</b>：所有焊点目检无桥连后再接，红黑线剪成不同长度防止碰到一起短路。</li>
+  <li><b>天线必须插上。</b>天线座在 USB 口旁边，垂直轻按到"咔哒"一声。不插天线 WiFi 基本连不上；而且板载天线个体差异大，个别板子插了还是弱，换板即好。</li>
+  <li><b>锂电过放就废。</b>之前有一块 1200mAh 电池被放电到 1.49V 直接报废。焊上两颗 100kΩ 分压电阻（BAT+ → 100k → D0 → 100k → GND），固件才能读电量、低电自动休眠；不焊的话屏上电量显示"--"，固件改为连续开机 5 小时自动休眠。</li>
+  <li><b>电源键要买"自锁 + 3–6V 灯"款。</b>自复位款松手就断电；12V / 24V 灯的款在 3.7V 锂电下不亮。</li>
+  <li><b>SD 卡不要超过 32GB。</b>大卡默认是 exFAT，卡槽不认；固件报"SD 卡未就绪"先查格式。</li>
+  <li><b>仅充电的 USB 线烧不了固件。</b>批量买线时确认支持数据传输。</li>
+  <li><b>换零件型号外壳可能要改。</b>外壳开孔按清单里的尺寸设计：快门孔 Φ11.15、OLED 沉坑 28.6×29、电池仓 42×30×10、电源键 16mm。换成其他尺寸的件，要改 <code>sitas_cam_case.scad</code> 开头的常量重新导出。</li>
+</ul>
+
+<footer>
+  <p><b>资料来源：</b>项目 <code>READY.md</code>、<code>enclosure/wiring.html</code>、<code>enclosure/*.scad</code>、<code>firmware/sitas_cam_ov7725/</code>、<code>firmware/tools/cam_id/</code>，以及历次装机记录；官方信息来自 <a href="https://www.seeedstudio.com/XIAO-ESP32S3-Sense-p-5639.html" target="_blank" rel="noopener">Seeed 官方商品页</a> 和 <a href="https://wiki.seeedstudio.com/xiao_esp32s3_getting_started/" target="_blank" rel="noopener">Seeed 官方 Wiki</a>（2026-10-20 查阅）。</p>
+  <p>不含：显微镜本体、电脑、3D 打印机（如果没有，就找外包代打）。清单整理日期 2026-10-20。</p>
+</footer>
+</div>
+
+<script>
+(function(){
+  var TB = 'https://s.taobao.com/search?q=';
+  // mode: per = 每套 q 个；pack = 整包购买（每套用 q，一包 pk 个）；batch = 每 k 套备 1 个（至少 1 个）；tool = 按工具份数
+  var CATS = [
+    ['main','主控与摄像头'],['power','供电与电池'],['io','接口与转接'],
+    ['case','外壳与结构'],['cons','线材与耗材'],['tool','工具（一次性，不按套算）']
+  ];
+  var ITEMS = [
+    {c:'main', n:'XIAO ESP32S3 Sense 开发板', s:'Seeed Studio XIAO ESP32-S3 <b>Sense</b>（官方 SKU 113991115）；ESP32-S3，8MB PSRAM + 8MB Flash；含 Sense 扩展板（摄像头接口 + 数字麦克风 + MicroSD 卡槽）、2.4G 天线；不带排针',
+      use:'1 块', mode:'per', q:1, unit:'块', p:120, r:'100–150（官方价已核实：US$13.90）', req:'must',
+      kw:'XIAO ESP32S3 Sense 矽递',
+      url:'https://www.seeedstudio.com/XIAO-ESP32S3-Sense-p-5639.html',
+      note:'整机主控。<b>必须是 Sense 版</b>。随板摄像头型号按批次不同（OV2640 已停产，新批次可能是 OV3660 / OV5640），到货先用 cam_id 核对。国内建议在矽递 / Seeed 官方店或正规代理买，防止被拆走摄像头再卖。'},
+    {c:'main', n:'备用摄像头模组', s:'适配 XIAO ESP32S3 Sense 扩展板的 24 针排线摄像头。首选 Seeed 官方配件"OV5640 Camera for XIAO ESP32S3 Sense"（SKU 114993115，带散热片）或原装 OV2640',
+      use:'每 3 套备 1 个', mode:'batch', k:3, unit:'个', p:45, r:'25–80', req:'rec',
+      kw:'XIAO ESP32S3 Sense 摄像头 OV5640',
+      note:'排线容易折裂，课堂上最常坏的就是它。<b>卖家常把 OV7725 当 OV2640 发，到货先用 cam_id 工具核对传感器 ID</b>。OV3660 / OV5640 还没有实机验证，先买 1 个试。'},
+    {c:'main', n:'ATECC608A 加密芯片模块', s:'Microchip ATECC608A，I2C 接口，地址 0x60，3.3V 供电；引出 VCC / GND / SDA / SCL 四脚，最好带 4.7kΩ 上拉',
+      use:'1 块', mode:'per', q:1, unit:'块', p:22, r:'15–30', req:'must',
+      kw:'ATECC608A 模块 I2C',
+      note:'信任根：私钥在芯片里生成、永远读不出来，"拍摄即签名"靠它成立。只焊四只脚，其余悬空。'},
+    {c:'main', n:'ATECC608A 备片', s:'同上',
+      use:'每 5 套备 1 块', mode:'batch', k:5, unit:'块', p:22, r:'15–30', req:'rec',
+      kw:'ATECC608A 模块 I2C',
+      note:'配置区锁定不可逆，<b>锁错 = 报废</b>。备片保证锁坏一颗不停工。'},
+    {c:'main', n:'0.96 寸 OLED 显示屏', s:'SSD1306 驱动，128×64，I2C 4 针，地址 0x3C，3.3V 可用；模块 PCB 约 27.3×27.8 mm（外壳沉坑按这个尺寸）',
+      use:'1 块', mode:'per', q:1, unit:'块', p:12, r:'8–18', req:'must',
+      kw:'0.96寸 OLED SSD1306 I2C 4针',
+      note:'显示 拍摄/指纹/签名/写卡 状态和电量。<b>别买 1.3 寸（多为 SH1106 驱动，尺寸也不对）</b>。针脚顺序各家不同，焊前看丝印。'},
+    {c:'main', n:'MicroSD 卡', s:'8–32GB，Class 10，格式化为 FAT32',
+      use:'1 张', mode:'per', q:1, unit:'张', p:18, r:'12–30', req:'must',
+      kw:'TF卡 16G class10',
+      note:'原图和签名清单本地留档。卡槽最大支持 32GB；超过 32GB 的卡默认是 exFAT，识别不了。'},
+
+    {c:'power', n:'103040 锂电池', s:'3.7V 1200mAh 聚合物锂电，<b>带保护板</b>，出线为红黑裸线；尺寸约 10×30×40 mm（外壳电池仓 42×30×10）',
+      use:'1 块', mode:'per', q:1, unit:'块', p:16, r:'10–25', req:'must',
+      kw:'103040 锂电池 1200mAh 3.7V 带保护板',
+      note:'焊在 XIAO 背面的 BAT+ / BAT− 焊盘，由板载电路充电，不需要另买充电模块。到货量电压 3.6–4.2V。'},
+    {c:'power', n:'16mm 金属自锁按钮（带灯）', s:'16mm 开孔，<b>自锁</b>，带灯，<b>灯电压 3–6V</b>；5 脚（COM / NO / NC + 灯+ / 灯−）',
+      use:'1 个', mode:'per', q:1, unit:'个', p:12, r:'6–20', req:'must',
+      kw:'16mm 金属按钮 自锁 带灯 3-6V',
+      note:'总电源开关，串在电池正极上（COM→NO，NC 不接）。外壳按本体加端子深度 30 mm 设计，到货实测。'},
+    {c:'power', n:'100kΩ 电阻（电量分压）', s:'1/4W 金属膜，精度 1%，直插；100 只一包',
+      use:'2 只', mode:'pack', q:2, pk:100, unit:'包', p:4, r:'3–6 / 包', req:'rec',
+      kw:'100K 金属膜电阻 1/4W 1%',
+      note:'BAT+ → 100k → D0 → 100k → GND。焊上后固件能读电量、低电自动休眠保护电池；不焊则只能靠"连续开机 5 小时自动休眠"兜底。'},
+
+    {c:'io', n:'带灯轻触按键（快门）', s:'项目外壳按 PB01-103RFL 设计：方形本体约 7.7 mm，蓝灯，4 脚（开关 2 + LED 2）；外壳开孔 Φ11.15',
+      use:'1 个（建议多买 1 个）', mode:'per', q:1, unit:'个', p:2, r:'1–5', req:'must',
+      kw:'PB01 带灯轻触开关 蓝灯',
+      note:'快门：一脚接 D1，一脚接 GND；LED+ 接 D2，LED− 接 GND，由固件 PWM 驱动，不用加电阻。换成其他尺寸的按键，外壳快门孔要改。'},
+    {c:'io', n:'USB-C 数据线', s:'USB-A 或 USB-C 转 USB-C，<b>支持数据传输</b>，约 1 m',
+      use:'1 根', mode:'per', q:1, unit:'根', p:10, r:'6–20', req:'must',
+      kw:'USB-C 数据线 1米 支持数据传输',
+      note:'烧录 + 充电共用。仅充电线烧不了固件。'},
+    {c:'io', n:'2.54mm 单排排针', s:'1×40P 可掰断，10 条一包',
+      use:'约 2 段 7P', mode:'pack', q:0.4, pk:10, unit:'包', p:4, r:'2–6 / 包', req:'rec',
+      kw:'2.54mm 单排排针 40P',
+      note:'XIAO 出厂不带排针，把 XIAO 和模块固定到洞洞板上时用。'},
+    {c:'io', n:'2.4G IPEX 天线（备件）', s:'IPEX / U.FL 一代接口，2.4GHz FPC 软天线或小棒状天线',
+      use:'按需', mode:'batch', k:5, unit:'根', p:5, r:'3–10', req:'opt',
+      kw:'IPEX 2.4G 天线 FPC U.FL',
+      note:'XIAO Sense 盒里自带 1 根，丢了或扯坏才需要。不插天线 WiFi 基本连不上。'},
+
+    {c:'case', n:'洞洞板（万用板）', s:'2.54mm 间距，5×7 cm，剪成约 45×28 mm；10 片一包',
+      use:'1 片', mode:'pack', q:1, pk:10, unit:'包', p:8, r:'5–12 / 包', req:'must',
+      kw:'洞洞板 万用板 5x7 2.54',
+      note:'固定 XIAO、ATECC 和走线，再整块放进外壳。'},
+    {c:'case', n:'3D 打印外壳（主体 + 盖）', s:'项目文件 <code>enclosure/base_v2.stl</code> + <code>lid_v2_print.stl</code>；PLA 或 PETG，0.2 mm 层高，无支撑，盖与底分开平放',
+      use:'1 套', mode:'per', q:1, unit:'套', p:35, r:'自己打只花耗材几元；外包代打约 20–60',
+      req:'must', kw:'3D打印代打 PLA',
+      note:'有打印机就自己打（项目按拓竹打印机调过间隙 0.35 mm）。外包时把 STL 发给店家，注明 PLA、无支撑、0.2 mm 层高。'},
+    {c:'case', n:'目镜转接件（接显微镜用）', s:'<code>plug_plug.stl</code>（插进 Φ23 标准目镜筒，插深 30 mm）+ <code>plug_dock.stl</code>（M24 螺纹座，热熔胶粘在相机孔上）；先打 <code>plug_gauge.stl</code> 试配',
+      use:'1 套', mode:'per', q:1, unit:'套', p:10, r:'5–20（和外壳一起打）', req:'opt',
+      kw:'3D打印代打 PLA',
+      note:'只在要把一体机装到显微镜上拍时需要。目镜筒不是 Φ23 的，要改 <code>eyepiece_plug.scad</code> 里的 TUBE_ID。'},
+    {c:'case', n:'热熔胶棒', s:'7 mm 小号（配小号热熔胶枪），20 支一包',
+      use:'约 1 支', mode:'pack', q:1, pk:20, unit:'包', p:6, r:'4–10 / 包', req:'must',
+      kw:'热熔胶棒 7mm',
+      note:'固定 OLED 模块、快门键、目镜转接座。'},
+
+    {c:'cons', n:'硅胶导线 28AWG（6 色）', s:'28AWG 硅胶软线，红 / 黑 / 黄 / 蓝 / 绿 / 灰各约 2 m',
+      use:'每色约 0.3 m', mode:'pack', q:1, pk:5, unit:'套', p:12, r:'8–20 / 套', req:'must',
+      kw:'28AWG 硅胶线 6色 套装',
+      note:'颜色对应接线图：红 = 电源正、黑 = GND、黄 = SDA、蓝 = SCL、绿 = 按键、灰 = LED。按颜色接线，排错快很多。'},
+    {c:'cons', n:'焊锡丝', s:'0.8 mm，含松香芯，50 g 一卷',
+      use:'少量', mode:'pack', q:1, pk:10, unit:'卷', p:10, r:'6–20 / 卷', req:'must',
+      kw:'焊锡丝 0.8mm 松香芯 50g',
+      note:'一卷够焊十几套。'},
+    {c:'cons', n:'热缩管套装', s:'1–6 mm 多规格混装盒',
+      use:'少量', mode:'pack', q:1, pk:10, unit:'盒', p:6, r:'4–10 / 盒', req:'must',
+      kw:'热缩管 套装 盒装',
+      note:'包电池线、开关端子，防短路。'},
+    {c:'cons', n:'绝缘胶带 / 双面泡棉胶', s:'高温胶带（聚酰亚胺，10 mm 宽）或双面泡棉胶',
+      use:'少量', mode:'pack', q:1, pk:10, unit:'卷', p:6, r:'4–10 / 卷', req:'rec',
+      kw:'高温胶带 聚酰亚胺 10mm',
+      note:'把电池和板子隔开、固定电池，防止焊点扎破电池。'},
+
+    {c:'tool', n:'恒温电烙铁', s:'可调温，带尖头 + 刀头（例如 936 焊台、T12 或 USB-C 便携烙铁）',
+      use:'—', mode:'tool', unit:'套', p:90, r:'60–200', req:'must',
+      kw:'恒温电烙铁 可调温 套装',
+      note:'XIAO 背面电池焊盘小，尖头更好下。'},
+    {c:'tool', n:'数字万用表', s:'带电压档和蜂鸣通断档',
+      use:'—', mode:'tool', unit:'台', p:40, r:'25–80', req:'must',
+      kw:'数字万用表 蜂鸣',
+      note:'量电池电压、上电前查短路、验收按键。'},
+    {c:'tool', n:'热熔胶枪', s:'小号，配 7 mm 胶棒',
+      use:'—', mode:'tool', unit:'把', p:18, r:'12–30', req:'must',
+      kw:'热熔胶枪 小号 7mm',
+      note:''},
+    {c:'tool', n:'剥线钳', s:'能剥 28AWG 细线',
+      use:'—', mode:'tool', unit:'把', p:20, r:'12–35', req:'must',
+      kw:'剥线钳 细线 28AWG',
+      note:''},
+    {c:'tool', n:'斜口钳', s:'5 寸电子斜口钳',
+      use:'—', mode:'tool', unit:'把', p:12, r:'8–25', req:'must',
+      kw:'电子斜口钳 5寸',
+      note:'剪引脚、剪洞洞板。'},
+    {c:'tool', n:'防静电尖头镊子', s:'直头或弯头',
+      use:'—', mode:'tool', unit:'把', p:6, r:'3–12', req:'rec',
+      kw:'防静电镊子 尖头',
+      note:''},
+    {c:'tool', n:'游标卡尺', s:'0–150 mm',
+      use:'—', mode:'tool', unit:'把', p:25, r:'15–50', req:'rec',
+      kw:'游标卡尺 150mm',
+      note:'量电源键深度、目镜筒尺寸，决定要不要改外壳参数。'},
+    {c:'tool', n:'MicroSD 读卡器', s:'USB-A 或 USB-C',
+      use:'—', mode:'tool', unit:'个', p:10, r:'6–20', req:'opt',
+      kw:'TF 读卡器 USB',
+      note:'格式化 SD 卡用。固件支持在浏览器里直接下载卡里的照片，日常取件不需要读卡器。'}
+  ];
+
+  var REQ = {must:['必须','t-must'], rec:['建议','t-rec'], opt:['可选','t-opt']};
+  var tb = document.getElementById('tb');
+  var nIn = document.getElementById('nSets'), tIn = document.getElementById('nTools'), oIn = document.getElementById('incOpt');
+
+  function money(v){ return '¥' + (Math.round(v*100)/100).toLocaleString('zh-CN',{minimumFractionDigits:0,maximumFractionDigits:2}); }
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function qty(it, N, T){
+    if (it.mode === 'per')   return it.q * N;
+    if (it.mode === 'pack')  return N > 0 ? Math.ceil(it.q * N / it.pk) : 0;
+    if (it.mode === 'batch') return N > 0 ? Math.max(1, Math.ceil(N / it.k)) : 0;
+    return T;
+  }
+  function perSet(it){
+    if (it.mode === 'per')   return it.q * it.p;
+    if (it.mode === 'pack')  return it.p * it.q / it.pk;
+    if (it.mode === 'batch') return it.p / it.k;
+    return 0;
+  }
+
+  // 静态行
+  var html = '', idx = 0;
+  CATS.forEach(function(cat){
+    html += '<tr class="cat"><td colspan="11">' + cat[1] + '<span class="ct num" data-cat="' + cat[0] + '"></span></td></tr>';
+    ITEMS.forEach(function(it, i){
+      if (it.c !== cat[0]) return;
+      idx++;
+      var link = TB + encodeURIComponent(it.kw);
+      var lk = it.url
+        ? '<a href="' + it.url + '" target="_blank" rel="noopener"><span class="vf">官方页 · 已核实</span></a><br><a href="' + link + '" target="_blank" rel="noopener">淘宝搜索</a>'
+        : '<a href="' + link + '" target="_blank" rel="noopener">淘宝搜索</a><br><span class="note">（搜索链接，非商品页）</span>';
+      html += '<tr data-i="' + i + '">' +
+        '<td class="c num">' + idx + '</td>' +
+        '<td class="nm">' + it.n + '</td>' +
+        '<td class="spec">' + it.s + '</td>' +
+        '<td class="use">' + it.use + '</td>' +
+        '<td class="r num q"></td>' +
+        '<td class="r num">' + it.p + '<span class="rng">参考价 ' + it.r + '</span></td>' +
+        '<td class="r num st"></td>' +
+        '<td class="kw"><code>' + esc(it.kw) + '</code><br><button type="button" class="noprint" data-kw="' + esc(it.kw) + '">复制</button></td>' +
+        '<td class="lk">' + lk + '</td>' +
+        '<td><span class="tag ' + REQ[it.req][1] + '">' + REQ[it.req][0] + '</span></td>' +
+        '<td class="nt">' + (it.note || '') + '</td>' +
+      '</tr>';
+    });
+  });
+  tb.innerHTML = html;
+
+  function calc(){
+    var N = Math.max(0, Math.min(500, parseInt(nIn.value, 10) || 0));
+    var T = Math.max(0, Math.min(50, parseInt(tIn.value, 10) || 0));
+    var incOpt = oIn.checked;
+    var perMust = 0, perRec = 0, order = 0, tools = 0, catSum = {};
+    ITEMS.forEach(function(it, i){
+      var q = qty(it, N, T), sub = q * it.p;
+      var counted = it.req !== 'opt' || incOpt;
+      var row = tb.querySelector('tr[data-i="' + i + '"]');
+      row.querySelector('.q').textContent = q + ' ' + it.unit;
+      row.querySelector('.st').textContent = sub ? (Math.round(sub*100)/100).toLocaleString('zh-CN') : '0';
+      row.classList.toggle('off', !counted);
+      if (!counted) return;
+      catSum[it.c] = (catSum[it.c] || 0) + sub;
+      if (it.mode === 'tool') { tools += sub; }
+      else {
+        if (it.req === 'must') perMust += perSet(it);
+        if (it.req === 'must' || it.req === 'rec') perRec += perSet(it);
+      }
+      order += sub;
+    });
+    document.getElementById('perMust').textContent = money(perMust);
+    document.getElementById('perRec').textContent = money(perRec);
+    document.getElementById('orderTotal').textContent = money(order);
+    document.getElementById('toolTotal').textContent = money(tools);
+    document.getElementById('nLabel').textContent = N;
+    [].forEach.call(document.querySelectorAll('[data-cat]'), function(el){
+      el.textContent = '小计 ' + money(catSum[el.getAttribute('data-cat')] || 0);
+    });
+  }
+  [nIn, tIn, oIn].forEach(function(el){ el.addEventListener('input', calc); el.addEventListener('change', calc); });
+  tb.addEventListener('click', function(e){
+    var b = e.target.closest('button[data-kw]'); if (!b) return;
+    var kw = b.getAttribute('data-kw');
+    function done(){ b.textContent = '已复制'; setTimeout(function(){ b.textContent = '复制'; }, 1200); }
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(kw).then(done, function(){ window.prompt('复制搜索词：', kw); }); }
+      else { window.prompt('复制搜索词：', kw); }
+    } catch (err) { window.prompt('复制搜索词：', kw); }
+  });
+  calc();
+})();
+</script>
+</body>
+</html>
