@@ -1,0 +1,8 @@
+{
+ "ver": "1.0.0",
+ "note": "首版",
+ "files": {
+  "app.py": "c4263440a429bf71b083de4d2ddc92cab2eace903fa2c8b0f6eca0ce2fb1e0db",
+  "web/index.html": "668f94c7bd74141cffa6c4750c3f5996333f0864eaab2eac4b61e4bab1099b7a"
+ }
+}
