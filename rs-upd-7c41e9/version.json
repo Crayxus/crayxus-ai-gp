@@ -1,8 +1,11 @@
 {
- "ver": "1.0.0",
- "note": "首版",
+ "ver": "1.1.1",
+ "note": "左下角显示今天 / 累计用了多少 token",
  "files": {
-  "app.py": "c4263440a429bf71b083de4d2ddc92cab2eace903fa2c8b0f6eca0ce2fb1e0db",
-  "web/index.html": "668f94c7bd74141cffa6c4750c3f5996333f0864eaab2eac4b61e4bab1099b7a"
+  "app.py": "8d55dfa8553565fa210c7c87ca9e7d3526c26d54c5ba83f2e94d8c96f65d5c46",
+  "web/index.html": "f3830fc6bebffa46576af0fce4c9f7b3541184a15e4deb0b0a4918b1d8aeeddf",
+  "web/mini.html": "7683effbced5ac6f0f4263098a3b733d31f23ec529719db89ddf755025e15975",
+  "boss/reader.py": "bcd19051fd0eda6dbae943991764f5ddeb3810970e3c80d0406a2d2ed502a017",
+  "boss/ui.py": "80457fffdfc4d4c4e9248719d83b4123f56ff9fcacbae05b19dfc6f07b9728f9"
  }
 }
