@@ -6,6 +6,24 @@
 <title>Crayxus DeepSearch · 海外企业尽调</title>
 <meta name="description" content="输入公司名，AI 分析师调取全球法人登记、监管申报、权威媒体与官网，几分钟交付一份带出处的尽调报告。">
 <meta name="theme-color" content="#07080B">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Crayxus DeepSearch">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:title" content="Crayxus DeepSearch · 一个名字，查清一家海外公司">
+<meta property="og:description" content="输入海外公司名，AI 分析师调取全球法人登记、监管申报、权威媒体与官网，交付一份逐句带出处的尽调报告。">
+<meta property="og:url" content="https://crayxus.com.au/deepsearch/">
+<meta property="og:image" content="https://crayxus.com.au/og-deepsearch.jpg?v=1">
+<meta property="og:image:secure_url" content="https://crayxus.com.au/og-deepsearch.jpg?v=1">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="800">
+<meta property="og:image:height" content="800">
+<meta property="og:image:alt" content="Crayxus DeepSearch">
+<meta itemprop="image" content="https://crayxus.com.au/og-deepsearch.jpg?v=1">
+<meta name="image" content="https://crayxus.com.au/og-deepsearch.jpg?v=1">
+<link rel="image_src" href="https://crayxus.com.au/og-deepsearch.jpg?v=1">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Crayxus DeepSearch · 一个名字，查清一家海外公司">
+<meta name="twitter:image" content="https://crayxus.com.au/og-deepsearch.jpg?v=1">
 <style>
 :root{--bg:#07080B;--s1:#0D0F14;--s2:#12151C;--s3:#181C25;--line:rgba(255,255,255,.075);--line2:rgba(255,255,255,.13);--ink:#EDEEF2;--ink2:#C3C7D0;--mute:#878D99;--faint:#5B616D;
   --gold:#D9B97A;--gold2:#F1DEB3;--cyan:#7FD4E6;--hi:#F06A5E;--mid:#E8B14A;--lo:#5FD08F;
@@ -176,7 +194,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--line);margin-top:4
 <script>
 const API = (new URLSearchParams(location.search).get('api') || 'https://api.crayxus.com.au').replace(/\/+$/, '');   // ?api= 只给本机测试用
 const FOCUS = [['', '综合背调'], ['partner', '合作前背调'], ['invest', '投资尽调'], ['supplier', '供应商审查'], ['compete', '竞品研究']];
-const EXAMPLES = ['Anduril Industries', 'Figure AI', 'Rivian', 'Shein', 'Scale AI'];
+const EXAMPLES = ['Anduril Industries', 'Figure AI', 'Rivian', 'Stripe', 'Scale AI'];
 const STAGES = [['entity', '识别实体', '全球法人登记、监管申报、百科知识库'], ['plan', '规划检索', '按尽调维度拆出检索方向'], ['search', '全网检索', '权威媒体与新闻、官网'], ['read', '阅读资料', '逐篇读取正文、去重、核对公司名'], ['write', '撰写报告', '交叉印证、标注出处、给出结论']];
 const KIND = { registry: '登记', wiki: '百科', site: '官网', news: '新闻', web: '网页', headline: '标题' };
 const $ = (s, el = document) => el.querySelector(s), esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -198,7 +216,7 @@ async function home() {
   app.innerHTML = `<section class="hero"><span class="eyebrow"><i></i>AI Due Diligence</span>
     <h1>一个名字，<em>查清一家海外公司</em></h1>
     <div class="box"><form id="f"><svg class="q" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6.2" stroke="#EDEEF2" stroke-width="1.6"/><path d="m13.6 13.6 4 4" stroke="#EDEEF2" stroke-width="1.6" stroke-linecap="round"/></svg>
-      <input id="q" placeholder="公司名，例如 Anduril Industries" autocomplete="off" maxlength="120" autofocus><button class="go" id="go">开始调查</button></form>
+      <input id="q" placeholder="海外公司英文名，例如 Anduril Industries" autocomplete="off" maxlength="120" autofocus><button class="go" id="go">开始调查</button></form>
       <div class="focus" id="fc">${FOCUS.map(([k, n]) => `<button type="button" class="chip ${k === focus ? 'on' : ''}" data-f="${k}">${n}</button>`).join('')}</div></div>
     <div class="try">试试${EXAMPLES.map((e) => `<button type="button" data-e="${esc(e)}">${esc(e)}</button>`).join('')}</div>
     <div class="err" id="err"></div>
@@ -215,6 +233,7 @@ async function home() {
 }
 async function start() {
   const q = $('#q').value.trim(), b = $('#go'); if (q.length < 2) { $('#err').textContent = '输入公司名'; return; }
+  if (/[㐀-鿿]/.test(q)) { $('#err').textContent = '只查海外公司，请输入公司的英文名'; return; }
   b.disabled = true; b.textContent = '启动中…'; $('#err').textContent = '';
   try { const r = await api('/api/deep/start', { company: q, focus }); location.hash = 'r=' + r.id; }
   catch (e) { $('#err').textContent = e.message; b.disabled = false; b.textContent = '开始调查'; }
