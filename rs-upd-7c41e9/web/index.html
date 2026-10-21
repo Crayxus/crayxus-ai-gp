@@ -228,7 +228,8 @@ function bossBar() {   // BOSS 初筛进度（10-21）
   const t = b.running ? `<span class="spin"></span>BOSS 初筛进行中` : b.error ? 'BOSS 初筛停了' : 'BOSS 初筛这一轮结束';
   return `<div style="margin:0 0 12px;padding:10px 14px;border:1px solid ${c};border-radius:10px;background:var(--card);font-size:13px">
     <button class="btn" style="float:right;padding:3px 10px" onclick="window.open('/mini?job=${S.cur}','rsmini','width=420,height=760')">AI·伯乐</button>
-    <b style="color:${c}">${t}</b>　读了 <b>${b.done || 0}</b> 人 · 认出读过的跳过 ${b.dup || 0} · 期望不在本地（只看摘要、没翻简历）${b.skipped_city || 0}
+    <b style="color:${c}">${t}</b>　这一轮读了 <b>${b.done || 0}</b> 人（累计 ${b.total_seen || 0} 人）· 认出读过的跳过 ${b.dup || 0} · 期望不在本地（只看摘要、没翻简历）${b.skipped_city || 0}
+    ${(() => { const j = (S.jobs || []).find((x) => x.id === S.cur); return j ? `<div style="color:var(--mute);margin-top:3px">文件夹 ${j.files == null ? '—' : j.files} 个文件 → 登记 ${j.n} 份 → 打完分 ${j.done} 份（另有 ${j.dup || 0} 份判为同一个人，不重复算）· 排队 ${j.busy} · 出错 ${j.err || 0}</div>` : ''; })()}
     <div style="color:${b.error ? 'var(--X)' : 'var(--mute)'};margin-top:3px">${esc(b.error || b.msg || '')}</div>
     ${b.running ? '<div style="color:var(--faint);margin-top:3px">只看不发：不会给任何人发消息。程序在后台点，不占鼠标；按 F12 或点「停止 BOSS 初筛」随时停，下次接着读。</div>' : ''}</div>`;
 }
@@ -478,6 +479,7 @@ document.addEventListener('click', async (e) => {
     catch (err) { alert('升级失败：' + err.message); }
     return;
   }
+  if (e.target.id === 'eco') { const on = e.target.checked; await api('/api/eco', { on }); toast(on ? '省钱模式开了：之后读的简历先用豆包打分' : '省钱模式关了：每份都用 DeepSeek 精评'); refresh(); return; }
   if (e.target.id === 'setkey') {
     e.preventDefault();
     const k = prompt('粘贴火山方舟 API Key（只存在这台电脑的 data/settings.json）');
