@@ -1,11 +1,11 @@
 {
- "ver": "1.1.1",
- "note": "左下角显示今天 / 累计用了多少 token",
+ "ver": "1.1.2",
+ "note": "修 BOSS 计数：编号接着文件夹最大号、名单写一半不会坏；出错自动重试一次；进度条显示 文件→登记→打完分→重复/排队/出错",
  "files": {
-  "app.py": "8d55dfa8553565fa210c7c87ca9e7d3526c26d54c5ba83f2e94d8c96f65d5c46",
-  "web/index.html": "f3830fc6bebffa46576af0fce4c9f7b3541184a15e4deb0b0a4918b1d8aeeddf",
+  "app.py": "604a756d3a2b30bb8ff534abf581ef73d53a2fc46fac40e58a2d21be649d8164",
+  "web/index.html": "cc3cf8df4a5ba9966a2d298ccae0754a6b227159ab85a80d83ada986ed59ce20",
   "web/mini.html": "7683effbced5ac6f0f4263098a3b733d31f23ec529719db89ddf755025e15975",
-  "boss/reader.py": "bcd19051fd0eda6dbae943991764f5ddeb3810970e3c80d0406a2d2ed502a017",
+  "boss/reader.py": "a653154c6b11c572c391495dfdaf2866cc264ebf4a9188bb6f6b7a56e46fd54b",
   "boss/ui.py": "80457fffdfc4d4c4e9248719d83b4123f56ff9fcacbae05b19dfc6f07b9728f9"
  }
 }
