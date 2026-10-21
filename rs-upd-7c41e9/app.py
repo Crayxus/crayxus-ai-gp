@@ -11,7 +11,7 @@ import urllib.request, urllib.parse, urllib.error, html as htmllib
 from datetime import datetime, timedelta, timezone
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 
-VERSION = '1.0.0'  # 每次发更新 +1（publish_update.py 会自动改）
+VERSION = '1.1.1'  # 每次发更新 +1（publish_update.py 会自动改）
 UPD_URL = os.environ.get('RS_UPD_URL') or 'https://crayxus.com.au/rs-upd-7c41e9/'  # 升级文件放这里：version.json + app.py + web/index.html
 FROZEN = getattr(sys, 'frozen', False)  # 打包成 exe 时：网页在包里，数据放 exe 旁边
 ROOT = os.path.dirname(sys.executable) if FROZEN else os.path.dirname(os.path.abspath(__file__))
@@ -23,7 +23,7 @@ PORT = int(os.environ.get('RS_PORT') or 8830)
 INDEX = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'web', 'index.html')  # 升级后的网页跟着新 app.py 走
 if not os.path.isfile(INDEX): INDEX = os.path.join(RES, 'web', 'index.html')
 EXTS = {'.pdf', '.docx', '.txt', '.md', '.html', '.htm', '.jpg', '.jpeg', '.png', '.webp', '.bmp'}
-WORKERS = 3
+WORKERS = int(os.environ.get('RS_WORKERS') or 3)   # BOSS 初筛时开到 6，读得快些
 os.makedirs(DATA, exist_ok=True)
 os.makedirs(INBOX, exist_ok=True)
 if sys.stdout is None or FROZEN:  # pythonw / exe 没有控制台：日志写到 data/app.log
@@ -37,7 +37,7 @@ def load_env():
         if not os.path.isfile(p): continue
         for l in io.open(p, encoding='utf-8').read().splitlines():
             m = re.match(r'\s*([A-Z0-9_]+)\s*=\s*(.*?)\s*$', l)
-            if m and m.group(1) in ('DOUBAO_API_KEY', 'RS_MODEL') and m.group(1) not in env:
+            if m and m.group(1) in ('DOUBAO_API_KEY', 'RS_MODEL', 'RS_TEXT_MODEL') and m.group(1) not in env:
                 env[m.group(1)] = m.group(2).strip('"\'')
     return env
 
@@ -52,7 +52,8 @@ def load_set():
 
 ENV = load_env()
 KEY = load_set().get('ark_key') or ENV.get('DOUBAO_API_KEY', '')
-MODEL = os.environ.get('RS_MODEL') or ENV.get('RS_MODEL') or 'doubao-seed-2-0-lite-260428'
+MODEL = os.environ.get('RS_MODEL') or ENV.get('RS_MODEL') or 'doubao-seed-2-0-lite-260428'   # 读图（扫描件、照片、BOSS 截图）
+TEXT_MODEL = os.environ.get('RS_TEXT_MODEL') or ENV.get('RS_TEXT_MODEL') or 'deepseek-v4-pro-ga-260813'   # 10-21 用户：打分用火山方舟上的 DeepSeek（它不看图，图先由豆包转成文字）
 ARK_URL = 'https://ark.cn-beijing.volces.com/api/v3/chat/completions'
 OPENER = urllib.request.build_opener(urllib.request.ProxyHandler({}))  # 火山在国内，不走本机代理
 BJ = timezone(timedelta(hours=8))
@@ -71,7 +72,7 @@ CREATE TABLE IF NOT EXISTS resumes(id INTEGER PRIMARY KEY, job_id INTEGER, file 
   name TEXT DEFAULT '', phone TEXT DEFAULT '', email TEXT DEFAULT '', dup_of INTEGER,
   mark TEXT DEFAULT '', note TEXT DEFAULT '', created TEXT, scored_at TEXT, ms INTEGER, UNIQUE(job_id, sha1));
 ''')
-for t, c in (('jobs', 'sign TEXT DEFAULT ""'), ('resumes', 'contacted TEXT DEFAULT ""')):  # 后加的列：老库补上
+for t, c in (('jobs', 'sign TEXT DEFAULT ""'), ('resumes', 'contacted TEXT DEFAULT ""'), ('jobs', 'city TEXT DEFAULT ""')):  # 后加的列：老库补上
     if c.split()[0] not in [x[1] for x in con.execute(f'PRAGMA table_info({t})')]: con.execute(f'ALTER TABLE {t} ADD COLUMN {c}')
 
 
@@ -147,7 +148,7 @@ def extract(path):
         with fitz.open(path) as d:
             text = clean('\n'.join(p.get_text() for p in d))
             if len(re.sub(r'\s', '', text)) >= 80: return text, [], d.page_count
-            return '', [jpeg_of(p) for p in list(d)[:3]], d.page_count  # 扫描件：前 3 页转图片
+            return '', [jpeg_of(p) for p in list(d)[:6]], d.page_count  # 扫描件：前 6 页转图片（BOSS 在线简历截图一般 3–5 屏）
     if ext == '.docx':
         import docx
         dd = docx.Document(path)
@@ -194,7 +195,7 @@ def build_prompt(job):
     dims = job['dims']
     num = lambda xs: '\n'.join(f'{i + 1}. {x}' for i, x in enumerate(xs)) or '（无）'
     schema = {
-        'name': '姓名，没写就空字符串', 'phone': '手机号', 'email': '邮箱', 'city': '现居或期望城市',
+        'name': '姓名，没写就空字符串', 'phone': '手机号', 'email': '邮箱', 'city': '现居或期望城市', 'expect_city': '期望工作城市（看「期望」那一栏，多个用、分隔；写了全国/不限就照写；看不到填空字符串）',
         'degree': '最高学历：博士/硕士/本科/大专/高中及以下/未知', 'school': '最高学历的学校', 'major': '专业',
         'grad_year': '最高学历毕业年份（数字，没有填 null）',
         'years': '全职工作年限（数字，可一位小数；实习不算，应届生填 0）',
@@ -218,15 +219,40 @@ def build_prompt(job):
     ])
 
 
-def ark(messages):
+USE_LOCK = threading.Lock()
+
+
+def add_usage(model, u):
+    """10-21：记每天每个模型用了多少 token（火山返回的 usage），存 data/usage.json，左下角显示"""
+    if not u: return
+    d, f = datetime.now(BJ).strftime('%Y-%m-%d'), os.path.join(DATA, 'usage.json')
+    with USE_LOCK:
+        try: U = json.load(io.open(f, encoding='utf-8'))
+        except Exception: U = {}
+        m = U.setdefault(d, {}).setdefault(model, {'in': 0, 'out': 0, 'n': 0})
+        m['in'] += int(u.get('prompt_tokens') or 0); m['out'] += int(u.get('completion_tokens') or 0); m['n'] += 1
+        try: json.dump(U, io.open(f, 'w', encoding='utf-8'), ensure_ascii=False)
+        except OSError: pass
+
+
+def usage_summary():
+    try: U = json.load(io.open(os.path.join(DATA, 'usage.json'), encoding='utf-8'))
+    except Exception: return None
+    tot = lambda ms: {'in': sum(m['in'] for m in ms), 'out': sum(m['out'] for m in ms), 'n': sum(m['n'] for m in ms)}
+    today = U.get(datetime.now(BJ).strftime('%Y-%m-%d'), {})
+    return {'today': tot(today.values()), 'all': tot([m for d in U.values() for m in d.values()]), 'since': min(U) if U else ''}
+
+
+def ark(messages, model=None, max_tokens=3000):
     if not KEY: raise RuntimeError('没有火山方舟的 Key：点左下角「填 Key」')
-    body = json.dumps({'model': MODEL, 'messages': messages, 'temperature': 0.1, 'max_tokens': 3000,
+    body = json.dumps({'model': model or TEXT_MODEL, 'messages': messages, 'temperature': 0.1, 'max_tokens': max_tokens,
                        'thinking': {'type': 'disabled'}}).encode()
     req = urllib.request.Request(ARK_URL, body, {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + KEY})
     try:
         with OPENER.open(req, timeout=150) as r: j = json.load(r)
     except urllib.error.HTTPError as e:
         raise RuntimeError(f'火山方舟返回 {e.code}：' + e.read().decode('utf-8', 'ignore')[:200])
+    add_usage(model or TEXT_MODEL, j.get('usage'))
     return j['choices'][0]['message']['content'] or ''
 
 
@@ -234,22 +260,65 @@ def parse_json(s):
     s = re.sub(r'^```(?:json)?|```$', '', s.strip(), flags=re.M).strip()
     i, k = s.find('{'), s.rfind('}')
     if i < 0 or k < i: raise ValueError('no json')
-    return json.loads(s[i:k + 1])
+    s = s[i:k + 1]
+    try: return json.loads(s)
+    except json.JSONDecodeError: pass
+    # 10-21：DeepSeek 偶尔在字符串里写英文双引号（"why": "他说"很好""）、字符串里换行或多个尾逗号，整段就解析不了 → 修一下再解析
+    out, ins, n = [], False, len(s)
+    for x, ch in enumerate(s):
+        if ch == '"' and (x == 0 or s[x - 1] != '\\'):
+            if not ins: ins = True
+            else:
+                y = x + 1
+                while y < n and s[y] in ' \t\r\n': y += 1
+                if y >= n or s[y] in ',:}]': ins = False
+                else: out.append('\\')   # 字符串中间的引号：转义
+        elif ins and ch in '\r\n': out.append(' '); continue
+        out.append(ch)
+    fixed = re.sub(r',\s*([}\]])', r'\1', ''.join(out))
+    try: return json.loads(fixed)
+    except json.JSONDecodeError as e: raise ValueError(str(e))
+
+
+TRANSCRIBE = ('把这些图片里的简历内容完整、按原顺序转写成纯文字：姓名、基本信息、期望（城市/职位/薪资）、每段工作经历（公司、职位、时间、做了什么）、'
+              '项目经历、教育经历、技能、对方发来的话，都要写进去。不要总结、不要评价、不要漏掉数字；BOSS 直聘界面上的按钮文字跳过。')
+
+
+def transcribe(imgs):
+    """图 → 文字（豆包看图）。DeepSeek 不看图，扫描件 / 照片 / BOSS 截图先走这一步"""
+    content = [{'type': 'image_url', 'image_url': {'url': 'data:image/jpeg;base64,' + b}} for b in imgs]
+    content.append({'type': 'text', 'text': TRANSCRIBE})
+    return ark([{'role': 'user', 'content': content}], model=MODEL, max_tokens=6000)
 
 
 def ask(job, text, imgs):
     p = build_prompt(job)
     if imgs:
+        try: text = transcribe(imgs)
+        except Exception as e:
+            print(now(), '转文字失败，改成直接看图打分：', e, flush=True); text = ''
+    if text:
+        content, model = p + '\n\n【简历原文】\n' + text[:14000], TEXT_MODEL
+    else:   # 转文字失败：退回豆包直接看图打分
         content = [{'type': 'image_url', 'image_url': {'url': 'data:image/jpeg;base64,' + b}} for b in imgs]
-        content.append({'type': 'text', 'text': p + '\n\n【简历】见上面的图片（扫描件或照片），先认真读完再判断。'})
-    else:
-        content = p + '\n\n【简历原文】\n' + text[:14000]
+        content.append({'type': 'text', 'text': p + '\n\n【简历】见上面的图片（扫描件或照片），先认真读完再判断。'}); model = MODEL
     last = ''
     for _ in range(2):
-        last = ark([{'role': 'system', 'content': SYS}, {'role': 'user', 'content': content}])
+        try: last = ark([{'role': 'system', 'content': SYS}, {'role': 'user', 'content': content}], model=model, max_tokens=6000)
+        except RuntimeError as e:
+            if model == MODEL: raise
+            print(now(), 'DeepSeek 打分失败，这份改用豆包：', e, flush=True); model = MODEL; continue
         try: return parse_json(last)
-        except ValueError: pass
+        except ValueError as e: print(now(), '回复解析不了（', e, '），原文：', last[:4000], flush=True)
     raise RuntimeError('模型回的不是 JSON：' + last[:100])
+
+
+def expect_city(img_b64):
+    """BOSS 聊天窗口右上「期望」那一行 → 城市（豆包看图，一两秒）。读不出来返回空"""
+    t = ark([{'role': 'user', 'content': [{'type': 'image_url', 'image_url': {'url': 'data:image/jpeg;base64,' + img_b64}},
+             {'type': 'text', 'text': '图里「期望」后面写的工作城市是哪些？只回城市名，多个用、分隔；写了全国或不限就回 全国；看不到回 无'}]}],
+            model=MODEL, max_tokens=30)
+    return '' if '无' in t else t.strip()
 
 
 # ---------------- 打分规则（代码算，不让模型算） ----------------
@@ -288,6 +357,11 @@ def compute(job, out):
         return res
     out['must'] = align(job['must'], out.get('must'), True)
     out['plus'] = align(job['plus'], out.get('plus'), False)
+    # 10-21 用户：期望城市不在岗位城市（杭州）的打分压低，不浪费时间——最高只到 C 档（比 B 线低 1 分）
+    city, ec = (job.get('city') or '').strip(), str(out.get('expect_city') or '').strip()
+    if city and ec and city not in ec and not re.search(r'全国|不限|均可|都可|异地|远程', ec):
+        total = min(total, int(job['b']) - 1)
+        out['risks'] = ['期望城市是' + ec + '，不在' + city] + [x for x in (out.get('risks') or []) if city not in str(x)]
     hard = sum(m['met'] == '否' for m in out['must'])
     unsure = sum(m['met'] == '不确定' for m in out['must'])
     tier = 'X' if hard else 'A' if total >= job['a'] else 'B' if total >= job['b'] else 'C'
@@ -299,13 +373,19 @@ def norm_phone(p):
     return d[-11:] if len(d) >= 7 else ''
 
 
-def mark_dup(job_id, rid, phone, email):
-    """同一岗位里手机号或邮箱相同 = 同一个人投了多份，后来的那份标成重复（统计里不算）"""
+def mark_dup(job_id, rid, phone, email, name='', school=''):
+    """同一岗位里手机号或邮箱相同 = 同一个人投了多份，后来的那份标成重复（统计里不算）。
+    BOSS 截图没有手机号邮箱：姓名 + 学校都一样也算同一个人（10-21）"""
     ph, em = norm_phone(phone), (email or '').strip().lower()
+    nm, sc = (name or '').strip(), re.sub(r'\s', '', school or '')
     run('UPDATE resumes SET dup_of=NULL WHERE id=?', (rid,))
-    if not ph and not em: return
-    for o in rows("SELECT id, phone, email FROM resumes WHERE job_id=? AND id<>? AND status='done' AND dup_of IS NULL", (job_id, rid)):
-        if (ph and norm_phone(o['phone']) == ph) or (em and (o['email'] or '').strip().lower() == em):
+    if not ph and not em and not (nm and sc): return
+    for o in rows("SELECT id, phone, email, name, data FROM resumes WHERE job_id=? AND id<>? AND status='done' AND dup_of IS NULL", (job_id, rid)):
+        osc = ''
+        if nm and sc and (o['name'] or '').strip() == nm:
+            try: osc = re.sub(r'\s', '', json.loads(o['data'] or '{}').get('school') or '')
+            except Exception: osc = ''
+        if (ph and norm_phone(o['phone']) == ph) or (em and (o['email'] or '').strip().lower() == em) or (osc and osc == sc):
             if o['id'] < rid: run('UPDATE resumes SET dup_of=? WHERE id=?', (o['id'], rid)); return
             run('UPDATE resumes SET dup_of=? WHERE id=?', (rid, o['id']))
 
@@ -333,7 +413,7 @@ def process(rid):
             (text, 'image' if imgs else 'text', pages, json.dumps(out, ensure_ascii=False), total, tier, hard, unsure,
              str(out.get('name') or '')[:40], str(out.get('phone') or '')[:40], str(out.get('email') or '')[:80],
              now(), int((time.time() - t0) * 1000), rid))
-        mark_dup(r['job_id'], rid, out.get('phone'), out.get('email'))
+        mark_dup(r['job_id'], rid, out.get('phone'), out.get('email'), out.get('name'), out.get('school'))
         print(f'[{now()}] 读完 #{rid} {r["fname"]}：{total} 分 {tier}（{time.time() - t0:.1f}s）', flush=True)
     except Exception as e:
         run("UPDATE resumes SET status='error', err=? WHERE id=?", (str(e)[:300], rid))
@@ -419,12 +499,12 @@ def j_save_job(h, q, b):
     a, bb = int(b.get('a') or 80), int(b.get('b') or 65)
     if not (0 < bb < a <= 100): return {'error': 'A 线要高于 B 线（0-100）'}
     vals = (name[:40], str(b.get('jd') or '')[:4000], json.dumps(lines(b.get('must'))[:10], ensure_ascii=False),
-            json.dumps(lines(b.get('plus'))[:10], ensure_ascii=False), json.dumps(dims, ensure_ascii=False), folder, 1 if b.get('auto', True) else 0, a, bb, str(b.get('sign') or '').strip()[:60])
+            json.dumps(lines(b.get('plus'))[:10], ensure_ascii=False), json.dumps(dims, ensure_ascii=False), folder, 1 if b.get('auto', True) else 0, a, bb, str(b.get('sign') or '').strip()[:60], str(b.get('city') or '').strip()[:20])
     if b.get('id'):
-        run('UPDATE jobs SET name=?,jd=?,must=?,plus=?,dims=?,folder=?,auto=?,a=?,b=?,sign=? WHERE id=?', vals + (int(b['id']),))
+        run('UPDATE jobs SET name=?,jd=?,must=?,plus=?,dims=?,folder=?,auto=?,a=?,b=?,sign=?,city=? WHERE id=?', vals + (int(b['id']),))
         jid = int(b['id'])
     else:
-        jid = run('INSERT INTO jobs(name,jd,must,plus,dims,folder,auto,a,b,sign,created) VALUES(?,?,?,?,?,?,?,?,?,?,?)', vals + (now(),))
+        jid = run('INSERT INTO jobs(name,jd,must,plus,dims,folder,auto,a,b,sign,city,created) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', vals + (now(),))
     os.makedirs(folder, exist_ok=True)
     return {'ok': True, 'id': jid}
 
@@ -514,8 +594,8 @@ def j_remove(h, q, b):
 
 def j_status(h, q, b):
     busy = one("SELECT COUNT(*) n FROM resumes WHERE status IN ('queued','reading')")['n']
-    return {'ok': True, 'model': MODEL, 'key': bool(KEY), 'busy': busy, 'version': VERSION, 'frozen': bool(FROZEN),
-            'upd': UPD if UPD.get('ver') and vt(UPD['ver']) > vt(VERSION) else None}
+    return {'ok': True, 'model': MODEL + ' 读图 · ' + TEXT_MODEL + ' 打分', 'key': bool(KEY), 'busy': busy, 'version': VERSION, 'frozen': bool(FROZEN),
+            'upd': UPD if UPD.get('ver') and vt(UPD['ver']) > vt(VERSION) else None, 'usage': usage_summary()}
 
 
 # ---------------- 升级：只换 app.py 和网页，库不动 ----------------
@@ -661,8 +741,84 @@ def serve_file(h, q):
     h.send(200, open(r['file'], 'rb').read(), ct, {'Content-Disposition': f"{disp}; filename*=UTF-8''{urllib.parse.quote(r['fname'])}"})
 
 
-GET = {'/api/jobs': j_jobs, '/api/resumes': j_resumes, '/api/status': j_status}
-POST = {'/api/job': j_save_job, '/api/job/del': j_del_job, '/api/job/auto': j_auto, '/api/scan': j_scan, '/api/mark': j_mark,
+
+# ---------------- BOSS 直聘初筛（10-21）：后台点开候选人、截简历，丢进岗位文件夹，照常打分 ----------------
+BOSS = {'r': None, 't': None}
+
+
+def boss_mod():
+    """boss/reader.py：优先用 app.py 旁边的（升级下来的新版），没有就用包里带的"""
+    import importlib.util
+    for base in (os.path.dirname(os.path.abspath(__file__)), RES, ROOT):
+        f = os.path.join(base, 'boss', 'reader.py')
+        if os.path.isfile(f):
+            if os.path.join(base, 'boss') not in sys.path: sys.path.insert(0, os.path.join(base, 'boss'))
+            spec = importlib.util.spec_from_file_location('boss_reader', f)
+            m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+            return m
+    raise RuntimeError('找不到 boss/reader.py')
+
+
+def j_boss_start(h, q, b):
+    if BOSS['r'] and BOSS['r'].st.get('running'): return {'ok': False, 'error': '已经在跑了'}
+    job = get_job(int(b.get('job') or 0))
+    if not job: return {'ok': False, 'error': '先选一个岗位'}
+    if not KEY: return {'ok': False, 'error': '没有火山方舟 Key'}
+    city = (job.get('city') or '').strip()
+
+    def city_ok(img):   # 期望城市不含岗位城市的，不点开在线简历（省时间），只存摘要
+        if not city: return True
+        buf = io.BytesIO(); img.convert('RGB').save(buf, 'JPEG', quality=85)
+        ec = expect_city(base64.b64encode(buf.getvalue()).decode())
+        return (not ec) or city in ec or bool(re.search(r'全国|不限|均可|异地|远程', ec))
+    m = boss_mod()
+    r = m.Reader(job['folder'], data_dir=DATA, delay=float(b.get('delay') or 2.5), cv=b.get('cv', True) is not False,
+                 city_ok=city_ok, max_n=int(b.get('max') or 100000), log=lambda t: print(t, flush=True))
+    r.st['job'] = job['id']
+    if not job.get('auto'): run('UPDATE jobs SET auto=1 WHERE id=?', (job['id'],))   # 截图进文件夹要自动翻阅才会被读
+    BOSS['r'] = r; BOSS['t'] = threading.Thread(target=r.run, daemon=True); BOSS['t'].start()
+    return {'ok': True}
+
+
+def j_boss_stop(h, q, b):
+    if BOSS['r']: BOSS['r'].stop_ev.set()
+    return {'ok': True}
+
+
+def j_boss_summary(h, q, b):
+    """小窗：已扫多少人、平均 / 最高 / 最低分、平均每人用时、总工作时间"""
+    r = BOSS['r']; st = dict(r.st) if r else {}
+    jid = int(q.get('job') or 0) or st.get('job') or (one("SELECT job_id FROM resumes WHERE fname LIKE 'boss_%' ORDER BY id DESC LIMIT 1") or {}).get('job_id') or 0
+    job = get_job(jid) or {}
+    rs = rows("SELECT name, total, tier, data FROM resumes WHERE job_id=? AND status='done' AND dup_of IS NULL", (jid,))
+    sc = [x['total'] for x in rs if x['total'] is not None]
+    try: people = len([1 for k in json.load(io.open(os.path.join(DATA, 'boss_seen.json'), encoding='utf-8')) if k.startswith('p:')])
+    except Exception: people = 0
+    try: d = json.load(io.open(os.path.join(DATA, 'boss_stats.json'), encoding='utf-8'))
+    except Exception: d = {'secs': 0, 'done': 0}
+    secs = d.get('secs', 0) + ((time.time() - r._mark) if r and st.get('running') else 0)
+    tiers = {t: sum(1 for x in rs if x['tier'] == t) for t in 'ABCX'}
+    def line(x):   # 排名里每人一行小字：现任 · 年限 · 期望城市
+        try: d = json.loads(x['data'] or '{}')
+        except Exception: d = {}
+        cur = d.get('current') or {}
+        bits = [cur.get('title') or '', f"{d['years']} 年" if d.get('years') not in (None, '') else '', d.get('expect_city') or '']
+        return ' · '.join(b for b in bits if b)
+    top = [{'name': x['name'] or '', 'total': x['total'], 'tier': x['tier'], 'line': line(x)}
+           for x in sorted(rs, key=lambda x: -(x['total'] or 0))[:max(1, min(30, int(q.get('top') or 5)))]]
+    return {'ok': True, 'job': job.get('name', ''), 'running': bool(st.get('running')), 'people': people, 'scored': len(sc),
+            'avg': round(sum(sc) / len(sc)) if sc else None, 'max': max(sc) if sc else None, 'min': min(sc) if sc else None,
+            'secs': round(secs), 'per': (secs / d['done']) if d.get('done') else None, 'tiers': tiers, 'top': top,
+            'skipped_city': st.get('skipped_city', 0), 'msg': st.get('msg', ''), 'error': st.get('error', '')}
+
+
+def j_boss_status(h, q, b):
+    r = BOSS['r']
+    return {'ok': True, **(dict(r.st) if r else {'running': False})}
+
+
+GET = {'/api/jobs': j_jobs, '/api/resumes': j_resumes, '/api/status': j_status, '/api/boss/status': j_boss_status, '/api/boss/summary': j_boss_summary}
+POST = {'/api/boss/start': j_boss_start, '/api/boss/stop': j_boss_stop, '/api/job': j_save_job, '/api/job/del': j_del_job, '/api/job/auto': j_auto, '/api/scan': j_scan, '/api/mark': j_mark,
         '/api/rescore': j_rescore, '/api/remove': j_remove, '/api/open-folder': j_open_folder, '/api/pick-folder': j_pick_folder,
         '/api/draft': j_draft, '/api/contacted': j_contacted, '/api/key': j_key, '/api/update': j_update, '/api/check-update': j_check_update}
 
@@ -693,6 +849,7 @@ class H(BaseHTTPRequestHandler):
         q = {k: v[0] for k, v in urllib.parse.parse_qs(u.query).items()}
         try:
             if m == 'GET' and u.path in ('/', '/index.html'): return self.send(200, open(INDEX, 'rb').read(), 'text/html; charset=utf-8')
+            if m == 'GET' and u.path == '/mini': return self.send(200, open(os.path.join(os.path.dirname(INDEX), 'mini.html'), 'rb').read(), 'text/html; charset=utf-8')   # 小窗
             if m == 'GET' and u.path == '/api/export': return export_csv(self, q)
             if m == 'GET' and u.path == '/api/file': return serve_file(self, q)
             n = int(self.headers.get('Content-Length') or 0)
@@ -707,6 +864,23 @@ class H(BaseHTTPRequestHandler):
             self.send(500, {'error': str(e)[:300]})
 
 
+def remap_paths():
+    """整个文件夹搬到别的电脑 / 别的位置后（10-21）：岗位文件夹、简历文件的路径如果不在本程序目录下，
+    而本程序的「简历/岗位名」里有同名的，就改指向这里（旧位置在不在都改：不然会往旧电脑的路径里写）"""
+    home = os.path.normcase(os.path.abspath(HOME))
+    inside = lambda f: os.path.normcase(os.path.abspath(f)).startswith(home + os.sep)
+    for j in rows('SELECT id, folder FROM jobs'):
+        f = j['folder'] or ''
+        if not f or inside(f): continue
+        nf = os.path.join(INBOX, os.path.basename(f.replace(chr(92), '/').rstrip('/')))
+        if os.path.isdir(nf) or not os.path.isdir(f):
+            os.makedirs(nf, exist_ok=True); run('UPDATE jobs SET folder=? WHERE id=?', (nf, j['id']))
+    for r in rows('SELECT r.id, r.file, j.folder FROM resumes r JOIN jobs j ON j.id=r.job_id'):
+        if r['file'] and not inside(r['file']):
+            nf = os.path.join(r['folder'], os.path.basename(r['file'].replace(chr(92), '/')))
+            if os.path.isfile(nf): run('UPDATE resumes SET file=? WHERE id=?', (nf, r['id']))
+
+
 def main():
     global SRV
     url = f'http://127.0.0.1:{PORT}/'
@@ -718,13 +892,14 @@ def main():
             if '--no-browser' not in sys.argv: webbrowser.open(url); return  # 已经开着：直接打开网页
             time.sleep(0.5)
     else: return
+    remap_paths()
     for r in rows("SELECT id FROM resumes WHERE status IN ('queued','reading') ORDER BY id"):  # 上次没读完的接着读
         run("UPDATE resumes SET status='queued' WHERE id=?", (r['id'],))
         Q.put(r['id'])
     for _ in range(WORKERS): threading.Thread(target=worker, daemon=True).start()
     threading.Thread(target=auto_loop, daemon=True).start()
     if FROZEN: threading.Thread(target=upd_loop, daemon=True).start()
-    print(f'简历快筛 v{VERSION} 已启动：{url}  模型 {MODEL}  Key {"有" if KEY else "没有！"}  数据 {DATA}', flush=True)
+    print(f'简历快筛 v{VERSION} 已启动：{url}  读图 {MODEL} · 打分 {TEXT_MODEL}  Key {"有" if KEY else "没有！"}  数据 {DATA}', flush=True)
     if '--no-browser' not in sys.argv: webbrowser.open(url)
     SRV.serve_forever()
 
