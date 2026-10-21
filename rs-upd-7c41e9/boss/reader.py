@@ -5,7 +5,7 @@
 - 坐标按 2560×1440、缩放 100% 实测，换电脑时按窗口 DPI 等比换算（BOSS 是网页界面，布局随缩放等比变）；开跑前先校准，过不了就停。
 - 停：快筛页面点「停止」、按 F12，或在本目录放一个 STOP 文件。重跑会跳过已经读过的人（boss_seen.json 存在数据目录）。
 命令行：python reader.py <岗位文件夹> [--max N] [--delay 2.5] [--no-cv]"""
-import hashlib, json, os, random, sys, time, threading
+import hashlib, json, os, random, re, sys, time, threading
 import ctypes
 import numpy as np
 from PIL import Image, JpegImagePlugin, PdfImagePlugin  # noqa: F401  存 PDF 要用 JPEG 编码器，先注册
@@ -182,6 +182,8 @@ class Reader:
             except Exception: pass
             return False
         n = len([1 for kk in seen if kk.startswith('p:')]) + 1
+        try: n = max([n] + [int(m.group(1)) + 1 for f in os.listdir(self.folder) for m in [re.match(r'boss_(\d+)\.', f)] if m])
+        except OSError: pass
         head = shot.crop(G.head)
         ok_city = True
         if self.city_ok:
@@ -197,7 +199,9 @@ class Reader:
             if not ok_city: st['skipped_city'] += 1
         st['done'] += 1
         seen['p:' + (pk or k)] = fn; st['total_seen'] = n
-        json.dump(seen, open(self.seen_f, 'w', encoding='utf-8'))
+        tmp = self.seen_f + '.tmp'
+        with open(tmp, 'w', encoding='utf-8') as f: json.dump(seen, f)
+        os.replace(tmp, self.seen_f)
         self.bump(1)
         if st['done'] % 10 == 0: self.log(f'已读 {st["done"]} 人（期望不在本地、没翻简历的 {st["skipped_city"]} 人）')
         return True
@@ -222,7 +226,9 @@ class Reader:
     def _run(self):
         os.makedirs(self.folder, exist_ok=True)
         try: seen = json.load(open(self.seen_f, encoding='utf-8'))
-        except Exception: seen = {}
+        except Exception:
+            seen = {}
+            if os.path.exists(self.seen_f): self.log('「读过谁」名单打不开，这次从头认人（已存的截图不会被覆盖）')
         self.h = h = ui.find()
         if not h: self.st['error'] = '没找到 BOSS直聘 窗口：先打开 BOSS 直聘电脑版并登录'; return
         if not self.calibrate(): return
