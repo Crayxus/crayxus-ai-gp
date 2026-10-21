@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Crayxus DeepSearch · 海外企业尽调</title>
+<meta name="description" content="输入公司名，AI 分析师调取全球法人登记、监管申报、权威媒体与官网，几分钟交付一份带出处的尽调报告。">
+<meta name="theme-color" content="#07080B">
+<style>
+:root{--bg:#07080B;--s1:#0D0F14;--s2:#12151C;--s3:#181C25;--line:rgba(255,255,255,.075);--line2:rgba(255,255,255,.13);--ink:#EDEEF2;--ink2:#C3C7D0;--mute:#878D99;--faint:#5B616D;
+  --gold:#D9B97A;--gold2:#F1DEB3;--cyan:#7FD4E6;--hi:#F06A5E;--mid:#E8B14A;--lo:#5FD08F;
+  --sans:"SF Pro Text","PingFang SC","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;--serif:"Songti SC","Noto Serif SC","STSong","Source Han Serif SC",Georgia,serif;--mono:"SF Mono","JetBrains Mono",Consolas,monospace}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.75 var(--sans);-webkit-font-smoothing:antialiased;min-height:100vh;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background:
+  radial-gradient(1100px 620px at 50% -180px,rgba(217,185,122,.14),transparent 62%),
+  radial-gradient(700px 420px at 92% 18%,rgba(127,212,230,.07),transparent 60%),
+  linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px) 0 0/100% 64px,
+  linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px) 0 0/64px 100%;
+  -webkit-mask-image:linear-gradient(#000 0,#000 55%,transparent 100%);mask-image:linear-gradient(#000 0,#000 55%,transparent 100%)}
+a{color:inherit}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 28px}
+nav{display:flex;align-items:center;gap:14px;height:68px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.mark{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:linear-gradient(140deg,#2A2418,#0F0D09);border:1px solid rgba(217,185,122,.35);box-shadow:inset 0 0 12px rgba(217,185,122,.15)}
+.mark svg{width:16px;height:16px}
+.brand b{font-size:14.5px;letter-spacing:.08em;font-weight:600}
+.brand span{color:var(--gold);font-weight:500}
+nav .r{margin-left:auto;display:flex;gap:18px;font-size:13px;color:var(--mute)}
+nav .r a{text-decoration:none}nav .r a:hover{color:var(--ink)}
+/* ── 首页 ── */
+.hero{padding:76px 0 40px;text-align:center}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11.5px;letter-spacing:.32em;color:var(--gold);text-transform:uppercase;padding:5px 14px;border:1px solid rgba(217,185,122,.25);border-radius:999px;background:rgba(217,185,122,.05)}
+.eyebrow i{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 10px var(--gold)}
+h1{font:600 clamp(34px,5.4vw,60px)/1.18 var(--serif);letter-spacing:.01em;margin:26px auto 16px;max-width:900px;background:linear-gradient(180deg,#FFFFFF 20%,#B9BCC6 110%);-webkit-background-clip:text;background-clip:text;color:transparent}
+h1 em{font-style:normal;background:linear-gradient(100deg,var(--gold2),var(--gold) 60%,#A8874E);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{max-width:680px;margin:0 auto;color:var(--ink2);font-size:16.5px}
+.box{max-width:820px;margin:40px auto 0;padding:8px;border-radius:20px;background:linear-gradient(var(--s2),var(--s2)) padding-box,linear-gradient(120deg,rgba(217,185,122,.55),rgba(255,255,255,.08) 40%,rgba(127,212,230,.35)) border-box;border:1px solid transparent;box-shadow:0 30px 80px rgba(0,0,0,.45),0 0 0 6px rgba(217,185,122,.04)}
+.box form{display:flex;align-items:center;gap:8px}
+.box svg.q{width:20px;height:20px;margin-left:14px;flex:none;opacity:.6}
+.box input{flex:1;min-width:0;font:inherit;font-size:18px;color:var(--ink);background:none;border:0;outline:none;padding:14px 6px}
+.box input::placeholder{color:var(--faint)}
+.go{font:inherit;font-size:15px;font-weight:600;color:#17130B;border:0;border-radius:14px;padding:13px 24px;cursor:pointer;background:linear-gradient(135deg,var(--gold2),var(--gold) 55%,#B48E4E);box-shadow:0 8px 24px rgba(217,185,122,.25);white-space:nowrap}
+.go:disabled{opacity:.55;cursor:default}
+.focus{display:flex;gap:6px;flex-wrap:wrap;padding:8px 8px 4px}
+.chip{font:inherit;font-size:12.5px;color:var(--ink2);background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:999px;padding:5px 13px;cursor:pointer}
+.chip:hover{border-color:var(--line2);color:var(--ink)}
+.chip.on{color:#17130B;background:var(--gold);border-color:var(--gold)}
+.try{margin-top:18px;font-size:13px;color:var(--mute)}
+.try button{font:inherit;color:var(--ink2);background:none;border:0;border-bottom:1px dashed rgba(255,255,255,.2);padding:0 2px;margin:0 6px;cursor:pointer}
+.try button:hover{color:var(--gold2);border-color:var(--gold)}
+.err{margin-top:14px;color:var(--hi);font-size:14px;min-height:22px}
+.pillars{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:70px 0 0}
+.pillar{padding:20px 20px 18px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,rgba(255,255,255,.025),transparent)}
+.pillar small{font-size:11px;letter-spacing:.24em;color:var(--gold)}
+.pillar b{display:block;font:600 17px/1.4 var(--serif);margin:8px 0 6px}
+.pillar p{margin:0;font-size:13.5px;color:var(--mute);line-height:1.7}
+.srcs{margin:34px 0 0;text-align:center;font-size:12px;letter-spacing:.18em;color:var(--faint)}
+.srcs span{color:var(--ink2);letter-spacing:.06em;margin:0 10px;font-size:13px}
+.recent{margin:64px 0 0}
+.sec-h{display:flex;align-items:baseline;gap:12px;margin:0 0 14px}
+.sec-h h3{font:600 18px var(--serif);margin:0}
+.sec-h small{color:var(--mute);font-size:12.5px}
+.rgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.rcard{display:block;text-decoration:none;padding:16px 18px;border:1px solid var(--line);border-radius:14px;background:var(--s1);transition:border-color .2s,transform .2s}
+.rcard:hover{border-color:rgba(217,185,122,.4);transform:translateY(-2px)}
+.rcard b{font:600 15.5px var(--serif)}
+.rcard .m{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:12px;color:var(--mute)}
+/* ── 进行中 ── */
+.run{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:20px;padding:34px 0 60px}
+.panel{border:1px solid var(--line);border-radius:18px;background:rgba(13,15,20,.82);backdrop-filter:blur(8px);padding:24px 24px 20px}
+.panel h2{font:600 22px/1.3 var(--serif);margin:0}
+.panel .sub{color:var(--mute);font-size:13px;margin-top:4px}
+.stages{list-style:none;margin:22px 0 0;padding:0;position:relative}
+.stages:before{content:"";position:absolute;left:13px;top:10px;bottom:10px;width:1px;background:var(--line2)}
+.stages li{position:relative;display:flex;gap:14px;align-items:flex-start;padding:9px 0}
+.dot{width:27px;height:27px;border-radius:50%;flex:none;display:grid;place-items:center;background:var(--s2);border:1px solid var(--line2);font-size:12px;color:var(--faint);position:relative;z-index:1}
+.stages li.done .dot{background:rgba(95,208,143,.12);border-color:rgba(95,208,143,.5);color:var(--lo)}
+.stages li.on .dot{border-color:var(--gold);color:var(--gold);box-shadow:0 0 0 6px rgba(217,185,122,.08)}
+.stages li.on .dot:after{content:"";position:absolute;inset:-5px;border-radius:50%;border:1px solid rgba(217,185,122,.5);animation:ring 1.6s ease-out infinite}
+@keyframes ring{from{transform:scale(.8);opacity:1}to{transform:scale(1.45);opacity:0}}
+.stages b{font-size:14.5px;font-weight:600}.stages li:not(.done):not(.on) b{color:var(--mute)}
+.stages p{margin:1px 0 0;font-size:12.5px;color:var(--mute)}
+.timer{font:500 13px var(--mono);color:var(--gold);margin-left:auto}
+.log{margin-top:18px;height:230px;overflow:hidden;font:12px/1.85 var(--mono);color:var(--mute);-webkit-mask-image:linear-gradient(#000 70%,transparent);mask-image:linear-gradient(#000 70%,transparent)}
+.log div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;animation:fade .4s ease}
+.log div:first-child{color:var(--ink2)}
+.log i{font-style:normal;color:var(--faint);margin-right:10px}
+@keyframes fade{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.count{display:flex;align-items:baseline;gap:10px}
+.count b{font:600 44px/1 var(--serif);color:var(--gold2)}
+.slist{margin-top:16px;display:flex;flex-direction:column;gap:7px;max-height:470px;overflow:auto;padding-right:4px}
+.sitem{display:flex;gap:12px;align-items:center;padding:9px 12px;border:1px solid var(--line);border-radius:11px;background:var(--s1);animation:fade .45s ease;text-decoration:none}
+.fav{width:26px;height:26px;border-radius:7px;flex:none;display:grid;place-items:center;font:600 12px var(--sans);color:#17130B}
+.sitem .t{min-width:0;flex:1}
+.sitem .t b{display:block;font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sitem .t small{font-size:11.5px;color:var(--mute)}
+.kind{font-size:10.5px;letter-spacing:.06em;padding:1px 8px;border-radius:999px;border:1px solid var(--line2);color:var(--ink2);white-space:nowrap}
+.kind.registry{color:var(--cyan);border-color:rgba(127,212,230,.35)}.kind.site{color:var(--gold);border-color:rgba(217,185,122,.35)}.kind.news{color:var(--lo);border-color:rgba(95,208,143,.35)}
+/* ── 报告 ── */
+.rep{padding:30px 0 80px}
+.rhead{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:28px;align-items:center;padding:30px 32px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(135deg,rgba(217,185,122,.07),rgba(13,15,20,.9) 45%),var(--s1);position:relative;overflow:hidden}
+.rhead:after{content:"";position:absolute;right:-120px;top:-120px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(217,185,122,.12),transparent 65%)}
+.rhead small.eb{font-size:11px;letter-spacing:.3em;color:var(--gold)}
+.rhead h2{font:600 clamp(28px,4vw,42px)/1.2 var(--serif);margin:8px 0 4px}
+.rhead .legal{color:var(--mute);font-size:13.5px}
+.rhead .one{margin-top:12px;font-size:16.5px;color:var(--ink2)}
+.verdict{display:inline-flex;align-items:center;gap:8px;margin-top:16px;padding:6px 14px;border-radius:999px;font-size:13.5px;font-weight:600}
+.v-ok{background:rgba(95,208,143,.12);color:var(--lo);border:1px solid rgba(95,208,143,.35)}.v-warn{background:rgba(232,177,74,.12);color:var(--mid);border:1px solid rgba(232,177,74,.35)}
+.v-bad{background:rgba(240,106,94,.12);color:var(--hi);border:1px solid rgba(240,106,94,.35)}.v-na{background:rgba(255,255,255,.05);color:var(--ink2);border:1px solid var(--line2)}
+.vreason{display:block;margin-top:8px;font-size:13px;color:var(--mute);max-width:640px}
+.ring{position:relative;width:150px;height:150px;z-index:1}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .n{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+.ring .n b{font:600 42px/1 var(--serif)}.ring .n small{display:block;font-size:11px;letter-spacing:.2em;color:var(--mute);margin-top:4px}
+.snap{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;margin-top:16px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--line)}
+.snap div{background:var(--s1);padding:14px 18px;min-width:0}
+.snap small{display:block;font-size:11px;letter-spacing:.14em;color:var(--mute)}
+.snap b{display:block;font-weight:500;font-size:14px;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.snap a{color:var(--gold2);text-decoration:none}
+.cols{display:grid;grid-template-columns:220px minmax(0,1fr);gap:34px;margin-top:30px;align-items:start}
+.toc{position:sticky;top:20px;font-size:13px}
+.toc a{display:block;text-decoration:none;color:var(--mute);padding:6px 0 6px 12px;border-left:1px solid var(--line)}
+.toc a:hover,.toc a.on{color:var(--ink);border-color:var(--gold)}
+.card{border:1px solid var(--line);border-radius:18px;background:var(--s1);padding:24px 26px;scroll-margin-top:20px}
+.card+.card{margin-top:16px}
+.card h3{font:600 19px/1.35 var(--serif);margin:0 0 12px;display:flex;align-items:center;gap:10px}
+.card h3 small{font:400 12px var(--sans);color:var(--mute)}
+.summary{font-size:17px;line-height:1.95;color:var(--ink)}
+.md p{margin:0 0 10px}.md ul{margin:0 0 10px;padding-left:20px}.md li{margin:3px 0}.md strong{color:#fff}
+.cite{display:inline-block;font:600 10.5px/1 var(--sans);color:var(--gold);background:rgba(217,185,122,.1);border:1px solid rgba(217,185,122,.28);border-radius:5px;padding:2px 4px;margin:0 1px;text-decoration:none;vertical-align:2px;cursor:pointer}
+.cite:hover{background:var(--gold);color:#17130B}
+.scores{display:grid;grid-template-columns:auto 1fr auto;gap:10px 16px;align-items:center;font-size:13.5px}
+.bar{height:6px;border-radius:6px;background:rgba(255,255,255,.07);overflow:hidden}.bar i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,var(--gold),var(--gold2))}
+.risk{display:flex;gap:14px;padding:13px 0;border-top:1px solid var(--line)}.risk:first-of-type{border-top:0;padding-top:2px}
+.lv{flex:none;width:42px;text-align:center;font-size:12px;font-weight:600;border-radius:8px;padding:3px 0;height:fit-content}
+.lv.hi{background:rgba(240,106,94,.14);color:var(--hi)}.lv.mid{background:rgba(232,177,74,.14);color:var(--mid)}.lv.lo{background:rgba(95,208,143,.12);color:var(--lo)}
+.risk b{font-size:14.5px}.risk p{margin:2px 0 0;font-size:13.5px;color:var(--ink2)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{text-align:left;font-weight:500;font-size:11.5px;letter-spacing:.1em;color:var(--mute);padding:8px 10px;border-bottom:1px solid var(--line2)}
+td{padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.tl{position:relative;padding-left:22px}.tl:before{content:"";position:absolute;left:5px;top:6px;bottom:6px;width:1px;background:var(--line2)}
+.tl div{position:relative;padding:6px 0 12px}.tl div:before{content:"";position:absolute;left:-21px;top:12px;width:9px;height:9px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 4px rgba(217,185,122,.15)}
+.tl b{font-family:var(--mono);font-size:12.5px;color:var(--gold2)}.tl span{font-weight:600;margin-left:8px}.tl p{margin:2px 0 0;font-size:13px;color:var(--ink2)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.two ol{margin:0;padding-left:20px;font-size:14px}.two li{margin:6px 0}
+.srcl{display:flex;flex-direction:column;gap:2px}
+.srcl a{display:grid;grid-template-columns:34px 26px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 10px;border-radius:10px;text-decoration:none;font-size:13px;scroll-margin-top:80px}
+.srcl a:hover,.srcl a.hl{background:rgba(217,185,122,.08)}
+.srcl .no{font:600 12px var(--mono);color:var(--gold)}
+.srcl .tt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.srcl .tt small{color:var(--mute);margin-left:8px}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.btn{font:inherit;font-size:13px;color:var(--ink2);background:rgba(255,255,255,.04);border:1px solid var(--line2);border-radius:999px;padding:7px 15px;cursor:pointer;text-decoration:none}
+.btn:hover{color:var(--ink);border-color:rgba(217,185,122,.45)}
+.disc{margin-top:26px;font-size:12px;color:var(--faint);line-height:1.8}
+.tip{position:fixed;z-index:50;max-width:320px;padding:8px 12px;border-radius:10px;background:#1C2029;border:1px solid var(--line2);font-size:12.5px;color:var(--ink2);pointer-events:none;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+footer{position:relative;z-index:1;border-top:1px solid var(--line);margin-top:40px;padding:26px 0 40px;font-size:12px;color:var(--faint)}
+.hide{display:none!important}
+@media (max-width:960px){.pillars{grid-template-columns:1fr 1fr}.rgrid{grid-template-columns:1fr 1fr}.run{grid-template-columns:1fr}.cols{grid-template-columns:1fr}.toc{display:none}.snap{grid-template-columns:1fr 1fr}}
+@media (max-width:620px){.wrap{padding:0 16px}.hero{padding:44px 0 24px}.lede{font-size:15px}.box form{flex-wrap:wrap}.box input{font-size:16px;width:calc(100% - 46px)}.go{width:100%}
+  .pillars,.rgrid,.two{grid-template-columns:1fr}.rhead{grid-template-columns:1fr;padding:22px 20px}.ring{width:120px;height:120px}.card{padding:20px 18px}nav .r{display:none}.srcl a{grid-template-columns:28px 22px minmax(0,1fr)}.srcl .kind{display:none}}
+@media print{body{background:#fff;color:#111}body:before,nav,.acts,.toc,footer,.tip{display:none!important}.card,.rhead,.snap div,.panel{background:#fff!important;border-color:#ddd!important;color:#111}.rhead h2,.summary,.md strong{color:#111}.cols{grid-template-columns:1fr}.cite{border:0;background:none;color:#8a6a2e}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav><a class="brand" href="#"><span class="mark"><svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.6" stroke="#D9B97A" stroke-width="1.6"/><path d="M10.4 10.4 14 14" stroke="#D9B97A" stroke-width="1.6" stroke-linecap="round"/></svg></span><b>CRAYXUS <span>DeepSearch</span></b></a>
+    <div class="r"><a href="#how">工作方式</a><a href="#recent">最近报告</a><a href="https://crayxus.com.au/">Crayxus</a></div></nav>
+</div>
+
+<main class="wrap" id="app"></main>
+
+<footer><div class="wrap">© Crayxus · DeepSearch 海外企业尽调。报告由 AI 依据公开资料自动生成，仅供参考，不构成投资、法律或合规意见；关键结论请以原始来源和正式尽调为准。</div></footer>
+
+<script>
+const API = (new URLSearchParams(location.search).get('api') || 'https://api.crayxus.com.au').replace(/\/+$/, '');   // ?api= 只给本机测试用
+const FOCUS = [['', '综合背调'], ['partner', '合作前背调'], ['invest', '投资尽调'], ['supplier', '供应商审查'], ['compete', '竞品研究']];
+const EXAMPLES = ['Anduril Industries', 'Figure AI', 'Rivian', 'Shein', 'Scale AI'];
+const STAGES = [['entity', '识别实体', '全球法人登记、监管申报、百科知识库'], ['plan', '规划检索', '按尽调维度拆出检索方向'], ['search', '全网检索', '权威媒体与新闻、官网'], ['read', '阅读资料', '逐篇读取正文、去重、核对公司名'], ['write', '撰写报告', '交叉印证、标注出处、给出结论']];
+const KIND = { registry: '登记', wiki: '百科', site: '官网', news: '新闻', web: '网页', headline: '标题' };
+const $ = (s, el = document) => el.querySelector(s), esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const app = $('#app');
+let focus = '', poll = 0, tick = 0;
+
+async function api(p, body) {
+  const r = await fetch(API + p, body ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) } : {});
+  const j = await r.json().catch(() => ({})); if (!r.ok || j.ok === false) throw new Error(j.error || '服务暂时不可用，稍后再试'); return j;
+}
+const hue = (s) => { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) % 360; return h; };
+const fav = (host) => `<span class="fav" style="background:hsl(${hue(host)} 45% 72%)">${esc((host || '?').replace(/^www\./, '')[0].toUpperCase())}</span>`;
+const vClass = (v) => (/可以合作/.test(v) ? 'v-ok' : /谨慎/.test(v) ? 'v-warn' : /不建议/.test(v) ? 'v-bad' : 'v-na');
+const ago = (t) => { const m = (Date.now() - t) / 6e4; return m < 60 ? Math.max(1, Math.round(m)) + ' 分钟前' : m < 1440 ? Math.round(m / 60) + ' 小时前' : Math.round(m / 1440) + ' 天前'; };
+
+/* ── 首页 ── */
+async function home() {
+  clearInterval(poll); clearInterval(tick); document.title = 'Crayxus DeepSearch · 海外企业尽调';
+  app.innerHTML = `<section class="hero"><span class="eyebrow"><i></i>AI Due Diligence</span>
+    <h1>一个名字，<em>查清一家海外公司</em></h1>
+    <p class="lede">输入公司名。AI 分析师调取全球法人登记、监管申报、权威媒体与官网资料，交叉印证后交付一份逐句带出处的尽调报告。</p>
+    <div class="box"><form id="f"><svg class="q" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6.2" stroke="#EDEEF2" stroke-width="1.6"/><path d="m13.6 13.6 4 4" stroke="#EDEEF2" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <input id="q" placeholder="公司名，例如 Anduril Industries" autocomplete="off" maxlength="120" autofocus><button class="go" id="go">开始调查</button></form>
+      <div class="focus" id="fc">${FOCUS.map(([k, n]) => `<button type="button" class="chip ${k === focus ? 'on' : ''}" data-f="${k}">${n}</button>`).join('')}</div></div>
+    <div class="try">试试${EXAMPLES.map((e) => `<button type="button" data-e="${esc(e)}">${esc(e)}</button>`).join('')}</div>
+    <div class="err" id="err"></div>
+    <div class="pillars" id="how">
+      <div class="pillar"><small>01 · ENTITY</small><b>先认准是谁</b><p>对照全球法人识别码库（GLEIF）、美国证监会申报（SEC）与知识库，确认法定全称、注册地与母公司。</p></div>
+      <div class="pillar"><small>02 · EVIDENCE</small><b>再找证据</b><p>按融资、管理层、财务、诉讼监管、舆情等维度检索权威媒体与官网，逐篇读取正文。</p></div>
+      <div class="pillar"><small>03 · ANALYSIS</small><b>交叉印证</b><p>分析模型只依据读到的资料下结论，矛盾之处直接指出，查不到的列为信息缺口。</p></div>
+      <div class="pillar"><small>04 · REPORT</small><b>可追溯的结论</b><p>每一句都带出处编号，风险分级、五维评分、下一步核实清单，一键分享或存为 PDF。</p></div></div>
+    <p class="srcs">数据来源<span>GLEIF</span><span>SEC EDGAR</span><span>Wikidata</span><span>Wikipedia</span><span>全球新闻</span><span>企业官网</span></p></section>
+    <section class="recent" id="recent"></section>`;
+  const q = $('#q');
+  $('#fc').onclick = (e) => { const b = e.target.closest('[data-f]'); if (!b) return; focus = b.dataset.f; for (const x of $('#fc').children) x.classList.toggle('on', x === b); };
+  $('.try').onclick = (e) => { const b = e.target.closest('[data-e]'); if (b) { q.value = b.dataset.e; start(); } };
+  $('#f').onsubmit = (e) => { e.preventDefault(); start(); };
+  try {
+    const r = await api('/api/deep/recent');
+    if (r.list.length) $('#recent').innerHTML = `<div class="sec-h"><h3>最近的报告</h3><small>同一家公司 24 小时内直接打开已有报告</small></div><div class="rgrid">${r.list.map((x) => `<a class="rcard" href="#r=${x.id}"><b>${esc(x.name)}</b><div class="m">${x.verdict ? `<span class="verdict ${vClass(x.verdict)}" style="margin:0;padding:1px 10px;font-size:11.5px">${esc(x.verdict)}</span>` : ''}${x.score != null ? `<span>${x.score} 分</span>` : ''}<span>${ago(x.at)}</span></div></a>`).join('')}</div>`;
+  } catch {}
+}
+async function start() {
+  const q = $('#q').value.trim(), b = $('#go'); if (q.length < 2) { $('#err').textContent = '输入公司名'; return; }
+  b.disabled = true; b.textContent = '启动中…'; $('#err').textContent = '';
+  try { const r = await api('/api/deep/start', { company: q, focus }); location.hash = 'r=' + r.id; }
+  catch (e) { $('#err').textContent = e.message; b.disabled = false; b.textContent = '开始调查'; }
+}
+
+/* ── 进行中 ── */
+function running(j) {
+  const idx = Math.max(0, STAGES.findIndex((s) => s[0] === j.stage));
+  if (!$('#runp')) {
+    app.innerHTML = `<section class="run"><div class="panel" id="runp"><div style="display:flex;align-items:baseline;gap:12px"><div><h2>正在调查 ${esc(j.q)}</h2><div class="sub">通常 1–2 分钟。可以关掉页面，稍后用同一个链接回来看。</div></div><span class="timer" id="tm"></span></div>
+      <ol class="stages" id="st"></ol><div class="log" id="lg"></div></div>
+      <div class="panel"><div class="count"><b id="cn">0</b><span class="sub">份资料已收集</span></div><div class="slist" id="sl"></div></div></section>`;
+    clearInterval(tick); const t0 = Date.now() - (j.elapsed || 0);
+    tick = setInterval(() => { const s = Math.floor((Date.now() - t0) / 1000); const el = $('#tm'); if (el) el.textContent = String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); }, 500);
+  }
+  $('#st').innerHTML = STAGES.map(([k, n, d], i) => `<li class="${i < idx ? 'done' : i === idx ? 'on' : ''}"><span class="dot">${i < idx ? '✓' : i + 1}</span><div><b>${n}</b><p>${d}</p></div></li>`).join('');
+  $('#lg').innerHTML = j.steps.slice().reverse().slice(0, 14).map((s) => `<div><i>${String(Math.floor(s.t / 1000)).padStart(3, ' ')}s</i>${esc(s.msg)}</div>`).join('');
+  const n = j.sources.length || j.steps.filter((s) => /^读完|^读了官网|^Wikipedia|^GLEIF 法人识别码库：[^没]|^SEC|^Wikidata/.test(s.msg)).length;
+  $('#cn').textContent = n;
+  const items = j.sources.length ? j.sources : j.steps.filter((s) => /^读完 /.test(s.msg)).map((s) => { const m = s.msg.match(/^读完 (\S+?)：(.*)$/) || []; return { host: m[1], title: m[2], kind: 'web' }; });
+  $('#sl').innerHTML = items.slice().reverse().map((s) => `<div class="sitem">${fav(s.host)}<div class="t"><b>${esc(s.title)}</b><small>${esc(s.host || '')}</small></div><span class="kind ${s.kind}">${KIND[s.kind] || ''}</span></div>`).join('');
+}
+
+/* ── 报告 ── */
+const md = (t, srcN) => {
+  const cite = (s) => s.replace(/\[(\d{1,2})\]/g, (m, n) => (+n <= srcN ? `<a class="cite" href="#src-${n}" data-n="${n}">${n}</a>` : ''));
+  const lines = esc(t || '').replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').split(/\n+/);
+  let out = '', ul = false;
+  for (const l of lines) { const m = l.match(/^\s*[-*•]\s+(.*)/); if (m) { if (!ul) { out += '<ul>'; ul = true; } out += `<li>${cite(m[1])}</li>`; } else { if (ul) { out += '</ul>'; ul = false; } if (l.trim()) out += `<p>${cite(l)}</p>`; } }
+  return out + (ul ? '</ul>' : '');
+};
+function report(j) {
+  clearInterval(tick); const r = j.report, S = r.sources || j.sources || [], N = S.length, sc = r.scores || {}, sn = r.snapshot || {};
+  document.title = (r.name || j.q) + ' · Crayxus DeepSearch';
+  const dims = [['legitimacy', '主体真实'], ['financial', '财务稳健'], ['legal', '法律合规'], ['reputation', '声誉舆情'], ['transparency', '信息透明']];
+  const lv = (x) => (/高/.test(x) ? 'hi' : /中/.test(x) ? 'mid' : 'lo');
+  const C = 2 * Math.PI * 64, ov = Math.max(0, Math.min(100, +sc.overall || 0));
+  const snapItems = [['成立', sn.founded], ['总部', sn.hq], ['CEO', sn.ceo], ['员工', sn.employees], ['行业', sn.industry], ['所有制', sn.ownership], ['官网', sn.website && /^https?:/.test(sn.website) ? `<a href="${esc(sn.website)}" target="_blank" rel="noopener">${esc(sn.website.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, ''))}</a>` : esc(sn.website)], ['LEI', sn.lei]];
+  const secs = (r.sections || []).filter((s) => s && s.body);
+  const toc = [['sum', '结论'], ['risk', '风险'], ...secs.map((s, i) => ['s' + i, s.title]), ...(r.people && r.people.length ? [['ppl', '关键人物']] : []), ...(r.funding && r.funding.length ? [['fund', '融资历程']] : []), ['next', '缺口与下一步'], ['src', '资料来源']];
+  app.innerHTML = `<section class="rep">
+    <div class="rhead"><div><small class="eb">DUE DILIGENCE REPORT${r.focus ? ' · ' + esc((FOCUS.find((f) => f[0] === r.focus) || [])[1] || '') : ''}</small><h2>${esc(r.name || j.q)}</h2>
+      ${r.legal_name ? `<div class="legal">${esc(r.legal_name)}${j.entity && j.entity.jurisdiction ? ' · ' + esc(j.entity.jurisdiction) : ''}</div>` : ''}<div class="one">${esc(r.one_liner || '')}</div>
+      <span class="verdict ${vClass(r.verdict)}">${esc(r.verdict || '')}</span><span class="vreason">${esc(r.verdict_reason || '')}</span></div>
+      <div class="ring"><svg viewBox="0 0 150 150"><circle cx="75" cy="75" r="64" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="9"/><circle cx="75" cy="75" r="64" fill="none" stroke="url(#gd)" stroke-width="9" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - ov / 100)}"/><defs><linearGradient id="gd"><stop offset="0" stop-color="#F1DEB3"/><stop offset="1" stop-color="#B48E4E"/></linearGradient></defs></svg><div class="n"><div><b>${ov}</b><small>综合评分</small></div></div></div></div>
+    <div class="snap">${snapItems.map(([k, v]) => `<div><small>${k}</small><b title="${esc(String(v || '').replace(/<[^>]+>/g, ''))}">${v ? (k === '官网' ? v : esc(v)) : '<span style="color:var(--faint)">—</span>'}</b></div>`).join('')}</div>
+    <div class="acts"><button class="btn" id="share">复制分享链接</button><button class="btn" onclick="print()">存为 PDF</button><a class="btn" href="#">新的调查</a><span class="btn" style="cursor:default;border-style:dashed">${N} 份资料 · ${new Date(r.at || Date.now()).toLocaleString('zh-CN', { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span></div>
+    <div class="cols"><aside class="toc" id="toc">${toc.map(([id, n]) => `<a href="#${id}" data-go="${id}">${esc(n)}</a>`).join('')}</aside><div>
+      <div class="card" id="sum"><h3>结论</h3><div class="summary md">${md(r.summary, N)}</div>
+        <div class="scores" style="margin-top:20px">${dims.map(([k, n]) => `<span>${n}</span><div class="bar"><i style="width:${Math.max(0, Math.min(100, +sc[k] || 0))}%"></i></div><b style="font-family:var(--mono);font-size:13px">${sc[k] == null ? '—' : sc[k]}</b>`).join('')}</div></div>
+      <div class="card" id="risk"><h3>风险 <small>${(r.risks || []).length} 项</small></h3>${(r.risks || []).map((x) => `<div class="risk"><span class="lv ${lv(x.level)}">${esc(x.level)}</span><div><b>${esc(x.title)}</b><div class="md" style="font-size:13.5px;color:var(--ink2)">${md(x.detail, N)}</div></div></div>`).join('') || '<p style="color:var(--mute)">资料里没有发现明显风险。</p>'}</div>
+      ${secs.map((s, i) => `<div class="card" id="s${i}"><h3>${esc(s.title)}</h3><div class="md">${md(s.body, N)}</div></div>`).join('')}
+      ${r.people && r.people.length ? `<div class="card" id="ppl"><h3>关键人物</h3><table><tr><th>姓名</th><th>职务</th><th>背景</th></tr>${r.people.map((p) => `<tr><td style="white-space:nowrap"><b>${esc(p.name)}</b></td><td style="color:var(--ink2)">${esc(p.role)}</td><td class="md">${md(p.note, N)}</td></tr>`).join('')}</table></div>` : ''}
+      ${r.funding && r.funding.length ? `<div class="card" id="fund"><h3>融资历程</h3><div class="tl">${r.funding.map((f) => `<div><b>${esc(f.date || '')}</b><span>${esc(f.round || '')}</span>${f.amount ? `<span style="color:var(--gold2)">${esc(f.amount)}</span>` : ''}<p>${esc(f.investors || '')}</p></div>`).join('')}</div></div>` : ''}
+      <div class="card" id="next"><h3>信息缺口与下一步</h3><div class="two"><div><div style="font-size:12px;letter-spacing:.14em;color:var(--mute);margin-bottom:6px">查不到 / 需核实</div><ol>${(r.gaps || []).map((g) => `<li>${esc(g)}</li>`).join('') || '<li>—</li>'}</ol></div>
+        <div><div style="font-size:12px;letter-spacing:.14em;color:var(--mute);margin-bottom:6px">建议的下一步</div><ol>${(r.next_steps || []).map((g) => `<li>${esc(g)}</li>`).join('') || '<li>—</li>'}</ol></div></div></div>
+      <div class="card" id="src"><h3>资料来源 <small>${N} 份 · 点正文里的编号跳到这里</small></h3><div class="srcl">${S.map((s) => `<a id="src-${s.n}" href="${esc(s.url)}" target="_blank" rel="noopener"><span class="no">[${s.n}]</span>${fav(s.host)}<span class="tt">${esc(s.title)}<small>${esc(s.host || '')}${s.date ? ' · ' + esc(s.date) : ''}</small></span><span class="kind ${s.kind}">${KIND[s.kind] || ''}</span></a>`).join('')}</div>
+        <p class="disc">本报告由 Crayxus 研究框架检索公开资料、分析模型 DeepSeek 撰写，只依据上列资料，可能遗漏未公开或付费数据库中的信息。不构成投资、法律或合规意见；做决定前请核实原始来源，必要时委托专业机构尽调。</p></div>
+    </div></div></section>`;
+  $('#share').onclick = async () => { try { await navigator.clipboard.writeText(location.href); $('#share').textContent = '链接已复制'; } catch { prompt('复制这个链接：', location.href); } };
+  const tip = document.createElement('div'); tip.className = 'tip hide'; document.body.appendChild(tip);
+  app.addEventListener('mouseover', (e) => { const c = e.target.closest('.cite'); if (!c) return tip.classList.add('hide'); const s = S.find((x) => x.n === +c.dataset.n); if (!s) return; tip.innerHTML = `<b style="color:var(--gold)">[${s.n}]</b> ${esc(s.title)}<br><span style="color:var(--mute)">${esc(s.host || '')}${s.date ? ' · ' + esc(s.date) : ''}</span>`; const b = c.getBoundingClientRect(); tip.style.left = Math.min(innerWidth - 340, b.left) + 'px'; tip.style.top = b.bottom + 8 + 'px'; tip.classList.remove('hide'); });
+  app.addEventListener('click', (e) => {
+    const c = e.target.closest('.cite'); if (c) { e.preventDefault(); const el = $('#src-' + c.dataset.n); if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.classList.add('hl'); setTimeout(() => el.classList.remove('hl'), 1800); } return; }
+    const g = e.target.closest('[data-go]'); if (g) { e.preventDefault(); const el = $('#' + g.dataset.go); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  });
+  const io = new IntersectionObserver((es) => { for (const x of es) if (x.isIntersecting) for (const a of document.querySelectorAll('#toc a')) a.classList.toggle('on', a.dataset.go === x.target.id); }, { rootMargin: '-20% 0px -70% 0px' });
+  for (const [id] of toc) { const el = $('#' + id); if (el) io.observe(el); }
+}
+function failed(j) {
+  clearInterval(tick);
+  app.innerHTML = `<section class="hero" style="padding-top:90px"><span class="eyebrow" style="color:var(--hi);border-color:rgba(240,106,94,.3)"><i style="background:var(--hi);box-shadow:0 0 10px var(--hi)"></i>没能完成</span>
+    <h1 style="font-size:34px">${esc(j.q || '')}</h1><p class="lede">${esc(j.error || '出了点问题')}</p><div class="acts" style="justify-content:center"><a class="btn" href="#">换个写法再查</a></div></section>`;
+}
+
+/* ── 路由：#r=<id> 看报告 / 进度，其他 = 首页 ── */
+async function route() {
+  clearInterval(poll); const m = location.hash.match(/^#r=(d[a-z0-9]+)/);
+  if (!m) return home();
+  const id = m[1];
+  const load = async () => {
+    let j; try { j = await api('/api/deep/job/' + id); } catch (e) { clearInterval(poll); failed({ error: e.message }); return; }
+    if (j.report) { clearInterval(poll); report(j); window.scrollTo(0, 0); }
+    else if (j.done || j.stage === 'error') { clearInterval(poll); failed(j); }
+    else running(j);
+  };
+  await load(); if (!$('.rep') && !$('.err') && $('#runp')) poll = setInterval(load, 1300);
+}
+addEventListener('hashchange', () => { if (/^#r=/.test(location.hash) || location.hash === '' || location.hash === '#') route(); });
+route();
+</script>
+</body>
+</html>
