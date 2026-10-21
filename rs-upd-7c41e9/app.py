@@ -11,7 +11,7 @@ import urllib.request, urllib.parse, urllib.error, html as htmllib
 from datetime import datetime, timedelta, timezone
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 
-VERSION = '1.1.1'  # 每次发更新 +1（publish_update.py 会自动改）
+VERSION = '1.1.2'  # 每次发更新 +1（publish_update.py 会自动改）
 UPD_URL = os.environ.get('RS_UPD_URL') or 'https://crayxus.com.au/rs-upd-7c41e9/'  # 升级文件放这里：version.json + app.py + web/index.html
 FROZEN = getattr(sys, 'frozen', False)  # 打包成 exe 时：网页在包里，数据放 exe 旁边
 ROOT = os.path.dirname(sys.executable) if FROZEN else os.path.dirname(os.path.abspath(__file__))
@@ -133,9 +133,9 @@ def clean(t):
     return re.sub(r'\n\s*\n+', '\n', t).strip()
 
 
-def jpeg_of(page, maxw=1400):
+def jpeg_of(page, maxw=1400, z=None):
     import fitz
-    z = min(2.0, maxw / max(page.rect.width, 1))
+    z = z or min(2.0, maxw / max(page.rect.width, 1))
     pix = page.get_pixmap(matrix=fitz.Matrix(z, z), alpha=False)
     return base64.b64encode(pix.tobytes('jpeg', jpg_quality=82)).decode()
 
@@ -291,7 +291,38 @@ def transcribe(imgs):
     return ark([{'role': 'user', 'content': content}], model=MODEL, max_tokens=6000)
 
 
+ECO_AT = 72   # 省钱模式下，豆包打到这个分以上的再交给 DeepSeek 精评（A 档 75 分，留点余量）
+
+
+def eco_on():
+    return load_set().get('eco', False)   # 10-21 用户看了账单（一天约 10 元）：「不要改动了」→ 默认关，打分照旧（豆包转文字 + DeepSeek）
+
+
 def ask(job, text, imgs):
+    """省钱模式：豆包一步打分（扫描件 / 截图直接看图，省掉转文字那一轮），≥ ECO_AT 分的再走精评；精评 = 豆包转文字 + DeepSeek 打分"""
+    if eco_on():
+        out = score_once(build_prompt(job), text, imgs, MODEL)
+        try: total = compute(job, out)[0]
+        except Exception: total = 0
+        if (total or 0) < ECO_AT: out['_by'] = 'eco'; return out
+        print(now(), f'豆包打了 {total} 分，交给 DeepSeek 精评', flush=True)
+    out = ask_precise(job, text, imgs); out['_by'] = 'precise'; return out
+
+
+def score_once(p, text, imgs, model):
+    if text: content = p + '\n\n【简历原文】\n' + text[:14000]
+    else:
+        content = [{'type': 'image_url', 'image_url': {'url': 'data:image/jpeg;base64,' + b}} for b in imgs]
+        content.append({'type': 'text', 'text': p + '\n\n【简历】见上面的图片（扫描件或照片），先认真读完再判断。'})
+    last = ''
+    for _ in range(2):
+        last = ark([{'role': 'system', 'content': SYS}, {'role': 'user', 'content': content}], model=model, max_tokens=6000)
+        try: return parse_json(last)
+        except ValueError as e: print(now(), '回复解析不了（', e, '），原文：', last[:4000], flush=True)
+    raise RuntimeError('模型回的不是 JSON：' + last[:100])
+
+
+def ask_precise(job, text, imgs):
     p = build_prompt(job)
     if imgs:
         try: text = transcribe(imgs)
@@ -416,7 +447,7 @@ def process(rid):
         mark_dup(r['job_id'], rid, out.get('phone'), out.get('email'), out.get('name'), out.get('school'))
         print(f'[{now()}] 读完 #{rid} {r["fname"]}：{total} 分 {tier}（{time.time() - t0:.1f}s）', flush=True)
     except Exception as e:
-        run("UPDATE resumes SET status='error', err=? WHERE id=?", (str(e)[:300], rid))
+        run("UPDATE resumes SET status='error', err=? WHERE id=?", (('重试过：' if r['err'] else '') + str(e)[:280], rid))
         print(f'[{now()}] 出错 #{rid} {r["fname"]}：{e}', flush=True)
 
 
@@ -469,6 +500,10 @@ def auto_loop():
         for r in rows('SELECT * FROM jobs WHERE auto=1'):
             try: scan(job_dict(r))
             except Exception: traceback.print_exc()
+        try:   # 出错的（多半是网络抖或限流）自动再试一次；err 开头是「重试过」的不再试
+            for r in rows("SELECT id FROM resumes WHERE status='error' AND err NOT LIKE '重试过%' AND err NOT LIKE '%Key%' LIMIT 20"):
+                run("UPDATE resumes SET status='queued' WHERE id=?", (r['id'],)); Q.put(r['id'])
+        except Exception: traceback.print_exc()
         time.sleep(15)
 
 
@@ -478,8 +513,10 @@ def j_jobs(h, q, b):
     for r in rows('SELECT * FROM jobs ORDER BY id'):
         d = job_dict(r)
         c = one('''SELECT COUNT(*) n, SUM(status='done' AND dup_of IS NULL) done, SUM(status IN ('queued','reading')) busy,
-                   SUM(tier='A' AND status='done' AND dup_of IS NULL) na FROM resumes WHERE job_id=?''', (r['id'],))
-        d.update({k: c[k] or 0 for k in ('n', 'done', 'busy', 'na')})
+                   SUM(tier='A' AND status='done' AND dup_of IS NULL) na, SUM(status='done' AND dup_of IS NOT NULL) dup, SUM(status='error') err FROM resumes WHERE job_id=?''', (r['id'],))
+        d.update({k: c[k] or 0 for k in ('n', 'done', 'busy', 'na', 'dup', 'err')})
+        try: d['files'] = sum(1 for _, _, fs in os.walk(d['folder']) for f in fs if not f.startswith(('~$', '.')) and os.path.splitext(f)[1].lower() in EXTS)
+        except Exception: d['files'] = None
         out.append(d)
     return out
 
@@ -595,7 +632,7 @@ def j_remove(h, q, b):
 def j_status(h, q, b):
     busy = one("SELECT COUNT(*) n FROM resumes WHERE status IN ('queued','reading')")['n']
     return {'ok': True, 'model': MODEL + ' 读图 · ' + TEXT_MODEL + ' 打分', 'key': bool(KEY), 'busy': busy, 'version': VERSION, 'frozen': bool(FROZEN),
-            'upd': UPD if UPD.get('ver') and vt(UPD['ver']) > vt(VERSION) else None, 'usage': usage_summary()}
+            'upd': UPD if UPD.get('ver') and vt(UPD['ver']) > vt(VERSION) else None, 'usage': usage_summary(), 'eco': eco_on()}
 
 
 # ---------------- 升级：只换 app.py 和网页，库不动 ----------------
@@ -668,6 +705,12 @@ def j_key(h, q, b):
         run("UPDATE resumes SET status='queued', err='' WHERE id=?", (r['id'],))
         Q.put(r['id'])
     return {'ok': True}
+
+
+def j_eco(h, q, b):
+    st = load_set(); st['eco'] = bool(b.get('on'))
+    io.open(SETF, 'w', encoding='utf-8').write(json.dumps(st, ensure_ascii=False))
+    return {'ok': True, 'eco': st['eco']}
 
 
 def j_open_folder(h, q, b):
@@ -820,7 +863,7 @@ def j_boss_status(h, q, b):
 GET = {'/api/jobs': j_jobs, '/api/resumes': j_resumes, '/api/status': j_status, '/api/boss/status': j_boss_status, '/api/boss/summary': j_boss_summary}
 POST = {'/api/boss/start': j_boss_start, '/api/boss/stop': j_boss_stop, '/api/job': j_save_job, '/api/job/del': j_del_job, '/api/job/auto': j_auto, '/api/scan': j_scan, '/api/mark': j_mark,
         '/api/rescore': j_rescore, '/api/remove': j_remove, '/api/open-folder': j_open_folder, '/api/pick-folder': j_pick_folder,
-        '/api/draft': j_draft, '/api/contacted': j_contacted, '/api/key': j_key, '/api/update': j_update, '/api/check-update': j_check_update}
+        '/api/draft': j_draft, '/api/contacted': j_contacted, '/api/key': j_key, '/api/eco': j_eco, '/api/update': j_update, '/api/check-update': j_check_update}
 
 
 class H(BaseHTTPRequestHandler):
