@@ -30,13 +30,13 @@ nav{display:flex;align-items:center;gap:14px;height:68px}
 nav .r{margin-left:auto;display:flex;gap:18px;font-size:13px;color:var(--mute)}
 nav .r a{text-decoration:none}nav .r a:hover{color:var(--ink)}
 /* ── 首页 ── */
-.hero{padding:76px 0 40px;text-align:center}
+.hero{padding:96px 0 40px;text-align:center}
 .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11.5px;letter-spacing:.32em;color:var(--gold);text-transform:uppercase;padding:5px 14px;border:1px solid rgba(217,185,122,.25);border-radius:999px;background:rgba(217,185,122,.05)}
 .eyebrow i{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 10px var(--gold)}
 h1{font:600 clamp(34px,5.4vw,60px)/1.18 var(--serif);letter-spacing:.01em;margin:26px auto 16px;max-width:900px;background:linear-gradient(180deg,#FFFFFF 20%,#B9BCC6 110%);-webkit-background-clip:text;background-clip:text;color:transparent}
 h1 em{font-style:normal;background:linear-gradient(100deg,var(--gold2),var(--gold) 60%,#A8874E);-webkit-background-clip:text;background-clip:text;color:transparent}
 .lede{max-width:680px;margin:0 auto;color:var(--ink2);font-size:16.5px}
-.box{max-width:820px;margin:40px auto 0;padding:8px;border-radius:20px;background:linear-gradient(var(--s2),var(--s2)) padding-box,linear-gradient(120deg,rgba(217,185,122,.55),rgba(255,255,255,.08) 40%,rgba(127,212,230,.35)) border-box;border:1px solid transparent;box-shadow:0 30px 80px rgba(0,0,0,.45),0 0 0 6px rgba(217,185,122,.04)}
+.box{max-width:820px;margin:34px auto 0;padding:8px;border-radius:20px;background:linear-gradient(var(--s2),var(--s2)) padding-box,linear-gradient(120deg,rgba(217,185,122,.55),rgba(255,255,255,.08) 40%,rgba(127,212,230,.35)) border-box;border:1px solid transparent;box-shadow:0 30px 80px rgba(0,0,0,.45),0 0 0 6px rgba(217,185,122,.04)}
 .box form{display:flex;align-items:center;gap:8px}
 .box svg.q{width:20px;height:20px;margin-left:14px;flex:none;opacity:.6}
 .box input{flex:1;min-width:0;font:inherit;font-size:18px;color:var(--ink);background:none;border:0;outline:none;padding:14px 6px}
@@ -166,12 +166,12 @@ footer{position:relative;z-index:1;border-top:1px solid var(--line);margin-top:4
 <body>
 <div class="wrap">
   <nav><a class="brand" href="#"><span class="mark"><svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.6" stroke="#D9B97A" stroke-width="1.6"/><path d="M10.4 10.4 14 14" stroke="#D9B97A" stroke-width="1.6" stroke-linecap="round"/></svg></span><b>CRAYXUS <span>DeepSearch</span></b></a>
-    <div class="r"><a href="#how">工作方式</a><a href="#recent">最近报告</a><a href="https://crayxus.com.au/">Crayxus</a></div></nav>
+    <div class="r"><a href="#recent">最近报告</a><a href="https://crayxus.com.au/">Crayxus</a></div></nav>
 </div>
 
 <main class="wrap" id="app"></main>
 
-<footer><div class="wrap">© Crayxus · DeepSearch 海外企业尽调。报告由 AI 依据公开资料自动生成，仅供参考，不构成投资、法律或合规意见；关键结论请以原始来源和正式尽调为准。</div></footer>
+<footer><div class="wrap">© Crayxus · DeepSearch</div></footer>
 
 <script>
 const API = (new URLSearchParams(location.search).get('api') || 'https://api.crayxus.com.au').replace(/\/+$/, '');   // ?api= 只给本机测试用
@@ -197,18 +197,12 @@ async function home() {
   clearInterval(poll); clearInterval(tick); document.title = 'Crayxus DeepSearch · 海外企业尽调';
   app.innerHTML = `<section class="hero"><span class="eyebrow"><i></i>AI Due Diligence</span>
     <h1>一个名字，<em>查清一家海外公司</em></h1>
-    <p class="lede">输入公司名。AI 分析师调取全球法人登记、监管申报、权威媒体与官网资料，交叉印证后交付一份逐句带出处的尽调报告。</p>
     <div class="box"><form id="f"><svg class="q" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6.2" stroke="#EDEEF2" stroke-width="1.6"/><path d="m13.6 13.6 4 4" stroke="#EDEEF2" stroke-width="1.6" stroke-linecap="round"/></svg>
       <input id="q" placeholder="公司名，例如 Anduril Industries" autocomplete="off" maxlength="120" autofocus><button class="go" id="go">开始调查</button></form>
       <div class="focus" id="fc">${FOCUS.map(([k, n]) => `<button type="button" class="chip ${k === focus ? 'on' : ''}" data-f="${k}">${n}</button>`).join('')}</div></div>
     <div class="try">试试${EXAMPLES.map((e) => `<button type="button" data-e="${esc(e)}">${esc(e)}</button>`).join('')}</div>
     <div class="err" id="err"></div>
-    <div class="pillars" id="how">
-      <div class="pillar"><small>01 · ENTITY</small><b>先认准是谁</b><p>对照全球法人识别码库（GLEIF）、美国证监会申报（SEC）与知识库，确认法定全称、注册地与母公司。</p></div>
-      <div class="pillar"><small>02 · EVIDENCE</small><b>再找证据</b><p>按融资、管理层、财务、诉讼监管、舆情等维度检索权威媒体与官网，逐篇读取正文。</p></div>
-      <div class="pillar"><small>03 · ANALYSIS</small><b>交叉印证</b><p>分析模型只依据读到的资料下结论，矛盾之处直接指出，查不到的列为信息缺口。</p></div>
-      <div class="pillar"><small>04 · REPORT</small><b>可追溯的结论</b><p>每一句都带出处编号，风险分级、五维评分、下一步核实清单，一键分享或存为 PDF。</p></div></div>
-    <p class="srcs">数据来源<span>GLEIF</span><span>SEC EDGAR</span><span>Wikidata</span><span>Wikipedia</span><span>全球新闻</span><span>企业官网</span></p></section>
+</section>
     <section class="recent" id="recent"></section>`;
   const q = $('#q');
   $('#fc').onclick = (e) => { const b = e.target.closest('[data-f]'); if (!b) return; focus = b.dataset.f; for (const x of $('#fc').children) x.classList.toggle('on', x === b); };
@@ -216,7 +210,7 @@ async function home() {
   $('#f').onsubmit = (e) => { e.preventDefault(); start(); };
   try {
     const r = await api('/api/deep/recent');
-    if (r.list.length) $('#recent').innerHTML = `<div class="sec-h"><h3>最近的报告</h3><small>同一家公司 24 小时内直接打开已有报告</small></div><div class="rgrid">${r.list.map((x) => `<a class="rcard" href="#r=${x.id}"><b>${esc(x.name)}</b><div class="m">${x.verdict ? `<span class="verdict ${vClass(x.verdict)}" style="margin:0;padding:1px 10px;font-size:11.5px">${esc(x.verdict)}</span>` : ''}${x.score != null ? `<span>${x.score} 分</span>` : ''}<span>${ago(x.at)}</span></div></a>`).join('')}</div>`;
+    if (r.list.length) $('#recent').innerHTML = `<div class="sec-h"><h3>最近的报告</h3></div><div class="rgrid">${r.list.map((x) => `<a class="rcard" href="#r=${x.id}"><b>${esc(x.name)}</b><div class="m">${x.verdict ? `<span class="verdict ${vClass(x.verdict)}" style="margin:0;padding:1px 10px;font-size:11.5px">${esc(x.verdict)}</span>` : ''}${x.score != null ? `<span>${x.score} 分</span>` : ''}<span>${ago(x.at)}</span></div></a>`).join('')}</div>`;
   } catch {}
 }
 async function start() {
@@ -230,7 +224,7 @@ async function start() {
 function running(j) {
   const idx = Math.max(0, STAGES.findIndex((s) => s[0] === j.stage));
   if (!$('#runp')) {
-    app.innerHTML = `<section class="run"><div class="panel" id="runp"><div style="display:flex;align-items:baseline;gap:12px"><div><h2>正在调查 ${esc(j.q)}</h2><div class="sub">通常 1–2 分钟。可以关掉页面，稍后用同一个链接回来看。</div></div><span class="timer" id="tm"></span></div>
+    app.innerHTML = `<section class="run"><div class="panel" id="runp"><div style="display:flex;align-items:baseline;gap:12px"><div><h2>正在调查 ${esc(j.q)}</h2></div><span class="timer" id="tm"></span></div>
       <ol class="stages" id="st"></ol><div class="log" id="lg"></div></div>
       <div class="panel"><div class="count"><b id="cn">0</b><span class="sub">份资料已收集</span></div><div class="slist" id="sl"></div></div></section>`;
     clearInterval(tick); const t0 = Date.now() - (j.elapsed || 0);
@@ -277,8 +271,7 @@ function report(j) {
       ${r.funding && r.funding.length ? `<div class="card" id="fund"><h3>融资历程</h3><div class="tl">${r.funding.map((f) => `<div><b>${esc(f.date || '')}</b><span>${esc(f.round || '')}</span>${f.amount ? `<span style="color:var(--gold2)">${esc(f.amount)}</span>` : ''}<p>${esc(f.investors || '')}</p></div>`).join('')}</div></div>` : ''}
       <div class="card" id="next"><h3>信息缺口与下一步</h3><div class="two"><div><div style="font-size:12px;letter-spacing:.14em;color:var(--mute);margin-bottom:6px">查不到 / 需核实</div><ol>${(r.gaps || []).map((g) => `<li>${esc(g)}</li>`).join('') || '<li>—</li>'}</ol></div>
         <div><div style="font-size:12px;letter-spacing:.14em;color:var(--mute);margin-bottom:6px">建议的下一步</div><ol>${(r.next_steps || []).map((g) => `<li>${esc(g)}</li>`).join('') || '<li>—</li>'}</ol></div></div></div>
-      <div class="card" id="src"><h3>资料来源 <small>${N} 份 · 点正文里的编号跳到这里</small></h3><div class="srcl">${S.map((s) => `<a id="src-${s.n}" href="${esc(s.url)}" target="_blank" rel="noopener"><span class="no">[${s.n}]</span>${fav(s.host)}<span class="tt">${esc(s.title)}<small>${esc(s.host || '')}${s.date ? ' · ' + esc(s.date) : ''}</small></span><span class="kind ${s.kind}">${KIND[s.kind] || ''}</span></a>`).join('')}</div>
-        <p class="disc">本报告由 Crayxus 研究框架检索公开资料、分析模型 DeepSeek 撰写，只依据上列资料，可能遗漏未公开或付费数据库中的信息。不构成投资、法律或合规意见；做决定前请核实原始来源，必要时委托专业机构尽调。</p></div>
+      <div class="card" id="src"><h3>资料来源 <small>${N} 份</small></h3><div class="srcl">${S.map((s) => `<a id="src-${s.n}" href="${esc(s.url)}" target="_blank" rel="noopener"><span class="no">[${s.n}]</span>${fav(s.host)}<span class="tt">${esc(s.title)}<small>${esc(s.host || '')}${s.date ? ' · ' + esc(s.date) : ''}</small></span><span class="kind ${s.kind}">${KIND[s.kind] || ''}</span></a>`).join('')}</div></div>
     </div></div></section>`;
   $('#share').onclick = async () => { try { await navigator.clipboard.writeText(location.href); $('#share').textContent = '链接已复制'; } catch { prompt('复制这个链接：', location.href); } };
   const tip = document.createElement('div'); tip.className = 'tip hide'; document.body.appendChild(tip);
