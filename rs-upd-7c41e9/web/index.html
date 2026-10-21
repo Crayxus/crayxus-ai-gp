@@ -198,7 +198,7 @@ let toastT;
 const toast = (t) => { const el = $('#toast'); el.textContent = t; el.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('on'), 2600); };
 
 const TIER = { A: 'A 推荐面试', B: 'B 可考虑', C: 'C 不合适', X: '硬性不符' };
-const S = { jobs: [], cur: +(localStorage.getItem('rs.job') || 0), rows: [], filter: 'all', q: '', sort: 'tier', sel: 0, status: {}, up: { n: 0, done: 0 } };
+const S = { jobs: [], cur: +(localStorage.getItem('rs.job') || 0), rows: [], filter: 'all', q: '', sort: 'score', sel: 0, status: {}, up: { n: 0, done: 0 } };
 const job = () => S.jobs.find((j) => j.id === S.cur);
 const color = (t) => `var(--${t === 'A' || t === 'B' || t === 'X' ? t : 'C'})`;
 const tierOf = (sc, j) => (sc >= j.a ? 'A' : sc >= j.b ? 'B' : 'C');
@@ -215,19 +215,32 @@ async function loadRows() {
 async function refresh() {
   try {
     S.status = await api('/api/status');
+    try { S.boss = await api('/api/boss/status'); } catch (e) {}
     if (S.waitVer && S.status.version === S.waitVer) return location.reload();  // 升级重启好了，刷新拿新网页
     await loadJobs(); await loadRows();
     renderSys(); renderMain();
     if (S.sel) renderDrawer(false);
   } catch (e) { $('#sys').innerHTML = '<span class="dot off"></span>连不上本机服务：先双击「开始简历快筛」'; }
 }
+function bossBar() {   // BOSS 初筛进度（10-21）
+  const b = S.boss || {}; if (!b.running && !b.error && !b.done) return '';
+  const c = b.error ? 'var(--X)' : 'var(--acc)';
+  const t = b.running ? `<span class="spin"></span>BOSS 初筛进行中` : b.error ? 'BOSS 初筛停了' : 'BOSS 初筛这一轮结束';
+  return `<div style="margin:0 0 12px;padding:10px 14px;border:1px solid ${c};border-radius:10px;background:var(--card);font-size:13px">
+    <button class="btn" style="float:right;padding:3px 10px" onclick="window.open('/mini?job=${S.cur}','rsmini','width=420,height=760')">AI·伯乐</button>
+    <b style="color:${c}">${t}</b>　读了 <b>${b.done || 0}</b> 人 · 认出读过的跳过 ${b.dup || 0} · 期望不在本地（只看摘要、没翻简历）${b.skipped_city || 0}
+    <div style="color:${b.error ? 'var(--X)' : 'var(--mute)'};margin-top:3px">${esc(b.error || b.msg || '')}</div>
+    ${b.running ? '<div style="color:var(--faint);margin-top:3px">只看不发：不会给任何人发消息。程序在后台点，不占鼠标；按 F12 或点「停止 BOSS 初筛」随时停，下次接着读。</div>' : ''}</div>`;
+}
 function renderSys() {
   const s = S.status;
   $('#sys').innerHTML = `<div><span class="dot ${s.key ? '' : 'off'}"></span>${s.key ? '火山方舟已连接' : '没有火山方舟 Key'} <a href="#" id="setkey" style="color:var(--acc)">${s.key ? '换 Key' : '填 Key'}</a></div>
     <div>模型：${esc(s.model || '')}</div>
+    ${s.usage ? `<div title="从 ${esc(s.usage.since)} 开始记；准确账单以火山方舟控制台为准">token：今天 ${tk(s.usage.today)}（${s.usage.today.n} 次调用）· 累计 ${tk(s.usage.all)}</div>` : ''}
     <div>版本 v${esc(s.version || '')}${s.upd ? ` · <a href="#" id="doupd" style="color:var(--acc);font-weight:600">升级到 v${esc(s.upd.ver)}</a>${s.upd.note ? `<div style="color:var(--faint)">${esc(s.upd.note)}</div>` : ''}` : (s.frozen ? ` · <a href="#" id="chkupd" style="color:var(--faint)">检查更新</a>` : '')}</div><div>${s.busy ? `<span class="spin"></span>正在读 ${s.busy} 份` : '没有待读的简历'}</div>
     <div style="margin-top:6px;color:var(--faint)">简历和结果只存在这台电脑；只有简历内容会发给火山方舟分析。</div>`;
 }
+function tk(u) { const n = (u.in || 0) + (u.out || 0); return (n >= 1e4 ? (n / 1e4).toFixed(1) + ' 万' : n) + `<span style="color:var(--faint)">（入 ${((u.in || 0) / 1e4).toFixed(1)} 万 / 出 ${((u.out || 0) / 1e4).toFixed(1)} 万）</span>`; }
 function renderJobs() {
   $('#jobs').innerHTML = S.jobs.map((j) => `<button class="job ${j.id === S.cur ? 'on' : ''}" data-job="${j.id}"><b>${esc(j.name)}</b>
     <span>${j.done} 份已读${j.na ? ` · A ${j.na}` : ''}${j.busy ? ` · <span class="spin"></span>${j.busy}` : ''}</span></button>`).join('') || '<div class="empty" style="padding:10px">还没有岗位</div>';
@@ -270,12 +283,14 @@ function renderMain() {
     <div><h1>${esc(j.name)}</h1><div class="fd">简历文件夹：<a data-act="folder" title="打开文件夹">${esc(j.folder)}</a></div></div>
     <div class="acts">
       <span class="sw ${j.auto ? 'on' : ''}" data-act="auto" title="开着时每 15 秒看一次文件夹，有新简历就自动读"><i></i>自动翻阅</span>
+      <button class="btn ${S.boss && S.boss.running ? 'pri' : ''}" data-act="boss" title="在 BOSS 直聘电脑版里一个个点开候选人、翻在线简历，截下来交给这里打分（只看，不发消息）">${S.boss && S.boss.running ? '停止 BOSS 初筛' : 'BOSS 初筛'}</button>
       <button class="btn" data-act="scan">现在翻一遍</button>
       <button class="btn" data-act="edit">评分标准</button>
       <button class="btn" data-act="rescore" title="改了评分标准后，用新标准把这个岗位的简历全部重新打分">全部重算</button>
       <button class="btn pri" data-act="export">导出 Excel</button>
     </div>
   </div>
+  ${bossBar()}
   <div class="drop" id="drop"><span>⇣</span><div>把简历<b>拖到这里</b>，或 <a data-act="pick" style="color:var(--acc);cursor:pointer">选择文件</a>　PDF · Word(.docx) · 图片 · 扫描件都行；也可以直接放进上面的文件夹</div><div class="prog" id="prog">${S.up.n && S.up.done < S.up.n ? `<span class="spin"></span>上传 ${S.up.done}/${S.up.n}` : ''}</div></div>
   <div class="stats">
     ${box('all', '已读（去重）', st.done)}${box('A', TIER.A + ` · ≥${j.a}`, st.A, 'A')}${box('B', TIER.B + ` · ≥${j.b}`, st.B, 'B')}${box('C', TIER.C, st.C, 'C')}${box('X', TIER.X, st.X, 'X')}
@@ -404,6 +419,7 @@ function openEditor(j) {
       <div class="f"><label>A「推荐面试」线 / B「可考虑」线</label><div class="row"><input id="eA" type="number" min="1" max="100" value="${j.a}"><input id="eB" type="number" min="1" max="100" value="${j.b}"></div></div>
       <div class="f"><label>简历文件夹（留空自动建在「简历」目录下）</label><div class="row"><input id="eFolder" value="${esc(j.folder)}"><button class="btn sm" id="ePick">选择…</button></div></div>
     </div>
+    <div class="f"><label>工作城市（填了的话：期望城市不含这里、也没写「全国 / 不限」的，最高只给 C 档）</label><input id="eCity" placeholder="比如：杭州；不限城市就空着" value="${esc(j.city || '')}"></div>
     <div class="f"><label>联系候选人时的落款（比如：机智算能科技 · 招聘负责人 王女士 138xxxx）</label><input id="eSign" value="${esc(j.sign || '')}"></div>
     <div class="f hint">性别、年龄、婚育、籍贯、民族、照片等不参与打分，也不写进结果。</div>
     <div class="bfoot">${n ? '' : '<button class="btn del" id="eDel">删除这个岗位</button>'}<span style="flex:1"></span><button class="btn" id="eCancel">取消</button><button class="btn pri" id="eSave">保存</button></div>`;
@@ -420,7 +436,7 @@ function openEditor(j) {
   $('#eCancel').onclick = () => $('#modal').classList.remove('on');
   if (!n) $('#eDel').onclick = async () => { if (!confirm(`删除岗位「${j.name}」和它的全部评分记录？文件夹里的简历原件不会删。`)) return; await api('/api/job/del', { id: j.id }); $('#modal').classList.remove('on'); S.cur = 0; refresh(); };
   $('#eSave').onclick = async () => {
-    const body = { id: j.id, name: $('#eName').value, jd: $('#eJd').value, must: $('#eMust').value, plus: $('#ePlus').value, dims, folder: $('#eFolder').value, a: +$('#eA').value, b: +$('#eB').value, auto: j.auto, sign: $('#eSign').value };
+    const body = { id: j.id, name: $('#eName').value, jd: $('#eJd').value, must: $('#eMust').value, plus: $('#ePlus').value, dims, folder: $('#eFolder').value, a: +$('#eA').value, b: +$('#eB').value, auto: j.auto, sign: $('#eSign').value, city: $('#eCity').value };
     try {
       const r = await api('/api/job', body); $('#modal').classList.remove('on');
       S.cur = r.id; localStorage.setItem('rs.job', r.id); await refresh();
@@ -484,6 +500,10 @@ document.addEventListener('click', async (e) => {
     if (a === 'close') closeDrawer();
     else if (a === 'folder') await api('/api/open-folder', { job: j.id });
     else if (a === 'auto') { await api('/api/job/auto', { id: j.id, on: !j.auto }); j.auto = j.auto ? 0 : 1; renderMain(); toast(j.auto ? '自动翻阅已打开：每 15 秒看一次文件夹' : '自动翻阅已关闭'); }
+    else if (a === 'boss') {
+      if (S.boss && S.boss.running) { await api('/api/boss/stop', {}); toast('正在停…'); refresh(); return; }
+      if (!confirm('开始 BOSS 初筛？\n\n先确认：BOSS 直聘电脑版已登录，停在「消息」页，左上角选好「' + j.name + '」这个岗位。\n程序会在后台一个个点开候选人、翻在线简历，截下来交给这里打分。只看，不发任何消息。\n期望城市不含「' + (j.city || '本地') + '」的只看摘要、不翻简历。')) return;
+      const r = await api('/api/boss/start', { job: j.id }); if (!r.ok) return alert(r.error); toast('开始了：先校准屏幕，再一个个读'); refresh(); }
     else if (a === 'scan') { const r = await api('/api/scan', { job: j.id }); toast(r.added ? `找到 ${r.added} 份新简历，开始读` : '文件夹里没有新简历'); refresh(); }
     else if (a === 'edit') openEditor(j);
     else if (a === 'rescore') { if (confirm(`按现在的评分标准，把「${j.name}」的简历全部重新打分？`)) { const r = await api('/api/rescore', { job: j.id }); toast(`${r.n} 份重新排队`); refresh(); } }
