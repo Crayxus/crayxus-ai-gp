@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI·伯乐</title>
+<style>
+:root{--bg:#07090D;--panel:rgba(255,255,255,.035);--line:rgba(255,255,255,.09);--ink:#EEF2F7;--mute:#8A93A3;--faint:#566070;
+  --gold:#E8C27A;--cyan:#5CE1E6;--A:#5BE49B;--B:#F2C14E;--C:#8A93A3;--X:#FF6B6B}
+:root[data-theme="light"]{--bg:#F4F6F9;--panel:#fff;--line:#E2E6EC;--ink:#141A22;--mute:#5A6474;--faint:#97A0AE;--gold:#B4863A;--cyan:#0E8C93;--A:#1F9D5C;--B:#B9850F;--C:#7A8392;--X:#D43F3F}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font:13px/1.45 "Microsoft YaHei UI","PingFang SC",system-ui,sans-serif}
+body{background:radial-gradient(120% 60% at 10% -10%,rgba(92,225,230,.16),transparent 60%),radial-gradient(90% 50% at 110% 0%,rgba(232,194,122,.14),transparent 60%),var(--bg)}
+.w{padding:14px 16px 18px}
+.hd{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.logo{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--cyan),var(--gold));color:#07090D;font-weight:800;font-size:15px;box-shadow:0 0 18px rgba(92,225,230,.35)}
+.tt b{display:block;font-size:17px;letter-spacing:.06em;background:linear-gradient(90deg,var(--cyan),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+.tt small{color:var(--mute);font-size:11px}
+.st{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--mute);border:1px solid var(--line);border-radius:999px;padding:3px 9px}
+.st i{width:7px;height:7px;border-radius:50%;background:var(--faint)}.st.on i{background:var(--A);box-shadow:0 0 0 0 var(--A);animation:p 1.6s infinite}.st.on{color:var(--A)}
+@keyframes p{0%{box-shadow:0 0 0 0 rgba(91,228,155,.6)}70%{box-shadow:0 0 0 7px rgba(91,228,155,0)}100%{box-shadow:0 0 0 0 rgba(91,228,155,0)}}
+.hero{display:grid;grid-template-columns:118px 1fr;gap:12px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px}
+.ring{position:relative;width:118px;height:118px}.ring svg{transform:rotate(-90deg)}.ring .c{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+.ring .c b{font-size:30px;font-variant-numeric:tabular-nums;line-height:1}.ring .c small{display:block;color:var(--mute);font-size:11px;margin-top:3px}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:8px 10px}
+.kv div{border-left:2px solid var(--line);padding-left:8px}.kv i{display:block;font-style:normal;color:var(--mute);font-size:11px}
+.kv b{font-size:16px;font-variant-numeric:tabular-nums}.kv small{color:var(--faint);font-size:11px;margin-left:2px}
+.bar{display:flex;height:6px;border-radius:3px;overflow:hidden;margin:12px 0 6px;background:var(--line)}.bar i{display:block}
+.lg{display:flex;flex-wrap:wrap;gap:4px 12px;color:var(--mute);font-size:11px}.lg span:before{content:"";display:inline-block;width:7px;height:7px;border-radius:2px;margin-right:4px;background:var(--k)}.lg em{font-style:normal;color:var(--ink);font-weight:600;margin-left:2px}
+h4{margin:14px 0 6px;font-size:12px;color:var(--mute);font-weight:500;letter-spacing:.12em}
+.rk{display:flex;flex-direction:column;gap:5px}
+.r{display:grid;grid-template-columns:24px 1fr 46px;gap:8px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px 10px}
+.r .n{font-weight:700;color:var(--faint);text-align:center;font-variant-numeric:tabular-nums}.r:nth-child(1) .n{color:var(--gold)}.r:nth-child(2) .n{color:#C9D1DC}.r:nth-child(3) .n{color:#D79A6B}
+.r .nm{min-width:0}.r .nm b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.r .nm small{display:block;color:var(--mute);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.r .s{text-align:right;font-size:17px;font-weight:700;font-variant-numeric:tabular-nums}
+.r .t{display:block;height:3px;border-radius:2px;margin-top:4px;background:var(--line);overflow:hidden}.r .t i{display:block;height:100%}
+.msg{margin-top:10px;color:var(--faint);font-size:11px;min-height:16px}.err{color:var(--X)}
+.empty{color:var(--faint);text-align:center;padding:18px 0}
+</style></head><body><div class="w" id="w"><div class="empty">AI·伯乐 正在连接…</div></div>
+<script>
+const $ = (s) => document.querySelector(s), esc = (t) => String(t == null ? '' : t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const job = +(new URLSearchParams(location.search).get('job') || 0);
+const TIER = { A: '推荐面试', B: '可考虑', C: '不合适', X: '硬性不符' };
+const dur = (s) => { s = Math.round(s || 0); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60); return h ? `${h}<small>时</small>${m}<small>分</small>` : m ? `${m}<small>分</small>${s % 60}<small>秒</small>` : `${s}<small>秒</small>`; };
+async function tick() {
+  try {
+    const r = await (await fetch('/api/boss/summary?job=' + job + '&top=10', { cache: 'no-store' })).json();
+    const t = r.tiers || {}, n = (t.A || 0) + (t.B || 0) + (t.C || 0) + (t.X || 0) || 1;
+    const avg = r.avg ?? 0, C = 2 * Math.PI * 50;
+    const bar = ['A', 'B', 'C', 'X'].map((k) => `<i style="width:${(t[k] || 0) / n * 100}%;background:var(--${k})"></i>`).join('');
+    const rank = (r.top || []).map((x, i) => `<div class="r"><span class="n">${i + 1}</span><span class="nm"><b>${esc(x.name || '未识别')}</b><small>${esc(x.line || TIER[x.tier] || '')}</small></span>
+      <span class="s" style="color:var(--${x.tier || 'C'})">${x.total}<span class="t"><i style="width:${x.total}%;background:var(--${x.tier || 'C'})"></i></span></span></div>`).join('');
+    $('#w').innerHTML = `<div class="hd"><div class="logo">伯</div><div class="tt"><b>AI·伯乐</b><small>${esc(r.job || 'BOSS 初筛')}</small></div>
+        <div class="st ${r.running ? 'on' : ''}"><i></i>${r.running ? '正在识人' : '待命'}</div></div>
+      <div class="hero">
+        <div class="ring"><svg width="118" height="118" viewBox="0 0 118 118"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--cyan)"/><stop offset="1" stop-color="var(--gold)"/></linearGradient></defs>
+          <circle cx="59" cy="59" r="50" fill="none" stroke="var(--line)" stroke-width="9"/>
+          <circle cx="59" cy="59" r="50" fill="none" stroke="url(#g)" stroke-width="9" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - avg / 100)}"/></svg>
+          <div class="c"><div><b>${r.avg ?? '—'}</b><small>平均分</small></div></div></div>
+        <div class="kv">
+          <div><i>已扫</i><b>${r.people}</b><small>人</small></div>
+          <div><i>已打分</i><b>${r.scored}</b><small>人</small></div>
+          <div><i>最高 / 最低</i><b>${r.max ?? '—'}</b><small>/ ${r.min ?? '—'}</small></div>
+          <div><i>平均每人</i><b>${r.per ? Math.round(r.per) : '—'}</b><small>秒</small></div>
+          <div style="grid-column:1/3"><i>总工作时间</i><b>${dur(r.secs)}</b></div>
+        </div></div>
+      <div class="bar">${bar}</div>
+      <div class="lg"><span style="--k:var(--A)">推荐<em>${t.A || 0}</em></span><span style="--k:var(--B)">可考虑<em>${t.B || 0}</em></span><span style="--k:var(--C)">不合适<em>${t.C || 0}</em></span><span style="--k:var(--X)">硬性不符<em>${t.X || 0}</em></span><span style="--k:var(--faint)">外地只看摘要<em>${r.skipped_city || 0}</em></span></div>
+      <h4>积分排名 · TOP ${(r.top || []).length}</h4>
+      <div class="rk">${rank || '<div class="empty">还没有打完分的人</div>'}</div>
+      <div class="msg ${r.error ? 'err' : ''}">${esc(r.error || r.msg || '')}</div>`;
+  } catch (e) { $('#w').innerHTML = '<div class="empty">连不上简历快筛：先打开它</div>'; }
+}
+tick(); setInterval(tick, 3000);
+</script></body></html>
