@@ -11,7 +11,7 @@ import urllib.request, urllib.parse, urllib.error, html as htmllib
 from datetime import datetime, timedelta, timezone
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 
-VERSION = '1.1.2'  # 每次发更新 +1（publish_update.py 会自动改）
+VERSION = '1.1.3'  # 每次发更新 +1（publish_update.py 会自动改）
 UPD_URL = os.environ.get('RS_UPD_URL') or 'https://crayxus.com.au/rs-upd-7c41e9/'  # 升级文件放这里：version.json + app.py + web/index.html
 FROZEN = getattr(sys, 'frozen', False)  # 打包成 exe 时：网页在包里，数据放 exe 旁边
 ROOT = os.path.dirname(sys.executable) if FROZEN else os.path.dirname(os.path.abspath(__file__))
@@ -61,7 +61,7 @@ now = lambda: datetime.now(BJ).strftime('%Y-%m-%d %H:%M:%S')
 
 # ---------------- 数据库 ----------------
 LOCK = threading.RLock()
-con = sqlite3.connect(os.path.join(DATA, 'screener.db'), check_same_thread=False)
+con = sqlite3.connect(os.path.join(DATA, 'screener.db'), check_same_thread=False, timeout=30)   # 10-21：升级重启时旧进程可能还没退干净，等它让出库，不要直接报 database is locked
 con.row_factory = sqlite3.Row
 con.executescript('''
 CREATE TABLE IF NOT EXISTS jobs(id INTEGER PRIMARY KEY, name TEXT, jd TEXT, must TEXT, plus TEXT, dims TEXT,
@@ -672,8 +672,12 @@ def j_update(h, q, b):
         dst = os.path.join(new, *rel.split('/'))
         os.makedirs(os.path.dirname(dst), exist_ok=True)
         open(dst, 'wb').write(data)
-    shutil.rmtree(cur, ignore_errors=True)
-    os.replace(new, cur)
+    for i in range(6):   # 10-21：Windows 上杀毒 / 索引偶尔占着旧文件，删不干净时 os.replace 会失败 → 多试几次，最后退回逐个覆盖
+        shutil.rmtree(cur, ignore_errors=True)
+        try: os.replace(new, cur); break
+        except OSError: time.sleep(1)
+    else:
+        shutil.copytree(new, cur, dirs_exist_ok=True); shutil.rmtree(new, ignore_errors=True)
     print(now(), '已升级到', UPD['ver'], '正在重启', flush=True)
     threading.Thread(target=restart, daemon=True).start()
     return {'ok': True, 'ver': UPD['ver']}
