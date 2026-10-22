@@ -11,7 +11,7 @@ import urllib.request, urllib.parse, urllib.error, html as htmllib
 from datetime import datetime, timedelta, timezone
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 
-VERSION = '1.1.3'  # 每次发更新 +1（publish_update.py 会自动改）
+VERSION = '1.1.4'  # 每次发更新 +1（publish_update.py 会自动改）
 UPD_URL = os.environ.get('RS_UPD_URL') or 'https://crayxus.com.au/rs-upd-7c41e9/'  # 升级文件放这里：version.json + app.py + web/index.html
 FROZEN = getattr(sys, 'frozen', False)  # 打包成 exe 时：网页在包里，数据放 exe 旁边
 ROOT = os.path.dirname(sys.executable) if FROZEN else os.path.dirname(os.path.abspath(__file__))
@@ -72,7 +72,11 @@ CREATE TABLE IF NOT EXISTS resumes(id INTEGER PRIMARY KEY, job_id INTEGER, file 
   name TEXT DEFAULT '', phone TEXT DEFAULT '', email TEXT DEFAULT '', dup_of INTEGER,
   mark TEXT DEFAULT '', note TEXT DEFAULT '', created TEXT, scored_at TEXT, ms INTEGER, UNIQUE(job_id, sha1));
 ''')
-for t, c in (('jobs', 'sign TEXT DEFAULT ""'), ('resumes', 'contacted TEXT DEFAULT ""'), ('jobs', 'city TEXT DEFAULT ""')):  # 后加的列：老库补上
+con.executescript('''
+CREATE TABLE IF NOT EXISTS interviews(id INTEGER PRIMARY KEY, job_id INTEGER, rid INTEGER UNIQUE, day TEXT, start TEXT, end TEXT,
+  status TEXT DEFAULT '待发', msg TEXT DEFAULT '', note TEXT DEFAULT '', created TEXT, updated TEXT);
+''')   # 10-22 面试排期：一人一条，day = YYYY-MM-DD，start/end = HH:MM
+for t, c in (('jobs', 'sign TEXT DEFAULT ""'), ('resumes', 'contacted TEXT DEFAULT ""'), ('jobs', 'city TEXT DEFAULT ""'), ('jobs', 'addr TEXT DEFAULT ""'), ('jobs', 'sched TEXT DEFAULT ""')):  # 后加的列：老库补上
     if c.split()[0] not in [x[1] for x in con.execute(f'PRAGMA table_info({t})')]: con.execute(f'ALTER TABLE {t} ADD COLUMN {c}')
 
 
@@ -542,6 +546,7 @@ def j_save_job(h, q, b):
         jid = int(b['id'])
     else:
         jid = run('INSERT INTO jobs(name,jd,must,plus,dims,folder,auto,a,b,sign,city,created) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', vals + (now(),))
+    if 'addr' in b: run('UPDATE jobs SET addr=? WHERE id=?', (str(b.get('addr') or '').strip()[:120], jid))   # 10-22 面试地点
     os.makedirs(folder, exist_ok=True)
     return {'ok': True, 'id': jid}
 
@@ -864,10 +869,170 @@ def j_boss_status(h, q, b):
     return {'ok': True, **(dict(r.st) if r else {'running': False})}
 
 
-GET = {'/api/jobs': j_jobs, '/api/resumes': j_resumes, '/api/status': j_status, '/api/boss/status': j_boss_status, '/api/boss/summary': j_boss_summary}
+# ---------------- 面试排期（10-22）：把入围的人按分数排进时间格，一人一条邀请消息；发消息仍由 HR 在 BOSS / 微信里自己点 ----------------
+WEEK = '一二三四五六日'
+SCHED_DEF = {'start': '', 'from': '10:00', 'to': '18:00', 'dur': 45, 'gap': 15, 'pool': 'A', 'weekend': 0, 'lunch': ''}
+ST_INT = ['待发', '已发', '已确认', '改期', '取消']
+
+
+def next_monday():
+    d = datetime.now(BJ).date()
+    d += timedelta(days=(7 - d.weekday()) % 7 or 7)
+    return d.isoformat()
+
+
+def hm(t):
+    h, m = str(t).split(':'); return int(h) * 60 + int(m)
+
+
+def mh(n): return f'{n // 60:02d}:{n % 60:02d}'
+
+
+def day_slots(cfg):
+    """一天里的时间格：from 起，每格 dur 分钟，格与格之间歇 gap；午休「12:00-13:00」这种时段跳过"""
+    out, t, end = [], hm(cfg['from']), hm(cfg['to'])
+    lunch = None
+    if cfg.get('lunch') and '-' in cfg['lunch']:
+        a, b = cfg['lunch'].split('-'); lunch = (hm(a.strip()), hm(b.strip()))
+    while t + cfg['dur'] <= end:
+        if lunch and t < lunch[1] and t + cfg['dur'] > lunch[0]: t = lunch[1]; continue
+        out.append((mh(t), mh(t + cfg['dur']))); t += cfg['dur'] + cfg['gap']
+    return out
+
+
+def sched_cfg(job):
+    cfg = dict(SCHED_DEF)
+    try: cfg.update({k: v for k, v in json.loads(job.get('sched') or '{}').items() if k in cfg})
+    except Exception: pass
+    if not cfg['start']: cfg['start'] = next_monday()
+    return cfg
+
+
+def day_txt(d):
+    x = datetime.strptime(d, '%Y-%m-%d'); return f'{x.month} 月 {x.day} 日（周{WEEK[x.weekday()]}）'
+
+
+def invite_msg(job, r, it):
+    """邀请消息：模板直接生成（不走模型，不编内容）；简历里有亮点就点一句"""
+    d = json.loads(r['data'] or '{}'); hl = (d.get('highlights') or [''])[0]
+    name = (r['name'] or '').strip()
+    lines = [f'{name}您好，' if name else '您好，',
+             f'我是{job.get("sign") or "【公司 · 招聘负责人】"}。看过您投递「{job["name"]}」的简历' + (f'，「{str(hl)[:40]}」这一点很打动我们' if hl else '') + '，想邀请您来参加线下面试：',
+             f'时间：{day_txt(it["day"])} {it["start"]}–{it["end"]}（约 {job.get("_dur", 45)} 分钟）', f'地点：{job.get("addr") or "【面试地点】"}',
+             '方便的话请回复「确认」；如果这个时间不方便，请告诉我您本周或下周方便的时段，我再为您调整。期待见面！']
+    return '\n'.join(lines)
+
+
+def sched_rows(jid):
+    out = []
+    for r in rows('''SELECT i.*, r.name, r.phone, r.email, r.total, r.tier, r.data, r.mark, r.contacted FROM interviews i JOIN resumes r ON r.id=i.rid
+                     WHERE i.job_id=? ORDER BY i.day, i.start''', (jid,)):
+        d = dict(r); dd = json.loads(d.pop('data') or '{}'); cur = dd.get('current') or {}
+        d['edu'] = ' · '.join(x for x in [dd.get('degree'), dd.get('school')] if x); d['cur'] = ' · '.join(x for x in [cur.get('company'), cur.get('title')] if x)
+        d['dayTxt'] = day_txt(d['day']); out.append(d)
+    return out
+
+
+def sched_pool(job, cfg):
+    """谁该进排期：读完、不是重复、没被标淘汰、还没排过；pool = A（A 档）/ mark（标了「面试」）/ both（二者都算）；按总分从高到低"""
+    rs = rows("SELECT id, total, tier, mark FROM resumes WHERE job_id=? AND status='done' AND dup_of IS NULL AND id NOT IN (SELECT rid FROM interviews) ORDER BY total DESC, id", (job['id'],))
+    pick = {'A': lambda r: r['tier'] == 'A', 'mark': lambda r: r['mark'] == '面试', 'both': lambda r: r['tier'] == 'A' or r['mark'] == '面试'}[cfg.get('pool') if cfg.get('pool') in ('A', 'mark', 'both') else 'A']
+    return [r for r in rs if r['mark'] != '淘汰' and pick(r)]
+
+
+def j_sched(h, q, b):
+    job = get_job(int(q.get('job') or 0))
+    if not job: return {'error': '没有这个岗位'}
+    cfg = sched_cfg(job)
+    return {'ok': True, 'cfg': cfg, 'addr': job.get('addr') or '', 'sign': job.get('sign') or '', 'rows': sched_rows(job['id']), 'pool': len(sched_pool(job, cfg)), 'slotsPerDay': len(day_slots(cfg))}
+
+
+def j_sched_build(h, q, b):
+    """生成 / 续排：已排好的人不动（保住已发出去的时间），没排的人按分数填进后面的空格"""
+    job = get_job(int(b.get('job') or 0))
+    if not job: return {'error': '没有这个岗位'}
+    cfg = sched_cfg(job)
+    for k in ('start', 'from', 'to', 'pool', 'lunch'):
+        if k in b: cfg[k] = str(b[k] or '').strip()
+    for k in ('dur', 'gap', 'weekend'):
+        if k in b: cfg[k] = int(b[k] or 0)
+    if not re.match(r'^\d{4}-\d{2}-\d{2}$', cfg['start']): cfg['start'] = next_monday()
+    if not (15 <= cfg['dur'] <= 180): return {'error': '每人时长要在 15–180 分钟'}
+    if not (0 <= cfg['gap'] <= 120): return {'error': '间隔要在 0–120 分钟'}
+    try:
+        if hm(cfg['from']) + cfg['dur'] > hm(cfg['to']): return {'error': '一天的时间段放不下一场面试'}
+    except Exception: return {'error': '时间要写成 10:00 这样'}
+    run('UPDATE jobs SET sched=?, addr=? WHERE id=?', (json.dumps(cfg, ensure_ascii=False), str(b.get('addr', job.get('addr')) or '').strip()[:120], job['id']))
+    job = get_job(job['id']); job['_dur'] = cfg['dur']
+    slots = day_slots(cfg)
+    if not slots: return {'error': '一天的时间段放不下一场面试'}
+    taken = {(r['day'], r['start']) for r in rows('SELECT day, start FROM interviews WHERE job_id=? AND status!=?', (job['id'], '取消'))}
+    pool = sched_pool(job, cfg)
+    day, i, n, guard = datetime.strptime(cfg['start'], '%Y-%m-%d').date(), 0, 0, 0
+    while i < len(pool) and guard < 400:
+        guard += 1
+        if day.weekday() >= 5 and not cfg['weekend']: day += timedelta(days=1); continue
+        for st, en in slots:
+            if i >= len(pool): break
+            if (day.isoformat(), st) in taken: continue
+            r = one('SELECT * FROM resumes WHERE id=?', (pool[i]['id'],))
+            it = {'day': day.isoformat(), 'start': st, 'end': en}
+            run('INSERT INTO interviews(job_id,rid,day,start,end,status,msg,created,updated) VALUES(?,?,?,?,?,?,?,?,?)',
+                (job['id'], r['id'], it['day'], st, en, '待发', invite_msg(job, r, it), now(), now()))
+            taken.add((it['day'], st)); i += 1; n += 1
+        day += timedelta(days=1)
+    return {'ok': True, 'added': n, **j_sched(h, {'job': job['id']}, b)}
+
+
+def j_sched_set(h, q, b):
+    """改一条：状态 / 备注 / 消息 / 改到别的时间（改时间会重写消息里的时间）"""
+    it = one('SELECT * FROM interviews WHERE id=?', (int(b.get('id') or 0),))
+    if not it: return {'error': '没有这条排期'}
+    job = get_job(it['job_id']); cfg = sched_cfg(job); job['_dur'] = cfg['dur']
+    if 'status' in b and b['status'] in ST_INT: run('UPDATE interviews SET status=?, updated=? WHERE id=?', (b['status'], now(), it['id']))
+    if 'note' in b: run('UPDATE interviews SET note=? WHERE id=?', (str(b['note'] or '')[:300], it['id']))
+    if 'msg' in b: run('UPDATE interviews SET msg=? WHERE id=?', (str(b['msg'] or '')[:1500], it['id']))
+    if b.get('day') or b.get('start'):
+        day = str(b.get('day') or it['day']); st = str(b.get('start') or it['start'])
+        if not re.match(r'^\d{4}-\d{2}-\d{2}$', day) or not re.match(r'^\d{1,2}:\d{2}$', st): return {'error': '日期或时间格式不对'}
+        st = mh(hm(st)); en = mh(hm(st) + cfg['dur'])
+        clash = one('SELECT i.id, r.name FROM interviews i JOIN resumes r ON r.id=i.rid WHERE i.job_id=? AND i.day=? AND i.start=? AND i.id!=? AND i.status!=?', (it['job_id'], day, st, it['id'], '取消'))
+        if clash: return {'error': f'这个时间已经排了 {clash["name"] or "别人"}'}
+        r = one('SELECT * FROM resumes WHERE id=?', (it['rid'],))
+        new_it = {'day': day, 'start': st, 'end': en}
+        run('UPDATE interviews SET day=?, start=?, end=?, msg=?, status=?, updated=? WHERE id=?', (day, st, en, invite_msg(job, r, new_it), '改期' if it['status'] in ('已发', '已确认', '改期') else it['status'], now(), it['id']))
+    return {'ok': True, **j_sched(h, {'job': it['job_id']}, b)}
+
+
+def j_sched_del(h, q, b):
+    it = one('SELECT job_id FROM interviews WHERE id=?', (int(b.get('id') or 0),))
+    if it: run('DELETE FROM interviews WHERE id=?', (int(b['id']),))
+    return {'ok': True, **(j_sched(h, {'job': it['job_id']}, b) if it else {})}
+
+
+def j_sched_clear(h, q, b):
+    """清掉还没发出去的（待发 / 取消），已发、已确认、改期的保留"""
+    jid = int(b.get('job') or 0)
+    run("DELETE FROM interviews WHERE job_id=? AND status IN ('待发','取消')", (jid,))
+    return {'ok': True, **j_sched(h, {'job': jid}, b)}
+
+
+def export_sched(h, q):
+    job = get_job(int(q.get('job') or 0))
+    if not job: return h.send(404, {'error': '没有这个岗位'})
+    buf = io.StringIO(); w = csv.writer(buf)
+    w.writerow(['日期', '星期', '开始', '结束', '候选人', '电话', '邮箱', '总分', '档位', '学历 · 学校', '最近', '状态', '备注', '邀请消息'])
+    for r in sched_rows(job['id']):
+        x = datetime.strptime(r['day'], '%Y-%m-%d')
+        w.writerow([r['day'], '周' + WEEK[x.weekday()], r['start'], r['end'], r['name'], r['phone'], r['email'], r['total'], TIER.get(r['tier'], ''), r['edu'], r['cur'], r['status'], r['note'], r['msg']])
+    fn = urllib.parse.quote(f'{job["name"]}-面试排期-{datetime.now(BJ):%m%d}.csv')
+    h.send(200, '﻿' + buf.getvalue(), 'text/csv; charset=utf-8', {'Content-Disposition': f"attachment; filename*=UTF-8''{fn}"})
+
+
+GET = {'/api/jobs': j_jobs, '/api/resumes': j_resumes, '/api/status': j_status, '/api/sched': j_sched, '/api/boss/status': j_boss_status, '/api/boss/summary': j_boss_summary}
 POST = {'/api/boss/start': j_boss_start, '/api/boss/stop': j_boss_stop, '/api/job': j_save_job, '/api/job/del': j_del_job, '/api/job/auto': j_auto, '/api/scan': j_scan, '/api/mark': j_mark,
         '/api/rescore': j_rescore, '/api/remove': j_remove, '/api/open-folder': j_open_folder, '/api/pick-folder': j_pick_folder,
-        '/api/draft': j_draft, '/api/contacted': j_contacted, '/api/key': j_key, '/api/eco': j_eco, '/api/update': j_update, '/api/check-update': j_check_update}
+        '/api/draft': j_draft, '/api/contacted': j_contacted, '/api/sched/build': j_sched_build, '/api/sched/set': j_sched_set, '/api/sched/del': j_sched_del, '/api/sched/clear': j_sched_clear, '/api/key': j_key, '/api/eco': j_eco, '/api/update': j_update, '/api/check-update': j_check_update}
 
 
 class H(BaseHTTPRequestHandler):
@@ -898,6 +1063,7 @@ class H(BaseHTTPRequestHandler):
             if m == 'GET' and u.path in ('/', '/index.html'): return self.send(200, open(INDEX, 'rb').read(), 'text/html; charset=utf-8')
             if m == 'GET' and u.path == '/mini': return self.send(200, open(os.path.join(os.path.dirname(INDEX), 'mini.html'), 'rb').read(), 'text/html; charset=utf-8')   # 小窗
             if m == 'GET' and u.path == '/api/export': return export_csv(self, q)
+            if m == 'GET' and u.path == '/api/sched/export': return export_sched(self, q)
             if m == 'GET' and u.path == '/api/file': return serve_file(self, q)
             n = int(self.headers.get('Content-Length') or 0)
             raw = self.rfile.read(n) if n else b''
