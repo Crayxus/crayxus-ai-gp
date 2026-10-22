@@ -1,9 +1,9 @@
 {
- "ver": "1.1.3",
- "note": "升级重启时等旧进程让出数据库，不再报 database is locked；升级替换文件失败会自动重试",
+ "ver": "1.1.4",
+ "note": "面试排期：把 A 档 / 标了面试的人按分数排进时间格，每人一条邀请消息，状态跟踪 + 导出排期表",
  "files": {
-  "app.py": "001c07c02cac70ab6bb3bb5e0b5425ca51237726b474339b7536eb56ac44298e",
-  "web/index.html": "cc3cf8df4a5ba9966a2d298ccae0754a6b227159ab85a80d83ada986ed59ce20",
+  "app.py": "ba409673f28ace478b8be8589e0311560917e9fe5dd0498913ec178cd1a67d5e",
+  "web/index.html": "0c4260879e4b5c1ca92bed84b7a0c01a5323d6430c2a3aaf812fbdddd5f9a1b6",
   "web/mini.html": "7683effbced5ac6f0f4263098a3b733d31f23ec529719db89ddf755025e15975",
   "boss/reader.py": "a653154c6b11c572c391495dfdaf2866cc264ebf4a9188bb6f6b7a56e46fd54b",
   "boss/ui.py": "80457fffdfc4d4c4e9248719d83b4123f56ff9fcacbae05b19dfc6f07b9728f9"
