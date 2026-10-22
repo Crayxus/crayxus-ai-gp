@@ -158,6 +158,12 @@ textarea.note{width:100%;min-height:60px;border:1px solid var(--line);border-rad
 .bfoot .del{margin-right:auto;color:var(--X);border-color:transparent;background:none}
 .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:10px;font-size:13.5px;z-index:40;opacity:0;transition:.2s;pointer-events:none}
 .toast.on{opacity:1}
+.sf{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-top:8px}
+.sf label{font-size:12.5px;color:var(--mute);display:flex;flex-direction:column;gap:3px}
+.sf input,.sf select{border:1px solid var(--line);background:var(--bg);border-radius:9px;padding:6px 9px;color:var(--ink)}
+.sf .ck2{flex-direction:row;align-items:center;gap:6px;padding-bottom:8px}
+.sch-day{margin-top:12px;overflow-x:auto}.sch-day h3 span{font-weight:400}
+.tb.sch td{vertical-align:top}.tb.sch .nm small{max-width:260px}
 @media (max-width:1100px){.stats{grid-template-columns:repeat(3,minmax(0,1fr))}.charts{grid-template-columns:1fr}}
 @media (max-width:760px){
   .top .acts{margin-left:0}.drop{flex-wrap:wrap}.tools input{width:100%}
@@ -218,6 +224,7 @@ async function refresh() {
     try { S.boss = await api('/api/boss/status'); } catch (e) {}
     if (S.waitVer && S.status.version === S.waitVer) return location.reload();  // 升级重启好了，刷新拿新网页
     await loadJobs(); await loadRows();
+    if (S.view === 'sched') { if (schedBusy()) { renderSys(); return; } await loadSched(); }
     renderSys(); renderMain();
     if (S.sel) renderDrawer(false);
   } catch (e) { $('#sys').innerHTML = '<span class="dot off"></span>连不上本机服务：先双击「开始简历快筛」'; }
@@ -270,6 +277,7 @@ const order = (o, keys) => Object.entries(o).sort((a, b) => (keys ? keys.indexOf
 function renderMain() {
   const j = job();
   if (!j) { $('#main').innerHTML = '<div class="empty">先在左边「新建岗位」，写清楚要招什么人。</div>'; return; }
+  if (S.view === 'sched') return renderSched();
   const st = stats(S.rows, j);
   const box = (k, label, val, cls = '') => `<button class="st ${cls} ${S.filter === k ? 'on' : ''}" data-f="${k}"><em>${label}</em><b>${val}</b></button>`;
   const hmax = Math.max(1, ...st.hist);
@@ -286,6 +294,7 @@ function renderMain() {
       <span class="sw ${j.auto ? 'on' : ''}" data-act="auto" title="开着时每 15 秒看一次文件夹，有新简历就自动读"><i></i>自动翻阅</span>
       <button class="btn ${S.boss && S.boss.running ? 'pri' : ''}" data-act="boss" title="在 BOSS 直聘电脑版里一个个点开候选人、翻在线简历，截下来交给这里打分（只看，不发消息）">${S.boss && S.boss.running ? '停止 BOSS 初筛' : 'BOSS 初筛'}</button>
       <button class="btn" data-act="scan">现在翻一遍</button>
+      <button class="btn" data-act="sched" title="把 A 档 / 标了「面试」的人按分数排进面试时间格，一人一条邀请消息">面试排期${S.sched && S.sched.rows && S.sched.rows.filter((r) => r.status !== '取消').length ? ' · ' + S.sched.rows.filter((r) => r.status !== '取消').length + ' 人' : ''}</button>
       <button class="btn" data-act="edit">评分标准</button>
       <button class="btn" data-act="rescore" title="改了评分标准后，用新标准把这个岗位的简历全部重新打分">全部重算</button>
       <button class="btn pri" data-act="export">导出 Excel</button>
@@ -382,6 +391,8 @@ function renderDrawer(open = true) {
       <div id="ctBox" style="${DR[r.id] ? '' : 'display:none'}"><input id="ctSub" placeholder="邮件标题" value="${esc(DR[r.id]?.subject || '')}"><textarea id="ctText">${esc(DR[r.id]?.text || '')}</textarea>
       <div class="row"><button class="btn pri sm" data-send="copy">复制，去微信 / 短信发</button>${r.email ? '<button class="btn sm" data-send="mail">用邮件发</button>' : ''}<span class="sm1">先看一遍、改好再发；【】里的要自己填</span></div></div>
     </div></div>`;
+    const sl = S.sched && S.sched.rows ? S.sched.rows.find((x) => x.rid === r.id) : null;
+    if (sl) h += `<div class="sec"><h4>面试排期</h4><div class="kv"><span>时间</span><div>${esc(sl.dayTxt)} ${esc(sl.start)}–${esc(sl.end)}</div><span>状态</span><div style="color:${STC[sl.status]}">${esc(sl.status)}</div></div></div>`;
     h += `<div class="sec"><h4>你的判断</h4><div class="marks">${['面试', '待定', '淘汰'].map((m) => `<button data-mark="${m}" class="${mk === m ? 'on' : ''}">${m}</button>`).join('')}</div>
       <textarea class="note" id="note" placeholder="备注（只存在本机）">${esc(r.note || '')}</textarea></div>`;
   }
@@ -468,6 +479,97 @@ async function upload(files) {
   S.up = { n: 0, done: 0 }; refresh();
 }
 
+/* ---------- 面试排期（10-22） ---------- */
+const ST_INT = ['待发', '已发', '已确认', '改期', '取消'];
+const STC = { '待发': 'var(--mute)', '已发': 'var(--B)', '已确认': 'var(--A)', '改期': 'var(--B)', '取消': 'var(--X)' };
+async function loadSched() { if (S.cur) S.sched = await api('/api/sched?job=' + S.cur); }
+function schedBusy() { const el = document.activeElement; return !!(el && el.closest && el.closest('#sched')); }
+function renderSched() {
+  const j = job(), d = S.sched; if (!d) { $('#main').innerHTML = '<div class="empty">加载排期…</div>'; return; }
+  const c = d.cfg, rs = d.rows, live = rs.filter((r) => r.status !== '取消');
+  const days = [...new Set(live.map((r) => r.day))].sort();
+  const cnt = {}; for (const r of rs) cnt[r.status] = (cnt[r.status] || 0) + 1;
+  const byDay = {}; for (const r of rs) (byDay[r.day] = byDay[r.day] || []).push(r);
+  const sum = rs.length ? `已排 <b>${live.length}</b> 人${days.length ? ` · ${esc(live[0].dayTxt)} 到 ${esc(live[live.length - 1].dayTxt)}，共 ${days.length} 天` : ''} · ${ST_INT.filter((s) => cnt[s]).map((s) => `<span style="color:${STC[s]}">${s} ${cnt[s]}</span>`).join('　')}` : '还没有排期';
+  $('#main').innerHTML = `
+  <div class="top"><div><h1>面试排期 · ${esc(j.name)}</h1><div class="fd">${sum}</div></div>
+    <div class="acts"><button class="btn" data-sch="back">← 回到名单</button><button class="btn" data-sch="export" ${rs.length ? '' : 'disabled'}>导出排期表</button></div></div>
+  <div class="panel" id="sched" style="margin:14px 0">
+    <h3>怎么排：从开始日起按工作日一天天排，分数高的排前面；已经排好的人不动，新入围的接着往后填</h3>
+    <div class="sf">
+      <label>开始日期<input type="date" id="scStart" value="${esc(c.start)}"></label>
+      <label>每天<span class="row"><input id="scFrom" value="${esc(c.from)}" style="width:64px">–<input id="scTo" value="${esc(c.to)}" style="width:64px"></span></label>
+      <label>每人（分钟）<input type="number" id="scDur" value="${c.dur}" min="15" max="180" style="width:64px"></label>
+      <label>中间休息（分钟）<input type="number" id="scGap" value="${c.gap}" min="0" max="120" style="width:64px"></label>
+      <label>午休（可空）<input id="scLunch" value="${esc(c.lunch || '')}" placeholder="12:00-13:00" style="width:110px"></label>
+      <label>谁进排期<select id="scPool"><option value="A" ${c.pool === 'A' ? 'selected' : ''}>A 档（≥${j.a} 分）</option><option value="mark" ${c.pool === 'mark' ? 'selected' : ''}>标了「面试」的</option><option value="both" ${c.pool === 'both' ? 'selected' : ''}>A 档 + 标了「面试」的</option></select></label>
+      <label class="ck2"><input type="checkbox" id="scWe" ${c.weekend ? 'checked' : ''}> 周末也排</label>
+    </div>
+    <div class="sf"><label style="flex:1">面试地点（写进邀请消息）<input id="scAddr" value="${esc(d.addr || '')}" placeholder="比如：杭州市余杭区 ×× 路 ×× 号 3 楼（到了前台找 ××）"></label>
+      <label style="flex:1">落款（在「评分标准」里改）<input value="${esc(d.sign || '')}" disabled></label></div>
+    <div class="row" style="margin-top:10px;flex-wrap:wrap">
+      <button class="btn pri" data-sch="build">${rs.length ? '续排：把新入围的填进去' : '生成排期'}</button>
+      <span class="sm1">还有 <b>${d.pool}</b> 人入围未排 · 每天 ${d.slotsPerDay} 场</span>
+      ${rs.length ? `<button class="btn" data-sch="clear" style="margin-left:auto;color:var(--X)">清掉还没发的（已发 / 已确认的保留）</button>` : ''}
+    </div>
+    <div class="sm1" style="margin-top:8px">发消息还是你在 BOSS 直聘 / 微信里点：每人一条写好的邀请，「复制」后粘贴发送，状态自动记成「已发」；对方回复了就改成「已确认」或改时间。程序不会替你发任何消息。</div>
+  </div>
+  ${days.length ? days.map((day) => { const L = byDay[day].slice().sort((a, b) => a.start.localeCompare(b.start)); return `
+  <div class="panel sch-day"><h3 style="display:flex;align-items:center;gap:10px"><b style="color:var(--ink);font-size:14px">${esc(L[0].dayTxt)}</b><span>${L.filter((r) => r.status !== '取消').length} 场</span><button class="btn sm" data-sch="copyday" data-day="${day}" style="margin-left:auto">复制这天全部消息</button></h3>
+    <table class="tb sch"><thead><tr><th>时间</th><th>候选人</th><th>状态</th><th>邀请消息</th><th>改时间</th><th>备注</th><th></th></tr></thead><tbody>
+    ${L.map((r) => `<tr class="${r.status === '取消' ? 'dup' : ''}" data-sid="${r.id}">
+      <td class="mu"><b>${esc(r.start)}</b>–${esc(r.end)}</td>
+      <td class="nm"><a data-sch="open" data-rid="${r.rid}" style="cursor:pointer"><b>${esc(r.name || '（没写姓名）')}</b></a> <span class="tg ${r.tier}" style="font-size:11px">${r.total}</span><small>${esc([r.cur || r.edu, r.phone].filter(Boolean).join(' · '))}${r.phone ? ` <a data-sch="copyph" data-ph="${esc(r.phone)}" style="color:var(--acc);cursor:pointer">复制手机号</a>` : ''}</small></td>
+      <td><select data-sch-st="${r.id}" style="color:${STC[r.status]};border:1px solid var(--line);background:var(--card);border-radius:8px;padding:3px 6px">${ST_INT.map((s) => `<option ${s === r.status ? 'selected' : ''}>${s}</option>`).join('')}</select></td>
+      <td><div class="row"><button class="btn sm pri" data-sch="copy" data-id="${r.id}">复制</button><button class="btn sm" data-sch="show" data-id="${r.id}">${S.schShow === r.id ? '收起' : '看 / 改'}</button></div>${S.schShow === r.id ? `<textarea data-sch-msg="${r.id}" style="width:100%;min-height:150px;margin-top:6px;border:1px solid var(--line);border-radius:8px;background:var(--bg);padding:8px;line-height:1.6">${esc(r.msg)}</textarea>` : ''}</td>
+      <td><div class="row"><input type="date" data-sch-day="${r.id}" value="${esc(r.day)}" style="border:1px solid var(--line);background:var(--card);border-radius:8px;padding:3px 6px"><input data-sch-time="${r.id}" value="${esc(r.start)}" style="width:62px;border:1px solid var(--line);background:var(--card);border-radius:8px;padding:3px 6px"></div></td>
+      <td><input data-sch-note="${r.id}" value="${esc(r.note || '')}" placeholder="备注" style="width:140px;border:1px solid var(--line);background:var(--card);border-radius:8px;padding:3px 6px"></td>
+      <td><button class="btn sm" data-sch="del" data-id="${r.id}" title="移出排期（候选人还在名单里）">移出</button></td></tr>`).join('')}</tbody></table></div>`; }).join('') : ''}`;
+}
+async function schedAct(c, e) {
+  const j = job(); if (!j) return;
+  const k = c.dataset.sch, id = +c.dataset.id;
+  try {
+    if (k === 'back') { S.view = 'list'; renderMain(); return; }
+    if (k === 'export') { location.href = '/api/sched/export?job=' + j.id; return; }
+    if (k === 'open') { S.sel = +c.dataset.rid; renderDrawer(true); return; }
+    if (k === 'copyph') { await navigator.clipboard.writeText(c.dataset.ph); toast('手机号已复制'); return; }
+    if (k === 'show') { S.schShow = S.schShow === id ? 0 : id; renderSched(); return; }
+    if (k === 'build') {
+      const body = { job: j.id, start: $('#scStart').value, from: $('#scFrom').value.trim(), to: $('#scTo').value.trim(), dur: +$('#scDur').value, gap: +$('#scGap').value, lunch: $('#scLunch').value.trim(), pool: $('#scPool').value, weekend: $('#scWe').checked ? 1 : 0, addr: $('#scAddr').value.trim() };
+      if (!body.addr && !confirm('面试地点还没填，消息里会留【面试地点】让你手填。先这样生成？')) return;
+      c.disabled = true; const r = await api('/api/sched/build', body); S.sched = r; renderSched(); toast(r.added ? `排进去 ${r.added} 人` : '没有新的人可排（入围的都排过了）'); return;
+    }
+    if (k === 'clear') { if (!confirm('清掉所有「待发」和「取消」的排期？已发 / 已确认 / 改期的保留。')) return; S.sched = await api('/api/sched/clear', { job: j.id }); renderSched(); return; }
+    if (k === 'del') { S.sched = await api('/api/sched/del', { id }); renderSched(); return; }
+    if (k === 'copy') {
+      const r = S.sched.rows.find((x) => x.id === id); const ta = $(`[data-sch-msg="${id}"]`); const text = ta ? ta.value : r.msg;
+      if (/【[^】]*】/.test(text) && !confirm('消息里还有【】没填，确定就这样复制？')) return;
+      await navigator.clipboard.writeText(text); toast('已复制，去 BOSS / 微信粘贴发送');
+      const body = { id, status: r.status === '待发' ? '已发' : r.status }; if (ta && ta.value !== r.msg) body.msg = ta.value;
+      S.sched = await api('/api/sched/set', body); await api('/api/contacted', { id: r.rid, how: 'BOSS/微信 面试邀请' }); renderSched(); return;
+    }
+    if (k === 'copyday') {
+      const L = S.sched.rows.filter((r) => r.day === c.dataset.day && r.status !== '取消');
+      await navigator.clipboard.writeText(L.map((r) => `【${r.start} ${r.name}${r.phone ? ' ' + r.phone : ''}】\n${r.msg}`).join('\n\n----------\n\n'));
+      toast(`这天 ${L.length} 条消息已复制（带时间和姓名，方便一条条对着发）`); return;
+    }
+  } catch (err) { toast(err.message); c.disabled = false; }
+}
+let schT = {};
+async function schedField(el) {
+  const id = +(el.dataset.schSt || el.dataset.schNote || el.dataset.schDay || el.dataset.schTime || el.dataset.schMsg); if (!id) return;
+  const body = { id };
+  if (el.dataset.schSt) body.status = el.value;
+  else if (el.dataset.schNote) body.note = el.value;
+  else if (el.dataset.schMsg) body.msg = el.value;
+  else { const d = $(`[data-sch-day="${id}"]`), t = $(`[data-sch-time="${id}"]`); body.day = d.value; body.start = t.value.trim(); }
+  try { S.sched = await api('/api/sched/set', body); if (!schedBusy() || el.dataset.schSt || el.dataset.schDay || el.dataset.schTime) renderSched(); }
+  catch (err) { toast(err.message); S.sched = await api('/api/sched?job=' + S.cur); renderSched(); }
+}
+document.addEventListener('change', (e) => { const el = e.target; if (el.dataset.schSt || el.dataset.schDay || el.dataset.schTime) schedField(el); });
+document.addEventListener('input', (e) => { const el = e.target; if (el.dataset.schNote || el.dataset.schMsg) { clearTimeout(schT[el.dataset.schNote || el.dataset.schMsg]); schT[el.dataset.schNote || el.dataset.schMsg] = setTimeout(() => schedField(el), 700); } });
+
 /* ---------- 事件 ---------- */
 document.addEventListener('click', async (e) => {
   if (e.target.id === 'chkupd') { e.preventDefault(); S.status = await api('/api/check-update', {}); renderSys(); if (!S.status.upd) toast('已经是最新版'); return; }
@@ -489,11 +591,12 @@ document.addEventListener('click', async (e) => {
     catch (err) { alert('这个 Key 连不上：' + err.message); }
     return;
   }
+  const sc = e.target.closest('[data-sch]'); if (sc) return schedAct(sc, e);
   const c = e.target.closest('[data-draft],[data-send],[data-copy],[data-ct]');
   if (c) return contact(c, e);
   const t = e.target.closest('[data-job],[data-f],[data-act],[data-mark],tr.r'); if (!t) return;
   const j = job();
-  if (t.dataset.job) { S.cur = +t.dataset.job; localStorage.setItem('rs.job', S.cur); S.filter = 'all'; closeDrawer(); await loadRows(); renderJobs(); renderMain(); return; }
+  if (t.dataset.job) { S.cur = +t.dataset.job; localStorage.setItem('rs.job', S.cur); S.filter = 'all'; S.view = 'list'; S.sched = null; closeDrawer(); await loadRows(); renderJobs(); renderMain(); return; }
   if (t.dataset.f) { S.filter = S.filter === t.dataset.f ? 'all' : t.dataset.f; renderMain(); return; }
   if (t.dataset.mark) { const r = S.rows.find((x) => x.id === S.sel); saveMark(r && r.mark === t.dataset.mark ? '' : t.dataset.mark); return; }
   if (t.matches('tr.r')) { S.sel = +t.dataset.id; renderTable(); renderDrawer(true); return; }
@@ -507,6 +610,7 @@ document.addEventListener('click', async (e) => {
       if (!confirm('开始 BOSS 初筛？\n\n先确认：BOSS 直聘电脑版已登录，停在「消息」页，左上角选好「' + j.name + '」这个岗位。\n程序会在后台一个个点开候选人、翻在线简历，截下来交给这里打分。只看，不发任何消息。\n期望城市不含「' + (j.city || '本地') + '」的只看摘要、不翻简历。')) return;
       const r = await api('/api/boss/start', { job: j.id }); if (!r.ok) return alert(r.error); toast('开始了：先校准屏幕，再一个个读'); refresh(); }
     else if (a === 'scan') { const r = await api('/api/scan', { job: j.id }); toast(r.added ? `找到 ${r.added} 份新简历，开始读` : '文件夹里没有新简历'); refresh(); }
+    else if (a === 'sched') { S.view = 'sched'; $('#main').innerHTML = '<div class="empty">加载排期…</div>'; await loadSched(); renderSched(); }
     else if (a === 'edit') openEditor(j);
     else if (a === 'rescore') { if (confirm(`按现在的评分标准，把「${j.name}」的简历全部重新打分？`)) { const r = await api('/api/rescore', { job: j.id }); toast(`${r.n} 份重新排队`); refresh(); } }
     else if (a === 'export') location.href = '/api/export?job=' + j.id;
