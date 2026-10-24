@@ -11,7 +11,7 @@ import urllib.request, urllib.parse, urllib.error, html as htmllib
 from datetime import datetime, timedelta, timezone
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 
-VERSION = '1.1.5'  # 每次发更新 +1（publish_update.py 会自动改）
+VERSION = '1.1.6'  # 每次发更新 +1（publish_update.py 会自动改）
 UPD_URL = os.environ.get('RS_UPD_URL') or 'https://crayxus.com.au/rs-upd-7c41e9/'  # 升级文件放这里：version.json + app.py + web/index.html
 FROZEN = getattr(sys, 'frozen', False)  # 打包成 exe 时：网页在包里，数据放 exe 旁边
 ROOT = os.path.dirname(sys.executable) if FROZEN else os.path.dirname(os.path.abspath(__file__))
@@ -22,6 +22,8 @@ INBOX = os.path.join(HOME, '简历')
 PORT = int(os.environ.get('RS_PORT') or 8830)
 INDEX = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'web', 'index.html')  # 升级后的网页跟着新 app.py 走
 if not os.path.isfile(INDEX): INDEX = os.path.join(RES, 'web', 'index.html')
+def idx():   # 每次请求时再判断：升级换目录的那几秒 app\web 可能不在，退回包里自带的网页，不报错
+    return INDEX if os.path.isfile(INDEX) else os.path.join(RES, 'web', 'index.html')
 EXTS = {'.pdf', '.docx', '.txt', '.md', '.html', '.htm', '.jpg', '.jpeg', '.png', '.webp', '.bmp'}
 WORKERS = int(os.environ.get('RS_WORKERS') or 3)   # BOSS 初筛时开到 6，读得快些
 os.makedirs(DATA, exist_ok=True)
@@ -677,12 +679,15 @@ def j_update(h, q, b):
         dst = os.path.join(new, *rel.split('/'))
         os.makedirs(os.path.dirname(dst), exist_ok=True)
         open(dst, 'wb').write(data)
-    for i in range(6):   # 10-21：Windows 上杀毒 / 索引偶尔占着旧文件，删不干净时 os.replace 会失败 → 多试几次，最后退回逐个覆盖
-        shutil.rmtree(cur, ignore_errors=True)
-        try: os.replace(new, cur); break
+    old = os.path.join(ROOT, 'app.old'); shutil.rmtree(old, ignore_errors=True)
+    for i in range(6):   # 10-24：先把旧 app 挪成 app.old、再把 app.new 改名成 app，中间没有「app 目录不存在」的空档（之前先删后换，升级那几秒页面会报找不到 index.html）
+        try:
+            if os.path.isdir(cur): os.replace(cur, old)
+            os.replace(new, cur); break
         except OSError: time.sleep(1)
     else:
         shutil.copytree(new, cur, dirs_exist_ok=True); shutil.rmtree(new, ignore_errors=True)
+    shutil.rmtree(old, ignore_errors=True)
     print(now(), '已升级到', UPD['ver'], '正在重启', flush=True)
     threading.Thread(target=restart, daemon=True).start()
     return {'ok': True, 'ver': UPD['ver']}
@@ -1083,8 +1088,8 @@ class H(BaseHTTPRequestHandler):
         u = urllib.parse.urlparse(self.path)
         q = {k: v[0] for k, v in urllib.parse.parse_qs(u.query).items()}
         try:
-            if m == 'GET' and u.path in ('/', '/index.html'): return self.send(200, open(INDEX, 'rb').read(), 'text/html; charset=utf-8')
-            if m == 'GET' and u.path == '/mini': return self.send(200, open(os.path.join(os.path.dirname(INDEX), 'mini.html'), 'rb').read(), 'text/html; charset=utf-8')   # 小窗
+            if m == 'GET' and u.path in ('/', '/index.html'): return self.send(200, open(idx(), 'rb').read(), 'text/html; charset=utf-8')
+            if m == 'GET' and u.path == '/mini': return self.send(200, open(os.path.join(os.path.dirname(idx()), 'mini.html'), 'rb').read(), 'text/html; charset=utf-8')   # 小窗
             if m == 'GET' and u.path == '/api/export': return export_csv(self, q)
             if m == 'GET' and u.path == '/api/sched/export': return export_sched(self, q)
             if m == 'GET' and u.path == '/api/file': return serve_file(self, q)
