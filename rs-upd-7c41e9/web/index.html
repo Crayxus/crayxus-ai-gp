@@ -296,6 +296,7 @@ function renderMain() {
       <button class="btn" data-act="scan">现在翻一遍</button>
       <button class="btn" data-act="sched" title="把 A 档 / 标了「面试」的人按分数排进面试时间格，一人一条邀请消息">面试排期${S.sched && S.sched.rows && S.sched.rows.filter((r) => r.status !== '取消').length ? ' · ' + S.sched.rows.filter((r) => r.status !== '取消').length + ' 人' : ''}</button>
       <button class="btn" data-act="markA" title="把这个岗位 A 档、没标淘汰的人全部标成「面试」；EI TOKEN Finance 人事页「从伯乐导入」只拉标了面试和已排期的人">A 档标面试</button>
+      <button class="btn" data-act="eit" title="把标了面试 / 已排期的人推到 EI TOKEN Finance 人事页的「待安排」；第一次要登录 EI TOKEN 账号">同步到 EI TOKEN</button>
       <button class="btn" data-act="edit">评分标准</button>
       <button class="btn" data-act="rescore" title="改了评分标准后，用新标准把这个岗位的简历全部重新打分">全部重算</button>
       <button class="btn pri" data-act="export">导出 Excel</button>
@@ -613,6 +614,7 @@ document.addEventListener('click', async (e) => {
     else if (a === 'scan') { const r = await api('/api/scan', { job: j.id }); toast(r.added ? `找到 ${r.added} 份新简历，开始读` : '文件夹里没有新简历'); refresh(); }
     else if (a === 'sched') { S.view = 'sched'; $('#main').innerHTML = '<div class="empty">加载排期…</div>'; await loadSched(); renderSched(); }
     else if (a === 'markA') { if (confirm(`把「${j.name}」A 档、没标淘汰的人全部标成「面试」？已标的不动。`)) { const r = await api('/api/mark-tier', { job: j.id, tier: 'A' }); toast(`现在共 ${r.total} 人标了面试`); refresh(); } }
+    else if (a === 'eit') { let r; try { r = await api('/api/eit-sync', {}); } catch (e) { if (e.message !== 'need_login') throw e; const email = prompt('登录 EI TOKEN（eitoken.ai 的账号，邮箱或用户名）'); if (!email) return; const password = prompt('密码'); if (!password) return; r = await api('/api/eit-sync', { email, password }); } toast(r.total ? `已同步到 EI TOKEN 人事（${r.email}）：新加 ${r.imported} 人，共 ${r.total} 人` : '还没有标「面试」或排期的人'); }
     else if (a === 'edit') openEditor(j);
     else if (a === 'rescore') { if (confirm(`按现在的评分标准，把「${j.name}」的简历全部重新打分？`)) { const r = await api('/api/rescore', { job: j.id }); toast(`${r.n} 份重新排队`); refresh(); } }
     else if (a === 'export') location.href = '/api/export?job=' + j.id;
