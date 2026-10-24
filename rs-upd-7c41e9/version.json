@@ -1,8 +1,8 @@
 {
- "ver": "1.1.4",
- "note": "面试排期：把 A 档 / 标了面试的人按分数排进时间格，每人一条邀请消息，状态跟踪 + 导出排期表",
+ "ver": "1.1.5",
+ "note": "给 Finance 人事页的面试名单接口",
  "files": {
-  "app.py": "ba409673f28ace478b8be8589e0311560917e9fe5dd0498913ec178cd1a67d5e",
+  "app.py": "7bb351412993b3fea5d01f0a1378add353a921db42a30fe6e34d7302462f35e6",
   "web/index.html": "0c4260879e4b5c1ca92bed84b7a0c01a5323d6430c2a3aaf812fbdddd5f9a1b6",
   "web/mini.html": "7683effbced5ac6f0f4263098a3b733d31f23ec529719db89ddf755025e15975",
   "boss/reader.py": "a653154c6b11c572c391495dfdaf2866cc264ebf4a9188bb6f6b7a56e46fd54b",
