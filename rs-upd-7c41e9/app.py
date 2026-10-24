@@ -11,7 +11,7 @@ import urllib.request, urllib.parse, urllib.error, html as htmllib
 from datetime import datetime, timedelta, timezone
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 
-VERSION = '1.1.6'  # 每次发更新 +1（publish_update.py 会自动改）
+VERSION = '1.1.7'  # 每次发更新 +1（publish_update.py 会自动改）
 UPD_URL = os.environ.get('RS_UPD_URL') or 'https://crayxus.com.au/rs-upd-7c41e9/'  # 升级文件放这里：version.json + app.py + web/index.html
 FROZEN = getattr(sys, 'frozen', False)  # 打包成 exe 时：网页在包里，数据放 exe 旁边
 ROOT = os.path.dirname(sys.executable) if FROZEN else os.path.dirname(os.path.abspath(__file__))
@@ -581,6 +581,14 @@ def j_resumes(h, q, b):
     return out
 
 
+def j_mark_tier(h, q, b):
+    """把一个岗位里某档（默认 A 档）、没标淘汰也没标面试的人全部标成「面试」—— 10-24 用户：推荐的人一键标面试，Finance 人事页导入后再逐个联系确认"""
+    jid, tier = int(b.get('job') or 0), str(b.get('tier') or 'A')[:1]
+    r = run("UPDATE resumes SET mark='面试' WHERE job_id=? AND status='done' AND dup_of IS NULL AND tier=? AND mark NOT IN ('淘汰','面试')", (jid, tier))
+    n = one("SELECT COUNT(*) n FROM resumes WHERE job_id=? AND status='done' AND dup_of IS NULL AND mark='面试'", (jid,))['n']
+    return {'ok': True, 'total': n}
+
+
 def j_mark(h, q, b):
     run('UPDATE resumes SET mark=?, note=? WHERE id=?', (str(b.get('mark') or '')[:8], str(b.get('note') or '')[:1000], int(b.get('id') or 0)))
     return {'ok': True}
@@ -1053,7 +1061,7 @@ def j_invite(h, q, b):
 
 
 GET = {'/api/invite': j_invite, '/api/jobs': j_jobs, '/api/resumes': j_resumes, '/api/status': j_status, '/api/sched': j_sched, '/api/boss/status': j_boss_status, '/api/boss/summary': j_boss_summary}
-POST = {'/api/boss/start': j_boss_start, '/api/boss/stop': j_boss_stop, '/api/job': j_save_job, '/api/job/del': j_del_job, '/api/job/auto': j_auto, '/api/scan': j_scan, '/api/mark': j_mark,
+POST = {'/api/mark-tier': j_mark_tier, '/api/boss/start': j_boss_start, '/api/boss/stop': j_boss_stop, '/api/job': j_save_job, '/api/job/del': j_del_job, '/api/job/auto': j_auto, '/api/scan': j_scan, '/api/mark': j_mark,
         '/api/rescore': j_rescore, '/api/remove': j_remove, '/api/open-folder': j_open_folder, '/api/pick-folder': j_pick_folder,
         '/api/draft': j_draft, '/api/contacted': j_contacted, '/api/sched/build': j_sched_build, '/api/sched/set': j_sched_set, '/api/sched/del': j_sched_del, '/api/sched/clear': j_sched_clear, '/api/key': j_key, '/api/eco': j_eco, '/api/update': j_update, '/api/check-update': j_check_update}
 
