@@ -1,9 +1,9 @@
 {
- "ver": "1.1.6",
- "note": "升级不再有空档",
+ "ver": "1.1.7",
+ "note": "A 档一键标面试",
  "files": {
-  "app.py": "3247c3f70a4e20e499190cd0fb80175f82a1e7f5514ae49903d14587da6c2413",
-  "web/index.html": "0c4260879e4b5c1ca92bed84b7a0c01a5323d6430c2a3aaf812fbdddd5f9a1b6",
+  "app.py": "8e24837a2e5fb7f60bfd29eaefcfb6af82f4c39fb987e460a8fdb384d426bf0d",
+  "web/index.html": "9141d8c6db33f07e33f881657b4d9edea488142664dd963c68d1f6b806cdd493",
   "web/mini.html": "7683effbced5ac6f0f4263098a3b733d31f23ec529719db89ddf755025e15975",
   "boss/reader.py": "a653154c6b11c572c391495dfdaf2866cc264ebf4a9188bb6f6b7a56e46fd54b",
   "boss/ui.py": "80457fffdfc4d4c4e9248719d83b4123f56ff9fcacbae05b19dfc6f07b9728f9"
