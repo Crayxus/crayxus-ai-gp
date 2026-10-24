@@ -1,8 +1,8 @@
 {
- "ver": "1.1.5",
- "note": "给 Finance 人事页的面试名单接口",
+ "ver": "1.1.6",
+ "note": "升级不再有空档",
  "files": {
-  "app.py": "7bb351412993b3fea5d01f0a1378add353a921db42a30fe6e34d7302462f35e6",
+  "app.py": "3247c3f70a4e20e499190cd0fb80175f82a1e7f5514ae49903d14587da6c2413",
   "web/index.html": "0c4260879e4b5c1ca92bed84b7a0c01a5323d6430c2a3aaf812fbdddd5f9a1b6",
   "web/mini.html": "7683effbced5ac6f0f4263098a3b733d31f23ec529719db89ddf755025e15975",
   "boss/reader.py": "a653154c6b11c572c391495dfdaf2866cc264ebf4a9188bb6f6b7a56e46fd54b",
