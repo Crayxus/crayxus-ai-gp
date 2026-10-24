@@ -1,9 +1,9 @@
 {
- "ver": "1.1.7",
- "note": "A 档一键标面试",
+ "ver": "1.1.8",
+ "note": "同步到 EI TOKEN 人事页",
  "files": {
-  "app.py": "8e24837a2e5fb7f60bfd29eaefcfb6af82f4c39fb987e460a8fdb384d426bf0d",
-  "web/index.html": "9141d8c6db33f07e33f881657b4d9edea488142664dd963c68d1f6b806cdd493",
+  "app.py": "02822c796f39519cdd94537a2c83a01ce757052631cd1a43c5ad48274be1b088",
+  "web/index.html": "b11924e3a5303c0f1841551e08852d047683f2c038daf7ee55298cb4fafe949b",
   "web/mini.html": "7683effbced5ac6f0f4263098a3b733d31f23ec529719db89ddf755025e15975",
   "boss/reader.py": "a653154c6b11c572c391495dfdaf2866cc264ebf4a9188bb6f6b7a56e46fd54b",
   "boss/ui.py": "80457fffdfc4d4c4e9248719d83b4123f56ff9fcacbae05b19dfc6f07b9728f9"
