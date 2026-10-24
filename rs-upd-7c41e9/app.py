@@ -11,7 +11,7 @@ import urllib.request, urllib.parse, urllib.error, html as htmllib
 from datetime import datetime, timedelta, timezone
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 
-VERSION = '1.1.4'  # 每次发更新 +1（publish_update.py 会自动改）
+VERSION = '1.1.5'  # 每次发更新 +1（publish_update.py 会自动改）
 UPD_URL = os.environ.get('RS_UPD_URL') or 'https://crayxus.com.au/rs-upd-7c41e9/'  # 升级文件放这里：version.json + app.py + web/index.html
 FROZEN = getattr(sys, 'frozen', False)  # 打包成 exe 时：网页在包里，数据放 exe 旁边
 ROOT = os.path.dirname(sys.executable) if FROZEN else os.path.dirname(os.path.abspath(__file__))
@@ -1029,7 +1029,25 @@ def export_sched(h, q):
     h.send(200, '﻿' + buf.getvalue(), 'text/csv; charset=utf-8', {'Content-Disposition': f"attachment; filename*=UTF-8''{fn}"})
 
 
-GET = {'/api/jobs': j_jobs, '/api/resumes': j_resumes, '/api/status': j_status, '/api/sched': j_sched, '/api/boss/status': j_boss_status, '/api/boss/summary': j_boss_summary}
+CORS_OK = ('https://eitoken.ai', 'https://www.eitoken.ai', 'http://127.0.0.1:8799', 'http://localhost:8799', 'http://127.0.0.1:8813')   # Finance 人事页从这些来源读名单
+def cors_headers(h):
+    o = h.headers.get('Origin') or ''
+    if o not in CORS_OK: return {}
+    return {'Access-Control-Allow-Origin': o, 'Access-Control-Allow-Private-Network': 'true', 'Access-Control-Allow-Methods': 'GET, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type', 'Vary': 'Origin'}
+
+
+def j_invite(h, q, b):
+    """给 EI TOKEN Finance「人事」页：要约面试的人（标了「面试」、或已经进了排期且没取消），只给姓名 / 岗位 / 档位，不给联系方式"""
+    out, seen = [], set()
+    for r in rows("""SELECT r.id rid, r.name nm, r.tier, r.total, r.mark, j.name job FROM resumes r JOIN jobs j ON j.id=r.job_id
+                     WHERE r.status='done' AND r.dup_of IS NULL AND r.mark!='淘汰' AND (r.mark='面试' OR r.id IN (SELECT rid FROM interviews WHERE status!='取消'))
+                     ORDER BY r.total DESC, r.id"""):
+        if r['rid'] in seen or not (r['nm'] or '').strip(): continue
+        seen.add(r['rid']); out.append({'rid': r['rid'], 'nm': r['nm'].strip(), 'job': r['job'] or '', 'tier': r['tier'] or '', 'total': r['total'] or 0})
+    return {'ok': True, 'items': out}
+
+
+GET = {'/api/invite': j_invite, '/api/jobs': j_jobs, '/api/resumes': j_resumes, '/api/status': j_status, '/api/sched': j_sched, '/api/boss/status': j_boss_status, '/api/boss/summary': j_boss_summary}
 POST = {'/api/boss/start': j_boss_start, '/api/boss/stop': j_boss_stop, '/api/job': j_save_job, '/api/job/del': j_del_job, '/api/job/auto': j_auto, '/api/scan': j_scan, '/api/mark': j_mark,
         '/api/rescore': j_rescore, '/api/remove': j_remove, '/api/open-folder': j_open_folder, '/api/pick-folder': j_pick_folder,
         '/api/draft': j_draft, '/api/contacted': j_contacted, '/api/sched/build': j_sched_build, '/api/sched/set': j_sched_set, '/api/sched/del': j_sched_del, '/api/sched/clear': j_sched_clear, '/api/key': j_key, '/api/eco': j_eco, '/api/update': j_update, '/api/check-update': j_check_update}
@@ -1051,6 +1069,11 @@ class H(BaseHTTPRequestHandler):
 
     def do_GET(self): self.route('GET')
 
+    def do_OPTIONS(self):   # 跨域预检：只放行 /api/invite
+        u = urllib.parse.urlparse(self.path)
+        if u.path != '/api/invite': return self.send(404, {'error': 'not found'})
+        self.send(204, b'', extra=cors_headers(self))
+
     def do_POST(self): self.route('POST')
 
     def route(self, m):
@@ -1065,6 +1088,7 @@ class H(BaseHTTPRequestHandler):
             if m == 'GET' and u.path == '/api/export': return export_csv(self, q)
             if m == 'GET' and u.path == '/api/sched/export': return export_sched(self, q)
             if m == 'GET' and u.path == '/api/file': return serve_file(self, q)
+            if m == 'GET' and u.path == '/api/invite': return self.send(200, j_invite(self, q, {}), extra=cors_headers(self))
             n = int(self.headers.get('Content-Length') or 0)
             raw = self.rfile.read(n) if n else b''
             if m == 'POST' and u.path == '/api/upload': return self.send(200, j_upload(self, q, raw))
