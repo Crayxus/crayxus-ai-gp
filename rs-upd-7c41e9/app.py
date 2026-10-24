@@ -11,7 +11,7 @@ import urllib.request, urllib.parse, urllib.error, html as htmllib
 from datetime import datetime, timedelta, timezone
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 
-VERSION = '1.1.7'  # 每次发更新 +1（publish_update.py 会自动改）
+VERSION = '1.1.8'  # 每次发更新 +1（publish_update.py 会自动改）
 UPD_URL = os.environ.get('RS_UPD_URL') or 'https://crayxus.com.au/rs-upd-7c41e9/'  # 升级文件放这里：version.json + app.py + web/index.html
 FROZEN = getattr(sys, 'frozen', False)  # 打包成 exe 时：网页在包里，数据放 exe 旁边
 ROOT = os.path.dirname(sys.executable) if FROZEN else os.path.dirname(os.path.abspath(__file__))
@@ -581,6 +581,42 @@ def j_resumes(h, q, b):
     return out
 
 
+EIT_API = os.environ.get('RS_EIT_API') or 'https://api.crayxus.com.au'   # EI TOKEN 后端：把面试名单推到 Finance 人事页（10-24）
+
+
+def save_set(d):
+    tmp = SETF + '.tmp'
+    io.open(tmp, 'w', encoding='utf-8').write(json.dumps(d, ensure_ascii=False, indent=1)); os.replace(tmp, SETF)
+
+
+def eit_call(path, body, token=''):
+    hd = {'Content-Type': 'application/json'}
+    if token: hd['Authorization'] = 'Bearer ' + token
+    req = urllib.request.Request(EIT_API + path, data=json.dumps(body, ensure_ascii=False).encode('utf-8'), headers=hd, method='POST')
+    try:
+        with OPENER.open(req, timeout=30) as r: return r.status, json.load(r)
+    except urllib.error.HTTPError as e:
+        try: return e.code, json.load(e)
+        except Exception: return e.code, {'error': 'HTTP %s' % e.code}
+
+
+def j_eit_sync(h, q, b):
+    """把要约面试的人（同 /api/invite）推到 EI TOKEN Finance 人事页的「待安排」。第一次要 EI TOKEN 账号密码登录，之后只存登录令牌（不存密码），令牌失效再问一次"""
+    st = load_set(); tok = st.get('eit_token') or ''
+    email, pw = str(b.get('email') or '').strip(), str(b.get('password') or '')
+    if email and pw:
+        code, j = eit_call('/api/auth/login', {'email': email, 'password': pw})
+        if code != 200 or not j.get('token'): return {'error': j.get('error') or 'EI TOKEN 登录失败'}
+        tok = j['token']; st['eit_token'] = tok; st['eit_email'] = j.get('email') or email; save_set(st)
+    if not tok: return {'error': 'need_login'}
+    items = [{'nm': c['nm'], 'job': c['job'], 'rid': c['rid'], 'tier': c['tier'], 'src': 'boss'} for c in j_invite(h, q, {})['items']]
+    if not items: return {'ok': True, 'imported': 0, 'total': 0, 'email': st.get('eit_email', '')}
+    code, j = eit_call('/api/fin/hr', {'op': 'import', 'items': items}, tok)
+    if code == 401: st.pop('eit_token', None); save_set(st); return {'error': 'need_login'}
+    if code != 200 or not j.get('ok'): return {'error': j.get('error') or ('同步失败 %s' % code)}
+    return {'ok': True, 'imported': (j.get('value') or {}).get('imported', 0), 'total': len(items), 'email': st.get('eit_email', '')}
+
+
 def j_mark_tier(h, q, b):
     """把一个岗位里某档（默认 A 档）、没标淘汰也没标面试的人全部标成「面试」—— 10-24 用户：推荐的人一键标面试，Finance 人事页导入后再逐个联系确认"""
     jid, tier = int(b.get('job') or 0), str(b.get('tier') or 'A')[:1]
@@ -1061,7 +1097,7 @@ def j_invite(h, q, b):
 
 
 GET = {'/api/invite': j_invite, '/api/jobs': j_jobs, '/api/resumes': j_resumes, '/api/status': j_status, '/api/sched': j_sched, '/api/boss/status': j_boss_status, '/api/boss/summary': j_boss_summary}
-POST = {'/api/mark-tier': j_mark_tier, '/api/boss/start': j_boss_start, '/api/boss/stop': j_boss_stop, '/api/job': j_save_job, '/api/job/del': j_del_job, '/api/job/auto': j_auto, '/api/scan': j_scan, '/api/mark': j_mark,
+POST = {'/api/eit-sync': j_eit_sync, '/api/mark-tier': j_mark_tier, '/api/boss/start': j_boss_start, '/api/boss/stop': j_boss_stop, '/api/job': j_save_job, '/api/job/del': j_del_job, '/api/job/auto': j_auto, '/api/scan': j_scan, '/api/mark': j_mark,
         '/api/rescore': j_rescore, '/api/remove': j_remove, '/api/open-folder': j_open_folder, '/api/pick-folder': j_pick_folder,
         '/api/draft': j_draft, '/api/contacted': j_contacted, '/api/sched/build': j_sched_build, '/api/sched/set': j_sched_set, '/api/sched/del': j_sched_del, '/api/sched/clear': j_sched_clear, '/api/key': j_key, '/api/eco': j_eco, '/api/update': j_update, '/api/check-update': j_check_update}
 
