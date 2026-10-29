@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>面试作品小铺</title>
+<meta property="og:title" content="面试作品小铺">
+<meta property="og:description" content="大模型应用工程师一轮上机题：6 件 30 秒宣传动画，附评级和点评">
+<meta property="og:image" content="https://crayxus.com.au/iw-0a7d3c/w7922.jpg">
+<meta property="og:url" content="https://crayxus.com.au/iw-0a7d3c.html">
+<style>
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}[hidden]{display:none!important}
+
+/* 布局：店铺招牌 → 排序条 → 两到三列商品卡；点卡片弹出详情播放 */
+:root{
+  --bg:#f3f2f0; --card:#ffffff; --fg:#1f1b18; --mute:#7b726b; --line:#e7e2dd;
+  --accent:#ff4d14; --accent-soft:#fff0e9; --gold:#c98a12; --chip:#f5f1ed; --shade:rgba(20,12,6,.55);
+  --f-disp:"PingFang SC","Microsoft YaHei",sans-serif;
+  --f-body:"PingFang SC","Microsoft YaHei",sans-serif;
+  --f-mono:ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141210; --card:#1e1b18; --fg:#f1ece6; --mute:#a59c93; --line:#302b27;
+  --accent:#ff6a35; --accent-soft:#3a2016; --gold:#e3a83a; --chip:#2a2622; --shade:rgba(0,0,0,.7); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141210; --card:#1e1b18; --fg:#f1ece6; --mute:#a59c93; --line:#302b27;
+  --accent:#ff6a35; --accent-soft:#3a2016; --gold:#e3a83a; --chip:#2a2622; --shade:rgba(0,0,0,.7); color-scheme:dark}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.6 var(--f-body)}
+.wrap{max-width:1180px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sign{display:flex;flex-wrap:wrap;align-items:center;gap:16px 24px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.logo{width:56px;height:56px;border-radius:12px;background:var(--accent);color:#fff;display:grid;place-items:center;font:900 22px var(--f-disp);flex:none}
+.sign h1{margin:0;font:900 24px/1.2 var(--f-disp);text-wrap:balance}
+.sign p{margin:2px 0 0;color:var(--mute)}
+.shopmeta{display:flex;gap:20px;margin-left:auto;flex-wrap:wrap}
+.shopmeta div{text-align:center;min-width:64px}
+.shopmeta b{display:block;font:700 18px var(--f-mono);font-variant-numeric:tabular-nums}
+.shopmeta span{font-size:12px;color:var(--mute)}
+.task{margin-top:12px;font-size:13px;color:var(--mute);background:var(--accent-soft);border-radius:10px;padding:10px 14px}
+.task b{color:var(--accent)}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 14px;align-items:center}
+.bar button{font:500 13px var(--f-body);border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:999px;padding:6px 14px;cursor:pointer}
+.bar button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.bar button:focus-visible,.card:focus-visible,.x:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.bar .n{margin-left:auto;color:var(--mute);font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s;text-align:left;padding:0;color:inherit;font:inherit}
+.card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.pic{position:relative;aspect-ratio:1024/600;background:#000;max-width:100%}
+.pic video{width:100%;height:100%;object-fit:cover;display:block}
+.play{position:absolute;inset:0;display:grid;place-items:center}
+.play i{width:46px;height:46px;border-radius:50%;background:var(--shade);display:grid;place-items:center}
+.play i::after{content:"";border-left:14px solid #fff;border-top:9px solid transparent;border-bottom:9px solid transparent;margin-left:4px}
+.dur{position:absolute;right:8px;bottom:8px;background:var(--shade);color:#fff;font:500 11px var(--f-mono);padding:2px 6px;border-radius:4px}
+.rank{position:absolute;left:0;top:0;background:var(--accent);color:#fff;font:700 12px var(--f-body);padding:3px 10px;border-bottom-right-radius:10px}
+.rank.gold{background:var(--gold)}
+.body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px;flex:1;min-width:0}
+.title{font:700 15px/1.45 var(--f-disp);margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:11px;line-height:1;padding:4px 6px;border-radius:4px;background:var(--chip);color:var(--mute)}
+.chip.hot{background:var(--accent-soft);color:var(--accent)}
+.price{display:flex;align-items:baseline;gap:6px;margin-top:auto}
+.price small{color:var(--accent);font-size:12px}
+.price strong{color:var(--accent);font:900 26px/1 var(--f-disp)}
+.price .sold{margin-left:auto;color:var(--mute);font-size:12px}
+.quote{font-size:12.5px;color:var(--mute);border-top:1px dashed var(--line);padding-top:8px}
+.quote b{color:var(--fg);font-weight:500}
+dialog{border:0;padding:0;border-radius:14px;background:var(--card);color:var(--fg);width:min(880px,calc(100vw - 32px));max-height:calc(100vh - 32px)}
+dialog::backdrop{background:var(--shade)}
+.dlg{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr)}
+.dlg video{width:100%;height:100%;background:#000;display:block;aspect-ratio:1024/600}
+.info{padding:18px 18px 20px;display:flex;flex-direction:column;gap:10px;min-width:0;overflow:auto}
+.info h2{margin:0;font:700 18px/1.4 var(--f-disp);text-wrap:balance;padding-right:28px}
+.x{position:absolute;right:10px;top:10px;width:32px;height:32px;border-radius:50%;border:0;background:var(--chip);color:var(--fg);font-size:18px;cursor:pointer}
+.spec{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13px;margin:0}
+.spec dt{color:var(--mute)}
+.spec dd{margin:0;font-variant-numeric:tabular-nums}
+.pros,.cons{margin:0;padding-left:18px;font-size:13px}
+.lbl{font-size:12px;letter-spacing:.06em;color:var(--mute);margin:4px 0 -4px}
+.foot{margin-top:22px;color:var(--mute);font-size:12px;text-align:center}
+@media (max-width:640px){.dlg{grid-template-columns:1fr}.shopmeta{margin-left:0}.sign h1{font-size:20px}}
+@media (prefers-reduced-motion:reduce){.card{transition:none}.card:hover{transform:none}}
+</style>
+</head><body>
+
+<div class="wrap">
+  <header class="sign">
+    <div class="logo" aria-hidden="true">EI</div>
+    <div style="min-width:0">
+      <h1>面试作品小铺</h1>
+      <p>大模型应用工程师 · 一轮上机题作品 · 内部评审 · 请勿外传</p>
+    </div>
+    <div class="shopmeta">
+      <div><b>6</b><span>件作品</span></div>
+      <div><b>2</b><span>A 档</span></div>
+      <div><b>30″</b><span>统一时长</span></div>
+    </div>
+  </header>
+  <div class="task"><b>题目</b>　根据 eitoken.ai 做一段 30 秒宣传动画，在 ESP32-P4 7 寸屏（1024×600）上播放。卡片里是静音小视频，点开看原片和点评（原片默认静音，点喇叭听声音）。</div>
+
+  <div class="bar" role="toolbar" aria-label="筛选">
+    <button id="f-all" data-f="all" aria-pressed="true">综合排序</button>
+    <button id="f-a" data-f="a" aria-pressed="false">只看 A 档</button>
+    <button id="f-snd" data-f="snd" aria-pressed="false">有声音</button>
+    <button id="f-p4" data-f="p4" aria-pressed="false">适配 P4 屏</button>
+    <span class="n" id="count"></span>
+  </div>
+  <main class="grid" id="grid"></main>
+  <p class="foot">评级是看画面后的初评；第 1 个的配乐是老师现场提示加上的，第 2 个没声音不扣分。</p>
+</div>
+
+<dialog id="dlg" aria-labelledby="d-title">
+  <div class="dlg">
+    <video id="d-video" controls muted playsinline preload="none"></video>
+    <div class="info">
+      <h2 id="d-title"></h2>
+      <div class="price"><small>评级</small><strong id="d-grade"></strong></div>
+      <dl class="spec" id="d-spec"></dl>
+      <p class="lbl">亮点</p><ul class="pros" id="d-pros"></ul>
+      <p class="lbl">不足</p><ul class="cons" id="d-cons"></ul>
+    </div>
+  </div>
+  <button class="x" id="d-close" aria-label="关闭">×</button>
+</dialog>
+
+<script>
+const ITEMS = [
+  { id:'7922', rank:1, grade:'A', title:'一句话让 LED 呼吸起来：从想法到烧录的完整流程', date:'10-29', res:'1024×600', snd:true, p4:true,
+    how:'AI 写网页动画代码 → 录制 → 自己用 ffmpeg 合成配乐',
+    chips:['用时最短','产品流程完整','打字动画'], quote:'把产品怎么用讲明白了，速度还快',
+    pros:['完整走了一遍：说一句话 → 编写 → 编译烧录 → 串口调试 → 引导访问 eitoken.ai','界面风格和官网一致，有打字输入的动态演示','尺寸正好是 P4 屏，交付用时明显比别人短'],
+    cons:['配乐是老师现场提示后加的','个别页面停留稍短，字小的地方在 7 寸屏上要凑近看'] },
+  { id:'ceb3', rank:2, grade:'A', title:'ESP32-P4 · 说一句话，一次完成 · 77 个真机验证案例', date:'10-28', res:'1024×600', snd:false, p4:true,
+    how:'AI 写动画代码渲染成视频（30 帧，文字清晰）',
+    chips:['动效最精致','信息量足','渐变品牌字'], quote:'做工最细，信息最多',
+    pros:['开场、芯片、流程、案例数、结尾层次清楚','用了 ESP32-P4 芯片和「77 个已验证案例」这样的具体数字','动效节奏好，品牌字有渐变质感'],
+    cons:['没有声音（没被提示，不扣分）','案例数和官网当前数字要核对'] },
+  { id:'483a', rank:3, grade:'B+', title:'AI 生成实景：电脑、机械臂、电路板 + 标语', date:'10-28', res:'1024×600', snd:true, p4:true,
+    how:'AI 视频生成素材（24 帧，类似即梦 / 可灵）+ 后期加字',
+    chips:['画面质感好','有配乐'], quote:'好看，但换个品牌也能用',
+    pros:['电脑、机械臂夹方块、电路板的画面质感高','标语和品牌名使用正确'],
+    cons:['素材都是通用画面，没体现 EI TOKEN 的具体用法','配乐音量偏小'] },
+  { id:'84d6', rank:4, grade:'B', title:'让硬件，听懂人话：三件事，一个界面', date:'10-29', res:'1280×720', snd:true, p4:false,
+    how:'文字动效（网页或剪辑软件），1280×720 导出',
+    chips:['干净简洁','有配乐'], quote:'清爽，但内容偏少',
+    pros:['「插上开发板 / 说一句话 / 点一下就运行」三步讲得清楚','排版干净，结尾有网址'],
+    cons:['全片只有文字和背景，没有产品画面','分辨率是 1280×720，不是 P4 屏的 1024×600'] },
+  { id:'ec0c', rank:5, grade:'C+', title:'3D 开发板 + 云端 + 乱拳师傅弹窗', date:'10-28', res:'854×480', snd:true, p4:false,
+    how:'即梦直接生成（文件里有即梦和 AI 生成标识）',
+    chips:['即梦生成','有想法','有配乐'], quote:'创意有，但细节出错',
+    pros:['3D 场景、云端连线、乱拳师傅弹窗，想到了产品特色'],
+    cons:['开头和结尾的域名写成了「eitoke.am」','代码画面是乱码','只有 480p，放到 7 寸屏会糊'] },
+  { id:'4925', rank:6, grade:'C', title:'ESP32-P4 MJPEG 视频播放测试卡', date:'10-26', res:'1024×600', snd:false, p4:true,
+    how:'程序生成的测试画面（15 帧）',
+    chips:['疑似测试片'], quote:'只是播放测试，不算宣传片',
+    pros:['尺寸和帧率是按 P4 屏播放来做的'],
+    cons:['只有色条、标题和进度条，没有宣传内容','没有声音','如果是我们自己的测试片，可以不计入'] },
+];
+const M = 'https://crayxus.com.au/iw-0a7d3c/';
+const grid = document.getElementById('grid'), count = document.getElementById('count');
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' })[c]);
+const FILTERS = { all:() => true, a:(x) => x.grade === 'A', snd:(x) => x.snd, p4:(x) => x.p4 };
+function render(f) {
+  const list = ITEMS.filter(FILTERS[f]);
+  count.textContent = '共 ' + list.length + ' 件';
+  grid.innerHTML = list.map((x) => `
+    <button class="card" id="card-${x.id}" data-id="${x.id}" aria-label="${esc(x.title)}，评级 ${x.grade}">
+      <div class="pic"><video class="pv" muted loop playsinline preload="none" poster="${M}w${x.id}.jpg" data-src="${M}s${x.id}.mp4"></video><span class="rank${x.rank <= 2 ? ' gold' : ''}">TOP ${x.rank}</span><span class="dur">0:30</span></div>
+      <div class="body">
+        <p class="title">${esc(x.title)}</p>
+        <div class="chips">${x.chips.map((c, i) => `<span class="chip${i === 0 ? ' hot' : ''}">${esc(c)}</span>`).join('')}<span class="chip">${x.res}</span>${x.snd ? '' : '<span class="chip">无声音</span>'}</div>
+        <div class="price"><small>评级</small><strong>${x.grade}</strong><span class="sold">${x.date} 交付</span></div>
+        <div class="quote"><b>店长点评：</b>${esc(x.quote)}</div>
+      </div>
+    </button>`).join('');
+  watch();
+}
+// 小视频（480 宽、无声、约 100–300 KB）滑进屏幕才加载播放，划走就暂停
+const io = 'IntersectionObserver' in window ? new IntersectionObserver((es) => es.forEach((e) => {
+  const v = e.target;
+  if (e.isIntersecting) { if (!v.src) v.src = v.dataset.src; v.play().catch(() => {}); } else v.pause();
+}), { threshold: 0.4 }) : null;
+function watch() { grid.querySelectorAll('.pv').forEach((v) => { if (io) io.observe(v); else { v.src = v.dataset.src; v.play().catch(() => {}); } }); }
+document.querySelectorAll('.bar button').forEach((b) => b.addEventListener('click', () => {
+  document.querySelectorAll('.bar button').forEach((o) => o.setAttribute('aria-pressed', String(o === b)));
+  render(b.dataset.f);
+}));
+const dlg = document.getElementById('dlg'), vid = document.getElementById('d-video');
+grid.addEventListener('click', (e) => {
+  const c = e.target.closest('.card'); if (!c) return;
+  const x = ITEMS.find((i) => i.id === c.dataset.id);
+  document.getElementById('d-title').textContent = x.title;
+  document.getElementById('d-grade').textContent = x.grade;
+  document.getElementById('d-spec').innerHTML = [['排名', 'TOP ' + x.rank], ['交付', x.date], ['尺寸', x.res + (x.p4 ? '（适配 P4 屏）' : '')], ['声音', x.snd ? '有配乐' : '无'], ['做法', x.how]].map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join('');
+  document.getElementById('d-pros').innerHTML = x.pros.map((p) => `<li>${esc(p)}</li>`).join('');
+  document.getElementById('d-cons').innerHTML = x.cons.map((p) => `<li>${esc(p)}</li>`).join('');
+  vid.poster = M + 'w' + x.id + '.jpg'; vid.src = M + 'w' + x.id + '.mp4'; vid.muted = true;
+  dlg.showModal(); vid.play().catch(() => {});
+});
+const close = () => { vid.pause(); dlg.close(); };
+document.getElementById('d-close').addEventListener('click', close);
+dlg.addEventListener('click', (e) => { if (e.target === dlg) close(); });
+dlg.addEventListener('close', () => vid.pause());
+render('all');
+</script>
+
+</body></html>
