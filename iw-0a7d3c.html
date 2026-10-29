@@ -5,7 +5,7 @@
 <title>面试作品小铺</title>
 <meta property="og:title" content="面试作品小铺">
 <meta property="og:description" content="大模型应用工程师一轮上机题：6 件 30 秒宣传动画，附评级和点评">
-<meta property="og:image" content="https://crayxus.com.au/iw-0a7d3c/w7922.jpg">
+<meta property="og:image" content="https://crayxus.com.au/iw-0a7d3c/wce71.jpg">
 <meta property="og:url" content="https://crayxus.com.au/iw-0a7d3c.html">
 <style>
 *{box-sizing:border-box}html{-webkit-text-size-adjust:100%}[hidden]{display:none!important}
@@ -91,8 +91,8 @@ dialog::backdrop{background:var(--shade)}
       <p>大模型应用工程师 · 一轮上机题作品 · 内部评审 · 请勿外传</p>
     </div>
     <div class="shopmeta">
-      <div><b>7</b><span>件作品</span></div>
-      <div><b>2</b><span>A 档</span></div>
+      <div><b>8</b><span>件作品</span></div>
+      <div><b>3</b><span>A 档</span></div>
       <div><b>30″</b><span>统一时长</span></div>
     </div>
   </header>
@@ -106,7 +106,7 @@ dialog::backdrop{background:var(--shade)}
     <span class="n" id="count"></span>
   </div>
   <main class="grid" id="grid"></main>
-  <p class="foot">评级是看画面后的初评；第 1 个的配乐是老师现场提示加上的，第 2 个没声音不扣分。</p>
+  <p class="foot">评级是看画面后的初评；王俊杰的配乐是老师现场提示加上的，肖爱金没声音不扣分。</p>
 </div>
 
 <dialog id="dlg" aria-labelledby="d-title">
@@ -125,37 +125,42 @@ dialog::backdrop{background:var(--shade)}
 
 <script>
 const ITEMS = [
-  { id:'7922', name:'王俊杰', rank:1, grade:'A', title:'一句话让 LED 呼吸起来：从想法到烧录的完整流程', date:'10-29', res:'1024×600', snd:true, p4:true,
+  { id:'ce71', name:'范湘黔', rank:1, grade:'A+', title:'让机械臂找到红色方块：从拆任务到烧录验证，再到三个真实案例', date:'10-29', res:'1024×600', snd:true, p4:true,
+    how:'AI 写网页动画代码 + 3D 插图，带底部字幕和声音',
+    chips:['最完整','具体场景','有字幕'], quote:'讲了一个真实任务，从头到尾都说清楚了',
+    pros:['用「机械臂找红色方块、放到指定位置」一个具体任务串起全片','讲清了和 AI 一起拆任务：设备、动作、条件','连接硬件 → 生成代码 → 编译烧录 → 运行验证，再落到温度监测、小车控制、视觉分拣三个案例','3D 插图统一，有底部字幕和声音，尺寸正好是 P4 屏'],
+    cons:['信息多，7 寸屏上底部字幕偏小','个别页面切换偏快'] },
+  { id:'7922', name:'王俊杰', rank:2, grade:'A', title:'一句话让 LED 呼吸起来：从想法到烧录的完整流程', date:'10-29', res:'1024×600', snd:true, p4:true,
     how:'AI 写网页动画代码 → 录制 → 自己用 ffmpeg 合成配乐',
     chips:['用时最短','产品流程完整','打字动画'], quote:'把产品怎么用讲明白了，速度还快',
     pros:['完整走了一遍：说一句话 → 编写 → 编译烧录 → 串口调试 → 引导访问 eitoken.ai','界面风格和官网一致，有打字输入的动态演示','尺寸正好是 P4 屏，交付用时明显比别人短'],
     cons:['配乐是老师现场提示后加的','个别页面停留稍短，字小的地方在 7 寸屏上要凑近看'] },
-  { id:'ceb3', name:'肖爱金', rank:2, grade:'A', title:'ESP32-P4 · 说一句话，一次完成 · 77 个真机验证案例', date:'10-28', res:'1024×600', snd:false, p4:true,
+  { id:'ceb3', name:'肖爱金', rank:3, grade:'A', title:'ESP32-P4 · 说一句话，一次完成 · 77 个真机验证案例', date:'10-28', res:'1024×600', snd:false, p4:true,
     how:'AI 写动画代码渲染成视频（30 帧，文字清晰）',
     chips:['动效最精致','信息量足','渐变品牌字'], quote:'做工最细，信息最多',
     pros:['开场、芯片、流程、案例数、结尾层次清楚','用了 ESP32-P4 芯片和「77 个已验证案例」这样的具体数字','动效节奏好，品牌字有渐变质感'],
     cons:['没有声音（没被提示，不扣分）','案例数和官网当前数字要核对'] },
-  { id:'483a', name:'', rank:3, grade:'B+', title:'AI 生成实景：电脑、机械臂、电路板 + 标语', date:'10-28', res:'1024×600', snd:true, p4:true,
+  { id:'483a', name:'', rank:4, grade:'B+', title:'AI 生成实景：电脑、机械臂、电路板 + 标语', date:'10-28', res:'1024×600', snd:true, p4:true,
     how:'AI 视频生成素材（24 帧，类似即梦 / 可灵）+ 后期加字',
     chips:['画面质感好','有配乐'], quote:'好看，但换个品牌也能用',
     pros:['电脑、机械臂夹方块、电路板的画面质感高','标语和品牌名使用正确'],
     cons:['素材都是通用画面，没体现 EI TOKEN 的具体用法','配乐音量偏小'] },
-  { id:'84d6', name:'刘静斌', rank:4, grade:'B', title:'让硬件，听懂人话：三件事，一个界面', date:'10-29', res:'1280×720', snd:true, p4:false,
+  { id:'84d6', name:'刘静斌', rank:5, grade:'B', title:'让硬件，听懂人话：三件事，一个界面', date:'10-29', res:'1280×720', snd:true, p4:false,
     how:'文字动效（网页或剪辑软件），1280×720 导出',
     chips:['干净简洁','有配乐'], quote:'清爽，但内容偏少',
     pros:['「插上开发板 / 说一句话 / 点一下就运行」三步讲得清楚','排版干净，结尾有网址'],
     cons:['全片只有文字和背景，没有产品画面','分辨率是 1280×720，不是 P4 屏的 1024×600'] },
-  { id:'9a1e', name:'虞泽华', rank:5, grade:'C+', title:'我们为极客做智能硬件：一块 7 寸屏，一颗 ESP32-P4', date:'10-28', res:'800×480', snd:false, p4:false,
+  { id:'9a1e', name:'虞泽华', rank:6, grade:'C+', title:'我们为极客做智能硬件：一块 7 寸屏，一颗 ESP32-P4', date:'10-28', res:'800×480', snd:false, p4:false,
     how:'纯文字幻灯，逐句淡入淡出（15 帧）',
     chips:['信息没写错','纯文字'], quote:'说对了，但说得太少',
     pros:['品牌、口号、ESP32-P4 和 7 寸屏这些信息都写对了'],
     cons:['全片只有几句白字，没有任何产品画面','中间有几段空白画面','没有声音','尺寸 800×480，不是 P4 屏的 1024×600'] },
-  { id:'ec0c', name:'卢杰', rank:6, grade:'C+', title:'3D 开发板 + 云端 + 乱拳师傅弹窗', date:'10-28', res:'854×480', snd:true, p4:false,
+  { id:'ec0c', name:'卢杰', rank:7, grade:'C+', title:'3D 开发板 + 云端 + 乱拳师傅弹窗', date:'10-28', res:'854×480', snd:true, p4:false,
     how:'即梦直接生成（文件里有即梦和 AI 生成标识）',
     chips:['即梦生成','有想法','有配乐'], quote:'创意有，但细节出错',
     pros:['3D 场景、云端连线、乱拳师傅弹窗，想到了产品特色'],
     cons:['开头和结尾的域名写成了「eitoke.am」','代码画面是乱码','只有 480p，放到 7 寸屏会糊'] },
-  { id:'4925', name:'杨明聪', rank:7, grade:'C', title:'ESP32-P4 MJPEG 视频播放测试卡', date:'10-26', res:'1024×600', snd:false, p4:true,
+  { id:'4925', name:'杨明聪', rank:8, grade:'C', title:'ESP32-P4 MJPEG 视频播放测试卡', date:'10-26', res:'1024×600', snd:false, p4:true,
     how:'程序生成的测试画面（15 帧）',
     chips:['只有测试画面'], quote:'做成了播放测试卡，不算宣传片',
     pros:['尺寸和帧率是按 P4 屏播放来做的'],
@@ -164,13 +169,13 @@ const ITEMS = [
 const M = 'https://crayxus.com.au/iw-0a7d3c/';
 const grid = document.getElementById('grid'), count = document.getElementById('count');
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' })[c]);
-const FILTERS = { all:() => true, a:(x) => x.grade === 'A', snd:(x) => x.snd, p4:(x) => x.p4 };
+const FILTERS = { all:() => true, a:(x) => x.grade.startsWith('A'), snd:(x) => x.snd, p4:(x) => x.p4 };
 function render(f) {
   const list = ITEMS.filter(FILTERS[f]);
   count.textContent = '共 ' + list.length + ' 件';
   grid.innerHTML = list.map((x) => `
     <button class="card" id="card-${x.id}" data-id="${x.id}" aria-label="${esc(x.name || '候选人待补')}：${esc(x.title)}，评级 ${x.grade}">
-      <div class="pic"><video class="pv" muted loop playsinline preload="none" poster="${M}w${x.id}.jpg" data-src="${M}s${x.id}.mp4"></video><span class="rank${x.rank <= 2 ? ' gold' : ''}">TOP ${x.rank}</span><span class="dur">0:30</span></div>
+      <div class="pic"><video class="pv" muted loop playsinline preload="none" poster="${M}w${x.id}.jpg" data-src="${M}s${x.id}.mp4"></video><span class="rank${x.rank <= 3 ? ' gold' : ''}">TOP ${x.rank}</span><span class="dur">0:30</span></div>
       <div class="body">
         <p class="who">候选人：<b>${x.name ? esc(x.name) : '待补'}</b></p>
         <p class="title">${esc(x.title)}</p>
