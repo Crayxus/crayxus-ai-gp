@@ -53,6 +53,8 @@ body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.6 var(--f-body)}
 .rank{position:absolute;left:0;top:0;background:var(--accent);color:#fff;font:700 12px var(--f-body);padding:3px 10px;border-bottom-right-radius:10px}
 .rank.gold{background:var(--gold)}
 .body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px;flex:1;min-width:0}
+
+.who{margin:0;font-size:12.5px;color:var(--mute)}.who b{color:var(--fg);font-weight:700}
 .title{font:700 15px/1.45 var(--f-disp);margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chip{font-size:11px;line-height:1;padding:4px 6px;border-radius:4px;background:var(--chip);color:var(--mute)}
@@ -123,32 +125,32 @@ dialog::backdrop{background:var(--shade)}
 
 <script>
 const ITEMS = [
-  { id:'7922', rank:1, grade:'A', title:'一句话让 LED 呼吸起来：从想法到烧录的完整流程', date:'10-29', res:'1024×600', snd:true, p4:true,
+  { id:'7922', name:'刘静斌', rank:1, grade:'A', title:'一句话让 LED 呼吸起来：从想法到烧录的完整流程', date:'10-29', res:'1024×600', snd:true, p4:true,
     how:'AI 写网页动画代码 → 录制 → 自己用 ffmpeg 合成配乐',
     chips:['用时最短','产品流程完整','打字动画'], quote:'把产品怎么用讲明白了，速度还快',
     pros:['完整走了一遍：说一句话 → 编写 → 编译烧录 → 串口调试 → 引导访问 eitoken.ai','界面风格和官网一致，有打字输入的动态演示','尺寸正好是 P4 屏，交付用时明显比别人短'],
     cons:['配乐是老师现场提示后加的','个别页面停留稍短，字小的地方在 7 寸屏上要凑近看'] },
-  { id:'ceb3', rank:2, grade:'A', title:'ESP32-P4 · 说一句话，一次完成 · 77 个真机验证案例', date:'10-28', res:'1024×600', snd:false, p4:true,
+  { id:'ceb3', name:'', rank:2, grade:'A', title:'ESP32-P4 · 说一句话，一次完成 · 77 个真机验证案例', date:'10-28', res:'1024×600', snd:false, p4:true,
     how:'AI 写动画代码渲染成视频（30 帧，文字清晰）',
     chips:['动效最精致','信息量足','渐变品牌字'], quote:'做工最细，信息最多',
     pros:['开场、芯片、流程、案例数、结尾层次清楚','用了 ESP32-P4 芯片和「77 个已验证案例」这样的具体数字','动效节奏好，品牌字有渐变质感'],
     cons:['没有声音（没被提示，不扣分）','案例数和官网当前数字要核对'] },
-  { id:'483a', rank:3, grade:'B+', title:'AI 生成实景：电脑、机械臂、电路板 + 标语', date:'10-28', res:'1024×600', snd:true, p4:true,
+  { id:'483a', name:'', rank:3, grade:'B+', title:'AI 生成实景：电脑、机械臂、电路板 + 标语', date:'10-28', res:'1024×600', snd:true, p4:true,
     how:'AI 视频生成素材（24 帧，类似即梦 / 可灵）+ 后期加字',
     chips:['画面质感好','有配乐'], quote:'好看，但换个品牌也能用',
     pros:['电脑、机械臂夹方块、电路板的画面质感高','标语和品牌名使用正确'],
     cons:['素材都是通用画面，没体现 EI TOKEN 的具体用法','配乐音量偏小'] },
-  { id:'84d6', rank:4, grade:'B', title:'让硬件，听懂人话：三件事，一个界面', date:'10-29', res:'1280×720', snd:true, p4:false,
+  { id:'84d6', name:'', rank:4, grade:'B', title:'让硬件，听懂人话：三件事，一个界面', date:'10-29', res:'1280×720', snd:true, p4:false,
     how:'文字动效（网页或剪辑软件），1280×720 导出',
     chips:['干净简洁','有配乐'], quote:'清爽，但内容偏少',
     pros:['「插上开发板 / 说一句话 / 点一下就运行」三步讲得清楚','排版干净，结尾有网址'],
     cons:['全片只有文字和背景，没有产品画面','分辨率是 1280×720，不是 P4 屏的 1024×600'] },
-  { id:'ec0c', rank:5, grade:'C+', title:'3D 开发板 + 云端 + 乱拳师傅弹窗', date:'10-28', res:'854×480', snd:true, p4:false,
+  { id:'ec0c', name:'', rank:5, grade:'C+', title:'3D 开发板 + 云端 + 乱拳师傅弹窗', date:'10-28', res:'854×480', snd:true, p4:false,
     how:'即梦直接生成（文件里有即梦和 AI 生成标识）',
     chips:['即梦生成','有想法','有配乐'], quote:'创意有，但细节出错',
     pros:['3D 场景、云端连线、乱拳师傅弹窗，想到了产品特色'],
     cons:['开头和结尾的域名写成了「eitoke.am」','代码画面是乱码','只有 480p，放到 7 寸屏会糊'] },
-  { id:'4925', rank:6, grade:'C', title:'ESP32-P4 MJPEG 视频播放测试卡', date:'10-26', res:'1024×600', snd:false, p4:true,
+  { id:'4925', name:'', rank:6, grade:'C', title:'ESP32-P4 MJPEG 视频播放测试卡', date:'10-26', res:'1024×600', snd:false, p4:true,
     how:'程序生成的测试画面（15 帧）',
     chips:['疑似测试片'], quote:'只是播放测试，不算宣传片',
     pros:['尺寸和帧率是按 P4 屏播放来做的'],
@@ -162,9 +164,10 @@ function render(f) {
   const list = ITEMS.filter(FILTERS[f]);
   count.textContent = '共 ' + list.length + ' 件';
   grid.innerHTML = list.map((x) => `
-    <button class="card" id="card-${x.id}" data-id="${x.id}" aria-label="${esc(x.title)}，评级 ${x.grade}">
+    <button class="card" id="card-${x.id}" data-id="${x.id}" aria-label="${esc(x.name || '候选人待补')}：${esc(x.title)}，评级 ${x.grade}">
       <div class="pic"><video class="pv" muted loop playsinline preload="none" poster="${M}w${x.id}.jpg" data-src="${M}s${x.id}.mp4"></video><span class="rank${x.rank <= 2 ? ' gold' : ''}">TOP ${x.rank}</span><span class="dur">0:30</span></div>
       <div class="body">
+        <p class="who">候选人：<b>${x.name ? esc(x.name) : '待补'}</b></p>
         <p class="title">${esc(x.title)}</p>
         <div class="chips">${x.chips.map((c, i) => `<span class="chip${i === 0 ? ' hot' : ''}">${esc(c)}</span>`).join('')}<span class="chip">${x.res}</span>${x.snd ? '' : '<span class="chip">无声音</span>'}</div>
         <div class="price"><small>评级</small><strong>${x.grade}</strong><span class="sold">${x.date} 交付</span></div>
@@ -189,7 +192,7 @@ grid.addEventListener('click', (e) => {
   const x = ITEMS.find((i) => i.id === c.dataset.id);
   document.getElementById('d-title').textContent = x.title;
   document.getElementById('d-grade').textContent = x.grade;
-  document.getElementById('d-spec').innerHTML = [['排名', 'TOP ' + x.rank], ['交付', x.date], ['尺寸', x.res + (x.p4 ? '（适配 P4 屏）' : '')], ['声音', x.snd ? '有配乐' : '无'], ['做法', x.how]].map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join('');
+  document.getElementById('d-spec').innerHTML = [['候选人', x.name || '待补'], ['排名', 'TOP ' + x.rank], ['交付', x.date], ['尺寸', x.res + (x.p4 ? '（适配 P4 屏）' : '')], ['声音', x.snd ? '有配乐' : '无'], ['做法', x.how]].map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join('');
   document.getElementById('d-pros').innerHTML = x.pros.map((p) => `<li>${esc(p)}</li>`).join('');
   document.getElementById('d-cons').innerHTML = x.cons.map((p) => `<li>${esc(p)}</li>`).join('');
   vid.poster = M + 'w' + x.id + '.jpg'; vid.src = M + 'w' + x.id + '.mp4'; vid.muted = true;
