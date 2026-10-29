@@ -5,7 +5,7 @@
 <title>面试作品小铺</title>
 <meta property="og:title" content="面试作品小铺">
 <meta property="og:description" content="大模型应用工程师一轮上机题：6 件 30 秒宣传动画，附评级和点评">
-<meta property="og:image" content="https://crayxus.com.au/iw-0a7d3c/wce71.jpg">
+<meta property="og:image" content="https://crayxus.com.au/iw-0a7d3c/w4760.jpg">
 <meta property="og:url" content="https://crayxus.com.au/iw-0a7d3c.html">
 <style>
 *{box-sizing:border-box}html{-webkit-text-size-adjust:100%}[hidden]{display:none!important}
@@ -102,11 +102,11 @@ dialog::backdrop{background:var(--shade)}
     <button id="f-all" data-f="all" aria-pressed="true">综合排序</button>
     <button id="f-a" data-f="a" aria-pressed="false">只看 A 档</button>
     <button id="f-snd" data-f="snd" aria-pressed="false">有声音</button>
-    <button id="f-p4" data-f="p4" aria-pressed="false">适配 P4 屏</button>
+    <button id="f-p4" data-f="p4" aria-pressed="false">在 P4 上跑通</button>
     <span class="n" id="count"></span>
   </div>
   <main class="grid" id="grid"></main>
-  <p class="foot">评级是看画面后的初评；王俊杰的配乐是老师现场提示加上的，肖爱金没声音不扣分。</p>
+  <p class="foot">只有宋浩在 P4 屏上真正跑通，其余是看画面后的初评；王俊杰的配乐是老师现场提示加上的，肖爱金没声音不扣分。</p>
 </div>
 
 <dialog id="dlg" aria-labelledby="d-title">
@@ -125,21 +125,21 @@ dialog::backdrop{background:var(--shade)}
 
 <script>
 const ITEMS = [
-  { id:'ce71', name:'范湘黔', rank:1, grade:'A+', title:'让机械臂找到红色方块：从拆任务到烧录验证，再到三个真实案例', date:'10-29', res:'1024×600', snd:true, p4:true,
+  { id:'ce71', name:'范湘黔', rank:2, grade:'A', title:'让机械臂找到红色方块：从拆任务到烧录验证，再到三个真实案例', date:'10-29', res:'1024×600', snd:true, p4:true,
     how:'AI 写网页动画代码 + 3D 插图，带底部字幕和声音',
     chips:['最完整','具体场景','有字幕'], quote:'讲了一个真实任务，从头到尾都说清楚了',
     pros:['用「机械臂找红色方块、放到指定位置」一个具体任务串起全片','讲清了和 AI 一起拆任务：设备、动作、条件','连接硬件 → 生成代码 → 编译烧录 → 运行验证，再落到温度监测、小车控制、视觉分拣三个案例','3D 插图统一，有底部字幕和声音，尺寸正好是 P4 屏'],
-    cons:['信息多，7 寸屏上底部字幕偏小','个别页面切换偏快'] },
-  { id:'7922', name:'王俊杰', rank:2, grade:'A', title:'一句话让 LED 呼吸起来：从想法到烧录的完整流程', date:'10-29', res:'1024×600', snd:true, p4:true,
+    cons:['没有在 P4 上跑通','信息多，7 寸屏上底部字幕偏小','个别页面切换偏快'] },
+  { id:'7922', name:'王俊杰', rank:3, grade:'A', title:'一句话让 LED 呼吸起来：从想法到烧录的完整流程', date:'10-29', res:'1024×600', snd:true, p4:true,
     how:'AI 写网页动画代码 → 录制 → 自己用 ffmpeg 合成配乐',
     chips:['用时最短','产品流程完整','打字动画'], quote:'把产品怎么用讲明白了，速度还快',
     pros:['完整走了一遍：说一句话 → 编写 → 编译烧录 → 串口调试 → 引导访问 eitoken.ai','界面风格和官网一致，有打字输入的动态演示','尺寸正好是 P4 屏，交付用时明显比别人短'],
     cons:['配乐是老师现场提示后加的','个别页面停留稍短，字小的地方在 7 寸屏上要凑近看'] },
-  { id:'4760', name:'宋浩', rank:3, grade:'A', title:'每一个创造始于一个想法：让描述成为行动', date:'10-29', res:'1280×752', snd:true, p4:false,
+  { id:'4760', name:'宋浩', rank:1, grade:'A+', title:'每一个创造始于一个想法：让描述成为行动', date:'10-29', res:'1280×752', snd:true, p4:true,
     how:'HyperFrames 网页代码渲染视频（文件里有标记），带字幕和配乐',
-    chips:['故事完整','字幕配乐','会挑工具'], quote:'故事讲得最顺，产品细节还可以再具体',
-    pros:['「想法 → 输入描述 → 明确任务 / 参考案例 / 推进项目 → 机械臂执行 → 感知环境」一条线讲完','输入框里真的打出「让机械臂把物品放到指定位置」，贴近产品用法','画面风格统一，底部字幕加配乐，用 HyperFrames 这种专门的视频框架做的'],
-    cons:['没讲编译、烧录、验证这些实际步骤','尺寸 1280×752，比例接近 P4 屏，要缩放显示'] },
+    chips:['唯一在 P4 上跑通','故事完整','字幕配乐'], quote:'唯一真正在 P4 屏上放出来的，题目完成度最高',
+    pros:['唯一一个在 ESP32-P4 7 寸屏上真正播放出来的，上机题的核心要求只有他做到了','「想法 → 输入描述 → 明确任务 / 参考案例 / 推进项目 → 机械臂执行 → 感知环境」一条线讲完','输入框里真的打出「让机械臂把物品放到指定位置」，贴近产品用法','画面风格统一，底部字幕加配乐，用 HyperFrames 这种专门的视频框架做的'],
+    cons:['没讲编译、烧录、验证这些实际步骤','原片尺寸 1280×752，比例接近 P4 屏，上屏时做了缩放'] },
   { id:'ceb3', name:'肖爱金', rank:4, grade:'A', title:'ESP32-P4 · 说一句话，一次完成 · 77 个真机验证案例', date:'10-28', res:'1024×600', snd:false, p4:true,
     how:'AI 写动画代码渲染成视频（30 帧，文字清晰）',
     chips:['动效最精致','信息量足','渐变品牌字'], quote:'做工最细，信息最多',
@@ -179,9 +179,9 @@ const ITEMS = [
 const M = 'https://crayxus.com.au/iw-0a7d3c/';
 const grid = document.getElementById('grid'), count = document.getElementById('count');
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' })[c]);
-const FILTERS = { all:() => true, a:(x) => x.grade.startsWith('A'), snd:(x) => x.snd, p4:(x) => x.p4 };
+const FILTERS = { all:() => true, a:(x) => x.grade.startsWith('A'), snd:(x) => x.snd, p4:(x) => x.id === '4760' };
 function render(f) {
-  const list = ITEMS.filter(FILTERS[f]);
+  const list = ITEMS.filter(FILTERS[f]).sort((a, b) => a.rank - b.rank);
   count.textContent = '共 ' + list.length + ' 件';
   grid.innerHTML = list.map((x) => `
     <button class="card" id="card-${x.id}" data-id="${x.id}" aria-label="${esc(x.name || '候选人待补')}：${esc(x.title)}，评级 ${x.grade}">
