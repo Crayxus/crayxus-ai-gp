@@ -20,5 +20,27 @@
   "page": "daily-20261106-breath-loop.html",
   "og": "og-daily-20261106-breath-loop.jpg",
   "poster": "daily/20261106/breath-loop-poster.jpg"
+ },
+ {
+  "date": "2026-11-07",
+  "slug": "tidal-fold-collar",
+  "nameCn": "汐褶",
+  "nameEn": "TidalFold",
+  "category": "可穿戴气候调节领环",
+  "tagline": "让呼吸，长在肩上",
+  "page": "daily-20261107-tidal-fold-collar.html",
+  "og": "og-daily-20261107-tidal-fold-collar.jpg",
+  "poster": "daily/20261107/tidal-fold-collar-poster.jpg"
+ },
+ {
+  "date": "2026-11-07",
+  "slug": "litho-roamer",
+  "nameCn": "栖岩",
+  "nameEn": "LithoRoamer",
+  "category": "移动静音睡眠舱",
+  "tagline": "把卧室，开进荒野",
+  "page": "daily-20261107-litho-roamer.html",
+  "og": "og-daily-20261107-litho-roamer.jpg",
+  "poster": "daily/20261107/litho-roamer-poster.jpg"
  }
 ]
