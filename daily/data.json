@@ -64,5 +64,27 @@
   "page": "daily-20261108-sonoloom-air-instrument.html",
   "og": "og-daily-20261108-sonoloom-air-instrument.jpg",
   "poster": "daily/20261108/sonoloom-air-instrument-poster.jpg"
+ },
+ {
+  "date": "2026-11-09",
+  "slug": "starhold",
+  "nameCn": "定星",
+  "nameEn": "Starhold",
+  "category": "户外定位锚具",
+  "tagline": "把荒野，装进网格",
+  "page": "daily-20261109-starhold.html",
+  "og": "og-daily-20261109-starhold.jpg",
+  "poster": "daily/20261109/starhold-poster.jpg"
+ },
+ {
+  "date": "2026-11-09",
+  "slug": "pacelight",
+  "nameCn": "逐光",
+  "nameEn": "PaceLight",
+  "category": "光影配速训练器",
+  "tagline": "让光，领你破风",
+  "page": "daily-20261109-pacelight.html",
+  "og": "og-daily-20261109-pacelight.jpg",
+  "poster": "daily/20261109/pacelight-poster.jpg"
  }
 ]
