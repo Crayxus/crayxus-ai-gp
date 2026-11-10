@@ -86,5 +86,27 @@
   "page": "daily-20261109-pacelight.html",
   "og": "og-daily-20261109-pacelight.jpg",
   "poster": "daily/20261109/pacelight-poster.jpg"
+ },
+ {
+  "date": "2026-11-10",
+  "slug": "tactile-feather-ring",
+  "nameCn": "触羽",
+  "nameEn": "FeatherPulse",
+  "category": "触觉指环",
+  "tagline": "让指尖长出触觉",
+  "page": "daily-20261110-tactile-feather-ring.html",
+  "og": "og-daily-20261110-tactile-feather-ring.jpg",
+  "poster": "daily/20261110/tactile-feather-ring-poster.jpg"
+ },
+ {
+  "date": "2026-11-10",
+  "slug": "mist-isle-pavilion",
+  "nameCn": "雾屿",
+  "nameEn": "MistIsle",
+  "category": "城市微气候亭",
+  "tagline": "把绿洲，挂进街角",
+  "page": "daily-20261110-mist-isle-pavilion.html",
+  "og": "og-daily-20261110-mist-isle-pavilion.jpg",
+  "poster": "daily/20261110/mist-isle-pavilion-poster.jpg"
  }
 ]
