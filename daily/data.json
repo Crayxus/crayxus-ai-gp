@@ -108,5 +108,27 @@
   "page": "daily-20261110-mist-isle-pavilion.html",
   "og": "og-daily-20261110-mist-isle-pavilion.jpg",
   "poster": "daily/20261110/mist-isle-pavilion-poster.jpg"
+ },
+ {
+  "date": "2026-11-11",
+  "slug": "fresh-halo",
+  "nameCn": "鲜穹",
+  "nameEn": "FreshHalo",
+  "category": "开放式食材保鲜装置",
+  "tagline": "把新鲜，晾在极光里",
+  "page": "daily-20261111-fresh-halo.html",
+  "og": "og-daily-20261111-fresh-halo.jpg",
+  "poster": "daily/20261111/fresh-halo-poster.jpg"
+ },
+ {
+  "date": "2026-11-11",
+  "slug": "eco-dune",
+  "nameCn": "知丘",
+  "nameEn": "EcoDune",
+  "category": "可编程沙盘学习台",
+  "tagline": "让知识，从指缝长出来",
+  "page": "daily-20261111-eco-dune.html",
+  "og": "og-daily-20261111-eco-dune.jpg",
+  "poster": "daily/20261111/eco-dune-poster.jpg"
  }
 ]
