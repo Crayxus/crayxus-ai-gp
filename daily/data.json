@@ -152,5 +152,27 @@
   "page": "daily-20261112-levarm-wearable-support.html",
   "og": "og-daily-20261112-levarm-wearable-support.jpg",
   "poster": "daily/20261112/levarm-wearable-support-poster.jpg"
+ },
+ {
+  "date": "2026-11-13",
+  "slug": "equilibra",
+  "nameCn": "若衡",
+  "nameEn": "EQUILIBRA",
+  "category": "健康陪护灯",
+  "tagline": "把心跳，养成一盏灯",
+  "page": "daily-20261113-equilibra.html",
+  "og": "og-daily-20261113-equilibra.jpg",
+  "poster": "daily/20261113/equilibra-poster.jpg"
+ },
+ {
+  "date": "2026-11-13",
+  "slug": "onyx-glide",
+  "nameCn": "玄川",
+  "nameEn": "ONYXGLIDE",
+  "category": "个人磁浮载具",
+  "tagline": "把夜路，踩成一条河",
+  "page": "daily-20261113-onyx-glide.html",
+  "og": "og-daily-20261113-onyx-glide.jpg",
+  "poster": "daily/20261113/onyx-glide-poster.jpg"
  }
 ]
