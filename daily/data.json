@@ -174,5 +174,27 @@
   "page": "daily-20261113-onyx-glide.html",
   "og": "og-daily-20261113-onyx-glide.jpg",
   "poster": "daily/20261113/onyx-glide-poster.jpg"
+ },
+ {
+  "date": "2026-11-14",
+  "slug": "terrafold-roamer",
+  "nameCn": "衍陆",
+  "nameEn": "TerraFold",
+  "category": "模块化折叠房车",
+  "tagline": "展开，就是一片营地",
+  "page": "daily-20261114-terrafold-roamer.html",
+  "og": "og-daily-20261114-terrafold-roamer.jpg",
+  "poster": "daily/20261114/terrafold-roamer-poster.jpg"
+ },
+ {
+  "date": "2026-11-14",
+  "slug": "lullhaven-submersible",
+  "nameCn": "澜隐",
+  "nameEn": "Lullhaven",
+  "category": "半潜式移动静修舱",
+  "tagline": "把喧嚣，留在水面",
+  "page": "daily-20261114-lullhaven-submersible.html",
+  "og": "og-daily-20261114-lullhaven-submersible.jpg",
+  "poster": "daily/20261114/lullhaven-submersible-poster.jpg"
  }
 ]
