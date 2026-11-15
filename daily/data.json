@@ -196,5 +196,27 @@
   "page": "daily-20261114-lullhaven-submersible.html",
   "og": "og-daily-20261114-lullhaven-submersible.jpg",
   "poster": "daily/20261114/lullhaven-submersible-poster.jpg"
+ },
+ {
+  "date": "2026-11-15",
+  "slug": "wavecarve",
+  "nameCn": "刻波",
+  "nameEn": "WaveCarve",
+  "category": "桌面声音雕塑创作工具",
+  "tagline": "把声音，刻成形状",
+  "page": "daily-20261115-wavecarve.html",
+  "og": "og-daily-20261115-wavecarve.jpg",
+  "poster": "daily/20261115/wavecarve-poster.jpg"
+ },
+ {
+  "date": "2026-11-15",
+  "slug": "plumewing",
+  "nameCn": "拂翼",
+  "nameEn": "PlumeWing",
+  "category": "可穿戴电动滑翔翼",
+  "tagline": "把天空，穿在身上",
+  "page": "daily-20261115-plumewing.html",
+  "og": "og-daily-20261115-plumewing.jpg",
+  "poster": "daily/20261115/plumewing-poster.jpg"
  }
 ]
