@@ -218,5 +218,27 @@
   "page": "daily-20261115-plumewing.html",
   "og": "og-daily-20261115-plumewing.jpg",
   "poster": "daily/20261115/plumewing-poster.jpg"
+ },
+ {
+  "date": "2026-11-16",
+  "slug": "ripple-stride",
+  "nameCn": "步漪",
+  "nameEn": "RippleStride",
+  "category": "运动节奏反馈地垫",
+  "tagline": "把地面，变成教练",
+  "page": "daily-20261116-ripple-stride.html",
+  "og": "og-daily-20261116-ripple-stride.jpg",
+  "poster": "daily/20261116/ripple-stride-poster.jpg"
+ },
+ {
+  "date": "2026-11-16",
+  "slug": "equibelt",
+  "nameCn": "扶衡",
+  "nameEn": "EquiBelt",
+  "category": "可穿戴平衡辅助腰带",
+  "tagline": "让每一次失衡，提前被扶住",
+  "page": "daily-20261116-equibelt.html",
+  "og": "og-daily-20261116-equibelt.jpg",
+  "poster": "daily/20261116/equibelt-poster.jpg"
  }
 ]
