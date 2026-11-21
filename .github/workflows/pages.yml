@@ -73,6 +73,11 @@ jobs:
         with:
           path: '.'
 
+      # 2026-11-21：多次 failure 都是「上传成功 0.3 秒后部署就去查产物 → Found 0 artifact(s)」，
+      # GitHub 侧产物索引还没刷新（githubstatus 一切正常，稍后 API 能查到产物）。等 20 秒再部署。
+      - name: 等产物可见
+        run: sleep 20
+
       - name: 部署
         id: deployment
         uses: actions/deploy-pages@v4
