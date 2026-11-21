@@ -262,5 +262,27 @@
   "page": "daily-20261117-homing-shell.html",
   "og": "og-daily-20261117-homing-shell.jpg",
   "poster": "daily/20261117/homing-shell-poster.jpg"
+ },
+ {
+  "date": "2026-11-21",
+  "slug": "manta-pal",
+  "nameCn": "渊伴",
+  "nameEn": "MantaPal",
+  "category": "水下伴随推进器",
+  "tagline": "深蓝有光随行",
+  "page": "daily-20261121-manta-pal.html",
+  "og": "og-daily-20261121-manta-pal.jpg",
+  "poster": "daily/20261121/manta-pal-poster.jpg"
+ },
+ {
+  "date": "2026-11-21",
+  "slug": "cloud-paw",
+  "nameCn": "踏云",
+  "nameEn": "CloudPaw",
+  "category": "宠物康复助行外骨骼",
+  "tagline": "让老友重新奔跑",
+  "page": "daily-20261121-cloud-paw.html",
+  "og": "og-daily-20261121-cloud-paw.jpg",
+  "poster": "daily/20261121/cloud-paw-poster.jpg"
  }
 ]
