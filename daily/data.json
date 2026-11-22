@@ -284,5 +284,27 @@
   "page": "daily-20261121-cloud-paw.html",
   "og": "og-daily-20261121-cloud-paw.jpg",
   "poster": "daily/20261121/cloud-paw-poster.jpg"
+ },
+ {
+  "date": "2026-11-22",
+  "slug": "halo-arc",
+  "nameCn": "凌环",
+  "nameEn": "HaloArc",
+  "category": "单人低空飞行器",
+  "tagline": "把天空，圈成座舱",
+  "page": "daily-20261122-halo-arc.html",
+  "og": "og-daily-20261122-halo-arc.jpg",
+  "poster": "daily/20261122/halo-arc-poster.jpg"
+ },
+ {
+  "date": "2026-11-22",
+  "slug": "moss-pulse",
+  "nameCn": "苔痕",
+  "nameEn": "MossPulse",
+  "category": "健康陪护生态墙",
+  "tagline": "让墙，听见你的呼吸",
+  "page": "daily-20261122-moss-pulse.html",
+  "og": "og-daily-20261122-moss-pulse.jpg",
+  "poster": "daily/20261122/moss-pulse-poster.jpg"
  }
 ]
