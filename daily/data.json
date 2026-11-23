@@ -306,5 +306,27 @@
   "page": "daily-20261122-moss-pulse.html",
   "og": "og-daily-20261122-moss-pulse.jpg",
   "poster": "daily/20261122/moss-pulse-poster.jpg"
+ },
+ {
+  "date": "2026-11-23",
+  "slug": "aura-vest",
+  "nameCn": "岚衣",
+  "nameEn": "AuraVest",
+  "category": "可穿戴触觉自然模拟背心",
+  "tagline": "把森林，穿在身上",
+  "page": "daily-20261123-aura-vest.html",
+  "og": "og-daily-20261123-aura-vest.jpg",
+  "poster": "daily/20261123/aura-vest-poster.jpg"
+ },
+ {
+  "date": "2026-11-23",
+  "slug": "dome-nest",
+  "nameCn": "望穹",
+  "nameEn": "DomeNest",
+  "category": "移动天文观测舱",
+  "tagline": "把星空，停在路边",
+  "page": "daily-20261123-dome-nest.html",
+  "og": "og-daily-20261123-dome-nest.jpg",
+  "poster": "daily/20261123/dome-nest-poster.jpg"
  }
 ]
