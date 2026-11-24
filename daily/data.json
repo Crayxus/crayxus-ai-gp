@@ -328,5 +328,27 @@
   "page": "daily-20261123-dome-nest.html",
   "og": "og-daily-20261123-dome-nest.jpg",
   "poster": "daily/20261123/dome-nest-poster.jpg"
+ },
+ {
+  "date": "2026-11-24",
+  "slug": "morphome",
+  "nameCn": "无相",
+  "nameEn": "MORPHOME",
+  "category": "软体家居机器人",
+  "tagline": "家具，随你起身",
+  "page": "daily-20261124-morphome.html",
+  "og": "og-daily-20261124-morphome.jpg",
+  "poster": "daily/20261124/morphome-poster.jpg"
+ },
+ {
+  "date": "2026-11-24",
+  "slug": "soniclay",
+  "nameCn": "律壤",
+  "nameEn": "SONICLAY",
+  "category": "触觉音乐创作工具",
+  "tagline": "捏出声音的形状",
+  "page": "daily-20261124-soniclay.html",
+  "og": "og-daily-20261124-soniclay.jpg",
+  "poster": "daily/20261124/soniclay-poster.jpg"
  }
 ]
