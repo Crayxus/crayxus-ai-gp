@@ -350,5 +350,27 @@
   "page": "daily-20261124-soniclay.html",
   "og": "og-daily-20261124-soniclay.jpg",
   "poster": "daily/20261124/soniclay-poster.jpg"
+ },
+ {
+  "date": "2026-11-25",
+  "slug": "ember-core",
+  "nameCn": "燧心",
+  "nameEn": "Embercore",
+  "category": "户外热能装置",
+  "tagline": "把火焰，收进一块石头",
+  "page": "daily-20261125-ember-core.html",
+  "og": "og-daily-20261125-ember-core.jpg",
+  "poster": "daily/20261125/ember-core-poster.jpg"
+ },
+ {
+  "date": "2026-11-25",
+  "slug": "aerothresh",
+  "nameCn": "风阈",
+  "nameEn": "Aerothresh",
+  "category": "气动训练装备",
+  "tagline": "把风，穿在身上",
+  "page": "daily-20261125-aerothresh.html",
+  "og": "og-daily-20261125-aerothresh.jpg",
+  "poster": "daily/20261125/aerothresh-poster.jpg"
  }
 ]
