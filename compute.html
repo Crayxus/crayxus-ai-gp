@@ -230,21 +230,20 @@ dialog::backdrop{background:rgb(0 0 0/.5)}
 
 <script>
 {
-const FX = 1.5073, MARGIN = 1.224;
 const SRC = [
-  {id:'on8', n:8, loc:'Ontario, CA', rel:95.2, v:false, usd:60.00},
-  {id:'on4', n:4, loc:'Ontario, CA', rel:94.9, v:false, usd:30.00},
-  {id:'on1', n:1, loc:'Ontario, CA', rel:95.2, v:false, usd:7.50},
-  {id:'tx2', n:2, loc:'Texas, US', rel:91.8, v:false, usd:15.98},
-  {id:'hr2', n:2, loc:'Croatia', rel:99.3, v:true, usd:19.88},
-  {id:'hr1', n:1, loc:'Croatia', rel:99.3, v:true, usd:9.94},
-  {id:'tw8', n:8, loc:'Taiwan', rel:98.0, v:false, usd:80.00},
-  {id:'wa1', n:1, loc:'Washington, US', rel:97.4, v:true, usd:11.20},
-  {id:'co4', n:4, loc:'Colorado, US', rel:99.8, v:true, usd:45.00},
-  {id:'ca2', n:2, loc:'California, US', rel:97.9, v:true, usd:22.50},
-  {id:'md2', n:2, loc:'Maryland, US', rel:99.3, v:true, usd:22.50}
+  {id:'on8', n:8, loc:'Ontario, CA', rel:95.2, v:false, hr:110.70},
+  {id:'on4', n:4, loc:'Ontario, CA', rel:94.9, v:false, hr:55.30},
+  {id:'on1', n:1, loc:'Ontario, CA', rel:95.2, v:false, hr:13.80},
+  {id:'tx2', n:2, loc:'Texas, US', rel:91.8, v:false, hr:29.50},
+  {id:'hr2', n:2, loc:'Croatia', rel:99.3, v:true, hr:36.70},
+  {id:'hr1', n:1, loc:'Croatia', rel:99.3, v:true, hr:18.30},
+  {id:'tw8', n:8, loc:'Taiwan', rel:98.0, v:false, hr:147.60},
+  {id:'wa1', n:1, loc:'Washington, US', rel:97.4, v:true, hr:20.70},
+  {id:'co4', n:4, loc:'Colorado, US', rel:99.8, v:true, hr:83.00},
+  {id:'ca2', n:2, loc:'California, US', rel:97.9, v:true, hr:41.50},
+  {id:'md2', n:2, loc:'Maryland, US', rel:99.3, v:true, hr:41.50}
 ];
-const OFFERS = SRC.map((o) => ({...o, hr: Math.round(o.usd * FX * MARGIN * 10) / 10}));
+const OFFERS = SRC;
 const DISK_MO = 0.35, $ = (s) => document.querySelector(s);
 const fmt = (v, d=2) => 'A$' + v.toLocaleString('en-AU', {minimumFractionDigits:d, maximumFractionDigits:d});
 const hms = (s) => [s/3600|0, (s%3600)/60|0, s%60|0].map((x) => String(x).padStart(2,'0')).join(':');
